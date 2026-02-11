@@ -5,6 +5,7 @@ import jakarta.ws.rs.GET
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
+import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
@@ -47,5 +48,17 @@ class VoieEndpoint : AbstractEndpoint() {
     @Public("Les voies ne sont pas liées à un droit")
     fun getGeometrieById(@PathParam("voieId") voieId: UUID): Response {
         return Response.ok(voieRepository.getGeometrieVoie(voieId)).build()
+    }
+
+    @GET
+    @Path("/get-by-name")
+    @Public("Les voies ne sont pas liées à un droit")
+    fun getByName(
+        @QueryParam("motifLibelle") libelle: String,
+        @QueryParam("dependenceObjId") communeId: UUID?,
+    ): Response {
+        return Response.ok(
+            voieRepository.getVoieByName(libelle, communeId),
+        ).build()
     }
 }

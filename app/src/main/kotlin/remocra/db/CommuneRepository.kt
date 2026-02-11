@@ -188,6 +188,16 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             .where(COMMUNE.ID.eq(communeId))
             .fetchSingleInto()
 
+    fun getCommuneByName(libelle: String): List<GlobalData.ItemSearch> =
+        dsl.select(
+            COMMUNE.ID.`as`("id"),
+            COMMUNE.LIBELLE.`as`("libelle"),
+            COMMUNE.GEOMETRIE.`as`("geometry"),
+        )
+            .from(COMMUNE)
+            .where(COMMUNE.LIBELLE.containsIgnoreCaseUnaccent(libelle))
+            .fetchInto()
+
     data class CommuneGeometryOnly(
         val communeGeometry: Geometry,
     )

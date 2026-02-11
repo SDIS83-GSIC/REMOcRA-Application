@@ -1,5 +1,6 @@
 package remocra.data
 
+import org.locationtech.jts.geom.Geometry
 import java.util.UUID
 
 class GlobalData {
@@ -23,5 +24,11 @@ class GlobalData {
     data class IdLibelleData(
         val id: UUID,
         val libelle: String,
+    )
+
+    data class ItemSearch(
+        val id: UUID,
+        val libelle: String,
+        val geometry: Geometry,
     )
 }

@@ -77,4 +77,15 @@ class CommuneEndpoint : AbstractEndpoint() {
     fun getGeometrieById(@PathParam("communeId") communeId: UUID): Response {
         return Response.ok(communeRepository.getGeometrieCommune(communeId)).build()
     }
+
+    @GET
+    @Path("/get-by-name")
+    @Public("Les communes ne sont pas liées à un droit")
+    fun getByName(
+        @QueryParam("motifLibelle") libelle: String,
+    ): Response {
+        return Response.ok(
+            communeUseCase.getCommuneByName(libelle),
+        ).build()
+    }
 }

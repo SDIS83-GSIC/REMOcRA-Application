@@ -7,6 +7,7 @@ import { FormLabel } from "../../components/Form/Form.tsx";
 import { IconQuickAccess } from "../../components/Icon/Icon.tsx";
 import useLocalisation, {
   GET_TYPE_GEOMETRY,
+  ItemSearch,
 } from "../../components/Localisation/useLocalisation.tsx";
 import url from "../../module/fetch.tsx";
 import AccesRapideTypeahead from "./AccesRapideTypeahead.tsx";
@@ -23,6 +24,16 @@ const AccesRapidePei = () => {
   );
 
   const { fetchGeometry } = useLocalisation();
+
+  const handleTourneeObject = (obj: ItemSearch) => {
+    setTourneeId(obj.id);
+  };
+  const handlePeiObject = (obj: ItemSearch) => {
+    setPeiId(obj.id);
+  };
+  const handleCommuneObject = (obj: ItemSearch) => {
+    setCommuneId(obj.id);
+  };
 
   useEffect(() => {
     if (
@@ -49,7 +60,7 @@ const AccesRapidePei = () => {
             <AccesRapideTypeahead
               label="Tournée"
               queryUrl="/api/tournee/acces-rapide"
-              setter={setTourneeId}
+              setter={handleTourneeObject}
             />
           </Col>
           <Col>
@@ -70,7 +81,7 @@ const AccesRapidePei = () => {
             <AccesRapideTypeahead
               label="PEI"
               queryUrl="/api/pei/acces-rapide"
-              setter={setPeiId}
+              setter={handlePeiObject}
             />
           </Col>
           <Col>
@@ -91,7 +102,7 @@ const AccesRapidePei = () => {
             <AccesRapideTypeahead
               label="Commune"
               queryUrl="/api/commune/acces-rapide"
-              setter={setCommuneId}
+              setter={handleCommuneObject}
             />
           </Col>
           <Col className="d-flex align-items-start flex-column" sm={2}>

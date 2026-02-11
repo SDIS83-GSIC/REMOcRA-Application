@@ -16,10 +16,16 @@ import {
   useMemo,
   useState,
 } from "react";
-import { Button, ButtonGroup, ButtonToolbar } from "react-bootstrap";
+import {
+  Button,
+  ButtonGroup,
+  ButtonToolbar,
+  ToggleButton,
+} from "react-bootstrap";
 import Row from "react-bootstrap/Row";
 import { hasDroit } from "../../droits.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
+import AccesRapideTypeahead from "../../pages/AccesRapide/AccesRapideTypeahead.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import {
   IconDistance,
@@ -28,9 +34,13 @@ import {
   IconZoomIn,
   IconZoomOut,
 } from "../Icon/Icon.tsx";
+import {
+  ItemSearch,
+  useCarteLocalisation,
+} from "../Localisation/useLocalisation.tsx";
 import Volet from "../Volet/Volet.tsx";
-import AdresseTypeahead from "./AdresseTypeahead.tsx";
 import OutilIVolet from "./MapOutilI/ShowInfoVolet.tsx";
+import AdresseTypeahead from "./RechercheLieu/AdresseTypeahead.tsx";
 import ToolbarButton from "./ToolbarButton.tsx";
 
 const measureStyle = new Style({
@@ -447,8 +457,67 @@ const MapToolbar = forwardRef(
     // Pour accéder aux méthodes de la bar en dehors
     useImperativeHandle(ref, () => ({}));
 
+    const optionsZoom = [
+      {
+        name: "Données BAN",
+        code: "BAN",
+      },
+      {
+        name: "Données perso",
+        code: "PERSO",
+      },
+    ];
+    const [checkBoxOptionZoom, setCheckBoxOptionZoom] = useState(
+      optionsZoom[0],
+    );
+    const { fetchMapGeometry } = useCarteLocalisation();
+    const [commune, setCommune] = useState<ItemSearch | undefined | null>();
+
     return (
       <Row>
+        <ButtonGroup>
+          {optionsZoom.map((opt, idx) => (
+            <ToggleButton
+              key={idx}
+              id={`optZoom-${idx}`}
+              type="radio"
+              variant={idx % 2 ? "outline-info" : "outline-primary"}
+              name="switch-ban-perso"
+              value={opt.code}
+              checked={checkBoxOptionZoom.code === opt.code}
+              onChange={() => setCheckBoxOptionZoom(optionsZoom[idx])}
+            >
+              {opt.name}
+            </ToggleButton>
+          ))}
+          {checkBoxOptionZoom.code === optionsZoom[0].code ? (
+            <AdresseTypeahead map={map} />
+          ) : (
+            <>
+              <AccesRapideTypeahead
+                label="Zoomer sur la commune"
+                queryUrl="/api/commune/get-by-name"
+                setter={(objet: ItemSearch | null) => {
+                  if (!objet) {
+                    setCommune(null);
+                  } else {
+                    fetchMapGeometry(objet, map);
+                    setCommune(objet);
+                  }
+                }}
+              />
+
+              <AccesRapideTypeahead
+                label="Zoomer sur la voie"
+                queryUrl="/api/voie/get-by-name"
+                dependentObject={commune}
+                setter={(objet: ItemSearch | null) => {
+                  fetchMapGeometry(objet, map);
+                }}
+              />
+            </>
+          )}
+        </ButtonGroup>
         <ButtonToolbar>
           <ButtonGroup>
             <Button
@@ -468,7 +537,7 @@ const MapToolbar = forwardRef(
               <IconZoomOut />
             </Button>
           </ButtonGroup>
-          <AdresseTypeahead map={map} />
+
           <ButtonGroup>
             <ToolbarButton
               toolName={"measure-length"}

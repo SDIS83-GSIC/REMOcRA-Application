@@ -149,6 +149,21 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
             .where(VOIE.ID.eq(voieId))
             .fetchSingleInto()
 
+    fun getVoieByName(libelle: String, communeId: UUID?): List<GlobalData.ItemSearch> {
+        val query = dsl.select(
+            VOIE.ID.`as`("id"),
+            VOIE.LIBELLE.`as`("libelle"),
+            VOIE.GEOMETRIE.`as`("geometry"),
+        ).from(VOIE)
+            .where(VOIE.LIBELLE.containsIgnoreCaseUnaccent(libelle))
+
+        communeId?.let {
+            query.and(VOIE.COMMUNE_ID.eq(it))
+        }
+
+        return query.fetchInto()
+    }
+
     data class VoieGeometryOnly(
         val voieGeometry: Geometry,
     )

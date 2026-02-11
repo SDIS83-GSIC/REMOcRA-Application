@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
 import { useGetRun } from "../../components/Fetch/useFetch.tsx";
+import { ItemSearch } from "../../components/Localisation/useLocalisation.tsx";
 import url from "../../module/fetch.tsx";
 
 export type IdLibelleData = {
@@ -12,14 +13,22 @@ const AccesRapideTypeahead = ({
   label,
   queryUrl,
   setter,
+  dependentObject,
 }: {
   label: string;
   queryUrl: string;
-  setter: (value: string) => void;
+  setter: (value: string | null) => void;
+  dependentObject?: ItemSearch | null;
 }) => {
   const [motif, setMotif] = useState<string>("");
+  const queryParams: Record<string, any> = { motifLibelle: motif };
+
+  if (dependentObject) {
+    queryParams.dependenceObjId = dependentObject.id;
+  }
+
   const { data, run, isResolved } = useGetRun(
-    url`${queryUrl}?${{ motifLibelle: motif }}`,
+    url`${queryUrl}?${new URLSearchParams(queryParams).toString()}`,
     {},
   );
 
@@ -36,13 +45,15 @@ const AccesRapideTypeahead = ({
       labelKey={"libelle"}
       options={data}
       onSearch={(query) => {
-        if (query.length > 1) {
+        if (query.length > 0) {
           setMotif(query);
         }
       }}
       onChange={(value) => {
         if (value.length > 0) {
-          setter(value[0].id);
+          setter(value[0]);
+        } else {
+          setter(null);
         }
       }}
     />

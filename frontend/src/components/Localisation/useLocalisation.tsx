@@ -1,5 +1,7 @@
 import { WKT } from "ol/format";
 import { GeometryCollection } from "ol/geom";
+import OLMap from "ol/Map";
+import { transformExtent } from "ol/proj";
 import { useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
@@ -16,7 +18,65 @@ export enum GET_TYPE_GEOMETRY {
   OLDEB = "/api/oldeb",
 }
 
+export type ItemSearch = {
+  id: string;
+  libelle: string;
+  geometry: string;
+};
+
 const BUFFER_LOCALISATION = 100;
+
+const parseGeometry = (raw: string) => {
+  const [rawSrid, rawFeature] = raw.split(";");
+  const srid = rawSrid.split("=").pop();
+  const geometry = new WKT().readGeometry(rawFeature);
+  return { geometry, srid };
+};
+
+const bufferExtent = (extent: number[], buffer: number) => {
+  return [
+    extent[0] - buffer,
+    extent[1] - buffer,
+    extent[2] + buffer,
+    extent[3] + buffer,
+  ];
+};
+
+const getGeometryData = (geometryData: string) => {
+  const { geometry, srid } = parseGeometry(geometryData);
+  return {
+    extent: bufferExtent(geometry.getExtent(), BUFFER_LOCALISATION),
+    srid,
+  };
+};
+
+export const useCarteLocalisation = () => {
+  const { pathname: currentPathname, search } = useLocation();
+
+  const fetchMapGeometry = useCallback(
+    (obj: ItemSearch | null, map: OLMap) => {
+      if (obj) {
+        const { extent, srid } = getGeometryData(obj.geometry);
+        localStorage.setItem(currentPathname, search);
+        map
+          .getView()
+          .fit(
+            transformExtent(
+              extent,
+              `EPSG:${srid}`,
+              map.getView().getProjection(),
+            ),
+            {
+              size: map.getSize(),
+            },
+          );
+      }
+    },
+    [currentPathname, search],
+  );
+
+  return { fetchMapGeometry };
+};
 
 /**
  * Permet de localiser les PEI, les tournées ou les communes et voie
@@ -46,24 +106,6 @@ const useLocalisation = () => {
       )
         .json()
         .then((resData) => {
-          const parseGeometry = (raw: string) => {
-            const [rawSrid, rawFeature] = raw.split(";");
-            const srid = rawSrid.split("=").pop();
-            const geometry = new WKT().readGeometry(rawFeature);
-            return { geometry, srid };
-          };
-
-          // Fonction utilitaire pour buffer un extent
-          const bufferExtent = (extent: number[], buffer: number) => {
-            // extent: [minX, minY, maxX, maxY]
-            return [
-              extent[0] - buffer,
-              extent[1] - buffer,
-              extent[2] + buffer,
-              extent[3] + buffer,
-            ];
-          };
-
           let extent, srid;
 
           switch (typeGeometry) {

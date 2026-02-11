@@ -2,7 +2,7 @@ import OLMap from "ol/Map";
 import { transform } from "ol/proj";
 import { useState } from "react";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
-import { EPSG_4326 } from "../../utils/constantsUtils.tsx";
+import { EPSG_4326 } from "../../../utils/constantsUtils.tsx";
 
 const AdresseTypeahead = ({ map }: { map: OLMap }) => {
   const [state, setState] = useState({ isLoading: false, options: [] });
@@ -11,6 +11,7 @@ const AdresseTypeahead = ({ map }: { map: OLMap }) => {
   return (
     <AsyncTypeahead
       minLength={3}
+      className={"ms-3"}
       placeholder={"Zoomer sur la voie"}
       emptyLabel={"Aucun résultat"}
       promptText={"Saisissez au moins 3 lettres"}

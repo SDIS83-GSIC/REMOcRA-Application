@@ -38,9 +38,9 @@ import useModal from "../../Modal/ModalUtils.tsx";
 import TooltipCustom from "../../Tooltip/Tooltip.tsx";
 import Volet from "../../Volet/Volet.tsx";
 import { desactiveMoveMap, refreshLayerGeoserver } from "../MapUtils.tsx";
+import ToponymieTypeBarre from "../RechercheLieu/ToponymieTypeBarre.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapEditEvenement } from "../TooltipsMap.tsx";
-import ToponymieTypeBarre from "../ToponymieTypeBarre.tsx";
 
 const drawStyle = new Style({
   fill: new Fill({
@@ -531,7 +531,7 @@ const MapToolbarCrise = forwardRef(
         </Col>
         <Col xs={"auto"}>
           {/* gestion toponymies */}
-          <ToponymieTypeBarre map={map} criseId={criseId} />
+          <ToponymieTypeBarre map={map!} criseId={criseId} />
         </Col>
         {hasDroit(user, TYPE_DROIT.CRISE_C) && (
           <Col xs={"auto"}>

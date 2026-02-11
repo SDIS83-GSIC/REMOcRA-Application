@@ -3,7 +3,7 @@ import OLMap from "ol/Map";
 import { transformExtent } from "ol/proj";
 import { useState } from "react";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
-import url, { getFetchOptions } from "../../module/fetch.tsx";
+import url, { getFetchOptions } from "../../../module/fetch.tsx";
 
 const ToponymieTypeBarre = ({
   map,
