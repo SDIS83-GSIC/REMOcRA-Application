@@ -17,6 +17,7 @@ import remocra.db.jooq.incoming.tables.pojos.Gestionnaire
 import remocra.db.jooq.incoming.tables.pojos.LContactRole
 import remocra.db.jooq.incoming.tables.pojos.LVisiteAnomalie
 import remocra.db.jooq.incoming.tables.pojos.NewPei
+import remocra.db.jooq.incoming.tables.pojos.PeiDeplacement
 import remocra.db.jooq.incoming.tables.pojos.PhotoPei
 import remocra.db.jooq.incoming.tables.pojos.Visite
 import remocra.db.jooq.incoming.tables.pojos.VisiteCtrlDebitPression
@@ -243,6 +244,9 @@ class IncomingRepository @Inject constructor(
     fun getNewPei(): Collection<NewPei> =
         dsl.selectFrom(NEW_PEI).fetchInto()
 
+    fun getPeiDeplacement(tourneeId: UUID): Collection<PeiDeplacement> =
+        dsl.selectFrom(PEI_DEPLACEMENT).where(PEI_DEPLACEMENT.TOURNEE_ID.eq(tourneeId)).fetchInto()
+
     fun getVisites(tourneeId: UUID): Collection<Visite> =
         dsl.selectFrom(VISITE).where(VISITE.TOURNEE_ID.eq(tourneeId)).fetchInto()
 
@@ -270,6 +274,11 @@ class IncomingRepository @Inject constructor(
     fun deleteNewPei(listeNewPeiId: Collection<UUID>) =
         dsl.deleteFrom(NEW_PEI)
             .where(NEW_PEI.ID.`in`(listeNewPeiId))
+            .execute()
+
+    fun deletePeiDeplacement(tourneeId: UUID) =
+        dsl.deleteFrom(PEI_DEPLACEMENT)
+            .where(PEI_DEPLACEMENT.TOURNEE_ID.eq(tourneeId))
             .execute()
 
     fun deleteVisiteAnomalie(listeVisiteId: Collection<UUID>) =

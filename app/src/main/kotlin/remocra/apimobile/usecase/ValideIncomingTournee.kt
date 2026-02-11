@@ -3,6 +3,7 @@ package remocra.apimobile.usecase
 import jakarta.inject.Inject
 import remocra.apimobile.repository.IncomingRepository
 import remocra.auth.WrappedUserInfo
+import remocra.auth.userInfo
 import remocra.data.CreationVisiteCtrl
 import remocra.data.PeiData
 import remocra.data.PenaData
@@ -23,37 +24,24 @@ import remocra.db.jooq.remocra.tables.pojos.LContactRole
 import remocra.log.LogManager
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.pei.CreatePeiUseCase
+import remocra.usecase.pei.MovePeiUseCase
+import remocra.usecase.pei.UpdatePeiUseCase
 import remocra.usecase.visites.CreateVisiteUseCase
 import java.util.UUID
 
-class ValideIncomingTournee : AbstractUseCase() {
-
-    @Inject
-    private lateinit var incomingRepository: IncomingRepository
-
-    @Inject
-    private lateinit var gestionnaireRepository: GestionnaireRepository
-
-    @Inject
-    private lateinit var contactRepository: ContactRepository
-
-    @Inject
-    private lateinit var documentRepository: DocumentRepository
-
-    @Inject
-    private lateinit var domaineRepository: DomaineRepository
-
-    @Inject
-    private lateinit var tourneeRepository: TourneeRepository
-
-    @Inject
-    private lateinit var transactionManager: TransactionManager
-
-    @Inject
-    private lateinit var createPeiUseCase: CreatePeiUseCase
-
-    @Inject
-    private lateinit var createVisiteUseCase: CreateVisiteUseCase
+class ValideIncomingTournee @Inject constructor(
+    private val incomingRepository: IncomingRepository,
+    private val gestionnaireRepository: GestionnaireRepository,
+    private val contactRepository: ContactRepository,
+    private val documentRepository: DocumentRepository,
+    private val domaineRepository: DomaineRepository,
+    private val tourneeRepository: TourneeRepository,
+    private val transactionManager: TransactionManager,
+    private val createPeiUseCase: CreatePeiUseCase,
+    private val createVisiteUseCase: CreateVisiteUseCase,
+    private val movePeiUseCase: MovePeiUseCase,
+    private val updatePeiUseCase: UpdatePeiUseCase,
+) : AbstractUseCase() {
 
     fun execute(tourneeId: UUID, userInfo: WrappedUserInfo, logManager: LogManager) {
         transactionManager.transactionResult {
@@ -70,6 +58,9 @@ class ValideIncomingTournee : AbstractUseCase() {
 
             logManager.info("Gestion des nouveaux PEI")
             gestionNewPei(userInfo, logManager)
+
+            logManager.info("Déplacement des PEI")
+            gestionPeiDeplacement(userInfo, tourneeId, logManager)
 
             logManager.info("Gestion des photos")
             gestionPhoto(tourneeId, logManager)
@@ -298,6 +289,32 @@ class ValideIncomingTournee : AbstractUseCase() {
         // Suppression des newPei
         logManager.info("Suppression des nouveaux PEI")
         incomingRepository.deleteNewPei(listeNewPei.map { it.newPeiId })
+    }
+
+    private fun gestionPeiDeplacement(userInfo: WrappedUserInfo, tourneeId: UUID, logManager: LogManager) {
+        val listePeiDeplacement = incomingRepository.getPeiDeplacement(tourneeId)
+
+        listePeiDeplacement.forEach {
+            logManager.info("Déplacement d'un PEI ${it.peiDeplacementPeiId} (peiId : ${it.peiDeplacementPeiId})")
+            val peiData = movePeiUseCase.execute(
+                it.peiDeplacementGeometrie,
+                it.peiDeplacementPeiId,
+            )
+
+            val result = updatePeiUseCase.execute(userInfo, peiData)
+
+            if (result !is Result.Success) {
+                if (result is Result.Error) {
+                    // On ne fait pas planter la synchronisation mais on ne déplace pas le PEI
+                    logManager.error("Erreur lors du déplacement du PEI ${it.peiDeplacementPeiId} : ${result.message}")
+                }
+                logManager.error("Erreur lors du déplacement du PEI ${it.peiDeplacementPeiId}")
+            }
+        }
+
+        // Suppression des peiDeplacement
+        logManager.info("Suppression des PEI déplacés dans incoming")
+        incomingRepository.deletePeiDeplacement(tourneeId)
     }
 
     private fun gestionVisites(tourneeId: UUID, userInfo: WrappedUserInfo, logManager: LogManager) {
