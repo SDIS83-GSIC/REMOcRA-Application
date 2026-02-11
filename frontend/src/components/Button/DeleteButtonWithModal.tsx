@@ -10,6 +10,8 @@ const DeleteButtonWithModal = ({
   disabled = false,
   variant = "danger",
   className = "text-white",
+  header = null,
+  content = null,
 }: {
   path: string;
   reload: () => void;
@@ -17,6 +19,8 @@ const DeleteButtonWithModal = ({
   disabled: boolean;
   variant?: string;
   className?: string;
+  header?: React.ReactNode;
+  content?: React.ReactNode;
 }) => {
   const { visible, show, close, ref } = useModal();
   return (
@@ -36,6 +40,8 @@ const DeleteButtonWithModal = ({
         query={path}
         ref={ref}
         onDelete={() => (reload ? reload() : window.location.reload())}
+        header={header}
+        content={content}
       />
     </>
   );

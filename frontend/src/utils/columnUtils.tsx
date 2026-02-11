@@ -430,6 +430,18 @@ function getColumnPeiByStringArray(
         },
         type: TYPE_BUTTON.DELETE,
         pathname: url`/api/pei/delete/`,
+        header: (row) => {
+          return "Suppression du PEI " + row.original.peiNumeroComplet;
+        },
+        content: (row) => {
+          return (
+            <div>
+              Êtes-vous sûr de vouloir supprimer le PEI{" "}
+              <b>{row.original.peiNumeroComplet}</b> ? Cette action est
+              irréversible.
+            </div>
+          );
+        },
       });
     }
     if (hasDroit(user, TYPE_DROIT.VISITE_R)) {

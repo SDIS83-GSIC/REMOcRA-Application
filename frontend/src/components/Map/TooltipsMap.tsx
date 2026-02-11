@@ -550,6 +550,19 @@ const Tooltip = ({
                           }
                           title={false}
                           reload={onClickDelete}
+                          header={`Suppression du PEI ${featureSelect?.getProperties().peiNumeroComplet}`}
+                          content={
+                            <div>
+                              Êtes-vous sûr de vouloir supprimer le PEI{" "}
+                              <b>
+                                {
+                                  featureSelect?.getProperties()
+                                    .peiNumeroComplet
+                                }
+                              </b>{" "}
+                              ? Cette action est irréversible.
+                            </div>
+                          }
                         />
                       </TooltipCustom>
                     </Col>

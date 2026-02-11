@@ -96,6 +96,8 @@ const TableActionColumn = ({
                   onDelete={() =>
                     reload ? reload() : window.location.reload(false)
                   }
+                  header={deleteModal.header}
+                  content={deleteModal.content}
                 />
               )}
             </>
@@ -195,6 +197,8 @@ type TableActionButtonType = {
   isPost?: boolean;
   pathname?: string;
   isLink?: boolean;
+  header?: (row: any) => string | null;
+  content?: (row: any) => ReactNode | null;
 };
 
 type ModaleType = {
@@ -202,6 +206,8 @@ type ModaleType = {
   show?: (value?: any) => void;
   close?: () => void;
   ref?: MutableRefObject<HTMLDialogElement | null>;
+  header?: string | ReactNode | ((row: any) => string | ReactNode);
+  content?: ReactNode | ((row: any) => ReactNode);
 };
 
 type SimpleModalType = {
@@ -354,6 +360,8 @@ const DeleteButtonPrivate = ({ row, _button }: DeleteButtonType) => {
     ref: ref,
     show: show,
     visible: visible,
+    header: _button.header ? _button.header(row) : undefined,
+    content: _button.content ? _button.content(row) : undefined,
   };
   return (
     <TableActionColumn
