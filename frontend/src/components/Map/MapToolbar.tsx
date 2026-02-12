@@ -39,6 +39,7 @@ import {
 import Volet from "../Volet/Volet.tsx";
 import OutilIVolet from "./MapOutilI/ShowInfoVolet.tsx";
 import AdresseTypeahead from "./RechercheLieu/AdresseTypeahead.tsx";
+import ToponymieTypeBarre from "./RechercheLieu/ToponymieTypeBarre.tsx";
 import ToolbarButton from "./ToolbarButton.tsx";
 
 const measureStyle = new Style({
@@ -510,6 +511,12 @@ const MapToolbar = forwardRef(
                   setter={(objet: ItemSearch | null) => {
                     fetchMapGeometry(objet, map);
                   }}
+                />
+
+                <ToponymieTypeBarre
+                  map={map!}
+                  dependentObject={commune}
+                  urlAPI={`/api/toponymie/parametres`}
                 />
               </>
             )}

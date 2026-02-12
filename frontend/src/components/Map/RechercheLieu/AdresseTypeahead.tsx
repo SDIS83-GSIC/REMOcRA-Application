@@ -2,7 +2,7 @@ import OLMap from "ol/Map";
 import { transform } from "ol/proj";
 import { useState } from "react";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
-import { EPSG_4326 } from "../../../utils/constantsUtils.tsx";
+import { EPSG_4326, RESOLUTION_ZOOM } from "../../../utils/constantsUtils.tsx";
 
 const AdresseTypeahead = ({ map }: { map: OLMap }) => {
   const [state, setState] = useState({ isLoading: false, options: [] });
@@ -23,7 +23,7 @@ const AdresseTypeahead = ({ map }: { map: OLMap }) => {
       }
       labelKey={(feature) => `${feature.properties.label}`}
       onSearch={(query) => {
-        if (query.length < 3) {
+        if (query.length < 2) {
           return;
         }
         const coord4326 = transform(
@@ -55,7 +55,7 @@ const AdresseTypeahead = ({ map }: { map: OLMap }) => {
         map.getView().setCenter(coordSource);
         map
           .getView()
-          .setZoom(map.getView().getZoomForResolution(0.29858214173896974));
+          .setZoom(map.getView().getZoomForResolution(RESOLUTION_ZOOM));
       }}
       style={{ width: 400 }}
     />

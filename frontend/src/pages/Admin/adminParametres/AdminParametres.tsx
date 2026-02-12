@@ -71,6 +71,8 @@ type ParametresSectionMobile = {
 type ParametresSectionCartographie = {
   coordonneesFormatAffichage: string;
   empriseNative: string | undefined;
+  rechercheBan: boolean;
+  listeToponymieCode: string[];
 };
 
 type ParametresSectionCouvertureHydraulique = {
@@ -439,16 +441,6 @@ const AdminGeneral = ({ values }: { values: ParametresSectionGeneral }) => {
             }
           />
         </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
-          <CheckBoxInput
-            name="general.rechercheBan"
-            checked={values?.rechercheBan}
-            label="Rechercher par BAN"
-            tooltipText={
-              "Permet de choisir entre une recherche par BAN ou une recherche parmi les voies et communes disponibles dans la base de données de l'application."
-            }
-          />
-        </AdminParametre>
       </>
     )
   );
@@ -758,6 +750,8 @@ const AdminCartographie = ({
     url`/api/zone-integration/get-active`,
   );
 
+  const toponymieList = useGet(url`/api/toponymie/get-libelle-toponymie`);
+
   return (
     values && (
       <>
@@ -802,6 +796,54 @@ const AdminCartographie = ({
             )}
           />
         </AdminParametre>
+
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="cartographie.rechercheBan"
+            checked={values.rechercheBan}
+            label="Rechercher par BAN"
+            tooltipText={
+              "Permet de choisir entre une recherche par BAN ou une recherche parmi les voies et autres données disponibles dans la base de données de l'application."
+            }
+          />
+        </AdminParametre>
+
+        {!values.rechercheBan && (
+          <>
+            <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
+              <Multiselect
+                name={"cartographie.listeToponymieCode"}
+                label="Répertoire des lieux de recherche"
+                options={toponymieList.data?.filter(
+                  (item: { code: string }) =>
+                    !["COMMUNE", "ROUTES"].includes(item.code),
+                )}
+                getOptionValue={(t) => t.code}
+                getOptionLabel={(t) => t.libelle}
+                isClearable={true}
+                required={false}
+                value={
+                  values.listeToponymieCode?.map((e: string) =>
+                    toponymieList.data?.find(
+                      (c: IdCodeLibelleType) => c.code === e,
+                    ),
+                  ) ?? undefined
+                }
+                onChange={(toponymies) => {
+                  const toponymiesCode = toponymies.map(
+                    (e: { code: string }) => e.code,
+                  );
+                  toponymiesCode.length > 0
+                    ? setFieldValue(
+                        "cartographie.listeToponymieCode",
+                        toponymiesCode,
+                      )
+                    : setFieldValue("cartographie.listeToponymieCode", []);
+                }}
+              />
+            </AdminParametre>
+          </>
+        )}
       </>
     )
   );

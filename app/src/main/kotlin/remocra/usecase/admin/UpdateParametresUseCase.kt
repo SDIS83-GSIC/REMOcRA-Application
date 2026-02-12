@@ -68,7 +68,6 @@ class UpdateParametresUseCase
                 ParametreEnum.ACCUEIL_PUBLIC,
                 policyFactory.sanitize(parametresAdminData.general.accueilPublic),
             )
-            updateParametre(ParametreEnum.RECHERCHE_BAN, parametresAdminData.general.rechercheBan?.toString())
 
             // Signalement
             updateParametre(ParametreEnum.SIGNALEMENT_DELIBERATION_DESTINATAIRE_EMAIL, parametresAdminData.signalement.signalementDeliberationDestinataireEmail)
@@ -83,6 +82,11 @@ class UpdateParametresUseCase
             updateParametre(
                 ParametreEnum.EMPRISE_NATIVE,
                 parametresAdminData.cartographie.empriseNative,
+            )
+            updateParametre(ParametreEnum.RECHERCHE_BAN, parametresAdminData.cartographie.rechercheBan?.toString())
+            updateParametre(
+                ParametreEnum.LISTE_TOPONYMIE_CODE,
+                objectMapper.writeValueAsString(parametresAdminData.cartographie.listeToponymieCode),
             )
 
             // Couverture hydraulique

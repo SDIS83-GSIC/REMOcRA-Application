@@ -53,7 +53,6 @@ data class ParametresSectionGeneral(
     val titrePage: String?,
     val toleranceVoiesMetres: Int?,
     val accueilPublic: String?,
-    val rechercheBan: Boolean?,
 )
 
 data class ParametresSectionSignalement(
@@ -84,6 +83,8 @@ data class ParametresSectionMobile(
 data class ParametresSectionCartographie(
     val coordonneesFormatAffichage: String?,
     val empriseNative: String?,
+    val rechercheBan: Boolean?,
+    val listeToponymieCode: List<String>?,
 )
 
 data class ParametresSectionPeiLongueIndispo(

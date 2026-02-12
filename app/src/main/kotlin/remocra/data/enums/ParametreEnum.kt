@@ -14,6 +14,8 @@ enum class ParametreEnum(val section: ParametreSection) {
     // Cartographie
     COORDONNEES_FORMAT_AFFICHAGE(ParametreSection.CARTOGRAPHIE),
     EMPRISE_NATIVE(ParametreSection.CARTOGRAPHIE),
+    RECHERCHE_BAN(ParametreSection.CARTOGRAPHIE),
+    LISTE_TOPONYMIE_CODE(ParametreSection.CARTOGRAPHIE),
 
     // Couverture hydraulique
     DECI_DISTANCE_MAX_PARCOURS(ParametreSection.COUVERTURE_HYDRAULIQUE),
@@ -32,7 +34,6 @@ enum class ParametreEnum(val section: ParametreSection) {
     TOLERANCE_VOIES_METRES(ParametreSection.GENERAL),
     VITESSE_EAU(ParametreSection.GENERAL),
     ACCUEIL_PUBLIC(ParametreSection.GENERAL),
-    RECHERCHE_BAN(ParametreSection.GENERAL),
 
     // Mobile
     AFFICHAGE_INDISPO(ParametreSection.MOBILE),

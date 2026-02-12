@@ -3,16 +3,22 @@ import OLMap from "ol/Map";
 import { transformExtent } from "ol/proj";
 import { useState } from "react";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
-import url, { getFetchOptions } from "../../../module/fetch.tsx";
+import { getFetchOptions } from "../../../module/fetch.tsx";
+import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
+import { RESOLUTION_ZOOM } from "../../../utils/constantsUtils.tsx";
+import { ItemSearch } from "../../Localisation/useLocalisation.tsx";
 
 const ToponymieTypeBarre = ({
   map,
-  criseId,
+  urlAPI,
+  dependentObject,
 }: {
+  urlAPI: string;
+  dependentObject?: ItemSearch | null;
   map: OLMap;
-  criseId: string;
 }) => {
   const [state, setState] = useState({ isLoading: false, options: [] });
+  const { error: errorToast } = useToastContext();
 
   return (
     <AsyncTypeahead
@@ -31,8 +37,14 @@ const ToponymieTypeBarre = ({
         }
 
         setState({ ...state, isLoading: true });
+        const params = new URLSearchParams();
+        params.append("libelle", query);
+        if (dependentObject) {
+          params.append("dependenceObjId", dependentObject.id);
+        }
+
         fetch(
-          url`/api/crise/${criseId}/get-toponymies?${{ libelle: query }}`,
+          `${urlAPI}/get-toponymies?${params.toString()}`,
           getFetchOptions(),
         )
           .then((response) => response.json())
@@ -44,15 +56,13 @@ const ToponymieTypeBarre = ({
                 toponymieId: any;
               }) => {
                 const [sridStr, wkt] = item.toponymieGeometrie.split(";");
-                const geom = new WKT().readGeometry(wkt);
-                const srid = sridStr.split("=").pop();
 
                 return {
                   type: "Feature",
                   geometry: {
                     type: "Point", // On prend le premier point pour représenter le lieu
-                    coordinates: geom.getExtent(),
-                    srid: srid,
+                    coordinates: new WKT().readGeometry(wkt).getExtent(),
+                    srid: sridStr.split("=").pop(),
                   },
                   properties: {
                     id: item.toponymieId,
@@ -72,17 +82,24 @@ const ToponymieTypeBarre = ({
         if (features.length === 0) {
           return;
         }
-
         const feature: any = features[0];
-        const coordSource = transformExtent(
-          feature.geometry.coordinates,
-          `EPSG:${feature.geometry.srid}`,
-          map.getView().getViewStateAndExtent().viewState.projection,
-        );
-        map.getView().setCenter(coordSource);
-        map
-          .getView()
-          .setZoom(map.getView().getZoomForResolution(0.29858214173896974));
+
+        if (feature.geometry.srid !== "0") {
+          map
+            .getView()
+            .setCenter(
+              transformExtent(
+                feature.geometry.coordinates,
+                `EPSG:${feature.geometry.srid}`,
+                map.getView().getViewStateAndExtent().viewState.projection,
+              ),
+            );
+          map
+            .getView()
+            .setZoom(map.getView().getZoomForResolution(RESOLUTION_ZOOM)!);
+        } else {
+          errorToast("La géométrie présente une anomalie : l'SRID vaut 0.");
+        }
       }}
     />
   );

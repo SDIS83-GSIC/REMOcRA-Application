@@ -13,22 +13,21 @@ import remocra.db.CriseRepository.ToponymieResult
 import remocra.db.CriseRepository.TypeCriseComplete
 import remocra.db.EvenementRepository
 import remocra.db.EvenementSousCategorieRepository
+import remocra.db.ToponymieRepository
 import remocra.usecase.AbstractUseCase
 import remocra.utils.BuildDynamicForm
 import remocra.utils.toGeomFromText
 import java.util.UUID
 
-class CriseUseCase
-@Inject
-constructor(
-    private val criseRepository: CriseRepository,
-    private val evenementRepository: EvenementRepository,
-    private val evenementSousCategorieRepository: EvenementSousCategorieRepository,
-    private val communeRepository: CommuneRepository,
-    private val appSettings: AppSettings,
-    private val buildDynamicForm: BuildDynamicForm,
-) :
-    AbstractUseCase() {
+class CriseUseCase @Inject constructor(
+    private var criseRepository: CriseRepository,
+    private var evenementRepository: EvenementRepository,
+    private var evenementSousCategorieRepository: EvenementSousCategorieRepository,
+    private var communeRepository: CommuneRepository,
+    private var appSettings: AppSettings,
+    private var toponymieRepository: ToponymieRepository,
+    private var buildDynamicForm: BuildDynamicForm,
+) : AbstractUseCase() {
 
     fun getTypeCriseForSelect(): Collection<TypeCriseComplete> = criseRepository.getCriseForSelect()
 
@@ -153,7 +152,7 @@ constructor(
         // Requête pour les toponymies protégées
         if (globalGeometry != null && proteges.isNotEmpty()) {
             results.addAll(
-                criseRepository.getToponymiesProtegesQuery(proteges, globalGeometry.toGeomFromText(appSettings.epsg.name), libelle),
+                toponymieRepository.getToponymiesProtegesQuery(proteges, globalGeometry.toGeomFromText(appSettings.epsg.name), libelle),
             )
         }
 

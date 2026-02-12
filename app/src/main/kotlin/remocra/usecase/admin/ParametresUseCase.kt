@@ -45,7 +45,6 @@ constructor(
             titrePage = mapParametres.getStringOrNull(ParametreEnum.TITRE_PAGE.name),
             toleranceVoiesMetres = mapParametres.getIntOrNull(ParametreEnum.TOLERANCE_VOIES_METRES.name),
             accueilPublic = mapParametres.getStringOrNull(ParametreEnum.ACCUEIL_PUBLIC.name),
-            rechercheBan = mapParametres.getBooleanOrNull(ParametreEnum.RECHERCHE_BAN.name),
         )
 
         val signalement = ParametresSectionSignalement(
@@ -76,6 +75,8 @@ constructor(
         val cartographie = ParametresSectionCartographie(
             coordonneesFormatAffichage = mapParametres.getStringOrNull(ParametreEnum.COORDONNEES_FORMAT_AFFICHAGE.name),
             empriseNative = mapParametres.getStringOrNull(ParametreEnum.EMPRISE_NATIVE.name),
+            rechercheBan = mapParametres.getBooleanOrNull(ParametreEnum.RECHERCHE_BAN.name),
+            listeToponymieCode = mapParametres.getListOfString(ParametreEnum.LISTE_TOPONYMIE_CODE.name, objectMapper),
         )
 
         val couvertureHydraulique = ParametresSectionCouvertureHydraulique(

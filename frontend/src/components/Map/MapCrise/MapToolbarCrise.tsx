@@ -531,7 +531,7 @@ const MapToolbarCrise = forwardRef(
         </Col>
         <Col xs={"auto"}>
           {/* gestion toponymies */}
-          <ToponymieTypeBarre map={map!} criseId={criseId} />
+          <ToponymieTypeBarre map={map!} urlAPI={`/api/crise/${criseId}`} />
         </Col>
         {hasDroit(user, TYPE_DROIT.CRISE_C) && (
           <Col xs={"auto"}>

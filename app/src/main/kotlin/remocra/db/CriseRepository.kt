@@ -20,7 +20,7 @@ import remocra.db.jooq.remocra.enums.TypeCriseStatut
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.db.jooq.remocra.tables.pojos.EvenementCategorie
 import remocra.db.jooq.remocra.tables.pojos.EvenementSousCategorie
-import remocra.db.jooq.remocra.tables.references.CADASTRE_SECTION
+import remocra.db.jooq.remocra.tables.pojos.TypeToponymie
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.COUCHE
 import remocra.db.jooq.remocra.tables.references.CRISE
@@ -28,18 +28,15 @@ import remocra.db.jooq.remocra.tables.references.DOCUMENT
 import remocra.db.jooq.remocra.tables.references.EVENEMENT
 import remocra.db.jooq.remocra.tables.references.EVENEMENT_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.EVENEMENT_SOUS_CATEGORIE
-import remocra.db.jooq.remocra.tables.references.LIEU_DIT
 import remocra.db.jooq.remocra.tables.references.L_COUCHE_CRISE
 import remocra.db.jooq.remocra.tables.references.L_COUCHE_MODULE
 import remocra.db.jooq.remocra.tables.references.L_CRISE_COMMUNE
 import remocra.db.jooq.remocra.tables.references.L_CRISE_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_EVENEMENT_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_TOPONYMIE_CRISE
-import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.TOPONYMIE
 import remocra.db.jooq.remocra.tables.references.TYPE_CRISE
 import remocra.db.jooq.remocra.tables.references.TYPE_TOPONYMIE
-import remocra.db.jooq.remocra.tables.references.VOIE
 import remocra.utils.ST_Multi
 import remocra.utils.ST_Union
 import remocra.utils.ST_Within
@@ -447,53 +444,23 @@ class CriseRepository @Inject constructor(
      * listIdToponymiesCrise : types de toponymie que l'utilisateur a sélectionnés.
      * Récupère les types sélectionnés par l'utilisateur et les classe en protégés / non protégés
      */
-    fun getSelectedTypes(listIdToponymiesCrise: Collection<UUID>?, protege: Boolean): Collection<SelectedToponymieTypes> =
-        dsl.select(
-            TYPE_TOPONYMIE.ID,
-            TYPE_TOPONYMIE.CODE,
-            TYPE_TOPONYMIE.PROTECTED,
-            TYPE_TOPONYMIE.ACTIF,
-        )
-            .from(TYPE_TOPONYMIE)
+    fun getSelectedTypes(listIdToponymiesCrise: Collection<UUID>?, protege: Boolean): Collection<TypeToponymie> =
+        dsl.selectFrom(TYPE_TOPONYMIE)
             .where((TYPE_TOPONYMIE.ID.`in`(listIdToponymiesCrise)), TYPE_TOPONYMIE.PROTECTED.eq(protege))
             .fetchInto()
 
     /**
      * Génère la requête pour les types non protégés dans la table `toponymie`
      */
-    fun getToponymiesNonProtegesQuery(nonProteges: Collection<SelectedToponymieTypes>, globalGeometry: Field<org.locationtech.jts.geom.Geometry?>, libelle: String): Collection<ToponymieResult> =
+    fun getToponymiesNonProtegesQuery(nonProteges: Collection<TypeToponymie>, globalGeometry: Field<org.locationtech.jts.geom.Geometry?>, libelle: String): Collection<ToponymieResult> =
         dsl.select(TOPONYMIE.ID, TOPONYMIE.LIBELLE, TOPONYMIE.GEOMETRIE)
             .from(TOPONYMIE)
             .where(
                 TOPONYMIE.TYPE_TOPONYMIE_ID.`in`(nonProteges.map { it.typeToponymieId })
                     .and(ST_Within(TOPONYMIE.GEOMETRIE, globalGeometry)),
             )
-            .and(TOPONYMIE.LIBELLE.likeIgnoreCase("%$libelle%"))
+            .and(TOPONYMIE.LIBELLE.containsIgnoreCaseUnaccent(libelle))
             .fetchInto()
-
-    /**
-     * Génère la requête pour les types protégés
-     */
-    fun getToponymiesProtegesQuery(proteges: Collection<SelectedToponymieTypes>, globalGeometry: Field<org.locationtech.jts.geom.Geometry?>, libelleName: String): Collection<ToponymieResult> {
-        val typeToTableMapping = mapOf(
-            "COMMUNE" to Triple(COMMUNE.ID, COMMUNE.LIBELLE, COMMUNE.GEOMETRIE), // permet de regrouper trois valeurs ensemble
-            "LIEU_DIT" to Triple(LIEU_DIT.ID, LIEU_DIT.LIBELLE, LIEU_DIT.GEOMETRIE),
-            "PEI" to Triple(PEI.ID, PEI.COMPLEMENT_ADRESSE, PEI.GEOMETRIE),
-            "CADASTRE" to Triple(CADASTRE_SECTION.ID, CADASTRE_SECTION.NUMERO, CADASTRE_SECTION.GEOMETRIE),
-            "ROUTE" to Triple(VOIE.ID, VOIE.LIBELLE, VOIE.GEOMETRIE),
-        )
-
-        return proteges
-            .filter { it.typeToponymieActif == true }
-            .mapNotNull { typeToTableMapping[it.typeToponymieCode] }
-            .flatMap { (id, libelle, geometrie) ->
-                dsl.select(id.`as`("toponymieId"), libelle.`as`("toponymieLibelle"), geometrie.`as`("toponymieGeometrie"))
-                    .from(id.table)
-                    .where(ST_Within(geometrie, globalGeometry))
-                    .and(libelle.likeIgnoreCase("%$libelleName%"))
-                    .fetchInto()
-            } // flatMap → retourne liste unique des élèments
-    }
 
     data class ToponymieResult(
         val toponymieId: UUID,
