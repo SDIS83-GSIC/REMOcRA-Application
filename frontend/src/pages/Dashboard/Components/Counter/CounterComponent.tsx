@@ -13,7 +13,9 @@ const CounterComponent = (data: any) => {
 
     let sumData = 0;
     dataMapped.forEach((data: { value: number }) => {
-      return (sumData += data.value);
+      if (!isNaN(data.value)) {
+        sumData += data.value;
+      }
     });
 
     return (
