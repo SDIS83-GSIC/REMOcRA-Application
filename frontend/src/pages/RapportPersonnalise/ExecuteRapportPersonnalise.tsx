@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Button, Col, Container, Row, Tab, Table, Tabs } from "react-bootstrap";
+import { useLocation } from "react-router-dom";
 import { object } from "yup";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
@@ -21,6 +22,15 @@ import "./ExecuteRapportPersonnalise.css";
 
 const ExecuteRapportPersonnalise = () => {
   const { success: successToast, error: errorToast } = useToastContext();
+  const location = useLocation();
+  const locationState = location.state as {
+    rapportPersonnaliseId?: string;
+    peiNumeroComplet?: string;
+  } | null;
+
+  const selectedRapportId = locationState?.rapportPersonnaliseId;
+  const peiNumeroComplet = locationState?.peiNumeroComplet;
+
   const { data: listeRapportPerso } = useGet(
     url`/api/rapport-personnalise/list`,
   );
@@ -42,6 +52,8 @@ const ExecuteRapportPersonnalise = () => {
     {},
   );
   const tableRef = useRef<HTMLTableElement>(null);
+  const formikRef = useRef<any>(null);
+  const [hasAutoExecuted, setHasAutoExecuted] = useState(false);
 
   const table = tableRef.current;
 
@@ -117,6 +129,25 @@ const ExecuteRapportPersonnalise = () => {
       }
     };
   }, [tableau, table]);
+
+  // On exécute directement le rapport si on a tous les éléments nécessaires (cas de la navigation depuis la fiche résumé)
+  useEffect(() => {
+    if (
+      !hasAutoExecuted &&
+      selectedRapportId &&
+      peiNumeroComplet &&
+      formikRef.current &&
+      listeParametres.length > 0
+    ) {
+      formikRef.current?.submitForm();
+      setHasAutoExecuted(true);
+    }
+  }, [
+    selectedRapportId,
+    peiNumeroComplet,
+    hasAutoExecuted,
+    listeParametres.length,
+  ]);
 
   const getColumnStyle = (index: number) => {
     const width = columnWidths[index];
@@ -218,7 +249,11 @@ const ExecuteRapportPersonnalise = () => {
       <Row>
         <Col xs={12} lg={3}>
           <MyFormik
-            initialValues={getInitialValues()}
+            innerRef={formikRef}
+            initialValues={getInitialValues(
+              selectedRapportId,
+              peiNumeroComplet,
+            )}
             validationSchema={validationSchema}
             isPost={false}
             successToastMessage="La requête a bien été exécutée"
@@ -322,8 +357,12 @@ const ExecuteRapportPersonnalise = () => {
   );
 };
 
-export const getInitialValues = () => ({
-  dynamicFormId: null,
+export const getInitialValues = (
+  selectedRapportId?: string,
+  peiNumeroComplet?: string,
+) => ({
+  dynamicFormId: selectedRapportId || null,
+  PEI_NUMERO_COMPLET: peiNumeroComplet || null,
 });
 
 export const validationSchema = object({

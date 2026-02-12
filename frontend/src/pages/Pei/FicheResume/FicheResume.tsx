@@ -24,12 +24,15 @@ import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import formatDateTime, { formatDate } from "../../../utils/formatDateUtils.tsx";
 import PARAMETRE from "../../../enums/ParametreEnum.tsx";
+import { TYPE_ROUTE_HISTORIQUE_PEI } from "../../../enums/TypeRouteHistoriquePei.tsx";
 
 const FicheResume = ({
   peiId,
+  peiNumeroComplet,
   titre = "",
 }: {
   peiId: string;
+  peiNumeroComplet?: string;
   titre?: string;
 }) => {
   const elementFicheResumeState = useGet(url`/api/fiche-resume/${peiId}`);
@@ -72,7 +75,14 @@ const FicheResume = ({
         <Row>
           <HistoriqueDebitPression pibiId={peiId} />
         </Row>
-        <VoirHistoriquePei peiId={peiId} user={user!} />
+        {(hasDroit(user, TYPE_DROIT.OPERATIONS_DIVERSES_E) ||
+          hasDroit(user, TYPE_DROIT.RAPPORT_PERSONNALISE_E)) && (
+          <VoirHistoriquePei
+            peiId={peiId}
+            peiNumeroComplet={peiNumeroComplet}
+            user={user!}
+          />
+        )}
       </Container>
     </>
   );
@@ -314,19 +324,28 @@ const HistoriqueDebitPression = ({ pibiId }: { pibiId: string }) => {
 };
 
 const VoirHistoriquePei = ({
-  peiId,
   user,
+  peiId,
+  peiNumeroComplet,
 }: {
-  peiId: string;
   user: UtilisateurEntity;
+  peiId: string;
+  peiNumeroComplet?: string;
 }) => {
-  const searchParams = new URLSearchParams({
-    typeObjet: "PEI",
-    objetId: peiId,
-  });
+  const parametreRouteHistorique = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify([PARAMETRE.PEI_ROUTE_HISTORIQUE]),
+    }}`,
+  );
+  const routeHistorique =
+    parametreRouteHistorique?.data?.[PARAMETRE.PEI_ROUTE_HISTORIQUE]
+      ?.parametreValeur;
 
   return (
-    hasDroit(user, TYPE_DROIT.OPERATIONS_DIVERSES_E) && (
+    ((routeHistorique === TYPE_ROUTE_HISTORIQUE_PEI.HISTORIQUE_OPERATIONS &&
+      hasDroit(user, TYPE_DROIT.OPERATIONS_DIVERSES_E)) ||
+      (routeHistorique === TYPE_ROUTE_HISTORIQUE_PEI.RAPPORT_PERSO &&
+        hasDroit(user, TYPE_DROIT.RAPPORT_PERSONNALISE_E))) && (
       <Row className="mt-2">
         <h4>Historique du PEI</h4>
         <Row>
@@ -348,17 +367,58 @@ const VoirHistoriquePei = ({
         </Row>
         <Row>
           <Col className="text-center mt-2">
-            <CustomLinkButton
-              pathname={URLS.HISTORIQUE_OPERATIONS}
-              search={searchParams.toString()}
-              variant="primary"
-            >
-              <IconUtilisateurs /> Voir l&apos;historique des opérations sur ce
-              PEI
-            </CustomLinkButton>
+            {routeHistorique ===
+            TYPE_ROUTE_HISTORIQUE_PEI.HISTORIQUE_OPERATIONS ? (
+              <HistoriqueOperationsPei peiId={peiId} />
+            ) : (
+              <RapportPersonnaliseHistoriquePei
+                peiNumeroComplet={peiNumeroComplet}
+              />
+            )}
           </Col>
         </Row>
       </Row>
     )
+  );
+};
+
+const RapportPersonnaliseHistoriquePei = ({
+  peiNumeroComplet,
+}: {
+  peiNumeroComplet?: string;
+}) => {
+  const rapportHistoriqueState = useGet(
+    url`/api/rapport-personnalise/get-id-rapport-historique-pei`,
+  );
+  const rapportPersonnaliseId = rapportHistoriqueState?.data;
+
+  return (
+    <CustomLinkButton
+      pathname={`/rapport-personnalise/execute`}
+      state={{
+        rapportPersonnaliseId: rapportPersonnaliseId,
+        peiNumeroComplet: peiNumeroComplet,
+      }}
+      variant="primary"
+    >
+      <IconUtilisateurs /> Voir l&apos;historique personnalisé du PEI
+    </CustomLinkButton>
+  );
+};
+
+const HistoriqueOperationsPei = ({ peiId }: { peiId: string }) => {
+  const searchParams = new URLSearchParams({
+    typeObjet: "PEI",
+    objetId: peiId,
+  });
+
+  return (
+    <CustomLinkButton
+      pathname={URLS.HISTORIQUE_OPERATIONS}
+      search={searchParams.toString()}
+      variant="primary"
+    >
+      <IconUtilisateurs /> Voir l&apos;historique des opérations sur ce PEI
+    </CustomLinkButton>
   );
 };

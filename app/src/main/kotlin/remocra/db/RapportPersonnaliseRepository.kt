@@ -7,6 +7,7 @@ import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
+import remocra.GlobalConstants
 import remocra.data.IdLibelleRapportPersonnalise
 import remocra.data.Params
 import remocra.data.RapportPersonnaliseData
@@ -406,4 +407,14 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
             .from(RAPPORT_PERSONNALISE)
             .where(RAPPORT_PERSONNALISE.ID.eq(rapportPersonnaliseId))
             .fetchSingleInto()
+
+    /**
+     * Retourne l'id du rapport personnalisé d'historique des PEI, afin de permettre l'aiguillage depuis la fiche résumé, le cas échéant.
+     * Si le rapport est désactivé, on ne le remonte pas, afin de ne pas construire le bouton
+     */
+    fun getIdRapportHistoriquePei(): UUID? = dsl.select(RAPPORT_PERSONNALISE.ID)
+        .from(RAPPORT_PERSONNALISE)
+        .where(RAPPORT_PERSONNALISE.CODE.eq(GlobalConstants.RAPPORT_PERSO_PEI_HISTORIQUE))
+        .and(RAPPORT_PERSONNALISE.ACTIF.isTrue)
+        .fetchOneInto()
 }

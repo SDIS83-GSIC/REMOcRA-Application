@@ -464,7 +464,12 @@ const Pei = ({
   if (!isNew) {
     listAccordions.push({
       header: "Fiche Résumé",
-      content: <FicheResume peiId={values.peiId} />,
+      content: (
+        <FicheResume
+          peiId={values.peiId}
+          peiNumeroComplet={values.peiNumeroComplet}
+        />
+      ),
     });
   }
   listAccordions.push(
@@ -1045,8 +1050,8 @@ const FormLocalisationPei = ({
             required={true}
             disabled={disableDeplacer}
             onChange={(v) => {
-              setFieldValue("coordonneeXToDisplay", v.target.value),
-                VerificationReferentiel();
+              (setFieldValue("coordonneeXToDisplay", v.target.value),
+                VerificationReferentiel());
             }}
           />
         </Col>
@@ -1057,8 +1062,8 @@ const FormLocalisationPei = ({
             required={true}
             disabled={disableDeplacer}
             onChange={(v) => {
-              setFieldValue("coordonneeYToDisplay", v.target.value),
-                VerificationReferentiel();
+              (setFieldValue("coordonneeYToDisplay", v.target.value),
+                VerificationReferentiel());
             }}
           />
         </Col>

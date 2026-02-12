@@ -245,4 +245,11 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
         )
         return Response.ok().build()
     }
+
+    @GET
+    @Path("/get-id-rapport-historique-pei")
+    @RequireDroits([Droit.RAPPORT_PERSONNALISE_E])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getIdRapportHistoriquePei(): Response =
+        Response.ok(rapportPersonnaliseRepository.getIdRapportHistoriquePei()).build()
 }

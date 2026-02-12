@@ -172,4 +172,7 @@ object GlobalConstants {
 
     // Code des Thématiques protégées
     const val THEMATIQUE_POINT_EAU = "POINT_EAU"
+
+    // Rapports personnalisés
+    const val RAPPORT_PERSO_PEI_HISTORIQUE = "PEI_HISTORIQUE"
 }

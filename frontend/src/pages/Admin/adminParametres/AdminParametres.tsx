@@ -29,6 +29,7 @@ import typeAgent from "../../../Entities/TypeAgentEntity.tsx";
 import { referenceColumnPei } from "../../../enums/ColumnPeiEnum.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import typeAffichageCoordonnees from "../../../enums/TypeAffichageCoordonnees.tsx";
+import typeRouteHistoriquePei from "../../../enums/TypeRouteHistoriquePei.tsx";
 import TYPE_PARAMETRE from "../../../enums/TypesParametres.tsx";
 import url from "../../../module/fetch.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
@@ -102,6 +103,7 @@ type ParametresSectionPei = {
   declarationPeiObjetEmail: string;
   declarationPeiCorpsEmail: string;
   receptionRecoInitObligatoire: boolean;
+  peiRouteHistorique: string;
   valeurMinimaleHistogramme: number | undefined;
 };
 
@@ -872,6 +874,7 @@ const AdminPei = ({
     listeSelectionne: null,
     nameFormik: "pei.peiColonnesIds",
   });
+  const { setFieldValue } = useFormikContext();
 
   useMemo(() => {
     if (!values?.peiColonnesIds) {
@@ -1321,6 +1324,27 @@ const AdminPei = ({
                 PEI à traiter Vous pouvez consulter la page{" "}
                 <b>Résultats d&apos;exécution</b> pour suivre son avancement.
               </>
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.SELECT}>
+          <SelectInput
+            name="pei.peiRouteHistorique"
+            label="Type de route pour l'historique des PEI"
+            options={typeRouteHistoriquePei}
+            getOptionValue={(v) => v.id}
+            getOptionLabel={(v) => v.libelle}
+            onChange={(e) =>
+              setFieldValue(
+                `pei.peiRouteHistorique`,
+                typeRouteHistoriquePei.find((type) => type.id === e.id)?.id,
+              )
+            }
+            defaultValue={typeRouteHistoriquePei.find(
+              (e) => e.id === values.peiRouteHistorique,
+            )}
+            tooltipText={
+              "Le bouton pourra rediriger soit vers l'écran d'historique des opérations, en s'appuyant sur l'identifiant technique du PEI, soit vers le rapport personnalisé d'historique d'un PEI avec son numéro complet"
             }
           />
         </AdminParametre>

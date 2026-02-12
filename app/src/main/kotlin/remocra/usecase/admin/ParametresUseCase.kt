@@ -130,6 +130,7 @@ class ParametresUseCase : AbstractUseCase() {
             peiLibelleNonConforme = mapParametres.getString(ParametreEnum.PEI_LIBELLE_NON_CONFORME.name),
             receptionRecoInitObligatoire = mapParametres.getBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name),
             valeurMinimaleHistogramme = mapParametres.getIntOrNull(ParametreEnum.VALEUR_HAUTE_MINIMALE_HISTOGRAMME.name),
+            peiRouteHistorique = mapParametres.getString(ParametreEnum.PEI_ROUTE_HISTORIQUE.name),
         )
 
         val peiLongueIndispo = ParametresSectionPeiLongueIndispo(

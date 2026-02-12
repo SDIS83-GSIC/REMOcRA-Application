@@ -205,6 +205,7 @@ class UpdateParametresUseCase
             updateParametre(ParametreEnum.DECLARATION_PEI_OBJET_EMAIL, parametresAdminData.pei.declarationPeiObjetEmail)
             updateParametre(ParametreEnum.DECLARATION_PEI_CORPS_EMAIL, parametresAdminData.pei.declarationPeiCorpsEmail)
             updateParametre(ParametreEnum.PEI_LIBELLE_NON_CONFORME, parametresAdminData.pei.peiLibelleNonConforme)
+            updateParametre(ParametreEnum.PEI_ROUTE_HISTORIQUE, parametresAdminData.pei.peiRouteHistorique)
 
             // ALERTE
             updateParametre(

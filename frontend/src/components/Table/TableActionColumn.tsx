@@ -212,7 +212,12 @@ type ModaleType = {
 
 type SimpleModalType = {
   header: string | ((row: any) => string);
-  content: ReactNode | ((id: string) => ReactNode);
+  content: ReactNode | ((id: string, row?: any) => ReactNode);
+};
+
+type ResolvedSimpleModalType = {
+  header: string;
+  content: ReactNode;
 };
 
 type EditModalType = ModaleType & {
@@ -402,9 +407,19 @@ type SimpleModalButtonType = {
   _button: ButtonType;
 };
 const SimpleModalButtonPrivate = ({ row, _button }: SimpleModalButtonType) => {
-  const simpleModal: SimpleModalType = {
-    content: _button.simpleModal?.content(row.value),
-    header: _button.simpleModal?.header(row),
+  const contentValue =
+    typeof _button.simpleModal?.content === "function"
+      ? _button.simpleModal.content(row.value, row)
+      : _button.simpleModal?.content;
+
+  const headerValue =
+    typeof _button.simpleModal?.header === "function"
+      ? _button.simpleModal.header(row)
+      : _button.simpleModal?.header;
+
+  const simpleModal: ResolvedSimpleModalType = {
+    content: contentValue,
+    header: headerValue || "",
   };
   return (
     <TableActionColumn

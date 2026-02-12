@@ -138,6 +138,7 @@ data class ParametresSectionPei(
     val peiFicheResumeStandalone: Boolean?,
     val peiDisplayIdentifiantGestionnaire: Boolean?,
     val peiDisplayTypeEngin: Boolean?,
+    val peiRouteHistorique: String?,
     val declarationPeiDestinataireEmail: String?,
     val declarationPeiObjetEmail: String?,
     val declarationPeiCorpsEmail: String?,

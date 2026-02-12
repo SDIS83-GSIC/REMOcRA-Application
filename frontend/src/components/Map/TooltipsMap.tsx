@@ -297,6 +297,9 @@ const TooltipMapPei = ({
                 >
                   <FicheResume
                     peiId={elementId}
+                    peiNumeroComplet={
+                      featureSelect?.getProperties().peiNumeroComplet
+                    }
                     titre={
                       "Fiche Résumé du PEI " +
                       featureSelect?.getProperties().peiNumeroComplet
@@ -1060,6 +1063,7 @@ export const TooltipMapRisque = ({
       >
         <FicheResume
           peiId={elementId}
+          peiNumeroComplet={featureSelect?.getProperties().peiNumeroComplet}
           titre={
             "Fiche Résumé du PEI " +
             featureSelect?.getProperties().peiNumeroComplet

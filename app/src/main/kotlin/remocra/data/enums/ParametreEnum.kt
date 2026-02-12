@@ -73,6 +73,7 @@ enum class ParametreEnum(val section: ParametreSection) {
     PEI_FICHE_RESUME_STANDALONE(ParametreSection.PEI),
     PEI_DISPLAY_IDENTIFIANT_GESTIONNAIRE(ParametreSection.PEI),
     PEI_DISPLAY_TYPE_ENGIN(ParametreSection.PEI),
+    PEI_ROUTE_HISTORIQUE(ParametreSection.PEI),
     VOIE_SAISIE_LIBRE(ParametreSection.PEI),
     TYPE_VISITE_CDP(ParametreSection.PEI),
     DECLARATION_PEI_DESTINATAIRE_EMAIL(ParametreSection.PEI),
