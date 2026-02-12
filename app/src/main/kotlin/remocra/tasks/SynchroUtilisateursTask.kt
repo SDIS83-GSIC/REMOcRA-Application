@@ -90,20 +90,23 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
                             utilisateurRepository.setActif(true, utilisateurExistant.utilisateurId)
                         }
                     } else {
-                        val utilisateur = utilisateurRepository.insertUtilisateur(
-                            id = UUID.randomUUID(),
-                            email = userRepresentation.email,
-                            prenom = userRepresentation.firstName,
-                            nom = userRepresentation.lastName,
-                            username = userRepresentation.username,
-                            actif = userRepresentation.enabled,
-                            keycloakId = userRepresentation.id,
-                        )
-                        nbUtilisateurAdd++
-                        logManager.info(
-                            "[TASK_SYNCHRO_UTILISATEUR] L'utilisateur ${utilisateur.utilisateurUsername} " +
-                                "a été inséré",
-                        )
+                        try {
+                            val utilisateur = utilisateurRepository.insertUtilisateur(
+                                id = UUID.randomUUID(),
+                                email = userRepresentation.email,
+                                prenom = userRepresentation.firstName,
+                                nom = userRepresentation.lastName,
+                                username = userRepresentation.username,
+                                actif = userRepresentation.enabled,
+                                keycloakId = userRepresentation.id,
+                            )
+                            nbUtilisateurAdd++
+                            logManager.info(
+                                "[TASK_SYNCHRO_UTILISATEUR] L'utilisateur ${utilisateur.utilisateurUsername} a été inséré",
+                            )
+                        } catch (_: Exception) {
+                            logManager.error("[TASK_SYNCHRO_UTILISATEUR] Erreur : impossible d'insérer l'utilisateur '${userRepresentation.username}' (présent an base avec des données incohérentes).")
+                        }
                     }
                 }
             } catch (e: IOException) {
