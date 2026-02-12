@@ -22,6 +22,7 @@ import remocra.apimobile.data.PhotoPeiForApiMobileData
 import remocra.apimobile.data.TourneeSynchroForApiMobileData
 import remocra.apimobile.data.VisiteAnomalieForApiMobileData
 import remocra.apimobile.data.VisiteForApiMobileData
+import remocra.apimobile.usecase.CheckZoneCompetenceUseCase
 import remocra.apimobile.usecase.SynchroNewPeiUseCase
 import remocra.apimobile.usecase.TourneeUseCase
 import remocra.apimobile.usecase.synchrofintournee.SynchroFinTourneeUseCase
@@ -84,6 +85,9 @@ class SynchroEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var parametresProvider: ParametresProvider
+
+    @Inject
+    lateinit var checkZoneCompetenceUseCase: CheckZoneCompetenceUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -347,4 +351,18 @@ class SynchroEndpoint : AbstractEndpoint() {
     ): Response {
         return Response.ok(synchroFinTourneeUseCase.execute(tourneeId, securityContext.userInfo)).build()
     }
+
+    @Path("/check-zone-competence")
+    @GET
+    @RequireDroits([Droit.MOBILE_DEPLACER_PEI_U])
+    fun checkZoneCompetence(
+        @FormParam("lat") lat: Double,
+        @FormParam("lon") lon: Double,
+
+    ): Response =
+        checkZoneCompetenceUseCase.execute(
+            lon = lon,
+            lat = lat,
+            userInfo = securityContext.userInfo,
+        ).wrap()
 }
