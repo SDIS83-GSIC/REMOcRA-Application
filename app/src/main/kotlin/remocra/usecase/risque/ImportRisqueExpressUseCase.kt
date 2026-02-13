@@ -60,7 +60,7 @@ class ImportRisqueExpressUseCase : AbstractCUDUseCase<ImportRisqueExpressData>(T
     override fun execute(userInfo: WrappedUserInfo, element: ImportRisqueExpressData): ImportRisqueExpressData {
         if (element.fileRisqueExpress != null) {
             val uuid = UUID.randomUUID()
-            val xmlString = element.fileRisqueExpress.bufferedReader().use { it.readText() }
+            val xmlString = element.fileRisqueExpress.inputStream?.bufferedReader().use { it?.readText() }
             val jsonString = XML.toJSONObject(xmlString).toString()
 
             risqueExpressRepository.insert(
@@ -75,6 +75,11 @@ class ImportRisqueExpressUseCase : AbstractCUDUseCase<ImportRisqueExpressData>(T
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: ImportRisqueExpressData) {
-        // no-op
+        val filePart = element.fileRisqueExpress
+        if (filePart != null) {
+            if (!filePart.submittedFileName.endsWith(".kml", ignoreCase = true)) {
+                throw RemocraResponseException(ErrorType.RISQUE_BAD_EXTENSION)
+            }
+        }
     }
 }

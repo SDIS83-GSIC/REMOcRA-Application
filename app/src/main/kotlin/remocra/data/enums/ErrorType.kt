@@ -233,6 +233,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
      *
      */
     RISQUE_FORBIDDEN_A(4310, "Vous n'avez pas les droits d'administration sur les risques.", Status.FORBIDDEN),
+    RISQUE_BAD_EXTENSION(4311, "Le fichier doit avoir l'extension .kml"),
 
     /***
      * ***********************************************************************

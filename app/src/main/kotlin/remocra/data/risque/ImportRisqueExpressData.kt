@@ -1,6 +1,6 @@
 package remocra.data.risque
 
-import java.io.InputStream
+import jakarta.servlet.http.Part
 import java.util.UUID
 
 /**
@@ -10,5 +10,5 @@ data class ImportRisqueExpressData(
     // Ne sera renseigné qu'au retour de la méthode execute, pour alimenter la traçabilité
     val risqueId: UUID?,
     val risqueLibelle: String?,
-    val fileRisqueExpress: InputStream?,
+    val fileRisqueExpress: Part?,
 )

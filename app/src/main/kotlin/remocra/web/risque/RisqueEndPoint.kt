@@ -54,7 +54,7 @@ class RisqueEndPoint : AbstractEndpoint() {
             ImportRisqueExpressData(
                 risqueId = null,
                 risqueLibelle = httpRequest.getTextPartOrNull("risqueLibelle"),
-                fileRisqueExpress = if (httpRequest.getPart("fileRisqueExpress")?.contentType != null) httpRequest.getPart("fileRisqueExpress").inputStream else null,
+                fileRisqueExpress = if (httpRequest.getPart("fileRisqueExpress")?.contentType != null) httpRequest.getPart("fileRisqueExpress") else null,
             ),
         ).wrap()
 
