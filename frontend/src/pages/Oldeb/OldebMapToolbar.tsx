@@ -45,7 +45,7 @@ export const useToolbarOldebContext = ({
   const [editOldebs, setEditOldebs] = useState<string | null>(null);
 
   function closeEdit() {
-    workingLayer.getSource().clear();
+    workingLayer?.getSource().clear();
     setEditOldebs(null);
   }
 
@@ -55,7 +55,7 @@ export const useToolbarOldebContext = ({
     }
 
     const createCtrl = new Draw({
-      source: workingLayer.getSource(),
+      source: workingLayer?.getSource(),
       type: "Polygon",
     });
     createCtrl.on("drawend", async (event) => {
@@ -91,12 +91,12 @@ export const useToolbarOldebContext = ({
               },
             });
           } else {
-            workingLayer.getSource().removeFeature(event.feature);
+            workingLayer?.getSource().removeFeature(event.feature);
             errorToast(text);
           }
         })
         .catch((reason) => {
-          workingLayer.getSource().removeFeature(event.feature);
+          workingLayer?.getSource().removeFeature(event.feature);
           errorToast(reason);
         });
     });
@@ -170,30 +170,30 @@ export const useToolbarOldebContext = ({
                 }
               });
             } else {
-              workingLayer.getSource().removeFeature(event.feature);
+              workingLayer?.getSource().removeFeature(event.feature);
               errorToast(text);
             }
           })
           .catch((reason) => {
-            workingLayer.getSource().removeFeature(event.feature);
+            workingLayer?.getSource().removeFeature(event.feature);
             errorToast(reason);
           });
       });
     });
 
     const editSelectCtrl = new Draw({
-      source: workingLayer.getSource(),
+      source: workingLayer?.getSource(),
       type: "Point",
     });
     editSelectCtrl.on("drawstart", async () => {
       // on clear le workingLayer avant de dessiner un nouveau point
-      workingLayer.getSource().clear();
+      workingLayer?.getSource().clear();
     });
 
     editSelectCtrl.on("drawend", async (event) => {
       const pointGeom = event.feature.getGeometry();
 
-      const workingSource = workingLayer.getSource();
+      const workingSource = workingLayer?.getSource();
       if (workingSource) {
         workingSource.removeFeature(event.feature);
       }
@@ -217,7 +217,7 @@ export const useToolbarOldebContext = ({
       if (featuresAtPixel.length > 0) {
         setEditOldebs(JSON.stringify(featuresAtPixel));
       } else {
-        workingLayer.getSource().clear();
+        workingLayer?.getSource().clear();
         errorToast("Aucune OLDEB trouvée");
       }
     });
@@ -276,7 +276,7 @@ export const useToolbarOldebContext = ({
     errorToast,
     navigate,
     location,
-    workingLayer.getSource,
+    workingLayer?.getSource,
   ]);
 
   return {
