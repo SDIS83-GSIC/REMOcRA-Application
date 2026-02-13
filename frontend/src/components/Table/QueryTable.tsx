@@ -171,9 +171,10 @@ function QueryTable({
     debounceSearch();
   }, [debounceSearch]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: on veut que ce useEffect soit appelé à chaque changement de watchedValues, même si historyPush ne change pas
   useEffect(() => {
     historyPush();
-  }, [...watchedValues, historyPush]);
+  }, [...watchedValues]);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(location?.search);
