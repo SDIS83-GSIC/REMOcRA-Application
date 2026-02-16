@@ -124,6 +124,7 @@ const ElementResumeDisponibilite = ({
   value: {
     disponibilite: keyof typeof DISPONIBILITE_PEI;
     hasIndispoTemp: boolean;
+    list: DataIndispoTemp[];
   };
 }) => {
   let libelleNonConforme: string = "";
@@ -156,11 +157,38 @@ const ElementResumeDisponibilite = ({
       </span>
     </p>
   ) : (
-    <p>
-      <span className="text-white bg-danger rounded p-2 text-nowrap">
-        NON {value.hasIndispoTemp ? "- Indisponibilité temporaire " : ""}
-      </span>
-    </p>
+    <>
+      <p>
+        <span className="text-white bg-danger rounded p-2 text-nowrap">
+          NON {value.hasIndispoTemp ? "- Indisponibilité temporaire" : ""}
+        </span>
+      </p>
+
+      {value.hasIndispoTemp && value.list.length > 0 && (
+        <ul className="mt-2 list-disc list-inside text-sm">
+          {value.list.map((indispo, index) => (
+            <li key={index} className="mb-2">
+              <div>
+                <strong>
+                  date début : {indispo.startDate}
+                  {indispo.endDate && (
+                    <>
+                      <br />
+                      date fin : {indispo.endDate}
+                    </>
+                  )}
+                </strong>
+              </div>
+              {indispo.motif && (
+                <div className="text-red-800 italic mt-1 md:mt-0 md:ml-4">
+                  motif : {indispo.motif}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
   );
 };
 
@@ -218,6 +246,12 @@ const ElementResumeGestionnaire = ({
     )}
   </>
 );
+
+type DataIndispoTemp = {
+  startDate: string;
+  endDate: string | null;
+  motif: string;
+};
 
 type ElementResumeType = {
   titre: string;

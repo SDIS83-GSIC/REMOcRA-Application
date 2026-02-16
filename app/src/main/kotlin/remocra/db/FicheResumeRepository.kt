@@ -10,6 +10,7 @@ import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.pojos.FicheResumeBloc
+import remocra.db.jooq.remocra.tables.pojos.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
@@ -40,6 +41,12 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
     fun getFicheResume(): Collection<FicheResumeBloc> =
         dsl.selectFrom(FICHE_RESUME_BLOC)
             .orderBy(FICHE_RESUME_BLOC.COLONNE, FICHE_RESUME_BLOC.LIGNE).fetchInto()
+
+    fun getIndispoTempByPeiId(peiId: UUID): Collection<IndisponibiliteTemporaire> =
+        dsl.select(*INDISPONIBILITE_TEMPORAIRE.fields()).from(INDISPONIBILITE_TEMPORAIRE)
+            .join(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+            .on(INDISPONIBILITE_TEMPORAIRE.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID))
+            .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(peiId)).fetchInto()
 
     fun getPeiInfoFicheResume(peiId: UUID): PeiFicheResume {
         val pibiJumeleTable = PEI.`as`("PIBI_JUMELE")
@@ -104,14 +111,6 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
             V_PEI_VISITE_DATE.LAST_ROP,
             V_PEI_VISITE_DATE.LAST_CTP,
             DIAMETRE.LIBELLE,
-            DSL.exists(
-                DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID).from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
-                    .join(INDISPONIBILITE_TEMPORAIRE)
-                    .on(INDISPONIBILITE_TEMPORAIRE.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID))
-                    .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
-                    .and(INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(dateUtils.now()))
-                    .and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull.or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(dateUtils.now()))),
-            ).`as`("hasIndispoTemp"),
             GESTIONNAIRE.ID,
             GESTIONNAIRE.LIBELLE,
             SITE.LIBELLE,
@@ -166,7 +165,6 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
         val diametreLibelle: String?,
         val pibiDiametreCanalisation: Int?,
         val penaCapacite: Int?,
-        val hasIndispoTemp: Boolean = false,
         val gestionnaireId: UUID?,
         val gestionnaireLibelle: String?,
         val siteLibelle: String?,

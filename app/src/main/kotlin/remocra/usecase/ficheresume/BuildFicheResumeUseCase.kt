@@ -22,10 +22,12 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
 
         val peiData = ficheResumeRepository.getPeiInfoFicheResume(peiId)
 
+        val peiIndispoData = ficheResumeRepository.getIndispoTempByPeiId(peiId)
+
         val listeResumeElement: MutableList<ResumeElement> = mutableListOf()
 
         // Puis on va chercher toutes les informations en fonction du type élément
-        listeElement.forEach {
+        listeElement.forEach { it ->
             when (it.ficheResumeBlocTypeResumeData) {
                 TypeResumeElement.TOURNEE -> {
                     listeResumeElement.add(
@@ -45,7 +47,14 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
                             titre = it.ficheResumeBlocTitre,
                             data = DisponibiliteWithIndispoTemp(
                                 disponibilite = peiData.peiDisponibiliteTerrestre,
-                                hasIndispoTemp = peiData.hasIndispoTemp,
+                                hasIndispoTemp = peiIndispoData.isNotEmpty(),
+                                list = peiIndispoData.map {
+                                    DataIndispoTemp(
+                                        startDate = dateUtils.formatDateOnly(it.indisponibiliteTemporaireDateDebut),
+                                        endDate = dateUtils.formatDateOnly(it.indisponibiliteTemporaireDateFin),
+                                        motif = it.indisponibiliteTemporaireMotif,
+                                    )
+                                },
                             ),
                             colonne = it.ficheResumeBlocColonne,
                             ligne = it.ficheResumeBlocLigne,
@@ -220,9 +229,16 @@ class BuildFicheResumeUseCase : AbstractUseCase() {
         val ligne: Int,
     )
 
+    data class DataIndispoTemp(
+        val startDate: String? = null,
+        val endDate: String? = null,
+        val motif: String,
+    )
+
     data class DisponibiliteWithIndispoTemp(
         val disponibilite: Disponibilite,
         val hasIndispoTemp: Boolean,
+        val list: List<DataIndispoTemp>,
     )
 
     data class GestionnaireInfo(
