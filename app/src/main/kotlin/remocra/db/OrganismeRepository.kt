@@ -396,4 +396,18 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             .fetchOne(TYPE_ORGANISME.DROIT_API)
             ?.filterNotNull()
             ?.toSet() ?: setOf()
+
+    fun getOrganismeParentFromType(typeOrganismeId: UUID): List<Organisme> {
+        return dsl.select(*ORGANISME.fields()).from(ORGANISME)
+            .where(
+                ORGANISME.TYPE_ORGANISME_ID.eq(
+                    dsl.select(TYPE_ORGANISME.PARENT_ID)
+                        .from(TYPE_ORGANISME)
+                        .where(TYPE_ORGANISME.ID.eq(typeOrganismeId)),
+                ),
+            )
+            .and(ORGANISME.ACTIF.isTrue)
+            .orderBy(ORGANISME.LIBELLE)
+            .fetchInto()
+    }
 }

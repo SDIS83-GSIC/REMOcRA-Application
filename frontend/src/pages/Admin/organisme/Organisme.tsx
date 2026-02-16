@@ -92,15 +92,22 @@ export type OrganismeType = {
 
 export const OrganismeForm = () => {
   const { values, setValues, setFieldValue }: any = useFormikContext();
+
   const profilOrganisme = useGet(url`/api/profil-organisme/get-active`);
   const typeOrganisme = useGet(url`/api/type-organisme/get-active`);
   const zoneIntegration = useGet(url`/api/zone-integration/get-active`);
-  const organisme = useGet(url`/api/organisme/get-active`);
+
+  const organismeParent = useGet(
+    values?.organismeTypeOrganismeId
+      ? url`/api/organisme/get-parent-from-type/${values.organismeTypeOrganismeId}`
+      : null,
+  );
+
   if (
     !profilOrganisme.isResolved ||
     !typeOrganisme.isResolved ||
     !zoneIntegration.isResolved ||
-    !organisme.isResolved
+    !organismeParent.isResolved
   ) {
     return;
   }
@@ -115,6 +122,7 @@ export const OrganismeForm = () => {
       };
     },
   );
+
   const typeOrganismeList = typeOrganisme.data.map((e: TypeOrganismeType) => {
     return {
       id: e.typeOrganismeId,
@@ -124,14 +132,11 @@ export const OrganismeForm = () => {
     };
   });
 
-  const organismeList = organisme.data.map((e: OrganismeType) => {
+  const organismeList = organismeParent?.data?.map((e: OrganismeType) => {
     return {
       id: e.organismeId,
       libelle: e.organismeLibelle,
       code: e.organismeCode,
-      typeOrganismeParentId: typeOrganismeList.find(
-        (to: IdCodeLibelleType) => to.id === e.organismeTypeOrganismeId,
-      )?.id,
     };
   });
 
@@ -150,7 +155,7 @@ export const OrganismeForm = () => {
       return e.id === values.organismeZoneIntegrationId;
     },
   );
-  const defaultOrganismeParent = organismeList.find((e: IdCodeLibelleType) => {
+  const defaultOrganismeParent = organismeList?.find((e: IdCodeLibelleType) => {
     return e.id === values.organismeParentId;
   });
 
@@ -203,10 +208,7 @@ export const OrganismeForm = () => {
       <SelectForm
         name="organismeParentId"
         label="Organisme parent"
-        listIdCodeLibelle={organismeList.filter(
-          (e: (typeof organismeList)[number]) =>
-            e.typeOrganismeParentId === values.organismeTypeOrganismeId,
-        )}
+        listIdCodeLibelle={organismeList}
         setValues={setValues}
         required={false}
         defaultValue={defaultOrganismeParent}

@@ -98,6 +98,15 @@ class OrganismeEndPoint : AbstractEndpoint() {
         return Response.ok(organismeUseCase.getActiveOrganisme()).build()
     }
 
+    @GET
+    @Path("/get-parent-from-type/{typeOrganismeId}")
+    @Public("Les organismes parent ne sont pas liés à un droit")
+    fun getOrganismeParentFromType(
+        @PathParam("typeOrganismeId") typeOrganismeId: UUID,
+    ): Response {
+        return Response.ok(organismeUseCase.getOrganismeParentFromType(typeOrganismeId)).build()
+    }
+
     @POST
     @Path("/create-client-keycloak/{organismeId}")
     @RequireDroits([Droit.ADMIN_API])

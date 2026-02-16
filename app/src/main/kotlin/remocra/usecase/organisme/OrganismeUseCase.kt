@@ -16,4 +16,5 @@ class OrganismeUseCase : AbstractUseCase() {
     fun getAutoriteDeciForSelect(): List<IdCodeLibelleData> = organismeRepository.getAutoriteDeciForSelect()
     fun getServicePublicForSelect(): List<IdCodeLibelleData> = organismeRepository.getServicePublicForSelect()
     fun getActiveOrganisme(): Collection<Organisme> = organismeRepository.getActive()
+    fun getOrganismeParentFromType(typeOrganismeId: UUID): Collection<Organisme?> = organismeRepository.getOrganismeParentFromType(typeOrganismeId)
 }
