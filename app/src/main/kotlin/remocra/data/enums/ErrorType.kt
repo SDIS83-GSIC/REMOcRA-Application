@@ -312,6 +312,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
         "Le format de la géométrie n'est pas reconnu.",
         Status.BAD_REQUEST,
     ),
+    GEOMETRIE_CONVERSION(8004, "Impossible de convertir la géométrie"),
 
     //
     // ********************************************************************************

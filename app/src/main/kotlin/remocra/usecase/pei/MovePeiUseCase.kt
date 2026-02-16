@@ -6,11 +6,13 @@ import org.geotools.referencing.CRS
 import org.locationtech.jts.geom.Geometry
 import remocra.app.AppSettings
 import remocra.data.PeiData
+import remocra.data.enums.ErrorType
 import remocra.db.CommuneRepository
 import remocra.db.PeiRepository
 import remocra.db.PenaRepository
 import remocra.db.PibiRepository
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import remocra.utils.toGeomFromText
 import java.util.UUID
@@ -35,23 +37,16 @@ class MovePeiUseCase : AbstractUseCase() {
     fun execute(
         geometry: Geometry,
         peiId: UUID,
+        voieId: UUID? = null,
+        voieLibelle: String? = null,
     ): PeiData {
-        var input = geometry
-        if (input.srid != appSettings.srid) {
-            val targetCRS = CRS.decode(appSettings.epsg.name)
-            val sourceCRS = CRS.decode("EPSG:${input.srid}")
-            input = JTS.transform(input, CRS.findMathTransform(sourceCRS, targetCRS))
-                ?: throw IllegalArgumentException("Impossible de convertir la géometrie $input en ${targetCRS.name}")
-            input.srid = appSettings.srid
-        }
+        val input = normalizeGeometry(geometry)
+
+        val finalVoie = voieLibelle.takeIf { !it.isNullOrEmpty() }
 
         val type = peiRepository.getTypePei(peiId)
         val communeActuelle = peiRepository.getCommune(peiId)
-
-        // On récupère la commune correspondante
-        val communeId = communeRepository.getCommunePei(
-            input.toGeomFromText(),
-        ) ?: throw IllegalArgumentException("Aucune commune n'a été trouvée")
+        val communeId = resolveCommuneId(input)
 
         return when (type) {
             TypePei.PIBI -> pibiRepository.getInfoPibi(peiId).copy(
@@ -60,24 +55,52 @@ class MovePeiUseCase : AbstractUseCase() {
             ).let {
                 if (communeActuelle != communeId) {
                     return it.copy(
-                        peiVoieId = null,
-                        peiVoieTexte = null,
+                        peiVoieId = voieId,
+                        peiVoieTexte = finalVoie,
                     )
                 }
                 it
             }
+
             TypePei.PENA -> penaRepository.getInfoPena(peiId).copy(
                 peiGeometrie = input,
                 peiCommuneId = communeId,
             ).let {
                 if (communeActuelle != communeId) {
                     return it.copy(
-                        peiVoieId = null,
-                        peiVoieTexte = null,
+                        peiVoieId = voieId,
+                        peiVoieTexte = finalVoie,
                     )
                 }
                 it
             }
         }
     }
+
+    fun needTobeMoved(
+        geometry: Geometry,
+        peiId: UUID,
+    ): Boolean {
+        return peiRepository.getCommune(peiId) != resolveCommuneId(normalizeGeometry(geometry))
+    }
+
+    private fun normalizeGeometry(geometry: Geometry): Geometry {
+        var input = geometry
+
+        if (input.srid != appSettings.srid) {
+            val targetCRS = CRS.decode(appSettings.epsg.name)
+
+            input = JTS.transform(input, CRS.findMathTransform(CRS.decode("EPSG:${input.srid}"), targetCRS))
+                ?: throw RemocraResponseException(ErrorType.GEOMETRIE_CONVERSION)
+
+            input.srid = appSettings.srid
+        }
+
+        return input
+    }
+
+    private fun resolveCommuneId(geometry: Geometry): UUID =
+        communeRepository.getCommunePei(
+            geometry.toGeomFromText(),
+        ) ?: throw RemocraResponseException(ErrorType.COMMUNE_NOT_FOUND)
 }

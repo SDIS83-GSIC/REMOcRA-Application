@@ -284,9 +284,8 @@ export const useToolbarCouvertureHydrauliqueContext = ({
 
       const circle = new Feature(
         new Circle(
-          featurePei
-            .get("geometry")
-            ?.transform(sridSource, EPSG_3857).flatCoordinates,
+          featurePei.get("geometry")?.transform(sridSource, EPSG_3857)
+            .flatCoordinates,
         ),
       );
 

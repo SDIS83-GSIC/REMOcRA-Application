@@ -226,10 +226,37 @@ class PeiEndPoint : AbstractEndpoint() {
     @RequireDroits([Droit.PEI_DEPLACEMENT_U])
     fun updateLocalisation(
         @PathParam("peiId") peiId: UUID,
-        geometry: Geometrie,
+        request: MovePeiRequest,
     ): Response {
-        val peiData = movePeiUseCase.execute(geometry.geometry, peiId)
+        val peiData = movePeiUseCase.execute(request.geometry, peiId, request.voieId, request.voieLibelle)
         return updatePeiUseCase.execute(securityContext.userInfo, peiData).wrap()
+    }
+
+    data class MovePeiRequest(
+        val geometry: Geometry,
+        val voieId: UUID?,
+        val voieLibelle: String?,
+    )
+
+    @GET
+    @Path("/doit-changer-commune/{peiId}")
+    @RequireDroits([Droit.PEI_DEPLACEMENT_U])
+    fun needTobeMoved(
+        @PathParam("peiId") peiId: UUID,
+        @QueryParam("geometry") geometry: Geometry,
+    ): Response {
+        return Response
+            .ok(movePeiUseCase.needTobeMoved(geometry, peiId))
+            .build()
+    }
+
+    @GET
+    @Path("/voie")
+    @RequireDroits([Droit.PEI_DEPLACEMENT_U])
+    fun getVoiesForPEI(
+        @QueryParam("geometry") geometry: Geometry,
+    ): Response {
+        return Response.ok(peiUseCase.getVoies(geometry)).build()
     }
 
     data class Geometrie(

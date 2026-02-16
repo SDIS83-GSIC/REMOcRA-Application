@@ -121,6 +121,11 @@ class PeiUseCase : AbstractUseCase() {
         }
     }
 
+    fun getVoies(geometry: Geometry): Collection<VoieRepository.VoieWithCommune> {
+        val geom = transform(geometry, CRS.decode(appSettings.epsg.name), appSettings.srid)
+        return getCommuneVoieUseCase.execute(geom).listVoies
+    }
+
     /**
      * Retourne les informations nécessaires pour les valeurs qui peuvent être modifié
      * dans le formaulaire d'update d'un PEI

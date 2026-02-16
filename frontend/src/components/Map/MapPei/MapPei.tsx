@@ -87,6 +87,7 @@ const MapPei = () => {
     closeMove,
     peiIdMove,
     geometrieMove,
+    deplacePei,
   } = useToolbarPeiContext({
     map,
     workingLayer,
@@ -254,6 +255,7 @@ const MapPei = () => {
                   setShowFormVisite={setShowFormVisite}
                   showFormVisite={showFormVisite}
                   coordonneesPeiCreate={coordonneesPeiCreate}
+                  deplacePei={deplacePei}
                 />
               )
             }

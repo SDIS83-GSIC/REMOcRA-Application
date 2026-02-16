@@ -6,6 +6,8 @@ import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { useMemo, useState } from "react";
 import { Button, ButtonGroup, Row } from "react-bootstrap";
+import { object } from "yup";
+import { useFormikContext } from "formik";
 import { hasDroit, isAuthorized } from "../../../droits.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import TYPE_NATURE_DECI from "../../../enums/TypeNatureDeci.tsx";
@@ -31,8 +33,13 @@ import Volet from "../../Volet/Volet.tsx";
 import toggleDeplacerPoint, { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import TooltipMapPei from "../TooltipsMap.tsx";
+import PARAMETRE from "../../../enums/ParametreEnum.tsx";
 import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
 import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
+import { useGet } from "../../Fetch/useFetch.tsx";
+import SelectForm from "../../Form/SelectForm.tsx";
+import { CheckBoxInput, FormContainer, TextInput } from "../../Form/Form.tsx";
+import { requiredString } from "../../../module/validators.tsx";
 
 export const useToolbarPeiContext = ({
   map,
@@ -79,6 +86,12 @@ export const useToolbarPeiContext = ({
   const [peiIdMove, setPeiIdMove] = useState<string | null>(null);
 
   const [geometrieMove, setGeometrieMove] = useState<string | null>(null);
+
+  const { data: deplacePei } = useGet(
+    peiIdMove && geometrieMove
+      ? url`/api/pei/doit-changer-commune/${peiIdMove}?${{ geometry: geometrieMove }}`
+      : null,
+  );
 
   const tools = useMemo(() => {
     if (!map) {
@@ -424,8 +437,15 @@ export const useToolbarPeiContext = ({
     geometrieMove,
     closeMove,
     visibleMove,
+    deplacePei,
   };
 };
+
+export const prepareVariables = (values: any) => ({
+  geometry: values.geometrie,
+  voieId: values.voieId,
+  voieLibelle: values.voieLibelle,
+});
 
 const MapToolbarPei = ({
   toggleTool: toggleToolCallback,
@@ -463,6 +483,7 @@ const MapToolbarPei = ({
   setShowFormVisite,
   showFormVisite,
   coordonneesPeiCreate,
+  deplacePei,
 }: {
   toggleTool: (toolId: string) => void;
   activeTool: string;
@@ -493,6 +514,7 @@ const MapToolbarPei = ({
   peiIdUpdate: string;
   disabledTool: (toolId: string) => void;
   peiIdMove: string | null;
+  deplacePei: boolean | null;
   geometrieMove: string | null;
   closeMove: () => void;
   visibleMove: boolean;
@@ -505,6 +527,33 @@ const MapToolbarPei = ({
   } | null;
 }) => {
   const { user } = useAppContext();
+  const canEdit = isAuthorized(user, [
+    TYPE_DROIT.PEI_U,
+    TYPE_DROIT.PEI_ADRESSE_C,
+  ]);
+
+  const voiesList = useGet(
+    geometrieMove ? url`/api/pei/voie?${{ geometry: geometrieMove }}` : null,
+  )?.data;
+
+  const parametreVoieSaisieLibre = PARAMETRE.VOIE_SAISIE_LIBRE;
+
+  const listeParametre = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify(parametreVoieSaisieLibre),
+    }}`,
+  );
+
+  const isSaisieVoieEnabled = useMemo<boolean>(() => {
+    if (!listeParametre.isResolved) {
+      return false;
+    }
+    // Le résultat est une String, on le parse pour récupérer le tableau
+    return JSON.parse(
+      listeParametre?.data[parametreVoieSaisieLibre].parametreValeur,
+    );
+  }, [listeParametre, parametreVoieSaisieLibre]);
+  const isVoiesListEmpty = !voiesList || voiesList.length === 0;
 
   // Pour afficher le *bon* bouton pour accéder à la fiche PEI (lecture, écriture)
   const canEditPei = isAuthorized(user, [
@@ -740,27 +789,99 @@ const MapToolbarPei = ({
           query={url`/api/pei/deplacer/${peiIdMove}`}
           submitLabel={"Valider"}
           visible={visibleMove}
+          validationSchema={
+            !isSaisieVoieEnabled
+              ? ValidationSchemaId
+              : isVoiesListEmpty
+                ? ValidationSchemaLibelle
+                : object({})
+          }
           header={"Déplacer le PEI"}
           onSubmit={() => {
             dataPeiLayer.getSource().refresh();
             refreshLayerGeoserver(map);
             window.location.reload();
           }}
-          prepareVariables={(values) => ({
-            geometry: values.geometrie,
-          })}
           getInitialValues={() => ({
             geometrie: geometrieMove,
+            voieId: null,
+            voieLibelle: "",
           })}
+          prepareVariables={(values) => prepareVariables(values)}
         >
           <p>
             Voulez-vous déplacer le PEI ? <br />
             Attention, le déplacement du PEI peut entraîner une modification sur
             son adresse, veuillez la mettre à jour en cas de besoin.
           </p>
+          {deplacePei && voiesList && (
+            <MessageVoieForm
+              voiesList={voiesList}
+              canEdit={canEdit}
+              isSaisieVoieEnabled={isSaisieVoieEnabled}
+            />
+          )}
         </EditModal>
       )}
     </ButtonGroup>
+  );
+};
+
+type MessageVoieFormProps = {
+  voiesList: any;
+  canEdit: boolean;
+  isSaisieVoieEnabled: boolean;
+};
+
+export const ValidationSchemaId = object({
+  voieId: requiredString,
+});
+
+export const ValidationSchemaLibelle = object({
+  voieLibelle: requiredString,
+});
+
+const MessageVoieForm = ({
+  voiesList,
+  canEdit,
+  isSaisieVoieEnabled,
+}: MessageVoieFormProps) => {
+  const { values, setValues, setFieldValue } = useFormikContext<any>();
+  const [voieTrouvee, setVoieTrouvee] = useState(false);
+
+  const voieArray = voiesList ?? [];
+
+  return (
+    <FormContainer>
+      <SelectForm
+        name="voieId"
+        listIdCodeLibelle={voieArray}
+        label="Voie"
+        disabled={voieTrouvee}
+        setValues={setValues}
+        defaultValue={voieArray.find(
+          (e: { id: string }) => e.id === values?.voieId,
+        )}
+      />
+
+      {isSaisieVoieEnabled && (
+        <>
+          <CheckBoxInput
+            name="voieSaisieLibre"
+            checked={voieTrouvee}
+            label="Voie non trouvée"
+            onChange={() => {
+              setVoieTrouvee(!voieTrouvee);
+              setFieldValue(!voieTrouvee ? "voieId" : "voieLibelle", undefined);
+            }}
+          />
+
+          {voieTrouvee && canEdit && (
+            <TextInput name="voieLibelle" label="Voie (saisie libre)" />
+          )}
+        </>
+      )}
+    </FormContainer>
   );
 };
 
