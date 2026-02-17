@@ -1,4 +1,5 @@
 import classnames from "classnames";
+import ReactSelect from "react-select";
 import { useGet } from "../components/Fetch/useFetch.tsx";
 import FilterInput from "../components/Filter/FilterInput.tsx";
 import MultiSelectFilterFromList from "../components/Filter/MultiSelectFilterFromList.tsx";
@@ -46,6 +47,91 @@ import { URLS } from "../routes.tsx";
 import getStringListeAnomalie from "./anomaliesUtils.tsx";
 import formatDateTime, { formatDateWithFallback } from "./formatDateUtils.tsx";
 import { IdCodeLibelleType } from "./typeUtils.tsx";
+
+/**
+ * Composant filtre pour la disponibilité des PEI
+ * Gère la logique spécifique de "Indisponible temporairement" qui met à jour 2 champs
+ */
+const DisponibiliteTerrrestreFilter = ({
+  onChange,
+  value,
+  libelleNonConforme,
+  ...otherProps
+}: any) => {
+  const defaultValue: IdCodeLibelleType = {
+    id: undefined,
+    code: undefined,
+    libelle: "Tous",
+  };
+
+  const listIdCodeLibelle = [
+    {
+      id: DISPONIBILITE_PEI.DISPONIBLE,
+      code: DISPONIBILITE_PEI.DISPONIBLE,
+      libelle: "Disponible",
+    },
+    {
+      id: DISPONIBILITE_PEI.INDISPONIBLE,
+      code: DISPONIBILITE_PEI.INDISPONIBLE,
+      libelle: "Indisponible",
+    },
+    {
+      id: "INDISPONIBLE_TEMPORAIRE",
+      code: "INDISPONIBLE_TEMPORAIRE",
+      libelle: "Indisponible temporairement",
+    },
+    {
+      id: DISPONIBILITE_PEI.NON_CONFORME,
+      code: DISPONIBILITE_PEI.NON_CONFORME,
+      libelle: libelleNonConforme,
+    },
+  ];
+
+  const data = [defaultValue].concat(
+    (listIdCodeLibelle || []).map((item: IdCodeLibelleType) => ({
+      id: item.id,
+      code: item.code ?? item.id,
+      libelle: item.libelle,
+    })),
+  );
+
+  const selectedOption =
+    data.find((option) => option.id === value) ?? defaultValue;
+
+  return (
+    <ReactSelect
+      {...otherProps}
+      placeholder={"Sélectionnez"}
+      noOptionsMessage={() => "Aucune donnée trouvée"}
+      name={"peiDisponibiliteTerrestre"}
+      options={data}
+      value={selectedOption}
+      getOptionValue={(t: IdCodeLibelleType) => t.id ?? ""}
+      getOptionLabel={(t: IdCodeLibelleType) => t.libelle}
+      onChange={(selected: IdCodeLibelleType) => {
+        if (selected?.id === "INDISPONIBLE_TEMPORAIRE") {
+          onChange({
+            name: "peiDisponibiliteTerrestre",
+            value: "INDISPONIBLE_TEMPORAIRE",
+          });
+          onChange({
+            name: "hasIndispoTemp",
+            value: true,
+          });
+        } else {
+          onChange({
+            name: "peiDisponibiliteTerrestre",
+            value: selected?.id,
+          });
+          onChange({
+            name: "hasIndispoTemp",
+            value: false,
+          });
+        }
+      }}
+    />
+  );
+};
 
 type PeiRowType = {
   original: {
@@ -102,18 +188,25 @@ function getColumnPeiByStringArray(
       case COLUMN_PEI.DISPONIBILITE_TERRESTRE:
         column.push({
           Header: "Disponibilité",
-          accessor: ({ peiDisponibiliteTerrestre, hasIndispoTemp }) => ({
-            peiDisponibiliteTerrestre,
-            hasIndispoTemp,
+          accessor: (row: {
+            peiDisponibiliteTerrestre: keyof typeof DISPONIBILITE_PEI;
+            hasIndispoTemp: boolean;
+          }) => ({
+            peiDisponibiliteTerrestre: row.peiDisponibiliteTerrestre,
+            hasIndispoTemp: row.hasIndispoTemp,
           }),
           sortField: "peiDisponibiliteTerrestre",
           Cell: (value) => {
             const dispo =
-              DISPONIBILITE_PEI[value.value.peiDisponibiliteTerrestre] ===
-              DISPONIBILITE_PEI.NON_CONFORME
+              DISPONIBILITE_PEI[
+                value.value
+                  .peiDisponibiliteTerrestre as keyof typeof DISPONIBILITE_PEI
+              ] === DISPONIBILITE_PEI.NON_CONFORME
                 ? { bg: "bg-warning", value: libelleNonConforme }
-                : DISPONIBILITE_PEI[value.value.peiDisponibiliteTerrestre] ===
-                    DISPONIBILITE_PEI.DISPONIBLE
+                : DISPONIBILITE_PEI[
+                      value.value
+                        .peiDisponibiliteTerrestre as keyof typeof DISPONIBILITE_PEI
+                    ] === DISPONIBILITE_PEI.DISPONIBLE
                   ? { bg: "", value: "Disponible" }
                   : value.value.hasIndispoTemp
                     ? {
@@ -128,8 +221,8 @@ function getColumnPeiByStringArray(
             );
           },
           Filter: (
-            <SelectIdLibelleDataFromList
-              listIdLibelle={getLibelleDisponibilite(libelleNonConforme)}
+            <DisponibiliteTerrrestreFilter
+              libelleNonConforme={libelleNonConforme}
               name={"peiDisponibiliteTerrestre"}
             />
           ),
@@ -152,7 +245,7 @@ function getColumnPeiByStringArray(
           },
           Filter: (
             <SelectIdLibelleDataFromList
-              listIdLibelle={getLibelleDisponibilite(libelleNonConforme)}
+              listIdCodeLibelle={getLibelleDisponibilite(libelleNonConforme)}
               name={"penaDisponibiliteHbe"}
             />
           ),
@@ -654,11 +747,13 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
           Filter: (
             <MultiSelectFilterFromList
               name={"listePeiId"}
-              listIdCodeLibelle={listePeiState?.data?.map((e) => ({
-                id: e.peiId,
-                code: e.peiId,
-                libelle: e.peiNumeroComplet,
-              }))}
+              listIdCodeLibelle={listePeiState?.data?.map(
+                (e: { peiId: any; peiNumeroComplet: any }) => ({
+                  id: e.peiId,
+                  code: e.peiId,
+                  libelle: e.peiNumeroComplet,
+                }),
+              )}
             />
           ),
           width: 200,

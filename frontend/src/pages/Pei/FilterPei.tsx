@@ -1,4 +1,5 @@
 import { Form } from "react-bootstrap";
+import DISPONIBILITE_PEI from "../../enums/DisponibiliteEnum.tsx";
 import PROCHAINE_DATE_ENUM from "../../enums/ProchaineDateEnum.tsx";
 
 type filterPei = {
@@ -19,6 +20,24 @@ type filterPei = {
   prochaineDateCtp?: PROCHAINE_DATE_ENUM;
   tourneeId?: string;
   gestionnaireId?: string;
+  hasIndispoTemp?: boolean;
+};
+
+// Transformation inverse : de l'URL vers le formulaire
+// Utilisé pour initialiser les valeurs du formulaire depuis l'URL
+export const filterVariableToValues = (filter: filterPei): filterPei => {
+  const values = { ...filter };
+
+  // Si on a peiDisponibiliteTerrestre=INDISPONIBLE + hasIndispoTemp=true
+  // on doit transformer en INDISPONIBLE_TEMPORAIRE pour l'affichage
+  if (
+    values.peiDisponibiliteTerrestre === DISPONIBILITE_PEI.INDISPONIBLE &&
+    (values.hasIndispoTemp === true || values.hasIndispoTemp === "true")
+  ) {
+    values.peiDisponibiliteTerrestre = "INDISPONIBLE_TEMPORAIRE";
+  }
+
+  return values;
 };
 
 export const filterValuesToVariable = ({
@@ -39,6 +58,7 @@ export const filterValuesToVariable = ({
   prochaineDateCtp,
   tourneeId,
   gestionnaireId,
+  hasIndispoTemp,
 }: filterPei) => {
   const filter: filterPei = {};
 
@@ -67,7 +87,22 @@ export const filterValuesToVariable = ({
     peiDisponibiliteTerrestre != null &&
     peiDisponibiliteTerrestre.trim() !== ""
   ) {
-    filter.peiDisponibiliteTerrestre = peiDisponibiliteTerrestre;
+    if (
+      peiDisponibiliteTerrestre === "INDISPONIBLE_TEMPORAIRE" ||
+      (peiDisponibiliteTerrestre === DISPONIBILITE_PEI.INDISPONIBLE &&
+        hasIndispoTemp === true)
+    ) {
+      // Filtre pour "Indisponible temporairement"
+      filter.peiDisponibiliteTerrestre = DISPONIBILITE_PEI.INDISPONIBLE;
+      filter.hasIndispoTemp = true;
+    } else if (peiDisponibiliteTerrestre === DISPONIBILITE_PEI.INDISPONIBLE) {
+      // Filtre pour "Indisponible" uniquement (pas temporaire)
+      filter.peiDisponibiliteTerrestre = DISPONIBILITE_PEI.INDISPONIBLE;
+      // On ne retourne pas hasIndispoTemp
+    } else {
+      // Tous les autres filtres (Disponible, Non conforme, etc.)
+      filter.peiDisponibiliteTerrestre = peiDisponibiliteTerrestre;
+    }
   }
   if (penaDisponibiliteHbe != null && penaDisponibiliteHbe.trim() !== "") {
     filter.penaDisponibiliteHbe = penaDisponibiliteHbe;
@@ -98,6 +133,7 @@ export const filterValuesToVariable = ({
   if (gestionnaireId != null && gestionnaireId.trim() !== "") {
     filter.gestionnaireId = gestionnaireId;
   }
+
   return filter;
 };
 

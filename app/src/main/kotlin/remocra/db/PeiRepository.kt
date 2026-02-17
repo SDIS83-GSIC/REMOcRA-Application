@@ -404,6 +404,7 @@ class PeiRepository
         val servicePublicDeci: UUID?,
         val peiDisponibiliteTerrestre: Disponibilite?,
         val penaDisponibiliteHbe: Disponibilite?,
+        val hasIndispoTemp: Boolean? = null,
         val anomalieId: UUID?,
         var idIndisponibiliteTemporaire: UUID?,
         var listePeiId: Set<UUID>?,
@@ -413,6 +414,23 @@ class PeiRepository
         var tourneeId: UUID?,
         val gestionnaireId: UUID?,
     ) {
+        private fun indispoTempCondition(exists: Boolean, dateUtils: DateUtils): Condition {
+            val subquery = DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID)
+                .from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+                .join(INDISPONIBILITE_TEMPORAIRE)
+                .on(INDISPONIBILITE_TEMPORAIRE.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID))
+                .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
+                .and(
+                    INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(dateUtils.now())
+                        .or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull),
+                )
+                .and(INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(dateUtils.now()))
+            return if (exists) {
+                DSL.and(PEI.DISPONIBILITE_TERRESTRE.eq(Disponibilite.INDISPONIBLE)).and(DSL.exists(subquery))
+            } else {
+                DSL.and(PEI.DISPONIBILITE_TERRESTRE.eq(Disponibilite.INDISPONIBLE)).and(DSL.notExists(subquery))
+            }
+        }
 
         enum class ProchaineDate {
             DATE_PASSEE,
@@ -426,7 +444,7 @@ class PeiRepository
 
         fun toCondition(dateUtils: DateUtils): Condition =
             DSL.and(
-                listOfNotNull(
+                listOfNotNull<Condition>(
                     peiNumeroComplet?.let { DSL.and(PEI.NUMERO_COMPLET.containsIgnoreCaseUnaccent(it)) },
                     peiNumeroInterne?.let { DSL.and(PEI.NUMERO_INTERNE.contains(it)) },
                     communeId?.let { DSL.and(PEI.COMMUNE_ID.eq(it)) },
@@ -435,7 +453,12 @@ class PeiRepository
                     natureId?.let { DSL.and(PEI.NATURE_ID.eq(it)) },
                     autoriteDeci?.let { DSL.and(PEI.AUTORITE_DECI_ID.eq(it)) },
                     servicePublicDeci?.let { DSL.and(PEI.SERVICE_PUBLIC_DECI_ID.eq(it)) },
-                    peiDisponibiliteTerrestre?.let { DSL.and(PEI.DISPONIBILITE_TERRESTRE.eq(it)) },
+                    // Filtrage disponibilité terrestre
+                    if (peiDisponibiliteTerrestre == Disponibilite.INDISPONIBLE && hasIndispoTemp != null) {
+                        indispoTempCondition(hasIndispoTemp, dateUtils)
+                    } else {
+                        peiDisponibiliteTerrestre?.let { DSL.and(PEI.DISPONIBILITE_TERRESTRE.eq(it)) }
+                    },
                     penaDisponibiliteHbe?.let { DSL.and(PENA.DISPONIBILITE_HBE.eq(it)) },
                     anomalieId?.let { DSL.and(L_PEI_ANOMALIE.ANOMALIE_ID.eq(it)) },
                     idIndisponibiliteTemporaire?.let {

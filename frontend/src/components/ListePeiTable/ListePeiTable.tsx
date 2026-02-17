@@ -1,4 +1,6 @@
+import { useFormik } from "formik";
 import { useState } from "react";
+import useQueryParams from "../../components/Fetch/useQueryParams.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
@@ -7,12 +9,38 @@ import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
 import NOMENCLATURE from "../../enums/NomenclaturesEnum.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import url from "../../module/fetch.tsx";
-import { filterValuesToVariable } from "../../pages/Pei/FilterPei.tsx";
+import {
+  filterValuesToVariable,
+  filterVariableToValues,
+} from "../../pages/Pei/FilterPei.tsx";
 import getColumnPeiByStringArray from "../../utils/columnUtils.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
 import QueryTableTournee from "../ListeTourneeTable/QueryTableTournee.tsx";
 import useLocalisation from "../Localisation/useLocalisation.tsx";
+
+const useFilterContextPei = (initialValues: any) => {
+  const { filterBy } = useQueryParams();
+  const transformedFilterBy = filterVariableToValues(filterBy ?? {});
+
+  const formik = useFormik({
+    initialValues: transformedFilterBy ?? initialValues,
+    validateOnChange: false,
+    validateOnBlur: true,
+    onSubmit: () => {
+      // Le filtre s'applique automatiquement via le changement des valeurs
+      // et la mise à jour des query params. Aucune action supplémentaire requise.
+    },
+  });
+
+  return {
+    values: formik.values,
+    setValues: formik.setValues,
+    setFieldValue: formik.setFieldValue,
+    handleChange: formik.handleChange,
+    formik,
+  };
+};
 
 const ListPei = ({
   filterPage,
@@ -121,7 +149,7 @@ const ListPei = ({
   }
   const [idPei, setIdPei] = useState(null);
 
-  const queryTableFilterContext = useFilterContext({ filter });
+  const queryTableFilterContext = useFilterContextPei({ filter });
   const queryTableTourneeContext = useFilterContext({
     tourneeLibelle: undefined,
     tourneeOrganismeLibelle: undefined,
