@@ -376,7 +376,7 @@ const RcciForm = () => {
   const { run: runReferentielState } = referentielState;
 
   useEffect(() => {
-    if (!values.rcci?.rcciX || !values.rcci?.rcciY) {
+    if (!values.rcci?.rcciX || !values.rcci?.rcciY || !values.rcci?.rcciSrid) {
       return;
     }
     if (
@@ -388,16 +388,17 @@ const RcciForm = () => {
         coordonneeY: values.coordonneeYToDisplay,
         srid: values.typeSystemeSrid,
       });
-      run({
-        geometry: `SRID=${values.rcci?.rcciSrid};POINT(${values.rcci?.rcciX} ${values.rcci?.rcciY})`,
-      });
+      const geometry = `SRID=${values.rcci.rcciSrid};POINT(${values.rcci.rcciX} ${values.rcci.rcciY})`;
 
-      runReferentielState({
-        geometrie: `SRID=${values.rcci?.rcciSrid};POINT(${values.rcci?.rcciX} ${values.rcci?.rcciY})`,
-      });
+      if (geometry) {
+        run({ geometry });
+        runReferentielState({ geometrie: geometry });
+      }
     }
 
-    const coordonnees = geometrieState?.data?.find((e) => e.srid === srid);
+    const coordonnees = geometrieState?.data?.find(
+      (e: { srid: number }) => e.srid === srid,
+    );
 
     if (coordonnees != null) {
       setFieldValue("rcci.rcciX", coordonnees?.coordonneeX);
