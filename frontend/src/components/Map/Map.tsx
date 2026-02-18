@@ -326,6 +326,10 @@ export const useMapComponent = ({
                   );
                   let result: string;
 
+                  // Nombre de décimales à afficher
+                  const decimals = 6;
+                  const latitude = coord[1].toFixed(decimals);
+                  const longitude = coord[0].toFixed(decimals);
                   if (
                     afficheCoordonneesState.data?.[
                       PARAMETRE.COORDONNEES_FORMAT_AFFICHAGE
@@ -333,11 +337,23 @@ export const useMapComponent = ({
                     TYPE_AFFICHAGE_COORDONNEES.DEGRES_SEXAGESIMAUX
                   ) {
                     result =
-                      degreesToStringHDMS("NS", coord[1], 4) +
+                      degreesToStringHDMS(
+                        "NS",
+                        parseFloat(latitude),
+                        decimals,
+                      ) +
                       " " +
-                      degreesToStringHDMS("EO", coord[0], 4);
+                      degreesToStringHDMS(
+                        "EO",
+                        parseFloat(longitude),
+                        decimals,
+                      );
                   } else {
-                    result = coord[0] + " " + coord[1];
+                    result =
+                      "x : " +
+                      parseFloat(longitude) +
+                      ", y : " +
+                      parseFloat(latitude);
                   }
                   return result;
                 }
