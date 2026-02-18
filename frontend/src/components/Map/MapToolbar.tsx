@@ -418,31 +418,29 @@ const MapToolbar = forwardRef(
     },
     ref,
   ) => {
-    const [zoom, setZoom] = useState<number>(
-      Math.floor(map.getView().getZoom() ?? 0),
-    );
+    const [zoom, setZoom] = useState<number>(map.getView().getZoom() ?? 0);
     const { user } = useAppContext();
 
     useEffect(() => {
       // setActiveTool("move");
-      setZoom(Math.floor(map.getView().getZoom() ?? 0));
+      setZoom(map.getView().getZoom() ?? 0);
     }, [map]);
 
     map.getView().on("change:resolution", () => {
-      if ((map.getView().getZoom() ?? 0) % 1 === 0) {
-        setZoom(Math.floor(map.getView().getZoom() ?? 0));
-      }
+      setZoom(map.getView().getZoom() ?? 0);
     });
 
     function zoomIn() {
-      if ((map.getView().getZoom() ?? 0) < map.getView().getMaxZoom()) {
-        map.getView().setZoom(Math.floor((map.getView().getZoom() ?? 0) + 1));
+      const currentZoom = zoom ?? 0;
+      if (currentZoom < map.getView().getMaxZoom()) {
+        map.getView().setZoom(currentZoom + 1);
       }
     }
 
     function zoomOut() {
-      if ((map.getView().getZoom() ?? 0) > map.getView().getMinZoom()) {
-        map.getView().setZoom(Math.floor((map.getView().getZoom() ?? 0) - 1));
+      const currentZoom = zoom ?? 0;
+      if (currentZoom > map.getView().getMinZoom()) {
+        map.getView().setZoom(currentZoom - 1);
       }
     }
 
