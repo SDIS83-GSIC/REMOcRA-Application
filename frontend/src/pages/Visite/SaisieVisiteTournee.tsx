@@ -103,21 +103,28 @@ const SaisieVisiteTournee = ({
 
   const valuesMemo = useMemo(() => {
     const listeElements: SimplifiedVisiteEntity[] = [];
-    tourneeInformations.data?.listCDPByPeiTournee.forEach((cdp) =>
-      listeElements.push({
-        visitePeiId: cdp.peiId,
-        visiteObservation: "",
-        listeAnomalie: listeAnomaliesAssignable.data[cdp.peiId],
-        ctrlDebitPression: {
-          visiteCtrlDebitPressionDebit: cdp.visiteCtrlDebitPressionDebit,
-          visiteCtrlDebitPressionPression: cdp.visiteCtrlDebitPressionPression,
-          visiteCtrlDebitPressionPressionDyn:
-            cdp.visiteCtrlDebitPressionPressionDyn,
-        },
-        isNoAnomalieChecked: false,
-        isSameAnomalieChecked: false,
-        isModified: false,
-      }),
+    tourneeInformations.data?.listCDPByPeiTournee.forEach(
+      (cdp: {
+        peiId: string;
+        visiteCtrlDebitPressionDebit: number | undefined;
+        visiteCtrlDebitPressionPression: number | undefined;
+        visiteCtrlDebitPressionPressionDyn: number | undefined;
+      }) =>
+        listeElements.push({
+          visitePeiId: cdp.peiId,
+          visiteObservation: "",
+          listeAnomalie: listeAnomaliesAssignable.data?.[cdp.peiId] ?? [],
+          ctrlDebitPression: {
+            visiteCtrlDebitPressionDebit: cdp.visiteCtrlDebitPressionDebit,
+            visiteCtrlDebitPressionPression:
+              cdp.visiteCtrlDebitPressionPression,
+            visiteCtrlDebitPressionPressionDyn:
+              cdp.visiteCtrlDebitPressionPressionDyn,
+          },
+          isNoAnomalieChecked: false,
+          isSameAnomalieChecked: false,
+          isModified: false,
+        }),
     );
     return {
       tourneeId: tourneeId,
