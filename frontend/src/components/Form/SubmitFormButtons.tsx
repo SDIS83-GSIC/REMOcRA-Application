@@ -1,3 +1,4 @@
+import { useFormikContext } from "formik";
 import { Button } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -14,8 +15,11 @@ const SubmitFormButtons = ({
   submitTitle = "Enregistrer",
   beforeReturn,
 }: SubmitButtonType) => {
+  const formik = useFormikContext();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const isDisabled = formik.isSubmitting || disabledValide;
 
   return (
     <Row className={"my-3 d-flex justify-content-center"}>
@@ -45,7 +49,7 @@ const SubmitFormButtons = ({
           type="submit"
           variant={"primary"}
           onClick={onClick}
-          disabled={disabledValide}
+          disabled={isDisabled}
         >
           {submitTitle}
         </Button>

@@ -1,5 +1,5 @@
 import { Formik } from "formik";
-import { ReactNode, SetStateAction, useState } from "react";
+import { ReactNode, SetStateAction, useRef, useState } from "react";
 import { Container } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
@@ -131,6 +131,8 @@ const MyFormik = (props: MyFormikProps) => {
     props.fluid ?? false,
   );
 
+  const isSubmittingRef = useRef(false);
+
   return (
     <Formik
       innerRef={props.innerRef}
@@ -139,12 +141,17 @@ const MyFormik = (props: MyFormikProps) => {
       initialStatus={props.initialStatus}
       validationSchema={props.validationSchema}
       onSubmit={async (values, { setSubmitting }) => {
+        if (isSubmittingRef.current) {
+          return;
+        }
+        isSubmittingRef.current = true;
         const variables = props.prepareVariables
           ? props.prepareVariables(values)
           : values;
         try {
           await submitState.run(variables);
         } finally {
+          isSubmittingRef.current = false;
           setSubmitting(false);
         }
       }}
