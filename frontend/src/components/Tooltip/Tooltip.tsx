@@ -10,6 +10,7 @@ const TooltipCustom = ({
   maxWidth,
   children,
   nowrap = true,
+  visibleMap = true,
 }: TooltipType) => {
   const [showTooltip, setShowTooltip] = useState(false);
 
@@ -24,8 +25,10 @@ const TooltipCustom = ({
         /*
                Ajoute la tooltips au composant map-container si il existe pour qu'elle s'affiche
                aussi en fullscreen
-           */
-        container={document.getElementById("map-container")}
+        */
+        container={
+          visibleMap ? document.getElementById("map-container") : document.body
+        }
         show={showTooltip}
         overlay={
           <Popover id={tooltipId} className="tooltip-popover">
@@ -63,6 +66,7 @@ type TooltipType = {
   children: React.ReactElement | ((props: any) => React.ReactNode);
   maxWidth?: number;
   nowrap?: boolean;
+  visibleMap?: boolean;
 };
 
 export default TooltipCustom;

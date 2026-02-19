@@ -275,6 +275,9 @@ const ExecuteRapportPersonnalise = () => {
               contexteLibelle="Rapport personnalisé"
               url="/api/rapport-personnalise/parametres/"
               onParametresChange={setListeParametres}
+              visibleMap={
+                tableau?.geometries != null && tableau.geometries.length !== 0
+              }
             />
           </MyFormik>
         </Col>

@@ -48,6 +48,7 @@ function buildDynamicForm(
   values: any,
   setFieldValue: (name: string, e: any) => void,
   onGeometrySelect?: (geometryType: string, geometryCode: string) => void,
+  visibleMap?: boolean,
 ) {
   switch (TYPE_PARAMETRE_RAPPORT_COURRIER[element.dynamicFormParametreType]) {
     case TYPE_PARAMETRE_RAPPORT_COURRIER.CHECKBOX_INPUT:
@@ -61,6 +62,7 @@ function buildDynamicForm(
             element.dynamicFormParametreValeurDefaut === "true"
           }
           tooltipText={element.dynamicFormParametreDescription}
+          visibleMap={visibleMap}
         />
       );
     case TYPE_PARAMETRE_RAPPORT_COURRIER.NUMBER_INPUT:
@@ -71,6 +73,7 @@ function buildDynamicForm(
           required={element.dynamicFormParametreIsRequired}
           value={element.dynamicFormParametreValeurDefaut}
           tooltipText={element.dynamicFormParametreDescription}
+          visibleMap={visibleMap}
         />
       );
     case TYPE_PARAMETRE_RAPPORT_COURRIER.TEXT_INPUT:
@@ -81,6 +84,7 @@ function buildDynamicForm(
           required={element.dynamicFormParametreIsRequired}
           value={element.dynamicFormParametreValeurDefaut}
           tooltipText={element.dynamicFormParametreDescription}
+          visibleMap={visibleMap}
         />
       );
     case TYPE_PARAMETRE_RAPPORT_COURRIER.DATE_INPUT:
@@ -91,11 +95,13 @@ function buildDynamicForm(
           required={element.dynamicFormParametreIsRequired}
           defaultValue={element.dynamicFormParametreValeurDefaut}
           tooltipText={element.dynamicFormParametreDescription}
+          visibleMap={visibleMap}
         />
       );
     case TYPE_PARAMETRE_RAPPORT_COURRIER.SELECT_INPUT:
       return (
         <SelectInput
+          visibleMap={visibleMap}
           name={element.dynamicFormParametreCode}
           label={element.dynamicFormParametreLibelle}
           required={element.dynamicFormParametreIsRequired}
@@ -189,6 +195,7 @@ const GenererForm = ({
   url,
   onGeometrySelect,
   onParametresChange,
+  visibleMap = true,
 }: {
   listeIdLibelleDescription: {
     id: string;
@@ -197,6 +204,7 @@ const GenererForm = ({
   }[];
   contexteLibelle: string;
   reference?: boolean;
+  visibleMap?: boolean;
   url: string;
   onGeometrySelect?: (geometryType: string, geometryCode: string) => void;
   onParametresChange?: (parametres: DynamicFormParametreFront[]) => void;
@@ -279,6 +287,7 @@ const GenererForm = ({
                 values,
                 setFieldValue,
                 onGeometrySelect,
+                visibleMap,
               );
             },
           )

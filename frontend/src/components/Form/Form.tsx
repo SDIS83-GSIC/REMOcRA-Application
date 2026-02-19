@@ -25,6 +25,7 @@ type InputType = {
   password?: boolean;
   onChange?: (...args: any[]) => void;
   onBlur?: (...args: any[]) => void;
+  visibleMap?: boolean;
 };
 
 export const FormContainer = (props: any) => <FormikForm {...props} />;
@@ -56,6 +57,7 @@ export const FormLabel = ({
   required = true,
   disabled = false,
   tooltipText = undefined,
+  visibleMap = true,
 }: {
   name: string;
   label?: string;
@@ -63,6 +65,7 @@ export const FormLabel = ({
   required?: boolean;
   disabled?: boolean;
   tooltipText?: string;
+  visibleMap?: boolean;
 }) => {
   return (
     label && (
@@ -78,7 +81,11 @@ export const FormLabel = ({
           {label} {required === true && <span className="text-danger">*</span>}
         </Form.Label>
         {tooltipText && (
-          <TooltipCustom tooltipText={tooltipText} tooltipId={name}>
+          <TooltipCustom
+            tooltipText={tooltipText}
+            tooltipId={name}
+            visibleMap={visibleMap}
+          >
             <IconInfo />
           </TooltipCustom>
         )}
@@ -99,6 +106,7 @@ export const TextInput = ({
   password = false,
   onChange,
   onBlur,
+  visibleMap = true,
 }: InputType) => {
   const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
@@ -109,6 +117,7 @@ export const TextInput = ({
         required={required}
         tooltipText={tooltipText}
         name={name}
+        visibleMap={visibleMap}
       />
       <Form.Control
         id={name}
@@ -218,6 +227,7 @@ type CheckBoxInputType = {
   checked?: boolean;
   tooltipText?: string | ReactNode;
   onChange?: (...args: any[]) => void;
+  visibleMap?: boolean;
 };
 
 export const CheckBoxInput = ({
@@ -228,6 +238,7 @@ export const CheckBoxInput = ({
   checked = false,
   tooltipText,
   onChange,
+  visibleMap = true,
 }: CheckBoxInputType) => {
   const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
@@ -248,7 +259,11 @@ export const CheckBoxInput = ({
       >
         {label}
         {tooltipText && (
-          <TooltipCustom tooltipText={tooltipText} tooltipId={name}>
+          <TooltipCustom
+            tooltipText={tooltipText}
+            tooltipId={name}
+            visibleMap={visibleMap}
+          >
             <IconInfo />
           </TooltipCustom>
         )}
@@ -342,6 +357,7 @@ export const NumberInput = ({
   min,
   step,
   max,
+  visibleMap = true,
   ...rest
 }: InputType & {
   min?: number;
@@ -357,6 +373,7 @@ export const NumberInput = ({
         required={required}
         tooltipText={tooltipText}
         name={name}
+        visibleMap={visibleMap}
       />
       <Form.Control
         id={name}
@@ -505,6 +522,7 @@ export const DateTimeInput = ({
   tooltipText,
   dateType = "datetime-local",
   value,
+  visibleMap = true,
   ...rest
 }: DateType) => {
   const [field, meta] = useField(name);
@@ -518,6 +536,7 @@ export const DateTimeInput = ({
           className={"me-2"}
           tooltipText={tooltipText}
           name={name}
+          visibleMap={visibleMap}
         />
       </Row>
       <Row className="mx-1">
@@ -545,6 +564,7 @@ type MultiselectType = InputType & {
   onChange: (e: any) => any;
   tooltipText?: string;
   noOptionsMessage?: string;
+  visibleMap?: boolean;
 };
 
 export const Multiselect = ({
@@ -604,6 +624,7 @@ export const SelectInput = ({
   onChange,
   disabled = false,
   noOptionsMessage = "Aucune donnée trouvée",
+  visibleMap = true,
 }: MultiselectType) => {
   const [, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
@@ -615,6 +636,7 @@ export const SelectInput = ({
         required={required}
         tooltipText={tooltipText}
         name={name}
+        visibleMap={visibleMap}
       />
       <ReactSelect
         id={name}
