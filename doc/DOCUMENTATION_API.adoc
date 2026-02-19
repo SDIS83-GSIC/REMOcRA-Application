@@ -51,6 +51,25 @@ Retourne les types d'organismes susceptibles d'exploiter REMOcRA.
 
 *Droit requis :* `RECEVOIR`
 
+*Structure de réponse :*
+
+Tableau d'objets `TypeOrganisme` :
+
+[source,json]
+----
+[
+  {
+    "typeOrganismeId": "uuid",
+    "typeOrganismeActif": true,
+    "typeOrganismeProtected": false,
+    "typeOrganismeCode": "string",
+    "typeOrganismeLibelle": "string",
+    "typeOrganismeParentId": "uuid (optionnel)",
+    "typeOrganismeDroitApi": ["RECEVOIR", "TRANSMETTRE"]
+  }
+]
+----
+
 === Communes
 
 ==== `GET /communes`
@@ -64,6 +83,28 @@ Retourne la liste des communes.
 - `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
 
 *Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `Commune` :
+
+[source,json]
+----
+[
+  {
+    "communeId": "uuid",
+    "communeLibelle": "string",
+    "communeCodeInsee": "string",
+    "communeCodePostal": "string",
+    "communeGeometrie": {
+      "type": "Polygon",
+      "coordinates": [...]
+    },
+    "communePprif": false,
+    "communeCode": "string (optionnel)"
+  }
+]
+----
 
 === Voies
 
@@ -82,6 +123,25 @@ Retourne les voies d'une commune donnée.
 
 *Droit requis :* `RECEVOIR`
 
+*Structure de réponse :*
+
+Tableau d'objets `Voie` :
+
+[source,json]
+----
+[
+  {
+    "voieId": "uuid",
+    "voieLibelle": "string",
+    "voieGeometrie": {
+      "type": "LineString",
+      "coordinates": [...]
+    },
+    "voieCommuneId": "uuid"
+  }
+]
+----
+
 === Organismes
 
 ==== `GET /organismes`
@@ -94,6 +154,27 @@ Retourne les organismes susceptibles d'exploiter REMOcRA (utilisateurs nommés a
 - `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
 
 *Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `Organisme` :
+
+[source,json]
+----
+[
+  {
+    "organismeId": "uuid",
+    "organismeActif": true,
+    "organismeCode": "string",
+    "organismeLibelle": "string",
+    "organismeEmailContact": "string (optionnel)",
+    "organismeProfilOrganismeId": "uuid",
+    "organismeTypeOrganismeId": "uuid",
+    "organismeZoneIntegrationId": "uuid",
+    "organismeParentId": "uuid (optionnel)"
+  }
+]
+----
 
 == DECI - Points d'Eau Incendie
 
@@ -115,6 +196,50 @@ Retourne la liste des PEI en lien avec l'organisme courant. La structure de donn
 
 *Droit requis :* `RECEVOIR`
 
+*Structure de réponse :*
+
+Tableau d'objets `ModeleMinimalPei` conformes au modèle AFIGEO :
+
+[source,json]
+----
+[
+  {
+    "peiId": "uuid",
+    "peiNumeroComplet": "string",
+    "typePeiNexSis": "string (optionnel)",
+    "isDisponible": true,
+    "geometrie": {
+      "type": "Point",
+      "coordinates": [longitude, latitude]
+    },
+    "codeInsee": "string",
+    "communeLibelle": "string",
+    "idGestion": "string (optionnel)",
+    "nomGest": "string (optionnel)",
+    "peiNumeroInterne": "string",
+    "sourcePei": "string (optionnel)",
+    "diametre": 100,
+    "pibiDiametreCanalisation": 150,
+    "natureLibelle": "string (optionnel)",
+    "natureDeci": "string",
+    "site": "string (optionnel)",
+    "adresse": "string",
+    "pibiPressionDynamique": 4.5,
+    "pibiPression": 6.0,
+    "pibiDebit": 60,
+    "penaVolumeConstate": 120000,
+    "instantChangementDispo": "2024-12-25T14:30:00.000Z",
+    "dateMiseEnService": "2024-01-15T00:00:00.000Z",
+    "dateMiseAJour": "2024-12-20T10:30:00.000Z",
+    "dateDernierControleTechnique": "2024-11-15T09:00:00.000Z",
+    "dateDerniereRop": "2024-10-10T08:00:00.000Z",
+    "precision": "string (optionnel)",
+    "isNonConforme": false,
+    "isAccessibleHbe": true
+  }
+]
+----
+
 ==== `GET /{numeroComplet}`
 Retourne les informations communes à tout type de PEI d'un PEI spécifique.
 
@@ -123,6 +248,10 @@ Retourne les informations communes à tout type de PEI d'un PEI spécifique.
 - `numeroComplet` (requis) : Numéro du PEI
 
 *Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Objet `ModeleMinimalPei` (voir structure ci-dessus)
 
 === Caractéristiques du PEI
 
@@ -135,6 +264,20 @@ Retourne les caractéristiques techniques propres au PEI et à son type (PIBI ou
 
 *Droit requis :* `RECEVOIR`
 
+*Structure de réponse :*
+
+Tableau d'objets `PeiCaracteristique` :
+
+[source,json]
+----
+[
+  {
+    "caracteristique": "string (nom de la caractéristique)",
+    "value": "valeur (type variable selon la caractéristique)"
+  }
+]
+----
+
 ==== `PUT /{numeroComplet}/pibi-caracteristiques`
 Modifie les caractéristiques techniques propres au PIBI.
 
@@ -142,9 +285,33 @@ Modifie les caractéristiques techniques propres au PIBI.
 
 - `numeroComplet` (requis) : Numéro du PEI
 
-*Corps de la requête :* Objet `ApiPibiFormData`
-
 *Droit requis :* `TRANSMETTRE`
+
+*Structure de requête :*
+
+Objet `ApiPibiFormData` :
+
+[source,json]
+----
+{
+  "codeDiametre": "string (optionnel)",
+  "diametreCanalisation": 150,
+  "peiJumele": "string (optionnel)",
+  "inviolabilite": true,
+  "renversable": false,
+  "codeMarque": "string (optionnel)",
+  "codeModele": "string (optionnel)",
+  "anneeFabrication": 2020,
+  "codeTypeReseau": "string (optionnel)",
+  "codeTypeCanalisation": "string (optionnel)",
+  "reseauSurpresse": false,
+  "reseauAdditive": false
+}
+----
+
+*Structure de réponse :*
+
+Objet `ModeleMinimalPei` mis à jour (voir structure ci-dessus)
 
 ==== `PUT /{numeroComplet}/pena-caracteristiques`
 Modifie les caractéristiques techniques propres au PENA.
@@ -153,9 +320,60 @@ Modifie les caractéristiques techniques propres au PENA.
 
 - `numeroComplet` (requis) : Numéro du PEI
 
-*Corps de la requête :* Objet `ApiPenaFormData`
-
 *Droit requis :* `TRANSMETTRE`
+
+*Structure de requête :*
+
+Objet `ApiPenaFormData` :
+
+[source,json]
+----
+{
+  "capaciteIllimitee": false,
+  "capaciteIncertaine": false,
+  "capacite": 120000,
+  "quantiteAppoint": 30.5,
+  "codeMateriau": "string (optionnel)",
+  "equipeHBE": true
+}
+----
+
+*Structure de réponse :*
+
+Objet `ModeleMinimalPei` mis à jour (voir structure ci-dessus)
+
+=== Différentiel des modifications
+
+==== `GET /diff`
+Liste des PEI ayant subi une modification (ajout, modification ou suppression) postérieure au moment passé en paramètre.
+
+*Paramètres de requête :*
+
+- `moment` (requis) : Moment à partir duquel retourner les résultats, format YYYY-MM-DD hh:mm
+
+*Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `PeiDiff` :
+
+[source,json]
+----
+[
+  {
+    "peiId": "uuid",
+    "numeroComplet": "string",
+    "momentModification": "2024-12-25T14:30:00.000Z",
+    "auteurModification": "string (optionnel)",
+    "auteur": {
+      "type": "string",
+      "details": "object"
+    },
+    "typeOperation": "INSERT | UPDATE | DELETE",
+    "typeObjet": "string"
+  }
+]
+----
 
 == DECI - Référentiels
 
@@ -166,21 +384,96 @@ Modifie les caractéristiques techniques propres au PENA.
 ==== `GET /naturesDECI`
 Retourne les types de DECI applicables sur les PEI (publique, privée, privée sous convention, ICPE, ICPE conventionnée).
 
-==== `GET /niveaux`
-Retourne les valeurs de positionnement par rapport au sol possibles pour un PEI.
-
-==== `GET /domaines`
-Retourne les natures domaniales des terrains sur lesquels les PEI sont localisés.
-
-==== `GET /typesVisites`
-Retourne les types de visites possibles sur les PEI.
-
-*Paramètres communs :*
+*Paramètres de requête :*
 
 - `limit` (optionnel) : Nombre maximum de résultats à retourner
 - `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
 
 *Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `NatureDeci` :
+
+[source,json]
+----
+[
+  {
+    "natureDeciId": "uuid",
+    "natureDeciActif": true,
+    "natureDeciCode": "string",
+    "natureDeciLibelle": "string",
+    "natureDeciProtected": false
+  }
+]
+----
+
+==== `GET /niveaux`
+Retourne les valeurs de positionnement par rapport au sol possibles pour un PEI.
+
+*Paramètres de requête :*
+
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `Niveau` :
+
+[source,json]
+----
+[
+  {
+    "niveauId": "uuid",
+    "niveauActif": true,
+    "niveauCode": "string",
+    "niveauLibelle": "string",
+    "niveauProtected": false
+  }
+]
+----
+
+==== `GET /domaines`
+Retourne les natures domaniales des terrains sur lesquels les PEI sont localisés.
+
+*Paramètres de requête :*
+
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `Domaine` :
+
+[source,json]
+----
+[
+  {
+    "domaineId": "uuid",
+    "domaineActif": true,
+    "domaineCode": "string",
+    "domaineLibelle": "string"
+  }
+]
+----
+
+==== `GET /typesVisites`
+Retourne les types de visites possibles sur les PEI.
+
+*Paramètres de requête :*
+
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau de valeurs énumérées (TypeVisite) : `["CTP", "ROI", "ROP", "NP", ...]`
 
 === Référentiels PIBI
 
@@ -189,12 +482,59 @@ Retourne les types de visites possibles sur les PEI.
 ==== `GET /naturesPEI`
 Retourne les natures de PEI possibles pour les PEI de type PIBI.
 
+*Paramètres de requête :*
+
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `Nature` (filtrés pour PIBI) :
+
+[source,json]
+----
+[
+  {
+    "natureId": "uuid",
+    "natureActif": true,
+    "natureCode": "string",
+    "natureLibelle": "string",
+    "natureTypePei": "PIBI",
+    "natureProtected": false,
+    "natureTypePeiNexsis": "string (optionnel)"
+  }
+]
+----
+
 ==== `GET /diametres/{natureCode}`
 Retourne les diamètres de demi-raccord possibles pour une nature de PIBI.
 
 *Paramètres de chemin :*
 
 - `natureCode` (requis) : Code de nature PIBI
+
+*Paramètres de requête :*
+
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `ApiDiametreCodeLibelle` :
+
+[source,json]
+----
+[
+  {
+    "diametreCode": "string",
+    "diametreLibelle": "string"
+  }
+]
+----
 
 ==== `GET /{natureCode}/naturesAnomalies`
 Retourne les types d'anomalies pouvant être constatées pour une nature de PIBI et un type de visite spécifiques.
@@ -206,9 +546,52 @@ Retourne les types d'anomalies pouvant être constatées pour une nature de PIBI
 *Paramètres de requête :*
 
 - `typeVisite` (optionnel) : Type de la visite
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `ApiAnomalieWithNature` :
+
+[source,json]
+----
+[
+  {
+    "anomalieCode": "string",
+    "anomalieLibelle": "string",
+    "poidsAnomalieValIndispoTerrestre": 5,
+    "listTypeVisite": ["CTP", "ROI"]
+  }
+]
+----
 
 ==== `GET /marques`
 Retourne les marques susceptibles d'équiper le parc de PIBI.
+
+*Paramètres de requête :*
+
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `MarquePibi` :
+
+[source,json]
+----
+[
+  {
+    "marquePibiId": "uuid",
+    "marquePibiActif": true,
+    "marquePibiCode": "string",
+    "marquePibiLibelle": "string"
+  }
+]
+----
 
 ==== `GET /modeles`
 Retourne les modèles susceptibles d'équiper le parc de PIBI.
@@ -216,14 +599,79 @@ Retourne les modèles susceptibles d'équiper le parc de PIBI.
 *Paramètres de requête :*
 
 - `codeMarque` (optionnel) : Code de la marque
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `ModelePibi` :
+
+[source,json]
+----
+[
+  {
+    "modelePibiId": "uuid",
+    "modelePibiActif": true,
+    "modelePibiCode": "string",
+    "modelePibiLibelle": "string",
+    "modelePibiMarqueId": "uuid"
+  }
+]
+----
 
 ==== `GET /typeReseau`
 Retourne les types de réseau.
 
+*Paramètres de requête :*
+
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `TypeReseau` :
+
+[source,json]
+----
+[
+  {
+    "typeReseauId": "uuid",
+    "typeReseauActif": true,
+    "typeReseauCode": "string",
+    "typeReseauLibelle": "string"
+  }
+]
+----
+
 ==== `GET /typeCanalisation`
 Retourne les types de canalisation.
 
+*Paramètres de requête :*
+
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
 *Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `TypeCanalisation` :
+
+[source,json]
+----
+[
+  {
+    "typeCanalisationId": "uuid",
+    "typeCanalisationActif": true,
+    "typeCanalisationCode": "string",
+    "typeCanalisationLibelle": "string"
+  }
+]
+----
 
 === Référentiels PENA
 
@@ -232,8 +680,57 @@ Retourne les types de canalisation.
 ==== `GET /naturesPEI`
 Retourne les natures de PEI possibles pour les PEI de type PENA.
 
+*Paramètres de requête :*
+
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `Nature` (filtrés pour PENA) :
+
+[source,json]
+----
+[
+  {
+    "natureId": "uuid",
+    "natureActif": true,
+    "natureCode": "string",
+    "natureLibelle": "string",
+    "natureTypePei": "PENA",
+    "natureProtected": false,
+    "natureTypePeiNexsis": "string (optionnel)"
+  }
+]
+----
+
 ==== `GET /materiaux`
 Retourne les matériaux possibles pour les PEI de type PENA.
+
+*Paramètres de requête :*
+
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `Materiau` :
+
+[source,json]
+----
+[
+  {
+    "materiauId": "uuid",
+    "materiauActif": true,
+    "materiauCode": "string",
+    "materiauLibelle": "string"
+  }
+]
+----
 
 ==== `GET /{natureCode}/naturesAnomalies`
 Retourne les types d'anomalies pouvant être constatées pour une nature de PENA et un type de visite spécifiques.
@@ -245,8 +742,262 @@ Retourne les types d'anomalies pouvant être constatées pour une nature de PENA
 *Paramètres de requête :*
 
 - `typeVisite` (optionnel) : Type de la visite
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
 
 *Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `ApiAnomalieWithNature` (voir format dans section PIBI)
+
+== DECI - Visites
+
+*Base URL :* `/api/deci/pei/{numeroComplet}/visites`
+
+=== Liste des visites d'un PEI
+
+==== `GET /`
+Retourne les visites associées à un PEI. Une visite correspond à une séance terrain auprès d'un PEI à une date donnée dans un contexte périodique (contrôle technique périodique, reconnaissance opérationnelle périodique) ou non (reconnaissance initiale, intervention).
+
+*Paramètres de chemin :*
+
+- `numeroComplet` (requis) : Numéro complet du PEI
+
+*Paramètres de requête :*
+
+- `codeTypeVisite` (optionnel) : Code du type de visite
+- `moment` (optionnel) : Moment à partir duquel retourner les résultats, format YYYY-MM-DD hh:mm
+- `derniereOnly` (optionnel) : Renvoyer uniquement la dernière visite (boolean)
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `ApiVisite` :
+
+[source,json]
+----
+[
+  {
+    "visiteId": "string",
+    "moment": "2024-12-25T14:30:00.000Z",
+    "visiteTypeVisite": "CTP",
+    "anomalies": ["ANOM_001", "ANOM_002"]
+  }
+]
+----
+
+=== Ajouter une visite
+
+==== `POST /`
+Ajoute une visite à un PEI en précisant le type de visite, une liste de points contrôlés et une liste d'anomalies éventuellement constatées. Des mesures de débit et de pression peuvent également être transmises dans le cas d'un "Contrôle Technique Périodique".
+
+*Paramètres de chemin :*
+
+- `numeroComplet` (requis) : Numéro complet du PEI
+
+*Droit requis :* `TRANSMETTRE`
+
+*Structure de requête :*
+
+Objet `ApiVisiteFormData` :
+
+[source,json]
+----
+{
+  "date": "2024-12-25",
+  "typeVisite": "CTP",
+  "agent1": "Dupont Jean",
+  "agent2": "Martin Paul",
+  "anomaliesControlees": ["ANOM_001", "ANOM_002"],
+  "anomaliesConstatees": ["ANOM_003"],
+  "debit": 60,
+  "pression": 6.0,
+  "pressionDynamique": 4.5,
+  "observations": "RAS"
+}
+----
+
+*Réponse :* Code HTTP 201 (Créée avec succès)
+
+=== Détails d'une visite
+
+==== `GET /{idVisite}`
+Retourne l'information détaillée d'une visite spécifique dont les éventuelles informations de débit et pressions.
+
+*Paramètres de chemin :*
+
+- `numeroComplet` (requis) : Numéro complet du PEI
+- `idVisite` (requis) : Identifiant de la visite
+
+*Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Objet `ApiVisiteSpecifique` :
+
+[source,json]
+----
+{
+  "moment": "2024-12-25T14:30:00.000Z",
+  "visiteId": "uuid",
+  "typeVisite": "CTP",
+  "agent1": "Dupont Jean",
+  "agent2": "Martin Paul",
+  "debit": 60,
+  "pression": 6.0,
+  "pressionDyn": 4.5,
+  "ctrlDebitPression": true,
+  "anomaliesConstatees": ["ANOM_001", "ANOM_002"],
+  "anomaliesControlees": ["ANOM_003"],
+  "observations": "RAS"
+}
+----
+
+=== Modifier une visite
+
+==== `PUT /{idVisite}`
+Modifie les informations relatives à une visite spécifique.
+
+*Paramètres de chemin :*
+
+- `numeroComplet` (requis) : Numéro complet du PEI
+- `idVisite` (requis) : Identifiant de la visite
+
+*Droit requis :* `TRANSMETTRE`
+
+*Structure de requête :*
+
+Objet `ApiUpdateVisiteFormData` :
+
+[source,json]
+----
+{
+  "agent1": "Dupont Jean",
+  "agent2": "Martin Paul",
+  "anomaliesControlees": ["ANOM_001", "ANOM_002"],
+  "anomaliesConstatees": ["ANOM_003"],
+  "debit": 60,
+  "pression": 6.0,
+  "pressionDynamique": 4.5,
+  "observations": "RAS"
+}
+----
+
+*Structure de réponse :*
+
+Objet `ApiVisiteSpecifique` mis à jour (voir structure ci-dessus)
+
+=== Supprimer une visite
+
+==== `DELETE /{idVisite}`
+Supprime une visite spécifique.
+
+*Paramètres de chemin :*
+
+- `numeroComplet` (requis) : Numéro complet du PEI
+- `idVisite` (requis) : Identifiant de la visite
+
+*Droit requis :* `TRANSMETTRE`
+
+*Réponse :* Code HTTP 200 (Succès)
+
+== DECI - Indisponibilités Temporaires
+
+*Base URL :* `/api/deci/indispoTemporaire`
+
+=== Liste des indisponibilités temporaires
+
+==== `GET /`
+Retourne la liste des indisponibilités temporaires de REMOcRA.
+
+*Paramètres de requête :*
+
+- `organismeApi` (optionnel) : Code de l'organisme API étant à l'origine de l'indisponibilité temporaire
+- `numeroComplet` (optionnel) : Ne renvoie que les indisponibilités temporaires liées à ce PEI
+- `statut` (optionnel) : Code du statut de l'indisponibilité temporaire ('EN_COURS', 'PLANIFIEE' ou 'TERMINEE')
+- `limit` (optionnel) : Nombre maximum de résultats à retourner
+- `offset` (optionnel) : Retourne les informations à partir de la n-ième ligne
+
+*Droit requis :* `RECEVOIR`
+
+*Structure de réponse :*
+
+Tableau d'objets `ApiIndispoTemporaire` :
+
+[source,json]
+----
+[
+  {
+    "indisponibiliteTemporaireId": "uuid",
+    "indisponibiliteTemporaireDateDebut": "2024-12-25T14:30:00.000Z",
+    "indisponibiliteTemporaireDateFin": "2024-12-26T14:30:00.000Z",
+    "indisponibiliteTemporaireMotif": "Travaux sur le réseau",
+    "indisponibiliteTemporaireObservation": "Remplacement de canalisation",
+    "indisponibiliteTemporaireBasculeAutoIndisponible": true,
+    "indisponibiliteTemporaireBasculeAutoDisponible": true,
+    "indisponibiliteTemporaireMailAvantIndisponibilite": true,
+    "indisponibiliteTemporaireMailApresIndisponibilite": true,
+    "listeNumeroPei": "PEI-001, PEI-002",
+    "organismeApiMaj": "SDIS_01"
+  }
+]
+----
+
+=== Ajouter une indisponibilité temporaire
+
+==== `POST /`
+Ajoute une nouvelle indisponibilité temporaire.
+
+*Droit requis :* `TRANSMETTRE`
+
+*Structure de requête :*
+
+Objet `ApiIndispoTempFormData` :
+
+[source,json]
+----
+{
+  "motif": "Travaux sur le réseau",
+  "observation": "Remplacement de canalisation",
+  "dateDebut": "2024-12-25T14:30:00.000Z",
+  "mailAvantIndisponibilite": true,
+  "mailApresIndisponibilite": true,
+  "basculeAutoDisponible": true,
+  "basculeAutoIndisponible": true,
+  "notificationDebut": "2024-12-25T08:00:00.000Z",
+  "notificationFin": "2024-12-26T18:00:00.000Z",
+  "notificationResteIndispo": null,
+  "dateFin": "2024-12-26T14:30:00.000Z",
+  "listeNumeroPei": ["PEI-001", "PEI-002"]
+}
+----
+
+*Structure de réponse :*
+
+Objet `ApiIndispoTemporaire` créé (voir structure ci-dessus)
+
+=== Modifier une indisponibilité temporaire
+
+==== `PUT /{idIndisponibiliteTemporaire}`
+Modifie les informations relatives à une indisponibilité temporaire.
+
+*Paramètres de chemin :*
+
+- `idIndisponibiliteTemporaire` (requis) : Identifiant de l'indisponibilité temporaire
+
+*Droit requis :* `TRANSMETTRE`
+
+*Structure de requête :*
+
+Objet `ApiIndispoTempFormData` (voir structure ci-dessus)
+
+*Structure de réponse :*
+
+Objet `ApiIndispoTemporaire` mis à jour (voir structure ci-dessus)
 
 == Documentation OpenAPI
 
