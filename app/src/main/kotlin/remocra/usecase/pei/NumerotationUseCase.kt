@@ -149,7 +149,6 @@ class NumerotationUseCase : AbstractUseCase() {
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01,
             CodeSdis.SDIS_22,
-            CodeSdis.SDIS_38,
             CodeSdis.SDIS_42,
             CodeSdis.SDIS_61,
             CodeSdis.SDIS_62,
@@ -161,6 +160,7 @@ class NumerotationUseCase : AbstractUseCase() {
             -> computeNumeroInterneMethodeA(pei)
             CodeSdis.SDIS_09,
             CodeSdis.SDIS_21,
+            CodeSdis.SDIS_38,
             CodeSdis.SDIS_77,
             CodeSdis.SDIS_89,
             CodeSdis.SDIS_973,
