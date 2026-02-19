@@ -13,6 +13,7 @@ import UpdatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/UpdateP
 import UpdateDebitSimultane from "../../pages/DebitSimultane/UpdateDebitSimultane.tsx";
 import ListIndisponibiliteTemporaire from "../../pages/IndisponibiliteTemporaire/ListIndisponibiliteTemporaire.tsx";
 import UpdateEvenement from "../../pages/ModuleCrise/Evenement/UpdateEvenement.tsx";
+import DocumentPei from "../../pages/Pei/DocumentPei.tsx";
 import FicheResume from "../../pages/Pei/FicheResume/FicheResume.tsx";
 import UpdatePeiPrescrit from "../../pages/PeiPrescrit/UpdatePeiPrescrit.tsx";
 import AireAspiration from "../../pages/Pena/AireAspiration.tsx";
@@ -27,6 +28,7 @@ import { useGet } from "../Fetch/useFetch.tsx";
 import {
   IconAireAspiration,
   IconClose,
+  IconDocument,
   IconEdit,
   IconIndisponibiliteTemporaire,
   IconOeil,
@@ -98,6 +100,9 @@ const TooltipMapPei = ({
 
   const [showFichePei, setShowFichePei] = useState(false);
   const handleCloseFichePei = () => setShowFichePei(false);
+
+  const [showDocumentPei, setShowDocumentPei] = useState(false);
+  const handleCloseDocumentPei = () => setShowDocumentPei(false);
 
   const [showIndispoTemp, setShowIndispoTemp] = useState(false);
   const handleCloseIndispoTemp = () => setShowIndispoTemp(false);
@@ -193,6 +198,25 @@ const TooltipMapPei = ({
                     >
                       <IconOeil />
                     </CustomLinkButton>
+                  </TooltipCustom>
+                </Col>
+              )}
+              {hasDroit(user, TYPE_DROIT.PEI_R) && (
+                <Col className="p-1" xs={"auto"}>
+                  <TooltipCustom
+                    tooltipText={"Consulter les documents du PEI"}
+                    tooltipId={"documents-pei-carte"}
+                  >
+                    <Button
+                      variant="info"
+                      onClick={() => {
+                        setShowDocumentPei(true);
+                        overlay?.setPosition(undefined);
+                      }}
+                      disabled={showFormPei || showFormVisite.show}
+                    >
+                      <IconDocument />
+                    </Button>
                   </TooltipCustom>
                 </Col>
               )}
@@ -307,6 +331,19 @@ const TooltipMapPei = ({
                   />
                 </Volet>
               )}
+              <Volet
+                handleClose={handleCloseDocumentPei}
+                show={showDocumentPei}
+                className="w-auto"
+              >
+                <DocumentPei
+                  peiId={elementId}
+                  titre={
+                    "Documents du PEI " +
+                    featureSelect?.getProperties().peiNumeroComplet
+                  }
+                />
+              </Volet>
               <Volet
                 handleClose={() => {
                   handleCloseIndispoTemp();

@@ -441,6 +441,8 @@ const SimpleModalButtonPrivate = ({ row, _button }: SimpleModalButtonType) => {
       simpleModal={simpleModal}
       textEnable={_button.textEnable ?? "Voir plus"}
       icon={_button.icon ?? <IconClose />}
+      disabled={_button.disable ? _button.disable(row) : false}
+      textDisable={_button.textDisable}
     />
   );
 };

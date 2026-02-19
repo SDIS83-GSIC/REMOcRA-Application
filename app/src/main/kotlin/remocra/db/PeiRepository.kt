@@ -34,6 +34,7 @@ import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
 import remocra.db.jooq.remocra.tables.references.LIEU_DIT
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.L_PEI_ANOMALIE
+import remocra.db.jooq.remocra.tables.references.L_PEI_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.MARQUE_PIBI
 import remocra.db.jooq.remocra.tables.references.MATERIAU
@@ -130,6 +131,10 @@ class PeiRepository
                 ).on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
                     .where(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID)).and(TOURNEE.RESERVATION_UTILISATEUR_ID.isNotNull),
             ).`as`("hasTourneeReservee"),
+            DSL.exists(
+                DSL.select(L_PEI_DOCUMENT.DOCUMENT_ID).from(L_PEI_DOCUMENT)
+                    .where(L_PEI_DOCUMENT.PEI_ID.eq(PEI.ID)),
+            ).`as`("hasDocuments"),
         )
             // Colonnes conditionnelles
             .let {
@@ -385,6 +390,7 @@ class PeiRepository
         val tourneeLibelle: String?,
         val hasTourneeReservee: Boolean = false,
         val hasIndispoTemp: Boolean = false,
+        val hasDocuments: Boolean,
         val gestionnaireLibelle: String?,
     )
 

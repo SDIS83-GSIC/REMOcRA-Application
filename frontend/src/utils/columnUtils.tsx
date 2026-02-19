@@ -9,6 +9,7 @@ import SelectIdLibelleDataFromList from "../components/Form/SelectIdLibelleFromL
 import {
   IconAireAspiration,
   IconCloseIndisponibiliteTemporaire,
+  IconDocument,
   IconList,
   IconLocation,
   IconOeil,
@@ -39,11 +40,23 @@ import STATUT_INDISPONIBILITE_TEMPORAIRE from "../enums/StatutIndisponibiliteTem
 import TYPE_PEI from "../enums/TypePeiEnum.tsx";
 import VRAI_FAUX from "../enums/VraiFauxEnum.tsx";
 import url from "../module/fetch.tsx";
+import DocumentPei from "../pages/Pei/DocumentPei.tsx";
 import FicheResume from "../pages/Pei/FicheResume/FicheResume.tsx";
 import { URLS } from "../routes.tsx";
 import getStringListeAnomalie from "./anomaliesUtils.tsx";
 import formatDateTime, { formatDateWithFallback } from "./formatDateUtils.tsx";
 import { IdCodeLibelleType } from "./typeUtils.tsx";
+
+type PeiRowType = {
+  original: {
+    peiId: string;
+    peiNumeroComplet: string;
+    peiTypePei?: string;
+    hasTourneeReservee?: boolean;
+    hasIndispoTemp?: boolean;
+    hasDocuments?: boolean;
+  };
+};
 
 function getColumnPeiByStringArray(
   handleTourneeButtonClick: (value: any) => void,
@@ -388,20 +401,18 @@ function getColumnPeiByStringArray(
       hasDroit(user, TYPE_DROIT.PEI_R)
     ) {
       listeButton.push({
-        row: (row) => {
-          return row;
-        },
+        row: (row: PeiRowType) => row,
         type: TYPE_BUTTON.SIMPLE_MODAL,
         icon: <IconSee />,
         textEnable: "Voir le résumé",
         simpleModal: {
-          content: (peiId: string, row: any) => (
+          content: (peiId: string, row: PeiRowType) => (
             <FicheResume
               peiId={peiId}
               peiNumeroComplet={row.original.peiNumeroComplet}
             />
           ),
-          header: (row) =>
+          header: (row: PeiRowType) =>
             "Fiche Résumé du PEI " + row.original.peiNumeroComplet,
         },
       });
@@ -409,9 +420,7 @@ function getColumnPeiByStringArray(
     // Si l'utilisateur ne peut pas update un PEI, on lui propose la fiche complète en lecture seule
     if (!canEditPei) {
       listeButton.push({
-        row: (row) => {
-          return row;
-        },
+        row: (row: PeiRowType) => row,
         type: TYPE_BUTTON.SEE,
         route: (idPei) => URLS.UPDATE_PEI(idPei),
         icon: <IconOeil />,
@@ -420,44 +429,49 @@ function getColumnPeiByStringArray(
     }
     if (canEditPei) {
       listeButton.push({
-        row: (row) => {
-          return row;
-        },
+        row: (row: PeiRowType) => row,
         type: TYPE_BUTTON.UPDATE,
         route: (idPei) => URLS.UPDATE_PEI(idPei),
       });
     }
-    if (hasDroit(user, TYPE_DROIT.PEI_D)) {
+    if (hasDroit(user, TYPE_DROIT.PEI_R)) {
       listeButton.push({
-        disable: (v) => {
-          return v.original.hasTourneeReservee;
-        },
-        textDisable:
-          "Impossible de supprimer un PEI affecté à une tournée réservée",
         row: (row) => {
           return row;
         },
+        type: TYPE_BUTTON.SIMPLE_MODAL,
+        icon: <IconDocument />,
+        textEnable: "Voir les documents",
+        disable: (row) => !row.original.hasDocuments,
+        textDisable: "Aucun document pour ce pei",
+        simpleModal: {
+          content: (peiId: string) => <DocumentPei peiId={peiId} />,
+          header: (row) => "Documents du PEI " + row.original.peiNumeroComplet,
+        },
+      });
+    }
+    if (hasDroit(user, TYPE_DROIT.PEI_D)) {
+      listeButton.push({
+        disable: (v: PeiRowType) => v.original.hasTourneeReservee,
+        textDisable:
+          "Impossible de supprimer un PEI affecté à une tournée réservée",
+        row: (row: PeiRowType) => row,
         type: TYPE_BUTTON.DELETE,
         pathname: url`/api/pei/delete/`,
-        header: (row) => {
-          return "Suppression du PEI " + row.original.peiNumeroComplet;
-        },
-        content: (row) => {
-          return (
-            <div>
-              Êtes-vous sûr de vouloir supprimer le PEI{" "}
-              <b>{row.original.peiNumeroComplet}</b> ? Cette action est
-              irréversible.
-            </div>
-          );
-        },
+        header: (row: PeiRowType) =>
+          "Suppression du PEI " + row.original.peiNumeroComplet,
+        content: (row: PeiRowType) => (
+          <div>
+            Êtes-vous sûr de vouloir supprimer le PEI{" "}
+            <b>{row.original.peiNumeroComplet}</b> ? Cette action est
+            irréversible.
+          </div>
+        ),
       });
     }
     if (hasDroit(user, TYPE_DROIT.VISITE_R)) {
       listeButton.push({
-        row: (row) => {
-          return row;
-        },
+        row: (row: PeiRowType) => row,
         route: (idPei) => URLS.VISITE(idPei),
         type: TYPE_BUTTON.LINK,
         icon: <IconVisite />,
@@ -467,35 +481,29 @@ function getColumnPeiByStringArray(
     }
     if (hasDroit(user, TYPE_DROIT.TOURNEE_R)) {
       listeButton.push({
-        row: (row: any) => {
-          return row;
-        },
+        row: (row: PeiRowType) => row,
         type: TYPE_BUTTON.BUTTON,
-        onClick: (row) => handleTourneeButtonClick(row),
+        onClick: (row: PeiRowType) => handleTourneeButtonClick(row),
         textEnable: "Voir les tournées associées",
         icon: <IconList />,
       });
     }
     if (hasDroit(user, TYPE_DROIT.PEI_U)) {
       listeButton.push({
-        row: (row) => {
-          return row;
-        },
+        row: (row: PeiRowType) => row,
         route: (idPei) => URLS.UPDATE_PENA_ASPIRATION(idPei),
         type: TYPE_BUTTON.LINK,
         icon: <IconAireAspiration />,
         textEnable: "Gérer les aires d'aspirations",
         classEnable: "warning",
-        hide: (original: any) => {
+        hide: (original: PeiRowType["original"]) => {
           return original.peiTypePei !== TYPE_PEI.PENA;
         },
       });
     }
     listeButton.push({
-      row: (row) => {
-        return row;
-      },
-      onClick: (idPei) => fetchGeometry(GET_TYPE_GEOMETRY.PEI, idPei),
+      row: (row: PeiRowType) => row,
+      onClick: (idPei: string) => fetchGeometry(GET_TYPE_GEOMETRY.PEI, idPei),
       type: TYPE_BUTTON.LINK,
       icon: <IconLocation />,
       textEnable: "Localiser",
