@@ -1,5 +1,41 @@
 = Release Notes
 
+== 3.0.3
+
+* https://redmine.atolcd.com/issues/274812[#274812]: Genération de la carte des tournées
+* https://redmine.atolcd.com/issues/277640[#277640]: Fiche résumé : Observation du PEI
+* https://redmine.atolcd.com/issues/277726[#277726]: CARTE : Affichage des coordonnées géographiques
+* https://redmine.atolcd.com/issues/278518[#278518]: Fiche résumé : Ajouter le bloc indisponibilités temporaires
+* https://redmine.atolcd.com/issues/279356[#279356]: Création d'un PEI : proposition des voies
+* https://redmine.atolcd.com/issues/279548[#279548]: Chargement affectation tournées depuis la carte
+* https://redmine.atolcd.com/issues/279572[#279572]: DFCI - bouton retour
+* https://redmine.atolcd.com/issues/279627[#279627]: Rapports personnalisés : critère DECI manquant
+* https://redmine.atolcd.com/issues/279638[#279638]: Import / Export CTP
+* https://redmine.atolcd.com/issues/279648[#279648]: Indisponibilités temporaires : ajouter un filtre sur la colonne "Communes"
+* https://redmine.atolcd.com/issues/279669[#279669]: Incohérence dans la liste des organismes parents lors de la création
+* https://redmine.atolcd.com/issues/279817[#279817]: Déplacer un PEI : Voie saisie libre
+* https://redmine.atolcd.com/issues/279889[#279889]: Rapports personnalisés : Proposition menu déroulant
+* https://redmine.atolcd.com/issues/280250[#280250]: Classement des visites dans l'histogramme
+* https://redmine.atolcd.com/issues/280261[#280261]: Ergonomie barre de navigation
+* https://redmine.atolcd.com/issues/280587[#280587]: Saisie visite à la même heure
+* https://redmine.atolcd.com/issues/280606[#280606]: [PEI] Gérer les visites - Visualiser une visite
+* https://redmine.atolcd.com/issues/281138[#281138]: Problème de numérotation PEI
+* https://redmine.atolcd.com/issues/281253[#281253]: Renommage ICPE conventionnée
+* https://redmine.atolcd.com/issues/281257[#281257]: Impossible de consulter les visites depuis un profil n'ayant que le droit "consultation" des visites
+* https://redmine.atolcd.com/issues/281261[#281261]: redirection suite à la création indispo temporaire
+* https://redmine.atolcd.com/issues/281266[#281266]: Fiche résumé : Historique d'un PEI
+* https://redmine.atolcd.com/issues/281297[#281297]: Suppression d'un PEI : modifier la modale
+* https://redmine.atolcd.com/issues/281308[#281308]: Déplacement d'un PEI : message d'avertissement
+* https://redmine.atolcd.com/issues/281338[#281338]: Synchronisation utilisateur en erreur
+* https://redmine.atolcd.com/issues/281379[#281379]: Requêtes PEI avec anomalies : ajouter Tous par défaut
+* https://redmine.atolcd.com/issues/281387[#281387]: Carte : Surbrillance des PEI
+* https://redmine.atolcd.com/issues/281493[#281493]: Voir les tournées depuis liste des points d'eau (filtrée)
+* https://redmine.atolcd.com/issues/281507[#281507]: Ajouter PEI à une nouvelle tournée
+* https://redmine.atolcd.com/issues/281517[#281517]: Composant counter du dashboard
+* https://redmine.atolcd.com/issues/281686[#281686]: Accès aux visites
+
+Pour plus d'informations, consultez les tickets REDMINE associés.
+
 == 3.0.2
 
 * https://redmine.atolcd.com/issues/267899[#267899]: [ADRESSES] SIGNALEMENTS - Ajouter un document au signalement
