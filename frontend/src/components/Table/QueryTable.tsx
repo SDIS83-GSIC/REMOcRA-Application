@@ -167,15 +167,17 @@ function QueryTable({
 
   const debounceSearch = useDebouncedCallback(historyPush, 500);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: on a besoin que ce useEffect soit appelé à chaque changement de formik.values
   useEffect(() => {
     debounceSearch();
-  }, [debounceSearch]);
+  }, [formik?.values, debounceSearch]);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: on veut que ce useEffect soit appelé à chaque changement de watchedValues, même si historyPush ne change pas
   useEffect(() => {
     historyPush();
   }, [...watchedValues]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: pour les tris, on ne peut pas mettre les sortBy
   useEffect(() => {
     const searchParams = new URLSearchParams(location?.search);
     const filterByParams = searchParams.get("filterBy");
@@ -208,7 +210,7 @@ function QueryTable({
       (offsetParams !== pagination.offset.toString() ||
         limitParams !== pagination.limit.toString())
     ) {
-      // navigate({ offset: offsetParams, limit: limitParams }, { replace: true });
+      navigate({ offset: offsetParams, limit: limitParams }, { replace: true });
     }
   }, [
     location,
@@ -217,8 +219,6 @@ function QueryTable({
     pagination.limit.toString,
     pagination.offset.toString,
     setSortBy,
-    sortBy,
-    setValues,
   ]);
 
   const { isRejected, isLoading, data, run } = usePost(
