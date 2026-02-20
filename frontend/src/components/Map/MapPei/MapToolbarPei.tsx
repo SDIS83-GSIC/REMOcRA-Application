@@ -1,7 +1,8 @@
 import { useFormikContext } from "formik";
-import { Map as OLMap } from "ol";
+import { Collection, Feature, Map as OLMap } from "ol";
 import { platformModifierKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
+import { Geometry } from "ol/geom";
 import { DragBox, Draw, Modify, Select } from "ol/interaction";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
@@ -41,6 +42,12 @@ import toggleDeplacerPoint, { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import TooltipMapPei from "../TooltipsMap.tsx";
 
+// Type pour les PEI sélectionnés pour les tournées
+type PeiSelect = {
+  peiId: string;
+  numeroComplet: string;
+};
+
 export const useToolbarPeiContext = ({
   map,
   workingLayer,
@@ -59,14 +66,14 @@ export const useToolbarPeiContext = ({
   const { error: errorToast } = useToastContext();
   const [listePeiId, setListePeiId] = useState<string[]>([]);
   const [listePeiTourneePublic, setListePeiTourneePublic] = useState<
-    { peiId: string; numeroComplet: string }[]
+    PeiSelect[]
   >([]);
-  const [listePeiTourneePrive, setListePeiTourneePrive] = useState<
-    { peiId: string; numeroComplet: string }[]
-  >([]);
-  const [listePeiTourneeIcpe, setListePeiTourneeIcpe] = useState<
-    { peiId: string; numeroComplet: string }[]
-  >([]);
+  const [listePeiTourneePrive, setListePeiTourneePrive] = useState<PeiSelect[]>(
+    [],
+  );
+  const [listePeiTourneeIcpe, setListePeiTourneeIcpe] = useState<PeiSelect[]>(
+    [],
+  );
   const [showCreateIndispoTemp, setShowCreateIndispoTemp] = useState(false);
   const handleCloseIndispoTemp = () => setShowCreateIndispoTemp(false);
 
@@ -94,6 +101,56 @@ export const useToolbarPeiContext = ({
   );
 
   const tools = useMemo(() => {
+    function associeNatureDeciPeiTournee(
+      features: Collection<Feature<Geometry>>,
+    ): void {
+      const prives: PeiSelect[] = [];
+      const publics: PeiSelect[] = [];
+      const icpes: PeiSelect[] = [];
+      features.forEach((feature) => {
+        const point = feature.getProperties();
+        const obj: PeiSelect = {
+          peiId: point.elementId,
+          numeroComplet: point.peiNumeroComplet,
+        };
+        switch (point.natureDeciCode) {
+          case TYPE_NATURE_DECI.PRIVE:
+            prives.push(obj);
+            break;
+          case TYPE_NATURE_DECI.ICPE:
+          case TYPE_NATURE_DECI.ICPE_CONVENTIONNE:
+            icpes.push(obj);
+            break;
+          default:
+            publics.push(obj);
+        }
+      });
+      if (prives.length > 0 && publics.length === 0 && icpes.length === 0) {
+        setListePeiTourneePrive(prives);
+        setListePeiTourneePublic([]);
+        setListePeiTourneeIcpe([]);
+      } else if (
+        publics.length > 0 &&
+        prives.length === 0 &&
+        icpes.length === 0
+      ) {
+        setListePeiTourneePublic(publics);
+        setListePeiTourneePrive([]);
+        setListePeiTourneeIcpe([]);
+      } else if (
+        icpes.length > 0 &&
+        prives.length === 0 &&
+        publics.length === 0
+      ) {
+        setListePeiTourneeIcpe(icpes);
+        setListePeiTourneePrive([]);
+        setListePeiTourneePublic([]);
+      } else {
+        setListePeiTourneePrive([]);
+        setListePeiTourneePublic([]);
+        setListePeiTourneeIcpe([]);
+      }
+    }
     if (!map) {
       return {};
     }
@@ -183,7 +240,7 @@ export const useToolbarPeiContext = ({
     });
     // Remplir listePeiId lors d'un Ctrl+clic (sélection individuelle)
     selectCtrl.on("select", function () {
-      const newListe: string[] = [];
+      const newListe: any[] | ((prevState: string[]) => string[]) = [];
       selectCtrl.getFeatures().forEach((feature) => {
         const point = feature.getProperties();
         if (!newListe.includes(point.elementId)) {
@@ -191,6 +248,7 @@ export const useToolbarPeiContext = ({
         }
       });
       setListePeiId(newListe);
+      associeNatureDeciPeiTournee(selectCtrl.getFeatures());
     });
 
     const dragBoxCtrl = new DragBox({
@@ -215,14 +273,6 @@ export const useToolbarPeiContext = ({
       selectCtrl.getFeatures().extend(boxFeatures);
 
       const newListe: string[] = [];
-      listePeiTourneePrive.splice(0, listePeiTourneePrive.length);
-      listePeiTourneePublic.splice(0, listePeiTourneePublic.length);
-      listePeiTourneeIcpe.splice(0, listePeiTourneeIcpe.length);
-
-      const prives: { peiId: string; numeroComplet: string }[] = [];
-      const publics: { peiId: string; numeroComplet: string }[] = [];
-      const icpes: { peiId: string; numeroComplet: string }[] = [];
-
       const peiPrivesDebitSimultane: any[] = [];
       const peiIcpesDebitSimultane: any[] = [];
 
@@ -231,33 +281,17 @@ export const useToolbarPeiContext = ({
         if (!newListe.includes(point.elementId)) {
           newListe.push(point.elementId);
         }
-
-        if (point.natureDeciCode === TYPE_NATURE_DECI.PRIVE) {
-          prives.push({
-            peiId: point.elementId,
-            numeroComplet: point.peiNumeroComplet,
-          });
-
-          if (point.pibiTypeReseauId != null) {
-            peiPrivesDebitSimultane.push(point);
-          }
-        } else if (
-          point.natureDeciCode === TYPE_NATURE_DECI.ICPE ||
-          point.natureDeciCode === TYPE_NATURE_DECI.ICPE_CONVENTIONNE
+        if (
+          point.natureDeciCode === TYPE_NATURE_DECI.PRIVE &&
+          point.pibiTypeReseauId != null
         ) {
-          icpes.push({
-            peiId: point.elementId,
-            numeroComplet: point.peiNumeroComplet,
-          });
-
-          if (point.pibiTypeReseauId != null) {
-            peiIcpesDebitSimultane.push(point);
-          }
-        } else {
-          publics.push({
-            peiId: point.elementId,
-            numeroComplet: point.peiNumeroComplet,
-          });
+          peiPrivesDebitSimultane.push(point);
+        } else if (
+          (point.natureDeciCode === TYPE_NATURE_DECI.ICPE ||
+            point.natureDeciCode === TYPE_NATURE_DECI.ICPE_CONVENTIONNE) &&
+          point.pibiTypeReseauId != null
+        ) {
+          peiIcpesDebitSimultane.push(point);
         }
       });
       setListePeiId(newListe);
@@ -285,25 +319,7 @@ export const useToolbarPeiContext = ({
       }
 
       // A retirer en 3.1 => ticket #126505
-      if (prives.length > 0 && publics.length === 0 && icpes.length === 0) {
-        setListePeiTourneePrive(prives);
-      } else if (
-        publics.length > 0 &&
-        prives.length === 0 &&
-        icpes.length === 0
-      ) {
-        setListePeiTourneePublic(publics);
-      } else if (
-        icpes.length > 0 &&
-        prives.length === 0 &&
-        publics.length === 0
-      ) {
-        setListePeiTourneeIcpe(icpes);
-      } else {
-        setListePeiTourneePrive([]);
-        setListePeiTourneePublic([]);
-        setListePeiTourneeIcpe([]);
-      }
+      associeNatureDeciPeiTournee(selectCtrl.getFeatures());
     });
 
     function toggleSelect(active = false) {
@@ -315,13 +331,12 @@ export const useToolbarPeiContext = ({
           map.addInteraction(dragBoxCtrl);
         }
       } else {
-        listePeiTourneePrive.splice(0, listePeiTourneePrive.length);
-        listePeiTourneePublic.splice(0, listePeiTourneePublic.length);
-        listePeiTourneeIcpe.splice(0, listePeiTourneeIcpe.length);
-        listePeiId.splice(0, listePeiId.length);
+        setListePeiTourneePrive([]);
+        setListePeiTourneePublic([]);
+        setListePeiTourneeIcpe([]);
+        setListePeiId([]);
         selectCtrl.getFeatures().clear();
         map.removeInteraction(selectCtrl);
-
         map.removeInteraction(dragBoxCtrl);
       }
     }
@@ -381,19 +396,11 @@ export const useToolbarPeiContext = ({
   }, [
     map,
     errorToast,
-    listePeiId.length,
     dataPeiLayer,
-    listePeiTourneeIcpe.splice,
-    listePeiTourneePrive.splice,
-    listePeiTourneePublic.splice,
-    listePeiTourneePrive.length,
-    listePeiTourneePublic.length,
-    listePeiTourneeIcpe.length,
     setShowFormPei,
     showMove,
     setCoordonneesPeiCreate,
     workingLayer?.getSource,
-    listePeiId.splice,
   ]);
 
   function createUpdateTournee() {
@@ -512,9 +519,9 @@ const MapToolbarPei = ({
   createUpdateTournee: () => void;
   showCreateTournee: boolean;
   handleCloseTournee: () => void;
-  listePeiTourneePrive: { peiId: string; numeroComplet: string }[];
-  listePeiTourneePublic: { peiId: string; numeroComplet: string }[];
-  listePeiTourneeIcpe: { peiId: string; numeroComplet: string }[];
+  listePeiTourneePrive: PeiSelect[];
+  listePeiTourneePublic: PeiSelect[];
+  listePeiTourneeIcpe: PeiSelect[];
   dataDebitSimultaneLayer: any;
   createDebitSimultane: () => void;
   handleCloseDebitSimultane: () => void;
