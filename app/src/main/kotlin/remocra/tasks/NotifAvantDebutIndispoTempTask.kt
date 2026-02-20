@@ -64,21 +64,24 @@ class NotifAvantDebutIndispoTempTask : SchedulableTask<NotifAvantDebutIndispoTem
             }
         }
 
-        /** Remplacement des PlaceHolders */
-        val objetsANotifier: MutableList<NotificationMailData> = mutableListOf()
-        // Placeholders degré 1
+        // Placeholders degré 1 : entête/footer (genre logo du sdis et autres)
         val genericCorps = notificationRaw.corps.replace(
             "#FOOTER#",
             "En cas d'incompréhension de ce message, merci de prendre contact avec votre SDIS.\n\n",
         )
-        // Placeholders degré 2
-        mapJoinDestinataireObjectOnPeiId.forEach { (destinataire, listeObjects) ->
+
+        // Placeholders degré 2 : chaque destinataire permet de personnaliser le mail
+        val mapEmailToPeis = mapJoinDestinataireObjectOnPeiId.entries
+            .groupBy({ it.key.destinataireEmail }, { it.value })
+            .mapValues { it.value.flatten() }
+
+        val objetsANotifier: MutableList<NotificationMailData> = mutableListOf()
+        mapEmailToPeis.forEach { (email, listeObjects) ->
             val formatedListPei = listeObjects.joinToString("\n") { it.peiNumeroComplet }
             val specificCorps = genericCorps.replace("#LISTE_PEI_DEBUT_INDISPO#", formatedListPei)
-
             objetsANotifier.add(
                 NotificationMailData(
-                    destinataires = setOf(destinataire.destinataireEmail),
+                    destinataires = setOf(email),
                     objet = notificationRaw.objet,
                     corps = specificCorps,
                 ),

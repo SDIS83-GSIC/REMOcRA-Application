@@ -57,11 +57,9 @@ class ChangementEtatPeiTask : SchedulableTask<ChangementEtatPeiTaskParameter, Ch
 
         /** Jointure entre les différents destinataires et les objets de traca qui leurs sont liés */
         val mapJoinDestinataireEventTracaOnPeiId: MutableMap<Destinataire, List<TracabiliteEvent<PeiData>>> = mutableMapOf()
-        mapPeiIdParDestinataire.forEach {
-                (destinataire, listPeiId) ->
+        mapPeiIdParDestinataire.forEach { (destinataire, listPeiId) ->
             val currentDestinatairePei: MutableList<TracabiliteEvent<PeiData>> = mutableListOf()
-            listPeiId.forEach {
-                    peiId ->
+            listPeiId.forEach { peiId ->
                 executionResults.listPei.find { it.pojoId == peiId }?.let { currentDestinatairePei.add(it) }
             }
             if (currentDestinatairePei.isNotEmpty()) {
@@ -72,8 +70,6 @@ class ChangementEtatPeiTask : SchedulableTask<ChangementEtatPeiTaskParameter, Ch
         /** Remplacement des PlaceHolders */
         val initialObjet = notificationRaw.objet
         val initialCorps = notificationRaw.corps
-
-        val objetsANotifier: MutableList<NotificationMailData> = mutableListOf()
         // Placeholders degré 1 : entête/footer (genre logo du sdis et autres)
         val genericCorps = initialCorps.replace(
             "#FOOTER#",
@@ -81,21 +77,30 @@ class ChangementEtatPeiTask : SchedulableTask<ChangementEtatPeiTaskParameter, Ch
         )
 
         // Placeholders degré 2 : chaque destinataire permet de paramétrer différement le mail
-        // Au niveau du bonjour, ou du contenu personnalisé
-        mapJoinDestinataireEventTracaOnPeiId.forEach { (destinataire, listeTracaEvent) ->
-            val listePeiDispo = listeTracaEvent.filter { it.pojo.peiDisponibiliteTerrestre == Disponibilite.DISPONIBLE }.map { it.pojo.peiNumeroComplet }.joinToString(", ")
-            val listePeiIndispo = listeTracaEvent.filter { it.pojo.peiDisponibiliteTerrestre == Disponibilite.INDISPONIBLE }.map { it.pojo.peiNumeroComplet }.joinToString(", ")
-            val listePeiNonConforme = listeTracaEvent.filter { it.pojo.peiDisponibiliteTerrestre == Disponibilite.NON_CONFORME }.map { it.pojo.peiNumeroComplet }.joinToString(", ")
+        val objetsANotifier: MutableList<NotificationMailData> = mutableListOf()
+        // Regrouper tous les événements par adresse e-mail
+        val mapEmailToTracaEvents = mapJoinDestinataireEventTracaOnPeiId.entries
+            .groupBy({ it.key.destinataireEmail }, { it.value })
+            .mapValues { it.value.flatten() }
+
+        mapEmailToTracaEvents.forEach { (email, listeTracaEvent) ->
+            val listePeiDispo = listeTracaEvent.filter { it.pojo.peiDisponibiliteTerrestre == Disponibilite.DISPONIBLE }
+                .joinToString(", ") { it.pojo.peiNumeroComplet.toString() }
+            val listePeiIndispo =
+                listeTracaEvent.filter { it.pojo.peiDisponibiliteTerrestre == Disponibilite.INDISPONIBLE }
+                    .joinToString(", ") { it.pojo.peiNumeroComplet.toString() }
+            val listePeiNonConforme =
+                listeTracaEvent.filter { it.pojo.peiDisponibiliteTerrestre == Disponibilite.NON_CONFORME }
+                    .joinToString(", ") { it.pojo.peiNumeroComplet.toString() }
 
             var corps = genericCorps
-
             corps = remplaceIfNotEmpty(corps, "#resultsDispo#", "Les PEIs suivants sont passés à l'état Disponible #liste#.\n", listePeiDispo)
             corps = remplaceIfNotEmpty(corps, "#resultsIndispo#", "Les PEI suivants sont passés à l'état Indisponible #liste#.\n", listePeiIndispo)
             corps = remplaceIfNotEmpty(corps, "#resultsNonConforme#", "Les PEI suivants sont passés à l'état Disponible #liste#.\n", listePeiNonConforme)
 
             objetsANotifier.add(
                 NotificationMailData(
-                    destinataires = setOf(destinataire.destinataireEmail),
+                    destinataires = setOf(email),
                     objet = initialObjet,
                     corps = corps,
                 ),

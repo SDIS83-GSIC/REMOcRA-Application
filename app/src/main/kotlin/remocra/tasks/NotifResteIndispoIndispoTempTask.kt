@@ -72,13 +72,16 @@ class NotifResteIndispoIndispoTempTask : SchedulableTask<NotifResteIndispoIndisp
             "En cas d'incompréhension de ce message, merci de prendre contact avec votre SDIS.\n\n",
         )
         // Placeholders degré 2
-        mapJoinDestinataireObjectOnPeiId.forEach { (destinataire, listeObjects) ->
+        // Regroupement par email pour garantir une seule notification par adresse
+        val mapEmailToPeis = mapJoinDestinataireObjectOnPeiId.entries
+            .groupBy({ it.key.destinataireEmail }, { it.value })
+            .mapValues { it.value.flatten() }
+        mapEmailToPeis.forEach { (email, listeObjects) ->
             val formatedListPei = listeObjects.joinToString("\n") { it.peiNumeroComplet }
             val specificCorps = genericCorps.replace("#LISTE_PEI_RESTE_INDISPO#", formatedListPei)
-
             objetsANotifier.add(
                 NotificationMailData(
-                    destinataires = setOf(destinataire.destinataireEmail),
+                    destinataires = setOf(email),
                     objet = notificationRaw.objet,
                     corps = specificCorps,
                 ),
