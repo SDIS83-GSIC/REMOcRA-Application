@@ -26,7 +26,9 @@ const DashboardItem = (props: DashboardItemProps) => {
   };
 
   // Set le composant associé à la clé
-  const Component = COMPONENTS[props.component.key as keyof typeof COMPONENTS];
+  const componentEntry =
+    COMPONENTS[props.component.key as keyof typeof COMPONENTS];
+  const Component = componentEntry?.component;
 
   const { data } = useGet(
     `/api/dashboard/get-list-data-query/${props.component.queryId}`,
@@ -54,7 +56,16 @@ const DashboardItem = (props: DashboardItemProps) => {
         <Card.Body className="p-0">
           <div style={{ height: `calc(${style.height} - 2rem)` }}>
             {data ? (
-              <Component data={formattedData} config={props.component.config} />
+              Component ? (
+                <Component
+                  data={formattedData}
+                  config={props.component.config}
+                />
+              ) : (
+                <div className="text-center text-danger p-3">
+                  Composant indisponible
+                </div>
+              )
             ) : (
               <Loading />
             )}

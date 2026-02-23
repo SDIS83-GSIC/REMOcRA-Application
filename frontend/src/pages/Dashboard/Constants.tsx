@@ -8,6 +8,8 @@ import {
 } from "../../components/Icon/Icon.tsx";
 import HorizontalChartComponent from "./Components/Chart/HorizontalChartComponent.tsx";
 import HorizontalChartConfig from "./Components/Chart/HorizontalChartConfig.tsx";
+import VerticalChartComponent from "./Components/Chart/VerticalChartComponent.tsx";
+import VerticalChartConfig from "./Components/Chart/VerticalChartConfig.tsx";
 import CounterComponent from "./Components/Counter/CounterComponent.tsx";
 import CounterConfig from "./Components/Counter/CounterConfig.tsx";
 import GaugeComponent from "./Components/Gauge/GaugeComponent.tsx";
@@ -73,6 +75,11 @@ export const getHorizontalChart = {
   value: "",
   max: "",
 };
+export const getVerticalChart = {
+  name: "",
+  value: "",
+  max: "",
+};
 
 export const getTable = [];
 
@@ -93,19 +100,32 @@ export const INIT_DATA = {
   PIECHART: getDataTypePieChart,
   GAUGE: getDataTypeGauge,
   HORIZONTALCHAR: getHorizontalChart,
+  VERTICAL_BAR_CHART: getVerticalChart,
   TABLE: getTable,
   COUNTER: getCounter,
   MAP: getMap,
 };
 
+type ComponentEntry = {
+  component: any;
+  label: string;
+};
+
 // Liste des composants
-export const COMPONENTS = {
-  PIECHART: PieChartComponent,
-  GAUGE: GaugeComponent,
-  HORIZONTALCHAR: HorizontalChartComponent,
-  TABLE: TableComponent,
-  COUNTER: CounterComponent,
-  MAP: MapComponent,
+export const COMPONENTS: Record<keyof typeof INIT_DATA, ComponentEntry> = {
+  PIECHART: { component: PieChartComponent, label: "Camembert" },
+  GAUGE: { component: GaugeComponent, label: "Jauge" },
+  HORIZONTALCHAR: {
+    component: HorizontalChartComponent,
+    label: "Histogramme horizontal",
+  },
+  VERTICAL_BAR_CHART: {
+    component: VerticalChartComponent,
+    label: "Histogramme vertical",
+  },
+  TABLE: { component: TableComponent, label: "Tableau" },
+  COUNTER: { component: CounterComponent, label: "Compteur" },
+  MAP: { component: MapComponent, label: "Carte" },
 };
 
 // Liste des formulaire de configuration
@@ -113,6 +133,7 @@ export const FORM_CONFIG = {
   PIECHART: PieChartConfig,
   GAUGE: GaugeConfig,
   HORIZONTALCHAR: HorizontalChartConfig,
+  VERTICAL_BAR_CHART: VerticalChartConfig,
   TABLE: TableConfig,
   COUNTER: CounterConfig,
   MAP: MapConfig,
@@ -123,6 +144,7 @@ export const ICONS = {
   PIECHART: IconPieChartComponent(),
   GAUGE: IconGaugeComponent(),
   HORIZONTALCHAR: IconHorizontalChartComponent(),
+  VERTICAL_BAR_CHART: IconHorizontalChartComponent(),
   TABLE: IconTableComponent(),
   COUNTER: IconCounterComponent(),
   MAP: IconMapComponent(),

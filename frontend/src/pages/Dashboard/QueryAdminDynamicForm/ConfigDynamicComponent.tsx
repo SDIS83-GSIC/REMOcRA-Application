@@ -23,15 +23,19 @@ const ConfigDynamicComponent = (props: ConfigDynamicComponentProps) => {
   const [indexToRemove, setIndextoremove] = useState<number | null>(); // Stocke l'index de l'onglet à fermer
 
   // Ajoute un nouvel onglet avec une configuration unique
-  const handleAddTab = (key: string | SetStateAction<null>) => {
-    const component = COMPONENTS[key as keyof typeof COMPONENTS];
+  const handleAddTab = (key: string) => {
+    const componentEntry = COMPONENTS[key as keyof typeof COMPONENTS];
+    if (!componentEntry) {
+      return;
+    }
+    const component = componentEntry.component;
     const formConfig = FORM_CONFIG[key as keyof typeof FORM_CONFIG];
     const dataConfig = INIT_DATA[key as keyof typeof INIT_DATA];
 
     const newTab = {
       index: null, // Sert uniquement en front pour la gestion des onglets
       key,
-      title: key,
+      title: componentEntry.label,
       component: component,
       formConfig: formConfig,
       config: dataConfig, // Stockage d’une config unique
@@ -132,9 +136,9 @@ const ConfigDynamicComponent = (props: ConfigDynamicComponentProps) => {
             <Dropdown className="ms-2">
               <Dropdown.Toggle variant="primary">+</Dropdown.Toggle>
               <Dropdown.Menu>
-                {Object.keys(COMPONENTS).map((key) => (
+                {Object.entries(COMPONENTS).map(([key, meta]) => (
                   <Dropdown.Item key={key} onClick={() => handleAddTab(key)}>
-                    {key}
+                    {meta.label}
                   </Dropdown.Item>
                 ))}
               </Dropdown.Menu>

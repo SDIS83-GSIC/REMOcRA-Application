@@ -154,20 +154,23 @@ const QueryList = forwardRef(
             },
             index: number,
           ) => {
+            const componentEntry = COMPONENTS[
+              element.dashboardComponentKey as keyof typeof COMPONENTS
+            ] ?? {
+              component: () => null,
+              label: element.dashboardComponentKey,
+            };
             return {
               id: element.dashboardComponentId,
               queryId: element.dashboardComponentDahsboardQueryId || "",
               index: index,
               key: element.dashboardComponentKey,
-              component:
-                COMPONENTS[
-                  element.dashboardComponentKey as keyof typeof COMPONENTS
-                ],
+              component: componentEntry.component,
               formConfig:
                 FORM_CONFIG[
                   element.dashboardComponentKey as keyof typeof FORM_CONFIG
                 ],
-              title: element.dashboardComponentTitle,
+              title: element.dashboardComponentTitle || componentEntry.label,
               config: element.dashboardComponentConfig,
             };
           },
