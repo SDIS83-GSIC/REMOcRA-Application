@@ -27,6 +27,7 @@ enum class TypeDashboardComponents(@get:JvmName("literal") public val literal: S
     TABLE("TABLE"),
     COUNTER("COUNTER"),
     MAP("MAP"),
+    VERTICAL_BAR_CHART("VERTICAL_BAR_CHART"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA
