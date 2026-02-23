@@ -1,12 +1,34 @@
 import { Cell, Pie, PieChart, ResponsiveContainer, Sector } from "recharts";
 import { setGaugeValueMapped } from "../../MappedValueComponent.tsx";
 
-const GaugeComponent = (options: any) => {
-  if (!options.data || options.data.length === 0) {
+interface Limit {
+  color?: string;
+  max?: number;
+}
+
+interface GaugeConfigData {
+  colorMode?: string;
+  limits?: Limit[];
+  highColor?: string;
+  barColor?: string;
+}
+
+interface GaugeData {
+  value: string;
+  max: string;
+}
+
+interface GaugeComponentProps {
+  data: GaugeData[];
+  config: GaugeConfigData;
+}
+
+const GaugeComponent = ({ data, config }: GaugeComponentProps) => {
+  if (!data || data.length === 0) {
     return;
   }
 
-  const dataMapped = setGaugeValueMapped(options.data, options.config);
+  const dataMapped = setGaugeValueMapped(data, config);
 
   // Calcule le pourcentage à afficher
   const safeParseFloat = (str: string): number => {
@@ -15,11 +37,11 @@ const GaugeComponent = (options: any) => {
   };
 
   const sumValues = dataMapped.reduce(
-    (sum: number, item: { value: string }) => sum + safeParseFloat(item.value),
+    (sum: number, item: GaugeData) => sum + safeParseFloat(item.value),
     0,
   );
   const sumMax = dataMapped.reduce(
-    (sum: number, item: { max: string }) => sum + safeParseFloat(item.max),
+    (sum: number, item: GaugeData) => sum + safeParseFloat(item.max),
     0,
   );
 
@@ -31,11 +53,59 @@ const GaugeComponent = (options: any) => {
   const maxAngle = 180; // Demi-jauge (180 degrés)
   const valueAngle = 180 - (percentage / 100) * maxAngle; // Inverser pour correspondre à la demi-jauge
 
+  const colorMode = config?.colorMode;
+  const useThresholdColors =
+    colorMode === "gradient" ||
+    (colorMode == null &&
+      Array.isArray(config?.limits) &&
+      config.limits.length > 0);
+
+  const rawLimits: Limit[] = Array.isArray(config?.limits) ? config.limits : [];
+  const highColor = config?.highColor || "#e74c3c";
+  const barColor = config?.barColor || "#8884d8";
+
+  interface Section {
+    from: number;
+    to: number;
+    color: string;
+  }
+
+  const sections: Section[] = (() => {
+    if (!useThresholdColors) {
+      return [];
+    }
+    const limits = rawLimits
+      .map((l) => ({ color: l.color || "#cccccc", max: Number(l.max) }))
+      .filter((l) => !Number.isNaN(l.max))
+      .sort((a, b) => a.max - b.max)
+      .map((l) => ({ color: l.color, max: Math.max(0, Math.min(100, l.max)) }));
+    const s: Section[] = [];
+    let prev = 0;
+    for (const lim of limits) {
+      const to = Math.max(prev, lim.max);
+      if (to > prev) {
+        s.push({ from: prev, to, color: lim.color });
+      }
+      prev = to;
+    }
+    if (s.length === 0) {
+      return [
+        { from: 0, to: 25, color: "#2ecc71" },
+        { from: 25, to: 50, color: "#f1c40f" },
+        { from: 50, to: 75, color: "#e67e22" },
+        { from: 75, to: 100, color: highColor },
+      ];
+    }
+    if (prev < 100) {
+      s.push({ from: prev, to: 100, color: highColor });
+    }
+    return s;
+  })();
+
   // Préparer les données pour la jauge extérieure (segments colorés)
-  const outerGaugeData = options.config.limits.map((item: any) => ({
-    ...item,
-    startAngle: 180,
-    endAngle: 0, // Demi-jauge (de 180 à 0 degrés)
+  const outerGaugeData = sections.map((sec) => ({
+    value: sec.to - sec.from,
+    color: sec.color,
   }));
 
   // Préparer les données pour la jauge intérieure (segments en fonction de la valeur)
@@ -54,22 +124,27 @@ const GaugeComponent = (options: any) => {
       >
         <PieChart className="d-flex flex-column justify-content-center align-items-center">
           {/* Jauge extérieure (segments colorés) */}
-          <Pie
-            data={outerGaugeData}
-            cx="50%"
-            cy="100%"
-            innerRadius={120} // Rayon intérieur de la jauge extérieure
-            outerRadius={150} // Rayon extérieur de la jauge extérieure
-            startAngle={180}
-            endAngle={0} // Demi-jauge (de 180 à 0 degrés)
-            dataKey="max"
-          >
-            {outerGaugeData.map(
-              (entry: { color: string | undefined }, index: any) => (
-                <Cell key={`outer-cell-${index}`} fill={entry.color} />
-              ),
-            )}
-          </Pie>
+          {useThresholdColors && (
+            <Pie
+              data={outerGaugeData}
+              cx="50%"
+              cy="100%"
+              innerRadius={120}
+              outerRadius={150}
+              startAngle={180}
+              endAngle={0}
+              dataKey="value"
+            >
+              {outerGaugeData.map(
+                (
+                  entry: { value: number; color: string | undefined },
+                  index: number,
+                ) => (
+                  <Cell key={`outer-cell-${index}`} fill={entry.color} />
+                ),
+              )}
+            </Pie>
+          )}
 
           {/* Jauge intérieure (segments en fonction de la valeur) */}
           <Pie
@@ -95,7 +170,7 @@ const GaugeComponent = (options: any) => {
             outerRadius={120}
             startAngle={valueAngle - 2} // Largeur de l'aiguille
             endAngle={valueAngle + 2} // Largeur de l'aiguille
-            fill="#FF0000" // Couleur de l'aiguille
+            fill={barColor}
           />
         </PieChart>
       </ResponsiveContainer>
@@ -105,7 +180,7 @@ const GaugeComponent = (options: any) => {
         style={{
           fontSize: "40px",
           fontWeight: "bold",
-          color: "#8884d8",
+          color: barColor,
         }}
         className="text-center"
       >
