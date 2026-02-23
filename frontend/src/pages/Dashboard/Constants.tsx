@@ -6,12 +6,12 @@ import {
   IconPieChartComponent,
   IconTableComponent,
 } from "../../components/Icon/Icon.tsx";
+import HorizontalChartComponent from "./Components/Chart/HorizontalChartComponent.tsx";
+import HorizontalChartConfig from "./Components/Chart/HorizontalChartConfig.tsx";
 import CounterComponent from "./Components/Counter/CounterComponent.tsx";
 import CounterConfig from "./Components/Counter/CounterConfig.tsx";
 import GaugeComponent from "./Components/Gauge/GaugeComponent.tsx";
 import GaugeConfig from "./Components/Gauge/GaugeConfig.tsx";
-import HorizontalCharConfig from "./Components/HorizontalChar/HorizontalCharConfig.tsx";
-import HorizontalChartComponent from "./Components/HorizontalChar/HorizontalChartComponent.tsx";
 import MapComponent from "./Components/Map/MapComponent.tsx";
 import MapConfig from "./Components/Map/MapConfig.tsx";
 import PieChartComponent from "./Components/PieChart/PieChartComponent.tsx";
@@ -112,7 +112,7 @@ export const COMPONENTS = {
 export const FORM_CONFIG = {
   PIECHART: PieChartConfig,
   GAUGE: GaugeConfig,
-  HORIZONTALCHAR: HorizontalCharConfig,
+  HORIZONTALCHAR: HorizontalChartConfig,
   TABLE: TableConfig,
   COUNTER: CounterConfig,
   MAP: MapConfig,

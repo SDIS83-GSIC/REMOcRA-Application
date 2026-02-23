@@ -1,6 +1,7 @@
 // Utilisations d'interfaces et pas de types, car cela définit
 // les contrats auquel les objets doivent se conformer.
 
+import React from "react";
 import { Margin } from "recharts/types/util/types";
 
 export interface OptionsList {
@@ -102,8 +103,8 @@ export interface BaseBarChartProps {
   data: BaseChartData[];
   config: ChartConfig;
   layout: Orientation.HORIZONTAL | Orientation.VERTICAL;
-  xAxis: number | string;
-  yAxis: number | string;
+  xAxis: React.ReactNode;
+  yAxis: React.ReactNode;
   legendPosition: Alignement.TOP | Alignement.BOTTOM;
   margin: Margin;
 }
