@@ -422,19 +422,25 @@ export const useMapComponent = ({
       ),
     );
 
+    // Calcul du nombre total de couches
+    const totalLayers = layersState.data.reduce(
+      (acc: number, group: any) => acc + group.layers.length,
+      0,
+    );
+    let globalLayerIndex = totalLayers - 1;
     return layersState.data.map((group: any) => {
       return {
         libelle: group.libelle,
         code: group.code,
         ordre: group.ordre,
         layers: group.layers.map((layer: any) => {
+          const zIndex = globalLayerIndex--;
           let openlayer;
 
           if (layer.source === SOURCE_CARTO.WFS) {
-            // Couche vectorielle WFS
             openlayer = new VectorLayer({
               source: toOpenLayer(layer) as VectorSource,
-              zIndex: layer.ordre,
+              zIndex,
               updateWhileAnimating: false,
               updateWhileInteracting: false,
               renderBuffer: 100,
@@ -451,20 +457,19 @@ export const useMapComponent = ({
                 projection.getCode(),
               projection,
             );
+            openlayer.setZIndex(zIndex);
           } else if (
             layer.source === SOURCE_CARTO.WMS &&
             layer.tuilage !== true
           ) {
-            // WMS: ImageLayer avec ImageWMS
             openlayer = new ImageLayer({
               source: toOpenLayer(layer, etudeId) as ImageWMS,
-              zIndex: layer.ordre,
+              zIndex,
             });
           } else {
-            // Autres tuiles (WMTS, OSM...): TileLayer
             openlayer = new TileLayer({
               source: toOpenLayer(layer, etudeId) as TileSource,
-              zIndex: layer.ordre,
+              zIndex,
               preload: 1,
               useInterimTilesOnError: false,
             });
