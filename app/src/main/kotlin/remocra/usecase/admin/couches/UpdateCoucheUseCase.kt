@@ -76,12 +76,22 @@ class UpdateCoucheUseCase : AbstractCUDUseCase<CoucheFormDataWithImage>(TypeOper
                 element.coucheFormData.coucheId,
                 element.icone.inputStream.use { it.readBytes() },
             )
+        } else if (element.coucheFormData.coucheIconeUrl == null) {
+            coucheRepository.updateIcone(
+                element.coucheFormData.coucheId,
+                null,
+            )
         }
 
         if (element.legende?.submittedFileName != null) {
             coucheRepository.updateLegende(
                 element.coucheFormData.coucheId,
                 element.legende.inputStream.use { it.readBytes() },
+            )
+        } else if (element.coucheFormData.coucheLegendeUrl == null) {
+            coucheRepository.updateLegende(
+                element.coucheFormData.coucheId,
+                null,
             )
         }
 

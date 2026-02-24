@@ -155,7 +155,6 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .set(COUCHE.LIBELLE, couche.coucheLibelle)
             .set(COUCHE.CODE, couche.coucheCode)
             .set(COUCHE.NOM, couche.coucheNom)
-            .set(COUCHE.ORDRE, couche.coucheOrdre)
             .set(COUCHE.SOURCE, couche.coucheSource)
             .set(COUCHE.PROJECTION, couche.coucheProjection)
             .set(COUCHE.CROSS_ORIGIN, couche.coucheCrossOrigin)
@@ -165,8 +164,6 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .set(COUCHE.ACTIVE, couche.coucheActive)
             .set(COUCHE.PROXY, couche.coucheProxy)
             .set(COUCHE.TUILAGE, couche.coucheTuilage)
-            .set(COUCHE.ICONE, couche.coucheIcone)
-            .set(COUCHE.LEGENDE, couche.coucheLegende)
             .execute()
     }
 
