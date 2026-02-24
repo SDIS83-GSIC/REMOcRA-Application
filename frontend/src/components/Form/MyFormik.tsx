@@ -4,6 +4,7 @@ import { Container } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { navigateGoBack } from "../../utils/fonctionsUtils.tsx";
+import Loading from "../Elements/Loading/Loading.tsx";
 import { usePost, usePut } from "../Fetch/useFetch.tsx";
 
 const ResolveReject = (
@@ -148,10 +149,13 @@ const MyFormik = (props: MyFormikProps) => {
         }
       }}
     >
-      <Container fluid={props.fluid}>
-        {errorMessage && <div className="text-danger">{errorMessage}</div>}
-        {props.children}
-      </Container>
+      <>
+        <Container fluid={props.fluid}>
+          {errorMessage && <div className="text-danger">{errorMessage}</div>}
+          {props.children}
+        </Container>
+        {submitState.isPending && <Loading />}
+      </>
     </Formik>
   );
 };
