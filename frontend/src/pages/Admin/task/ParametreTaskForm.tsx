@@ -585,6 +585,7 @@ const ParametreSynchroSIGIterableForm = ({
       ] === TYPE_SYNCHRONISATION_TABLE_SIG.STOCKAGE_SIMPLE && (
         <Row>
           <TextAreaInput
+            required={false}
             name={`taskParametres[listeTableASynchroniser][${index}].scriptPostRecuperation`}
             label="Script post-récupération :"
           />
