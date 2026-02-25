@@ -1,0 +1,20 @@
+package remocra.data.enums
+
+enum class PeiColonnes {
+    NUMERO_COMPLET,
+    NUMERO_INTERNE,
+    TYPE_PEI,
+    DISPONIBILITE_HBE,
+    DISPONIBILITE_TERRESTRE,
+    NATURE,
+    COMMUNE,
+    NATURE_DECI,
+    AUTORITE_DECI,
+    SERVICE_PUBLIC_DECI,
+    ANOMALIES,
+    PEI_NEXT_ROP,
+    PEI_NEXT_CTP,
+    TOURNEE_LIBELLE,
+    ADRESSE,
+    GESTIONNAIRE,
+}

@@ -243,7 +243,12 @@ function getColumnPeiByStringArray(
               </div>
             );
           },
-          Filter: <FilterInput type="text" name="listeAnomalie" />,
+          Filter: (
+            <SelectFilterFromUrl
+              url={url`/api/anomalie/get-libelle-anomalie`}
+              name="anomalieId"
+            />
+          ),
         });
         break;
       case COLUMN_PEI.PEI_NEXT_ROP:
@@ -294,7 +299,6 @@ function getColumnPeiByStringArray(
         column.push({
           Header: "Tournée",
           accessor: "tourneeLibelle",
-          sortField: "tourneeLibelle",
           Filter: (
             <SelectFilterFromUrl
               url={url`/api/tournee/get-libelle-tournee`}

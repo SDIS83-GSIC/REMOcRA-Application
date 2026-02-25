@@ -8,7 +8,7 @@ function getStringListeAnomalie(
     return;
   }
   return listeAnomaliePossible
-    ?.filter((ano) => listeAnomaliesPresent.includes(ano.id))
+    ?.filter((ano) => listeAnomaliesPresent?.includes(ano.id))
     .map((e) => e.libelle)
     .join(", ");
 }

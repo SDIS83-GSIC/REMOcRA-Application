@@ -12,7 +12,7 @@ type filterPei = {
   natureDeci?: string;
   autoriteDeci?: string;
   servicePublicDeci?: string;
-  listeAnomalie?: string;
+  anomalieId?: string;
   tourneeLibelle?: string;
   adresse?: string;
   prochaineDateRop?: PROCHAINE_DATE_ENUM;
@@ -32,7 +32,7 @@ export const filterValuesToVariable = ({
   natureDeci,
   autoriteDeci,
   servicePublicDeci,
-  listeAnomalie,
+  anomalieId,
   tourneeLibelle,
   adresse,
   prochaineDateRop,
@@ -75,8 +75,8 @@ export const filterValuesToVariable = ({
   if (peiNumeroInterne != null && peiNumeroInterne !== "") {
     filter.peiNumeroInterne = peiNumeroInterne;
   }
-  if (listeAnomalie != null && listeAnomalie !== "") {
-    filter.listeAnomalie = listeAnomalie;
+  if (anomalieId != null && anomalieId !== "") {
+    filter.anomalieId = anomalieId;
   }
   if (tourneeLibelle != null && tourneeLibelle !== "") {
     filter.tourneeLibelle = tourneeLibelle;

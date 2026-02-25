@@ -140,6 +140,18 @@ class TourneeRepository
             .where(TOURNEE.ID.eq(tourneeId))
             .fetchSingleInto()
 
+    fun getListTourneeLibelleByListPei(listPeiId: List<UUID>): Map<UUID, String> =
+        dsl.select(
+            L_TOURNEE_PEI.PEI_ID.`as`("PEI_ID"),
+            listAgg(TOURNEE.LIBELLE, ", ").withinGroupOrderBy(TOURNEE.LIBELLE).`as`("LIBELLES"),
+        )
+            .from(L_TOURNEE_PEI)
+            .join(TOURNEE)
+            .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
+            .where(L_TOURNEE_PEI.PEI_ID.`in`(listPeiId))
+            .groupBy(L_TOURNEE_PEI.PEI_ID)
+            .fetchMap(field("PEI_ID", UUID::class.java), field("LIBELLES", String::class.java))
+
     /**
      * Retourne les tournées dont l'ID fait partie de la liste passée en paramètre
      *

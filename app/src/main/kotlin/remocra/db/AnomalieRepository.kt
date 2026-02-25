@@ -385,4 +385,10 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
                 .where(ANOMALIE.CODE.eq(anomalieCode))
                 .and(L_PEI_ANOMALIE.PEI_ID.eq(peiId)),
         )
+
+    fun getAnomalieForSelect(): Collection<GlobalData.IdLibelleData> =
+        dsl.select(ANOMALIE.ID.`as`("id"), ANOMALIE.LIBELLE.`as`("libelle"))
+            .from(ANOMALIE)
+            .orderBy(ANOMALIE.LIBELLE)
+            .fetchInto()
 }

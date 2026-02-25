@@ -84,33 +84,10 @@ class PeiUseCase : AbstractUseCase() {
     lateinit var getCommuneVoieUseCase: GetCommuneVoieUseCase
 
     @Inject
+    lateinit var listePeiUseCase: ListPeiUseCase
+
+    @Inject
     lateinit var appSettings: AppSettings
-
-    fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>, userInfo: WrappedUserInfo): List<PeiRepository.PeiForTableau> {
-        return peiRepository.getPeiWithFilter(params, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
-    }
-
-    fun getPeiWithFilterByIndisponibiliteTemporaire(
-        param: Params<
-            PeiRepository.Filter,
-            PeiRepository.Sort,
-            >,
-        idIndisponibiliteTemporaire: UUID,
-        userInfo: WrappedUserInfo,
-    ) = peiRepository.getPeiWithFilterByIndisponibiliteTemporaire(param, idIndisponibiliteTemporaire, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
-
-    fun getPeiWithFilterByTournee(
-        param: Params<
-            PeiRepository.Filter,
-            PeiRepository.Sort,
-            >,
-        idTournee: UUID,
-        userInfo: WrappedUserInfo,
-    ): List<PeiRepository.PeiForTableau> {
-        param.filterBy?.idTournee = idTournee
-        param.sortBy?.ordreTournee = 1
-        return peiRepository.getPeiWithFilterByTournee(param, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
-    }
 
     fun getInfoPei(idPei: UUID): PeiData {
         val typePei = peiRepository.getTypePei(idPei)
@@ -197,19 +174,11 @@ class PeiUseCase : AbstractUseCase() {
         userInfo: WrappedUserInfo,
     ): DataTableau<PeiRepository.PeiForTableau> {
         val listePeiId = getMessagePeiLongueIndispoUseCase.getListePeiAlerte(userInfo) ?: setOf()
-        return DataTableau(
-            list = peiRepository.getPeiWithFilterByMessageAlerte(
-                params,
-                listePeiId,
-                userInfo.zoneCompetence?.zoneIntegrationId,
-                userInfo.isSuperAdmin,
-            ),
-            count = peiRepository.countAllPeiWithFilterByMessageAlerte(
-                params.filterBy,
-                listePeiId,
-                userInfo.zoneCompetence?.zoneIntegrationId,
-                userInfo.isSuperAdmin,
-            ),
+        return listePeiUseCase.execute(
+            params.apply {
+                filterBy?.listePeiId = listePeiId
+            },
+            userInfo,
         )
     }
 

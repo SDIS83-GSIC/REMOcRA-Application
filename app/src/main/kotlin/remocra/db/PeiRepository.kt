@@ -3,21 +3,13 @@ package remocra.db
 import jakarta.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
-import org.jooq.Field
 import org.jooq.InsertSetStep
 import org.jooq.Record
-import org.jooq.Record19
-import org.jooq.SelectForUpdateStep
 import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.impl.DSL
-import org.jooq.impl.DSL.field
 import org.jooq.impl.DSL.multiset
-import org.jooq.impl.DSL.name
-import org.jooq.impl.DSL.selectDistinct
 import org.jooq.impl.DSL.table
-import org.jooq.impl.SQLDataType
-import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.Point
 import remocra.GlobalConstants
 import remocra.api.data.PeiProprieteCommunePenaPibi
@@ -25,6 +17,7 @@ import remocra.auth.WrappedUserInfo
 import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.PeiData
+import remocra.data.enums.PeiColonnes
 import remocra.data.enums.TypeAutoriteDeci
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.tables.references.TRACABILITE
@@ -33,7 +26,6 @@ import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.enums.TypePeiNexsis
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.pojos.Pei
-import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.DOMAINE
@@ -62,7 +54,6 @@ import remocra.db.jooq.remocra.tables.references.V_PEI_VISITE_DATE
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.AdresseUtils
 import remocra.utils.DateUtils
-import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -108,340 +99,271 @@ class PeiRepository
         )
     }
 
-    enum class PageFilter {
-        INDISPONIBILITE_TEMPORAIRE,
-        TOURNEE,
-        LISTE_PEI,
-        PEI_LONGUE_INDISPO,
-    }
-
-    fun getPeiWithFilterByIndisponibiliteTemporaire(param: Params<Filter, Sort>, idIndisponibiliteTemporaire: UUID, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): List<PeiForTableau> {
-        param.filterBy?.idIndisponibiliteTemporaire = idIndisponibiliteTemporaire
-        return getAllWithFilterAndConditionalJoin(param, zoneCompetenceId, PageFilter.INDISPONIBILITE_TEMPORAIRE, isSuperAdmin).fetchInto()
-    }
-
-    // Pour les PEI indisponibles depuis trop longtemps
-    fun getPeiWithFilterByMessageAlerte(param: Params<Filter, Sort>, listePeiId: Set<UUID>, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): List<PeiForTableau> {
-        param.filterBy?.listePeiId = listePeiId
-        return getAllWithFilterAndConditionalJoin(
-            param,
-            zoneCompetenceId,
-            PageFilter.PEI_LONGUE_INDISPO,
-            isSuperAdmin,
-        )
-            .fetchInto()
-    }
-
-    fun countAllPeiWithFilterByMessageAlerte(filterBy: Filter?, listePeiId: Set<UUID>, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): Int {
-        filterBy?.listePeiId = listePeiId
-        return countAllPeiWithFilter(filterBy, zoneCompetenceId, isSuperAdmin, PageFilter.PEI_LONGUE_INDISPO)
-    }
-
-    fun countAllPeiWithFilterByIndisponibiliteTemporaire(filterBy: Filter?, idIndisponibiliteTemporaire: UUID, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): Int {
-        filterBy?.idIndisponibiliteTemporaire = idIndisponibiliteTemporaire
-        return countAllPeiWithFilter(filterBy, zoneCompetenceId, isSuperAdmin, PageFilter.INDISPONIBILITE_TEMPORAIRE)
-    }
-
-    fun getPeiWithFilterByTournee(param: Params<Filter, Sort>, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): List<PeiForTableau> {
-        return getAllWithFilterAndConditionalJoin(param, zoneCompetenceId, PageFilter.TOURNEE, isSuperAdmin).fetch().map { record ->
-            PeiForTableau(
-                peiId = record.component1()!!,
-                peiNumeroComplet = record.component2()!!,
-                peiNumeroInterne = record.component3()!!,
-                peiTypePei = record.component4()!!,
-                peiDisponibiliteTerrestre = record.component5(),
-                penaDisponibiliteHbe = record.component6(),
-                natureLibelle = record.component7()!!,
-                adresse = record.component8(),
-                communeLibelle = record.component9()!!,
-                natureDeciLibelle = record.component10()!!,
-                autoriteDeci = record.component11(),
-                servicePublicDeci = record.component12(),
-                listeAnomalie = record.component13(),
-                tourneeLibelle = record.component14(),
-                hasTourneeReservee = record.component15(),
-                peiNextRop = record.component16(),
-                peiNextCtp = record.component17(),
-                hasIndispoTemp = record.component18(),
-                gestionnaireLibelle = record.component19(),
-            )
-        }
-    }
-
-    // Très peu de données donc peu d'impact d'utiliser le count jooq plutôt que la primitive SQL
-    fun countAllPeiWithFilterByTournee(filterBy: Filter?, idTournee: UUID, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): Int {
-        filterBy?.idTournee = idTournee
-        return countAllPeiWithFilter(filterBy, zoneCompetenceId, isSuperAdmin, PageFilter.TOURNEE)
-    }
-
-    fun getPeiWithFilter(param: Params<Filter, Sort>, zoneCompetenceId: UUID?, isSuperAdmin: Boolean): List<PeiForTableau> =
-        getAllWithFilterAndConditionalJoin(param, zoneCompetenceId, PageFilter.LISTE_PEI, isSuperAdmin)
-            .fetch().map { record ->
-                PeiForTableau(
-                    peiId = record.component1()!!,
-                    peiNumeroComplet = record.component2()!!,
-                    peiNumeroInterne = record.component3()!!,
-                    peiTypePei = record.component4()!!,
-                    peiDisponibiliteTerrestre = record.component5(),
-                    penaDisponibiliteHbe = record.component6(),
-                    natureLibelle = record.component7()!!,
-                    adresse = record.component8(),
-                    communeLibelle = record.component9()!!,
-                    natureDeciLibelle = record.component10()!!,
-                    autoriteDeci = record.component11(),
-                    servicePublicDeci = record.component12(),
-                    listeAnomalie = record.component13(),
-                    tourneeLibelle = record.component14(),
-                    hasTourneeReservee = record.component15(),
-                    peiNextRop = record.component16(),
-                    peiNextCtp = record.component17(),
-                    hasIndispoTemp = record.component18(),
-                    gestionnaireLibelle = record.component19(),
-                )
-            }
-
-    fun countAllPeiWithFilter(filterBy: Filter?, zoneCompetenceId: UUID?, isSuperAdmin: Boolean, pageFilter: PageFilter = PageFilter.LISTE_PEI): Int =
-        dsl.selectDistinct(PEI.ID)
-            .from(PEI)
-            .join(NATURE)
-            .on(PEI.NATURE_ID.eq(NATURE.ID))
-            .leftJoin(PENA)
-            .on(PEI.ID.eq(PENA.ID))
-            .leftJoin(L_PEI_ANOMALIE)
-            .on(L_PEI_ANOMALIE.PEI_ID.eq(PEI.ID))
-            .leftJoin(ANOMALIE)
-            .on(ANOMALIE.ID.eq(L_PEI_ANOMALIE.ANOMALIE_ID)).and(ANOMALIE.ID.eq(L_PEI_ANOMALIE.ANOMALIE_ID))
-            .leftJoin(L_TOURNEE_PEI)
-            .on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
-            .leftJoin(TOURNEE)
-            .on(TOURNEE.ID.eq(L_TOURNEE_PEI.TOURNEE_ID))
-            .leftJoin(V_PEI_VISITE_DATE)
-            .on(V_PEI_VISITE_DATE.PEI_ID.eq(PEI.ID))
-            .leftJoin(ZONE_INTEGRATION)
-            .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
-            .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
-            .let {
-                when (pageFilter) {
-                    PageFilter.INDISPONIBILITE_TEMPORAIRE -> it.leftJoin(L_INDISPONIBILITE_TEMPORAIRE_PEI)
-                        .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
-
-                    // la tournée est déjà jointe pour afficher le libelle
-                    PageFilter.TOURNEE -> it
-
-                    // Si on vient de la page des pei pas de join supplémentaire
-                    PageFilter.LISTE_PEI -> it
-
-                    PageFilter.PEI_LONGUE_INDISPO -> it
-                }
-            }
-            .where(filterBy?.toCondition(dateUtils) ?: DSL.noCondition())
-            // Et la zone de compétence de l'utilisateur s'il n'est pas super admin
-            .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin))
-            .count()
-
-    fun isInZoneCompetence(
-        geometry: Field<Geometry?>,
-        idOrganisme: UUID,
-    ): Boolean =
-        dsl.fetchExists(
-            dsl.select().from(PEI)
-                .join(ORGANISME)
-                .on(ORGANISME.ID.eq(idOrganisme))
-                .join(ZONE_INTEGRATION)
-                .on(ZONE_INTEGRATION.ID.eq(ORGANISME.ZONE_INTEGRATION_ID))
-                .where(
-                    ST_Within(
-                        ST_Transform(geometry, SRID),
-                        ZONE_INTEGRATION.GEOMETRIE,
-                    ),
-                ).and(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)),
-        )
-
-    private fun getAllWithFilterAndConditionalJoin(
-        param: Params<Filter, Sort>,
+    fun getListePei(
+        params: Params<Filter, Sort>,
         zoneCompetenceId: UUID?,
-        pageFilter: PageFilter = PageFilter.LISTE_PEI,
         isSuperAdmin: Boolean,
-    ): SelectForUpdateStep<Record19<UUID?, String?, Int?, TypePei?, Disponibilite?, Disponibilite?, String?, String?, String?, String?, String?, String?, MutableList<UUID>, String, Boolean, ZonedDateTime?, ZonedDateTime?, Boolean, String?>> {
-        val concatTourneeLibelleNomCte = name("tournees_libelle")
-        val concatTourneeLibelle =
-            concatTourneeLibelleNomCte.fields("tournee_id", "concat_tournee_libelle").`as`(
-                DSL.select(
-                    L_TOURNEE_PEI.PEI_ID,
-                    DSL.listAgg(TOURNEE.LIBELLE, ", ")
-                        .withinGroupOrderBy(TOURNEE.LIBELLE),
-                ).from(L_TOURNEE_PEI)
-                    .join(TOURNEE).on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
-                    .groupBy(L_TOURNEE_PEI.PEI_ID),
-            )
-        val peiIdCte = field(name("tournees_libelle", "tournee_id"), SQLDataType.UUID)
-        val tourneeLibelleField = field(name("tournees_libelle", "concat_tournee_libelle"), SQLDataType.VARCHAR)
-
-        val hasTourneeReservee = DSL.exists(
-            DSL.select(L_TOURNEE_PEI.TOURNEE_ID).from(L_TOURNEE_PEI)
-                .where(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
-                .and(TOURNEE.RESERVATION_UTILISATEUR_ID.isNotNull),
-        )
-            .`as`("hasTourneeReservee")
-
-        val hasIndispoTemp = DSL.exists(
-            DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID).from(L_INDISPONIBILITE_TEMPORAIRE_PEI).join(
-                INDISPONIBILITE_TEMPORAIRE,
-            ).on(INDISPONIBILITE_TEMPORAIRE.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID))
-                .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID)).and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(dateUtils.now()).or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull)).and(INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(dateUtils.now())),
-        ).`as`("hasIndispoTemp")
-
-        // Champ libellé autorité DECI avec la règle métier appliquée via la jointure sur TYPE_ORGANISME
-        val autoriteDeciLibelleField = DSL
-            .`when`(
-                TYPE_ORGANISME.CODE
-                    .eq(TypeAutoriteDeci.COMMUNE.valeurConstante.uppercase()),
-                DSL.concat(
-                    DSL.value("Maire ("),
-                    autoriteDeciAlias.field(ORGANISME.LIBELLE),
-                    DSL.value(")"),
-                ),
-            )
-            .`when`(
-                TYPE_ORGANISME.CODE
-                    .eq(TypeAutoriteDeci.PREFECTURE.valeurConstante.uppercase()),
-                DSL.concat(
-                    DSL.value("Préfet ("),
-                    autoriteDeciAlias.field(ORGANISME.LIBELLE),
-                    DSL.value(")"),
-                ),
-            )
-            .`when`(
-                TYPE_ORGANISME.CODE
-                    .eq(TypeAutoriteDeci.EPCI.valeurConstante.uppercase()),
-                DSL.concat(
-                    DSL.value("Président ("),
-                    autoriteDeciAlias.field(ORGANISME.LIBELLE),
-                    DSL.value(")"),
-                ),
-            )
-            .otherwise(autoriteDeciAlias.field(ORGANISME.LIBELLE))
-            .`as`("AUTORITE_DECI")
-
-        return dsl.with(concatTourneeLibelle).select(
+        peiColonnes: Set<PeiColonnes>,
+    ): List<PeiForTableau> {
+        return dsl.selectDistinct(
             PEI.ID,
+            // Obligatoire pour le tri
+            DSL.length(PEI.NUMERO_COMPLET).`as`("numeroCompletLength"),
             PEI.NUMERO_COMPLET,
             PEI.NUMERO_INTERNE,
             PEI.TYPE_PEI,
             PEI.DISPONIBILITE_TERRESTRE,
-            PENA.DISPONIBILITE_HBE,
-            NATURE.LIBELLE,
-            AdresseUtils.getDslConcatForAdresse().`as`("adresse"),
             COMMUNE.LIBELLE,
+            NATURE.LIBELLE,
             NATURE_DECI.LIBELLE,
-            autoriteDeciLibelleField,
-            servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
-                /*
-                 * le multiset permet de renvoyer une liste dans une liste
-                 * */
-            multiset(
-                selectDistinct(L_PEI_ANOMALIE.ANOMALIE_ID)
-                    .from(L_PEI_ANOMALIE)
-                    .where(L_PEI_ANOMALIE.PEI_ID.eq(PEI.ID)),
-            ).`as`("listeAnomalie").convertFrom { record ->
-                record?.map { r ->
-                    r.value1().let { it as UUID }
-                }
-            },
-            tourneeLibelleField,
-            hasTourneeReservee,
-            V_PEI_VISITE_DATE.PEI_NEXT_ROP,
             V_PEI_VISITE_DATE.PEI_NEXT_CTP,
-            hasIndispoTemp,
-            GESTIONNAIRE.LIBELLE.`as`("gestionnaireLibelle"),
+            V_PEI_VISITE_DATE.PEI_NEXT_ROP,
+            DSL.exists(
+                DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID).from(L_INDISPONIBILITE_TEMPORAIRE_PEI).join(
+                    INDISPONIBILITE_TEMPORAIRE,
+                ).on(INDISPONIBILITE_TEMPORAIRE.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID))
+                    .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID)).and(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(dateUtils.now()).or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull)).and(INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(dateUtils.now())),
+            ).`as`("hasIndispoTemp"),
+            DSL.exists(
+                DSL.select(TOURNEE.ID).from(TOURNEE).join(
+                    L_TOURNEE_PEI,
+                ).on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
+                    .where(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID)).and(TOURNEE.RESERVATION_UTILISATEUR_ID.isNotNull),
+            ).`as`("hasTourneeReservee"),
         )
-            .from(PEI)
-            .join(COMMUNE)
-            .on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
-            .join(NATURE)
-            .on(PEI.NATURE_ID.eq(NATURE.ID))
-            .leftJoin(PENA)
-            .on(PEI.ID.eq(PENA.ID))
-            .leftJoin(PIBI)
-            .on(PEI.ID.eq(PIBI.ID))
-            .join(NATURE_DECI)
-            .on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
-            .leftJoin(autoriteDeciAlias)
-            .on(PEI.AUTORITE_DECI_ID.eq(autoriteDeciAlias.field(ORGANISME.ID)))
-            .leftJoin(servicePublicDeciAlias)
-            .on(PEI.SERVICE_PUBLIC_DECI_ID.eq(servicePublicDeciAlias.field(ORGANISME.ID)))
-            // Jointure supplémentaire sur TYPE_ORGANISME pour l'autorité DECI
-            .leftJoin(TYPE_ORGANISME)
-            .on(autoriteDeciAlias.field(ORGANISME.TYPE_ORGANISME_ID)?.eq(TYPE_ORGANISME.ID))
-            .leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
-            .leftJoin(table(concatTourneeLibelleNomCte)).on(peiIdCte.eq(PEI.ID))
-            .leftJoin(SITE).on(PEI.SITE_ID.eq(SITE.ID))
-            .leftJoin(GESTIONNAIRE).on(PEI.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID).or(SITE.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID)))
-            /*
-        Join des anomalies uniquement pour les filtres c'est pour cette raison qu'on ne prend pas de field
-        de cette jointure
-             */
-            .leftJoin(L_PEI_ANOMALIE)
-            .on(L_PEI_ANOMALIE.PEI_ID.eq(PEI.ID))
-            .leftJoin(ANOMALIE)
-            .on(ANOMALIE.ID.eq(L_PEI_ANOMALIE.ANOMALIE_ID))
-            .leftJoin(V_PEI_VISITE_DATE)
-            .on(V_PEI_VISITE_DATE.PEI_ID.eq(PEI.ID))
-            .leftJoin(L_TOURNEE_PEI)
-            .on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
-            .leftJoin(TOURNEE)
-            .on(TOURNEE.ID.eq(L_TOURNEE_PEI.TOURNEE_ID))
-            .leftJoin(ZONE_INTEGRATION)
-            .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
+            // Colonnes conditionnelles
             .let {
-                // Join conditionnel en fonction de la page qui demande (exemple les indispos temporaires, on n'en a besoin QUE
-                // pour les indispos temporaires)
-                when (pageFilter) {
-                    PageFilter.INDISPONIBILITE_TEMPORAIRE -> it.leftJoin(L_INDISPONIBILITE_TEMPORAIRE_PEI)
-                        .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
-
-                    // la tournée est déjà jointe pour afficher le libelle
-                    PageFilter.TOURNEE -> it
-
-                    // Si on vient de la page des pei pas de join supplémentaire
-                    PageFilter.LISTE_PEI -> it
-
-                    // Pour les PEI indisponibles depuis trop longtemps
-                    PageFilter.PEI_LONGUE_INDISPO -> it
+                if (peiColonnes.contains(PeiColonnes.AUTORITE_DECI)) {
+                    it.select(
+                        DSL
+                            .`when`(
+                                TYPE_ORGANISME.CODE
+                                    .eq(TypeAutoriteDeci.COMMUNE.valeurConstante.uppercase()),
+                                DSL.concat(
+                                    DSL.value("Maire ("),
+                                    autoriteDeciAlias.field(ORGANISME.LIBELLE),
+                                    DSL.value(")"),
+                                ),
+                            )
+                            .`when`(
+                                TYPE_ORGANISME.CODE
+                                    .eq(TypeAutoriteDeci.PREFECTURE.valeurConstante.uppercase()),
+                                DSL.concat(
+                                    DSL.value("Préfet ("),
+                                    autoriteDeciAlias.field(ORGANISME.LIBELLE),
+                                    DSL.value(")"),
+                                ),
+                            )
+                            .`when`(
+                                TYPE_ORGANISME.CODE
+                                    .eq(TypeAutoriteDeci.EPCI.valeurConstante.uppercase()),
+                                DSL.concat(
+                                    DSL.value("Président ("),
+                                    autoriteDeciAlias.field(ORGANISME.LIBELLE),
+                                    DSL.value(")"),
+                                ),
+                            )
+                            .otherwise(autoriteDeciAlias.field(ORGANISME.LIBELLE))
+                            .`as`("AUTORITE_DECI"),
+                        // Obligatoire pour le tri
+                        autoriteDeciAlias.field(ORGANISME.LIBELLE),
+                    )
+                } else {
+                    it
                 }
             }
-            .where(param.filterBy?.toCondition(dateUtils) ?: DSL.noCondition())
-            .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin))
-            .groupBy(
-                PEI.ID,
-                PEI.NUMERO_COMPLET,
-                PEI.NUMERO_INTERNE,
-                PEI.TYPE_PEI,
-                PEI.DISPONIBILITE_TERRESTRE,
-                PENA.DISPONIBILITE_HBE,
-                NATURE.LIBELLE,
-                AdresseUtils.getDslConcatForAdresse().`as`("adresse"),
-                COMMUNE.LIBELLE,
-                NATURE_DECI.LIBELLE,
-                autoriteDeciLibelleField,
-                servicePublicDeciAlias.field(ORGANISME.LIBELLE)?.`as`("SERVICE_PUBLIC_DECI"),
-                V_PEI_VISITE_DATE.PEI_NEXT_ROP,
-                V_PEI_VISITE_DATE.PEI_NEXT_CTP,
-                tourneeLibelleField,
-                hasTourneeReservee,
-                hasIndispoTemp,
-                TYPE_ORGANISME.CODE,
-                autoriteDeciAlias.field(ORGANISME.LIBELLE),
-                GESTIONNAIRE.LIBELLE,
+            .let {
+                if (peiColonnes.contains(PeiColonnes.ADRESSE)) {
+                    it.select(AdresseUtils.getDslConcatForAdresse().`as`("adresse"))
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.GESTIONNAIRE)) {
+                    it.select(GESTIONNAIRE.LIBELLE)
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.SERVICE_PUBLIC_DECI)) {
+                    it.select(servicePublicDeciAlias.field<String>(ORGANISME.LIBELLE)?.`as`("servicePublicDeci"))
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.DISPONIBILITE_HBE)) {
+                    it.select(PENA.DISPONIBILITE_HBE)
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.ANOMALIES)) {
+                    it.select(
+                        multiset(
+                            dsl.select(L_PEI_ANOMALIE.PEI_ID, L_PEI_ANOMALIE.ANOMALIE_ID)
+                                .from(L_PEI_ANOMALIE)
+                                .where(L_PEI_ANOMALIE.PEI_ID.eq(PEI.ID)),
+                        ).`as`("listeAnomalie").convertFrom { record ->
+                            record?.map { it.value2() as UUID }
+                        },
+                    )
+                } else {
+                    it
+                }
+            }
+            .from(PEI)
+            .join(NATURE).on(NATURE.ID.eq(PEI.NATURE_ID))
+            .join(NATURE_DECI).on(NATURE_DECI.ID.eq(PEI.NATURE_DECI_ID))
+            .join(COMMUNE).on(COMMUNE.ID.eq(PEI.COMMUNE_ID))
+            .leftJoin(V_PEI_VISITE_DATE).on(V_PEI_VISITE_DATE.PEI_ID.eq(PEI.ID))
+            .let {
+                if (peiColonnes.contains(PeiColonnes.ADRESSE)) {
+                    it.leftJoin(VOIE).on(VOIE.ID.eq(PEI.VOIE_ID))
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.DISPONIBILITE_HBE)) {
+                    it.leftJoin(PENA).on(PENA.ID.eq(PEI.ID))
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.AUTORITE_DECI)) {
+                    it.leftJoin(autoriteDeciAlias).on(PEI.AUTORITE_DECI_ID.eq(autoriteDeciAlias.field(ORGANISME.ID)))
+                        .leftJoin(TYPE_ORGANISME).on(TYPE_ORGANISME.ID.eq(autoriteDeciAlias.field(ORGANISME.TYPE_ORGANISME_ID)))
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.SERVICE_PUBLIC_DECI)) {
+                    it.leftJoin(servicePublicDeciAlias).on(PEI.SERVICE_PUBLIC_DECI_ID.eq(servicePublicDeciAlias.field(ORGANISME.ID)))
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.GESTIONNAIRE)) {
+                    it.leftJoin(SITE).on(PEI.SITE_ID.eq(SITE.ID))
+                        .leftJoin(GESTIONNAIRE).on(PEI.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID).or(SITE.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID)))
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.ANOMALIES)) {
+                    it.leftJoin(L_PEI_ANOMALIE).on(L_PEI_ANOMALIE.PEI_ID.eq(PEI.ID))
+                } else {
+                    it
+                }
+            }
+            .where(params.filterBy?.toCondition(dateUtils) ?: DSL.noCondition())
+            .and(
+                zoneCompetenceId?.let {
+                    repositoryUtils.checkIsSuperAdminOrCondition(
+                        ST_Within(
+                            PEI.GEOMETRIE,
+                            dsl.select(ZONE_INTEGRATION.GEOMETRIE)
+                                .from(ZONE_INTEGRATION)
+                                .where(ZONE_INTEGRATION.ID.eq(it))
+                                .limit(1)
+                                .asField(),
+                        ).isTrue,
+                        isSuperAdmin,
+                    )
+                },
             )
-            .orderBy(
-                param.sortBy?.toCondition(tourneeLibelleField).takeIf { !it.isNullOrEmpty() } ?: listOf(
-                    DSL.length(PEI.NUMERO_COMPLET).asc(),
-                    PEI.NUMERO_COMPLET.asc(),
-                ),
+            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(PEI.NUMERO_COMPLET.asc()))
+            .limit(params.limit)
+            .offset(params.offset)
+            .fetchInto()
+    }
+
+    fun countListePei(filter: Filter?, zoneCompetenceId: UUID?, isSuperAdmin: Boolean, peiColonnes: Set<PeiColonnes>): Int {
+        return dsl.select(DSL.countDistinct(PEI.ID))
+            .from(PEI)
+            .join(NATURE)
+            .on(NATURE.ID.eq(PEI.NATURE_ID))
+            .join(NATURE_DECI)
+            .on(NATURE_DECI.ID.eq(PEI.NATURE_DECI_ID))
+            .join(COMMUNE)
+            .on(COMMUNE.ID.eq(PEI.COMMUNE_ID))
+            .leftJoin(V_PEI_VISITE_DATE)
+            .on(V_PEI_VISITE_DATE.PEI_ID.eq(PEI.ID))
+            .let {
+                if (peiColonnes.contains(PeiColonnes.ADRESSE)) {
+                    it.leftJoin(VOIE)
+                        .on(VOIE.ID.eq(PEI.VOIE_ID))
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.DISPONIBILITE_HBE)) {
+                    it.leftJoin(PENA)
+                        .on(PENA.ID.eq(PEI.ID))
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.AUTORITE_DECI)) {
+                    it.leftJoin(autoriteDeciAlias)
+                        .on(PEI.AUTORITE_DECI_ID.eq(autoriteDeciAlias.field(ORGANISME.ID)))
+                        .leftJoin(TYPE_ORGANISME)
+                        .on(TYPE_ORGANISME.ID.eq(autoriteDeciAlias.field(ORGANISME.TYPE_ORGANISME_ID)))
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.SERVICE_PUBLIC_DECI)) {
+                    it.leftJoin(servicePublicDeciAlias)
+                        .on(PEI.SERVICE_PUBLIC_DECI_ID.eq(servicePublicDeciAlias.field(ORGANISME.ID)))
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.GESTIONNAIRE)) {
+                    it.leftJoin(SITE).on(PEI.SITE_ID.eq(SITE.ID))
+                        .leftJoin(GESTIONNAIRE).on(PEI.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID).or(SITE.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID)))
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.ANOMALIES)) {
+                    it.leftJoin(L_PEI_ANOMALIE)
+                        .on(L_PEI_ANOMALIE.PEI_ID.eq(PEI.ID))
+                } else {
+                    it
+                }
+            }
+            .where(filter?.toCondition(dateUtils) ?: DSL.noCondition())
+            .and(
+                zoneCompetenceId?.let {
+                    repositoryUtils.checkIsSuperAdminOrCondition(
+                        ST_Within(
+                            PEI.GEOMETRIE,
+                            dsl.select(ZONE_INTEGRATION.GEOMETRIE)
+                                .from(ZONE_INTEGRATION)
+                                .where(ZONE_INTEGRATION.ID.eq(it))
+                                .limit(1)
+                                .asField(),
+                        ).isTrue,
+                        isSuperAdmin,
+                    )
+                },
             )
-            .limit(param.limit)
-            .offset(param.offset)
+            .fetchSingleInto()
     }
 
     data class PeiForTableau(
@@ -457,12 +379,12 @@ class PeiRepository
         val natureDeciLibelle: String,
         val autoriteDeci: String?,
         val servicePublicDeci: String?,
-        val listeAnomalie: List<UUID>?,
+        val listeAnomalie: List<UUID>? = listOf(),
         val peiNextRop: ZonedDateTime?,
         val peiNextCtp: ZonedDateTime?,
         val tourneeLibelle: String?,
-        val hasTourneeReservee: Boolean,
-        val hasIndispoTemp: Boolean,
+        val hasTourneeReservee: Boolean = false,
+        val hasIndispoTemp: Boolean = false,
         val gestionnaireLibelle: String?,
     )
 
@@ -477,14 +399,13 @@ class PeiRepository
         val servicePublicDeci: UUID?,
         val peiDisponibiliteTerrestre: Disponibilite?,
         val penaDisponibiliteHbe: Disponibilite?,
-        val listeAnomalie: String?,
+        val anomalieId: UUID?,
         var idIndisponibiliteTemporaire: UUID?,
-        var idTournee: UUID?,
         var listePeiId: Set<UUID>?,
         var adresse: String?,
         val prochaineDateRop: ProchaineDate?,
         val prochaineDateCtp: ProchaineDate?,
-        val tourneeId: UUID?,
+        var tourneeId: UUID?,
         val gestionnaireId: UUID?,
     ) {
 
@@ -511,15 +432,25 @@ class PeiRepository
                     servicePublicDeci?.let { DSL.and(PEI.SERVICE_PUBLIC_DECI_ID.eq(it)) },
                     peiDisponibiliteTerrestre?.let { DSL.and(PEI.DISPONIBILITE_TERRESTRE.eq(it)) },
                     penaDisponibiliteHbe?.let { DSL.and(PENA.DISPONIBILITE_HBE.eq(it)) },
-                    listeAnomalie?.let { DSL.and(ANOMALIE.LIBELLE.containsIgnoreCaseUnaccent(it)) },
+                    anomalieId?.let { DSL.and(L_PEI_ANOMALIE.ANOMALIE_ID.eq(it)) },
                     idIndisponibiliteTemporaire?.let {
                         DSL.and(
-                            L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(
-                                it,
+                            PEI.ID.`in`(
+                                DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID)
+                                    .from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+                                    .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(it)),
                             ),
                         )
                     },
-                    idTournee?.let { DSL.and(L_TOURNEE_PEI.TOURNEE_ID.eq(it)) },
+                    tourneeId?.let {
+                        DSL.and(
+                            PEI.ID.`in`(
+                                DSL.select(L_TOURNEE_PEI.PEI_ID)
+                                    .from(L_TOURNEE_PEI)
+                                    .where(L_TOURNEE_PEI.TOURNEE_ID.eq(it)),
+                            ),
+                        )
+                    },
                     listePeiId?.let { DSL.and(PEI.ID.`in`(it)) },
                     prochaineDateRop?.let {
                         when (it) {
@@ -558,7 +489,6 @@ class PeiRepository
                     adresse?.let {
                         DSL.and(AdresseUtils.getDslConcatForAdresse().containsIgnoreCaseUnaccent(it))
                     },
-                    tourneeId?.let { DSL.and(L_TOURNEE_PEI.TOURNEE_ID.eq(it)) },
                     gestionnaireId?.let { DSL.and(PEI.GESTIONNAIRE_ID.eq(it)) },
                 ),
             )
@@ -577,10 +507,9 @@ class PeiRepository
         val servicePublicDeci: Int?,
         val peiNextRop: Int?,
         val peiNextCtp: Int?,
-        val tourneeLibelle: Int?,
         var ordreTournee: Int?,
     ) {
-        fun toCondition(tourneeLibelleField: Field<String?>): List<SortField<*>> = listOfNotNull(
+        fun toCondition(): List<SortField<*>> = listOfNotNull(
             PEI.NUMERO_INTERNE.getSortField(peiNumeroInterne),
             PEI.TYPE_PEI.getSortField(peiTypePei),
             PEI.DISPONIBILITE_TERRESTRE.getSortField(peiDisponibiliteTerrestre),
@@ -597,7 +526,6 @@ class PeiRepository
             PEI.NUMERO_COMPLET.getSortField(peiNumeroComplet),
             V_PEI_VISITE_DATE.PEI_NEXT_ROP.getSortField(peiNextRop),
             V_PEI_VISITE_DATE.PEI_NEXT_CTP.getSortField(peiNextCtp),
-            tourneeLibelleField.getSortField(tourneeLibelle),
         )
     }
 

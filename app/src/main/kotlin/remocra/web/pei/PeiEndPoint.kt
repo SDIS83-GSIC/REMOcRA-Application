@@ -21,7 +21,6 @@ import org.locationtech.jts.geom.Geometry
 import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
-import remocra.data.DataTableau
 import remocra.data.DocumentsData.DocumentData
 import remocra.data.DocumentsData.DocumentsPei
 import remocra.data.Params
@@ -40,6 +39,7 @@ import remocra.usecase.geometrie.CalculGeometrieUseCase
 import remocra.usecase.geometrie.GetCoordonneesBySrid
 import remocra.usecase.pei.CreatePeiUseCase
 import remocra.usecase.pei.DeletePeiUseCase
+import remocra.usecase.pei.ListPeiUseCase
 import remocra.usecase.pei.MovePeiUseCase
 import remocra.usecase.pei.PeiUseCase
 import remocra.usecase.pei.UpdatePeiUseCase
@@ -73,6 +73,8 @@ class PeiEndPoint : AbstractEndpoint() {
 
     @Inject lateinit var getElementCarteUseCase: GetPointCarteUseCase
 
+    @Inject lateinit var listePeiUseCase: ListPeiUseCase
+
     @Inject lateinit var objectMapper: ObjectMapper
 
     @Context lateinit var securityContext: SecurityContext
@@ -82,9 +84,8 @@ class PeiEndPoint : AbstractEndpoint() {
     @RequireDroits([Droit.PEI_R])
     @Produces(MediaType.APPLICATION_JSON)
     fun getPeiWithFilter(params: Params<PeiRepository.Filter, PeiRepository.Sort>): Response {
-        val listPei = peiUseCase.getPeiWithFilter(params, securityContext.userInfo)
         return Response.ok(
-            DataTableau(listPei, peiRepository.countAllPeiWithFilter(params.filterBy, securityContext.userInfo.zoneCompetence?.zoneIntegrationId, securityContext.userInfo.isSuperAdmin)),
+            listePeiUseCase.execute(params, securityContext.userInfo),
         )
             .build()
     }
@@ -114,16 +115,13 @@ class PeiEndPoint : AbstractEndpoint() {
             PeiRepository.Sort,
             >,
     ): Response {
-        val listPei = peiUseCase.getPeiWithFilterByIndisponibiliteTemporaire(params, idIndisponibiliteTemporaire, securityContext.userInfo)
         return Response.ok(
-            DataTableau(
-                listPei,
-                peiRepository.countAllPeiWithFilterByIndisponibiliteTemporaire(
-                    params.filterBy,
-                    idIndisponibiliteTemporaire,
-                    securityContext.userInfo.zoneCompetence?.zoneIntegrationId,
-                    securityContext.userInfo.isSuperAdmin,
-                ),
+            listePeiUseCase.execute(
+                params.apply {
+                    filterBy?.idIndisponibiliteTemporaire = idIndisponibiliteTemporaire
+                },
+                securityContext.userInfo,
+
             ),
         )
             .build()
@@ -140,16 +138,12 @@ class PeiEndPoint : AbstractEndpoint() {
             PeiRepository.Sort,
             >,
     ): Response {
-        val listPei = peiUseCase.getPeiWithFilterByTournee(params, idTournee, securityContext.userInfo)
         return Response.ok(
-            DataTableau(
-                listPei,
-                peiRepository.countAllPeiWithFilterByTournee(
-                    params.filterBy,
-                    idTournee,
-                    securityContext.userInfo.zoneCompetence?.zoneIntegrationId,
-                    securityContext.userInfo.isSuperAdmin,
-                ),
+            listePeiUseCase.execute(
+                params.apply {
+                    filterBy?.tourneeId = idTournee
+                },
+                securityContext.userInfo,
             ),
         )
             .build()

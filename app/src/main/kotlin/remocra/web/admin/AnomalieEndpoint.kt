@@ -9,6 +9,7 @@ import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
+import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
@@ -41,6 +42,15 @@ class AnomalieEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var natureRepository: NatureRepository
+
+    @Inject
+    lateinit var updateAnomalieUseCase: UpdateAnomalieUseCase
+
+    @Inject
+    lateinit var createAnomalieUseCase: CreateAnomalieUseCase
+
+    @Inject
+    lateinit var deleteAnomalieUseCase: DeleteAnomalieUseCase
 
     @GET
     @Path("/list")
@@ -112,18 +122,12 @@ class AnomalieEndpoint : AbstractEndpoint() {
         ).build()
     }
 
-    @Inject
-    lateinit var createAnomalieUseCase: CreateAnomalieUseCase
-
     @POST
     @Path("/create")
     @RequireDroits([Droit.ADMIN_ANOMALIES])
     fun post(element: AnomalieData): Response {
         return createAnomalieUseCase.execute(securityContext.userInfo, element).wrap()
     }
-
-    @Inject
-    lateinit var updateAnomalieUseCase: UpdateAnomalieUseCase
 
     @PUT
     @Path("/update/{anomalieId}")
@@ -132,13 +136,21 @@ class AnomalieEndpoint : AbstractEndpoint() {
         return updateAnomalieUseCase.execute(securityContext.userInfo, element.copy(anomalieId = anomalieId)).wrap()
     }
 
-    @Inject
-    lateinit var deleteAnomalieUseCase: DeleteAnomalieUseCase
-
     @DELETE
     @Path("/delete/{anomalieId}")
     @RequireDroits([Droit.ADMIN_ANOMALIES])
     fun delete(@PathParam("anomalieId") anomalieId: UUID): Response {
         return deleteAnomalieUseCase.execute(securityContext.userInfo, anomalieRepository.getAnomalieById(anomalieId)).wrap()
+    }
+
+    @GET
+    @Path("/get-libelle-anomalie")
+    @RequireDroits([Droit.PEI_R])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun getTourneeForSelect(): Response {
+        return Response.ok(
+            anomalieRepository.getAnomalieForSelect(),
+        )
+            .build()
     }
 }
