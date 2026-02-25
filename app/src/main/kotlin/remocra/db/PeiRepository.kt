@@ -358,11 +358,10 @@ class PeiRepository
                     repositoryUtils.checkIsSuperAdminOrCondition(
                         ST_Within(
                             PEI.GEOMETRIE,
-                            dsl.select(ZONE_INTEGRATION.GEOMETRIE)
-                                .from(ZONE_INTEGRATION)
-                                .where(ZONE_INTEGRATION.ID.eq(it))
-                                .limit(1)
-                                .asField(),
+                            DSL.field(
+                                DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
+                                    .where(ZONE_INTEGRATION.ID.eq(it)),
+                            ),
                         ).isTrue,
                         isSuperAdmin,
                     )

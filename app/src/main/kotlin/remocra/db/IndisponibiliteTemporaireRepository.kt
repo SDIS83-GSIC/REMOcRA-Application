@@ -92,10 +92,21 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             )
             .join(PEI)
             .on(PEI.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID))
-            .leftJoin(ZONE_INTEGRATION)
-            .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
             .where(params.filterBy?.toCondition(dateUtils) ?: DSL.noCondition())
-            .and(repositoryUtils.checkIsSuperAdminOrCondition(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue, isSuperAdmin))
+            .and(
+                zoneCompetenceId?.let {
+                    repositoryUtils.checkIsSuperAdminOrCondition(
+                        ST_Within(
+                            PEI.GEOMETRIE,
+                            DSL.field(
+                                DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
+                                    .where(ZONE_INTEGRATION.ID.eq(zoneCompetenceId)),
+                            ),
+                        ).isTrue,
+                        isSuperAdmin,
+                    )
+                },
+            )
             .groupBy(
                 INDISPONIBILITE_TEMPORAIRE.ID,
                 listeNumeroPei,
@@ -137,10 +148,14 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
                 .from(PEI)
                 .join(L_INDISPONIBILITE_TEMPORAIRE_PEI)
                 .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
-                .leftJoin(ZONE_INTEGRATION)
-                .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
                 .where(
-                    ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isFalse,
+                    ST_Within(
+                        PEI.GEOMETRIE,
+                        field(
+                            DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
+                                .where(ZONE_INTEGRATION.ID.eq(zoneCompetenceId)),
+                        ),
+                    ).isFalse,
                 )
                 .and(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.`in`(listItId))
                 .fetchInto()

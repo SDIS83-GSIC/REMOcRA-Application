@@ -2,6 +2,7 @@ package remocra.db
 
 import jakarta.inject.Inject
 import org.jooq.DSLContext
+import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Geometry
@@ -103,14 +104,20 @@ class DebitSimultaneRepository @Inject constructor(private val dsl: DSLContext) 
             .from(DEBIT_SIMULTANE)
             .leftJoin(SITE)
             .on(SITE.ID.eq(DEBIT_SIMULTANE.SITE_ID))
-            .leftJoin(ZONE_INTEGRATION)
-            .on(ZONE_INTEGRATION.ID.eq(zoneCompetenceId))
             .where(DEBIT_SIMULTANE.ID.eq(debitSimultaneId))
             .and(
-                repositoryUtils.checkIsSuperAdminOrCondition(
-                    ST_Within(DEBIT_SIMULTANE.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE).isTrue,
-                    isSuperAdmin,
-                ),
+                zoneCompetenceId?.let {
+                    repositoryUtils.checkIsSuperAdminOrCondition(
+                        ST_Within(
+                            DEBIT_SIMULTANE.GEOMETRIE,
+                            DSL.field(
+                                DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
+                                    .where(ZONE_INTEGRATION.ID.eq(zoneCompetenceId)),
+                            ),
+                        ).isTrue,
+                        isSuperAdmin,
+                    )
+                },
             )
             .fetchSingleInto()
 
