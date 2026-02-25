@@ -31,19 +31,15 @@ Il est également nécessaire de disposer d’une base de données PostgreSQL (v
 
 Créer un dossier `/opt/remocra`.
 
-Dans ce dossier, ajouter un fichier nommé `compose.yaml`. Renseigner le contenu suivant :
-
-[source,yaml]
-----
-include::compose-example.yaml[]
-----
+Dans ce dossier, ajouter un fichier nommé `compose.yaml`. Renseigner le contenu du fichier `compose-example.yaml`
+présent dans le même répertoire.
 
 === Mise en place des variables d’environnement
 Pour que le fichier compose.yaml ait tous les paramètres, il faut créer dans le même répertoire `/opt/remocra/` un fichier `.env` qui contiendra les éléments suivants :
 
 [source,properties]
 ----
-DOCKER_REMOCRA_VERSION=1.0-a9
+DOCKER_REMOCRA_VERSION=x.x.x
 
 GLOWROOT_ENABLED=false
 GLOWROOT_PORT=4000
@@ -51,6 +47,8 @@ GLOWROOT_PORT=4000
 OTEL_JAVAAGENT_ENABLED=false
 OTEL_SERVICE_INSTANCE_ID=1
 
+REMOCRA_UID=2000
+REMOCRA_GID=2000
 # Postgres
 POSTGRES_DB_HOSTNAME=localhost
 POSTGRES_DB_NAME=remocra
@@ -195,7 +193,7 @@ Créer les dossiers suivants et leur affecter tous deux les droits _remocra_ :
 mkdir /var/log/remocra
 mkdir /var/lib/remocra
 mkdir /var/opt/geoserver
-# mdkir /var/opt/apache-hop # si Apache Hop est installé
+# mkdir /var/opt/apache-hop # si Apache Hop est installé
 
 chown -R remocra: /var/lib/remocra
 chown -R remocra: /var/log/remocra
@@ -231,6 +229,11 @@ NOTE: Sans application des patchs de base de données l'application ne peut pas 
 ==== Création de l'utilisateur super-admin
 
 On va déjà créer un utilisateur super-admin temporaire via la commande suivante :
+
+[source,console]
+docker compose stop keycloak
+
+
 [source,console]
 ----
 docker compose run --rm \
@@ -241,6 +244,9 @@ docker compose run --rm \
 ----
 
 Puis créer l'utilisateur super-admin définitif :
+[source,console]
+docker compose up -d keycloak
+
 [source,console]
 ----
 docker compose run --rm \
