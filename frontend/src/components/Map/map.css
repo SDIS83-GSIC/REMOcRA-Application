@@ -140,3 +140,15 @@
   border-radius: 8px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
+
+.popover {
+  max-width: none;
+}
+
+.popover-body-content {
+  max-height: 120px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: auto;
+  max-width: none;
+}

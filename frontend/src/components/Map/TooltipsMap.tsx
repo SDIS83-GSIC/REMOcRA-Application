@@ -536,6 +536,7 @@ const Tooltip = ({
           </Popover.Header>
           <Popover.Body>
             <div
+              className="popover-body-content"
               dangerouslySetInnerHTML={{
                 __html: featureSelect.getProperties().propertiesToDisplay,
               }}
@@ -1007,6 +1008,7 @@ const useTooltipMap = ({
               });
               map.addOverlay(over);
               setOverlay(over);
+              map.getView().setCenter(coordinate);
               return true; // stop
             }
             return false; // continue cherche une autre feature
