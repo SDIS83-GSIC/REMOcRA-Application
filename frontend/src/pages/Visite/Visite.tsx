@@ -299,6 +299,7 @@ const Visite = ({
                               query={url`/api/visite/` + element.visiteId}
                               ref={ref}
                               onDelete={() => {
+                                refreshLayerGeoserver(map);
                                 visiteInformations.reload();
                                 listeAnomaliesAssignable.reload();
                               }}

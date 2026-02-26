@@ -238,7 +238,10 @@ export function addWktLayer(
   });
 }
 
-export function refreshLayerGeoserver(map: OLMap) {
+export function refreshLayerGeoserver(map: OLMap | undefined) {
+  if (!map) {
+    return;
+  }
   map.getLayers().forEach((layer) => {
     if (layer.getSource().updateParams) {
       layer.getSource().updateParams({
