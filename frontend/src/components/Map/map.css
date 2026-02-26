@@ -55,9 +55,9 @@
 
 @media print {
   .map-wrapper {
-    grid-template-areas: "map layers";
-    grid-template-rows: auto;
-    grid-template-columns: auto min-content;
+    display: flex;
+    width: 90vw;
+    height: auto;
   }
 
   #navbar,
@@ -72,6 +72,20 @@
   .printable-no-margin {
     margin: 0;
     padding: 0;
+  }
+  .printable-legend {
+    position: relative;
+    margin: 0;
+    padding: 1rem;
+    width: 270px;
+    max-height: 40vh;
+    flex-shrink: 0;
+  }
+
+  .map-map {
+    width: 70%;
+    height: auto !important;
+    flex-grow: 0;
   }
 }
 
