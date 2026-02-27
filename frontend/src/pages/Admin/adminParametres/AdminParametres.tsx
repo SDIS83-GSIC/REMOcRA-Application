@@ -1501,7 +1501,9 @@ const AdminUtilisateur = ({
             onChange={(organisme) => {
               setFieldValue(
                 `utilisateur.organismeDefaut`,
-                organismeList?.find((o) => o.id === organisme?.id).code,
+                organismeList?.find(
+                  (o: { id: string }) => o.id === organisme?.id,
+                )?.code,
               );
             }}
           />
@@ -1525,8 +1527,8 @@ const AdminUtilisateur = ({
               setFieldValue(
                 `utilisateur.profilUtilisateurDefaut`,
                 profilUtilisateurList?.find(
-                  (p) => p.id === profilUtilisateur?.id,
-                ).code,
+                  (p: { id: string }) => p.id === profilUtilisateur?.id,
+                )?.code,
               );
             }}
           />

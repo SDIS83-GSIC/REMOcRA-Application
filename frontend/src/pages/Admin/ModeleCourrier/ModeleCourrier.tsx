@@ -282,7 +282,7 @@ const ModeleCourrier = () => {
                 getOptionValue={(t: IdCodeLibelleType) => t.id}
                 getOptionLabel={(t: IdCodeLibelleType) => t.libelle}
                 onChange={(e: IdCodeLibelleType) => {
-                  setFieldValue(`modeleCourrierType`, e.id);
+                  setFieldValue(`modeleCourrierType`, e ? e.id : null);
                 }}
                 defaultValue={typesCourrier?.find(
                   (type: IdCodeLibelleType) =>
