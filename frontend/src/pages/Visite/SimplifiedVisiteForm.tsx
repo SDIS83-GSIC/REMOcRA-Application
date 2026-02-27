@@ -144,7 +144,7 @@ const SimplifiedVisiteForm = ({
                 tooltipText={`Le PEI contrôlé ne présente aucune anomalie`}
                 tooltipId={`${index}.isNoAnomalieChecked`}
               >
-                Aucune anomalie
+                <>Aucune anomalie</>
               </TooltipCustom>
             }
             onChange={() => {
@@ -182,8 +182,7 @@ const SimplifiedVisiteForm = ({
             }}
             disabled={values.listeSimplifiedVisite[index].isSameAnomalieChecked}
           />
-        </Col>
-        <Col>
+
           <CheckBoxInput
             key={`listeSimplifiedVisite[${index}].isSameAnomalieChecked`}
             name={`listeSimplifiedVisite[${index}].isSameAnomalieChecked`}
@@ -192,7 +191,7 @@ const SimplifiedVisiteForm = ({
                 tooltipText={`Les anomalies relevées lors du contrôle du PEI correspondent en tout point à celles du précédent contrôle`}
                 tooltipId={`${index}.isSameAnomalieChecked`}
               >
-                Rien à modifier
+                <>Rien à modifier</>
               </TooltipCustom>
             }
             onChange={() => {
@@ -219,6 +218,7 @@ const SimplifiedVisiteForm = ({
             disabled={values.listeSimplifiedVisite[index].isNoAnomalieChecked}
           />
         </Col>
+
         <Col xs={"auto"} className="text-align-center">
           <Button
             onClick={() => {

@@ -9,3 +9,7 @@ fieldset legend {
   width: auto !important;
   padding: 0.5rem !important;
 }
+
+.checkbox-custom {
+  transform: scale(1.5);
+}

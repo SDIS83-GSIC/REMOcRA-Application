@@ -240,6 +240,7 @@ export const CheckBoxInput = ({
         disabled={disabled}
         onChange={(v: boolean) => (onChange ? onChange(v) : field.onChange(v))}
         checked={field.value ?? checked}
+        className={"mb-3 checkbox-custom"}
       />
       <label
         htmlFor={id ?? name}
