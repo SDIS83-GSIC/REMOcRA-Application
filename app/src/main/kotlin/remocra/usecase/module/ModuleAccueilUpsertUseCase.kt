@@ -73,7 +73,7 @@ class ModuleAccueilUpsertUseCase @Inject constructor(
                 val repertoire = GlobalConstants.DOSSIER_IMAGE_MODULE.resolve("$moduleId")
                 if (imageAvant != null) {
                     // On supprime sur le disque
-                    documentUtils.deleteFile(it.imageName, repertoire)
+                    documentUtils.deleteFile(imageAvant.substringAfterLast('/'), repertoire)
                 }
 
                 // On sauvegarde l'image sur le disque
