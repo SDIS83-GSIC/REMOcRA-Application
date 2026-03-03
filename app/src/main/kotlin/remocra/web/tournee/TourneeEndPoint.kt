@@ -133,7 +133,7 @@ class TourneeEndPoint : AbstractEndpoint() {
         listePei: Set<UUID>,
     ): Response {
         return Response.ok().entity(
-            tourneeRepository.getTourneesActives(
+            tourneeRepository.getTournees(
                 securityContext.userInfo.isSuperAdmin,
                 securityContext.userInfo.affiliatedOrganismeIds!!,
                 isPrive,
@@ -169,7 +169,6 @@ class TourneeEndPoint : AbstractEndpoint() {
             userInfo = securityContext.userInfo,
             element = Tournee(
                 tourneeId = UUID.randomUUID(),
-                tourneeActif = true,
                 tourneeOrganismeId = tourneeInput.tourneeOrganismeId,
                 tourneeLibelle = tourneeInput.tourneeLibelle,
                 tourneePourcentageAvancement = null,

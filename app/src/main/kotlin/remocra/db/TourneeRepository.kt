@@ -95,7 +95,6 @@ class TourneeRepository
                     DSL.`val`(")"),
                 ).`as`("tourneeUtilisateurReservationLibelle"),
                 TOURNEE.DATE_SYNCHRONISATION,
-                TOURNEE.ACTIF,
                 peiCounterCte.field("TOURNEE_NB_PEI"),
                 nextRopCte.field("TOURNEE_NEXT_ROP_DATE"),
                 TOURNEE.DATE_DERNIERE_REALISATION,
@@ -176,7 +175,7 @@ class TourneeRepository
         .where(TOURNEE.ID.`in`(idsTournees))
         .execute()
 
-    fun getTourneesActives(isSuperAdmin: Boolean, listeOrganisme: Set<UUID>, isPrive: Boolean?, isIcpe: Boolean?, listePei: Set<UUID>): List<Tournee> {
+    fun getTournees(isSuperAdmin: Boolean, listeOrganisme: Set<UUID>, isPrive: Boolean?, isIcpe: Boolean?, listePei: Set<UUID>): List<Tournee> {
         val tourneesToExclude = getTourneeSameOrganisme(listePei)
         return getTourneeByIdOrPei()
             .leftJoin(L_TOURNEE_PEI)
@@ -185,8 +184,7 @@ class TourneeRepository
             .on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
             .leftJoin(NATURE_DECI)
             .on(NATURE_DECI.ID.eq(PEI.NATURE_DECI_ID))
-            .where(TOURNEE.ACTIF.isTrue)
-            .and(TOURNEE.ID.notIn(tourneesToExclude))
+            .where(TOURNEE.ID.notIn(tourneesToExclude))
             .and(
                 repositoryUtils.checkIsSuperAdminOrCondition(
                     isSuperAdmin = isSuperAdmin,
@@ -217,7 +215,7 @@ class TourneeRepository
             .fetchInto()
     }
 
-    fun getTourneesActivesMobile(isSuperAdmin: Boolean, listeOrganisme: Set<UUID>): List<Tournee> {
+    fun getTourneesMobile(isSuperAdmin: Boolean, listeOrganisme: Set<UUID>): List<Tournee> {
         return getTourneeByIdOrPei()
             .leftJoin(L_TOURNEE_PEI)
             .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
@@ -225,8 +223,7 @@ class TourneeRepository
             .on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
             .leftJoin(NATURE_DECI)
             .on(NATURE_DECI.ID.eq(PEI.NATURE_DECI_ID))
-            .where(TOURNEE.ACTIF.isTrue)
-            .and(
+            .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
                     isSuperAdmin = isSuperAdmin,
                     condition = TOURNEE.ORGANISME_ID.`in`(listeOrganisme),
@@ -283,7 +280,6 @@ class TourneeRepository
         val tourneeUtilisateurReservationLibelle: String?,
         val tourneeDateSynchronisation: ZonedDateTime?,
         val tourneeDateDerniereRealisation: ZonedDateTime?,
-        val tourneeActif: Boolean,
         val tourneeNbPei: Int,
         var tourneeNextRopDate: ZonedDateTime?,
         var isModifiable: Boolean = true,
@@ -298,7 +294,6 @@ class TourneeRepository
         val tourneeDeltaDate: String?,
         val tourneeNotifiee: Boolean?,
         val peiId: UUID?,
-        val tourneeActif: Boolean?,
     ) {
         /** Retourne une chaine regroupant toutes les possibilités d'enchainements de trois champs : ABCABACBAC
          *  @param f1: TableField<Record, String?>
@@ -316,7 +311,6 @@ class TourneeRepository
                     tourneeOrganismeLibelle?.let { DSL.and(ORGANISME.LIBELLE.containsIgnoreCaseUnaccent(it)) },
                     tourneeUtilisateurReservationLibelle?.let { DSL.and(concatFieldTriple(UTILISATEUR.PRENOM, UTILISATEUR.NOM, UTILISATEUR.USERNAME).containsIgnoreCase(it)) },
                     peiId?.let { DSL.and(L_TOURNEE_PEI.PEI_ID.eq(it)) },
-                    tourneeActif?.let { DSL.and(TOURNEE.ACTIF.eq(it)) },
                     tourneeNotifiee?.let {
                         DSL.and(
                             if (tourneeNotifiee) {
@@ -334,7 +328,6 @@ class TourneeRepository
         val organismeLibelle: Int?,
         val tourneePourcentageAvancement: Int?,
         val tourneeUtilisateurReservationLibelle: Int?,
-        val tourneeActif: Int?,
         val tourneeNextRopDate: Int?,
     ) {
         fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
@@ -343,7 +336,6 @@ class TourneeRepository
             organismeLibelle?.let { "organismeLibelle" to it },
             tourneePourcentageAvancement?.let { "tourneePourcentageAvancement" to it },
             tourneeUtilisateurReservationLibelle?.let { "tourneeUtilisateurReservationLibelle" to it },
-            tourneeActif?.let { "tourneeActif" to it },
             tourneeNextRopDate?.let { "tourneeNextRopDate" to it },
         )
 
@@ -407,17 +399,6 @@ class TourneeRepository
                                 Comparator.comparing<TourneeComplete, String> {
                                     it.tourneeUtilisateurReservationLibelle?.unaccent() ?: ""
                                 }.reversed(),
-                            )
-                        }
-                    }
-                    "tourneeActif" -> {
-                        if (pair.second >= 1) {
-                            comparator.thenComparing(
-                                Comparator.comparing { it.tourneeActif },
-                            )
-                        } else {
-                            comparator.thenComparing(
-                                Comparator.comparing<TourneeComplete, Boolean> { it.tourneeActif }.reversed(),
                             )
                         }
                     }

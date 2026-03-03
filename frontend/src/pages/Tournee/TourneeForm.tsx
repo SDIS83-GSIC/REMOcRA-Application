@@ -2,7 +2,11 @@ import { useFormikContext } from "formik";
 import { Col, Container } from "react-bootstrap";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
-import { FormContainer, TextInput } from "../../components/Form/Form.tsx";
+import {
+  CheckBoxInput,
+  FormContainer,
+  TextInput,
+} from "../../components/Form/Form.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { IconCreate, IconEdit } from "../../components/Icon/Icon.tsx";

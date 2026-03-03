@@ -64,7 +64,6 @@ class FetchTourneeDataUseCase @Inject constructor(
                     sortBy.organismeLibelle == null &&
                     sortBy.tourneePourcentageAvancement == null &&
                     sortBy.tourneeUtilisateurReservationLibelle == null &&
-                    sortBy.tourneeActif == null &&
                     sortBy.tourneeNextRopDate == null
                 )
         ) {
@@ -74,7 +73,6 @@ class FetchTourneeDataUseCase @Inject constructor(
                 organismeLibelle = null,
                 tourneePourcentageAvancement = null,
                 tourneeUtilisateurReservationLibelle = null,
-                tourneeActif = null,
                 tourneeNextRopDate = null,
             )
         } else {

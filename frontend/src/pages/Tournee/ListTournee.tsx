@@ -109,22 +109,6 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
       ),
     },
     {
-      Header: "Actif",
-      accessor: "tourneeActif",
-      Cell: (value) => {
-        return (
-          <div className="text-center">
-            <Form.Check
-              type="checkbox"
-              disabled
-              checked={value.value === true}
-            />
-          </div>
-        );
-      },
-      Filter: <SelectEnumOption options={VRAI_FAUX} name={"tourneeActif"} />,
-    },
-    {
       Header: "Prochaine ROP",
       accessor: ({ tourneeNextRopDate }) => {
         return tourneeNextRopDate

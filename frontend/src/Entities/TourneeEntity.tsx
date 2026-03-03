@@ -1,6 +1,5 @@
 export type TourneeEntity = {
   tourneeId: string;
-  tourneeActif: boolean;
   tourneeLibelle: string;
   tourneeOrganisme_id: string;
   tourneePourcentageAvancement: number;

@@ -91,11 +91,6 @@ open class Tournee(
     val ID: TableField<Record, UUID?> = createField(DSL.name("tournee_id"), SQLDataType.UUID.nullable(false), this, "")
 
     /**
-     * The column <code>remocra.tournee.tournee_actif</code>.
-     */
-    val ACTIF: TableField<Record, Boolean?> = createField(DSL.name("tournee_actif"), SQLDataType.BOOLEAN.nullable(false), this, "")
-
-    /**
      * The column <code>remocra.tournee.tournee_libelle</code>.
      */
     val LIBELLE: TableField<Record, String?> = createField(DSL.name("tournee_libelle"), SQLDataType.CLOB.nullable(false), this, "")

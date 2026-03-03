@@ -21,7 +21,6 @@ import javax.annotation.processing.Generated
 @Suppress("warnings")
 data class Tournee(
     val tourneeId: UUID,
-    val tourneeActif: Boolean,
     val tourneeLibelle: String,
     val tourneeOrganismeId: UUID,
     val tourneePourcentageAvancement: Int?,
@@ -43,9 +42,6 @@ data class Tournee(
         }
         val o: Tournee = other as Tournee
         if (this.tourneeId != o.tourneeId) {
-            return false
-        }
-        if (this.tourneeActif != o.tourneeActif) {
             return false
         }
         if (this.tourneeLibelle != o.tourneeLibelle) {
@@ -96,7 +92,6 @@ data class Tournee(
         val prime = 31
         var result = 1
         result = prime * result + this.tourneeId.hashCode()
-        result = prime * result + this.tourneeActif.hashCode()
         result = prime * result + this.tourneeLibelle.hashCode()
         result = prime * result + this.tourneeOrganismeId.hashCode()
         result = prime * result + (if (this.tourneePourcentageAvancement == null) 0 else this.tourneePourcentageAvancement.hashCode())
@@ -111,7 +106,6 @@ data class Tournee(
         val sb = StringBuilder("Tournee (")
 
         sb.append(tourneeId)
-        sb.append(", ").append(tourneeActif)
         sb.append(", ").append(tourneeLibelle)
         sb.append(", ").append(tourneeOrganismeId)
         sb.append(", ").append(tourneePourcentageAvancement)

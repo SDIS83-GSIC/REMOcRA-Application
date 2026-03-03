@@ -4,7 +4,6 @@ type filterTournee = {
   tourneeUtilisateurReservationLibelle?: string;
   tourneeDeltaDate?: string;
   peiId?: string;
-  tourneeActif?: string;
   tourneeNotifiee?: string;
 };
 
@@ -14,7 +13,6 @@ export const filterValuesToVariable = ({
   tourneeUtilisateurReservationLibelle,
   tourneeDeltaDate,
   peiId,
-  tourneeActif,
   tourneeNotifiee,
 }: filterTournee) => {
   const filter: filterTournee = {};
@@ -42,9 +40,6 @@ export const filterValuesToVariable = ({
     filter.peiId = peiId;
   }
 
-  if (tourneeActif?.trim().length > 0) {
-    filter.tourneeActif = tourneeActif;
-  }
   if (tourneeNotifiee?.trim().length > 0) {
     filter.tourneeNotifiee = tourneeNotifiee;
   }
