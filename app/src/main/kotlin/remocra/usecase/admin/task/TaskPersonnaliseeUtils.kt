@@ -55,6 +55,8 @@ class TaskPersonnaliseeUtils {
             filename = "\${PROJECT_HOME}/${element.taskId}/$nameHwf",
         )
 
+        documentUtils.ensureDirectory(GlobalConstants.DOSSIER_APACHE_HOP_CONFIG)
+
         val configFile = GlobalConstants.DOSSIER_APACHE_HOP_CONFIG.resolve("${parametre.taskCode}.json")
         configFile.writeText(objectMapper.writeValueAsString(config))
     }
