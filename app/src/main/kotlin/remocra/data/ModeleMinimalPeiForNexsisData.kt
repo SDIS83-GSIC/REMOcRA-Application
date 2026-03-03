@@ -85,7 +85,7 @@ data class ModeleMinimalPeiForNexsisData(
         typeRd = natureLibelle,
         diamPei = diametre,
         diamCana = pibiDiametreCanalisation,
-        sourcePei = natureLibelle,
+        sourcePei = sourcePei,
         statut = natureDeci,
         nomEtab = site,
         situation = adresse,
