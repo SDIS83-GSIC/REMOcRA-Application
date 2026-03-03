@@ -664,9 +664,21 @@ const MapToolbarPei = ({
         <>
           <TooltipCustom
             tooltipText={
-              showFormPei
-                ? "Un formulaire est en cours d'édition"
-                : "Ajouter des PEI de même nature DECI à une tournée"
+              showFormPei ? (
+                "Un formulaire est en cours d'édition"
+              ) : listePeiTourneePrive.length === 0 &&
+                listePeiTourneePublic.length === 0 &&
+                listePeiTourneeIcpe.length === 0 ? (
+                <>
+                  <b>Affecter des PEI à une tournée</b>
+                  <br />
+                  Sélectionnez au moins un PEI pour affecter une tournée. Les
+                  PEI doivent avoir la même nature DECI pour être ajouté dans
+                  une tournée
+                </>
+              ) : (
+                "Affecter des PEI à une tournée"
+              )
             }
             tooltipId={"affecter-pei-tournee-carte"}
           >
