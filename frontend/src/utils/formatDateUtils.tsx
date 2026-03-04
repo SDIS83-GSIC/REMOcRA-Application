@@ -82,4 +82,26 @@ export function formatSqlDateStringToFrShort(dateStr: string): string {
   return `${dd}/${MM}/${yyyy}`;
 }
 
+/**
+ * Formatte une date (objet Date ou string) en "dd/MM/yyyy".
+ * Sert à gérer les dates antérieures à 1970 qui posent problème à JavaScript.
+ * Si la conversion échoue, tente de formater une date SQL texte (ex: 0025-02-04 10:04:39.000 +0100) en "dd/MM/yyyy".
+ * Retourne une chaîne vide si aucun format n'est reconnu.
+ * @param date: Date | string
+ * @returns: string
+ */
+export function formatDateWithFallback(date: Date | string): string {
+  try {
+    return formatDate(typeof date === "string" ? new Date(date) : date);
+  } catch {
+    try {
+      return formatSqlDateStringToFrShort(
+        typeof date === "string" ? date : date.toString(),
+      );
+    } catch {
+      return "";
+    }
+  }
+}
+
 export default formatDateTime;

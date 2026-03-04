@@ -43,7 +43,7 @@ import VRAI_FAUX from "../../enums/VraiFauxEnum.tsx";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
-import { formatDate } from "../../utils/formatDateUtils.tsx";
+import { formatDateWithFallback } from "../../utils/formatDateUtils.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
 
 const ListTournee = ({ peiId }: { peiId: string }) => {
@@ -127,7 +127,9 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
     {
       Header: "Prochaine ROP",
       accessor: ({ tourneeNextRopDate }) => {
-        return tourneeNextRopDate ? formatDate(tourneeNextRopDate) : "";
+        return tourneeNextRopDate
+          ? formatDateWithFallback(tourneeNextRopDate)
+          : "";
       },
       sortField: "tourneeNextRopDate",
       Filter: (

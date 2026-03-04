@@ -42,10 +42,7 @@ import url from "../module/fetch.tsx";
 import FicheResume from "../pages/Pei/FicheResume/FicheResume.tsx";
 import { URLS } from "../routes.tsx";
 import getStringListeAnomalie from "./anomaliesUtils.tsx";
-import formatDateTime, {
-  formatDate,
-  formatSqlDateStringToFrShort,
-} from "./formatDateUtils.tsx";
+import formatDateTime, { formatDateWithFallback } from "./formatDateUtils.tsx";
 import { IdCodeLibelleType } from "./typeUtils.tsx";
 
 function getColumnPeiByStringArray(
@@ -836,17 +833,6 @@ const DateHighlightCell = ({
   paramUrgent: number;
   paramWarning: number;
 }) => {
-  function formatDateWithFallback(date: any) {
-    try {
-      return formatDate(date);
-    } catch {
-      try {
-        return formatSqlDateStringToFrShort(date);
-      } catch {
-        return "";
-      }
-    }
-  }
   const now = new Date();
 
   const dateUrgent = new Date(now);

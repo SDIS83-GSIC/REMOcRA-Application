@@ -33,6 +33,7 @@ import referenceTypeVisite, {
 import url from "../../module/fetch.tsx";
 import formatDateTime, {
   formatDate,
+  formatDateWithFallback,
   formatSqlDateStringToFr,
   formatSqlDateStringToFrShort,
 } from "../../utils/formatDateUtils.tsx";
@@ -160,14 +161,6 @@ const Visite = ({
       );
     }
   };
-
-  function formatDateWithFallback(date: any) {
-    try {
-      return formatDate(date);
-    } catch {
-      return formatSqlDateStringToFrShort(date);
-    }
-  }
 
   return (
     <Container fluid className={"px-5"}>
