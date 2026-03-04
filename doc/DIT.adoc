@@ -56,6 +56,7 @@ POSTGRES_DB_HOSTNAME=localhost
 POSTGRES_DB_NAME=remocra
 POSTGRES_DB_USERNAME=remocra
 POSTGRES_DB_PASSWORD=xxxxxxxxxxxxxxxxxx
+POSTGRES_DB_PORT=5432
 
 KC_BOOTSTRAP_ADMIN_USERNAME=kcadmin
 KC_BOOTSTRAP_ADMIN_PASSWORD=xxxxxxxxxxxxxx
@@ -100,11 +101,12 @@ GEOSERVER_PASSWORD=xxxxxxxxxxxxxxxxx
 |===
 | | Variable | Description | Valeur par défaut
 
-.4+| *Base de données*
+.5+| *Base de données*
 | POSTGRES_DB_HOSTNAME | Nom d’hôte de la base de données PostgreSQL |
 | POSTGRES_DB_NAME | Nom de la base de données PostgreSQL (par défaut _remocra_) | remocra
 | POSTGRES_DB_USERNAME | Nom de l’utilisateur PostgreSQL (par défaut _remocra_)  | remocra
 | POSTGRES_DB_PASSWORD | Mot de passe de l’utilisateur PostgreSQL  |
+| POSTGRES_DB_PORT | Port de la base de données PostgreSQL | 5432
 .5+| *Informations pour l’application REMOcRA*
 | REMOCRA_URL | L’adresse https permettant à accéder à l’interface REMOcRA sans “/” à la fin.  |
 | CODE_SDIS | Code du SDIS, doit correspondre à une valeur de l’énumération présente dans le fichier : https://github.com/SDIS83-GSIC/REMOcRA-Application/blob/master/app/src/main/kotlin/remocra/data/enums/CodeSdis.kt[] |
