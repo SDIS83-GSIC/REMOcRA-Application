@@ -325,7 +325,10 @@ const TooltipMapPei = ({
               >
                 <ListIndisponibiliteTemporaire
                   peiId={elementId}
-                  colonnes={[COLUMN_INDISPONIBILITE_TEMPORAIRE.MOTIF]}
+                  colonnes={[
+                    COLUMN_INDISPONIBILITE_TEMPORAIRE.MOTIF,
+                    COLUMN_INDISPONIBILITE_TEMPORAIRE.LIST_PEI,
+                  ]}
                 />
               </Volet>
               <Volet
