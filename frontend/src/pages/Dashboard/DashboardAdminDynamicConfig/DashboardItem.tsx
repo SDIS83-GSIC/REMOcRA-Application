@@ -54,6 +54,7 @@ const DashboardItem = (props: DashboardItemProps) => {
         }}
       >
         <Card.Body className="p-0">
+          <Card.Header>{props.component.title}</Card.Header>
           <div style={{ height: `calc(${style.height} - 2rem)` }}>
             {data ? (
               Component ? (
@@ -71,9 +72,6 @@ const DashboardItem = (props: DashboardItemProps) => {
             )}
           </div>
         </Card.Body>
-        <Card.Footer className="text-muted">
-          {props.component.title}
-        </Card.Footer>
       </Card>
     </div>
   );
