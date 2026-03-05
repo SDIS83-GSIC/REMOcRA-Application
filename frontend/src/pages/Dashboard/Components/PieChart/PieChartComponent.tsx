@@ -14,6 +14,11 @@ const COLORS = [
   "#0b8000",
 ]; // Couleurs des sections du pie chart
 
+interface ColorInterval {
+  value: string;
+  color: string;
+}
+
 const PieChartComponent = (data: { data: any[] | undefined; config: any }) => {
   if (!data.data || data.data.length === 0) {
     return;
@@ -24,6 +29,26 @@ const PieChartComponent = (data: { data: any[] | undefined; config: any }) => {
     ...item, // Conserver les autres propriétés de l'objet
     value: parseInt(item.value), // Convertir `value` en entier
   }));
+
+  // Fonction pour obtenir la couleur d'un élément
+  const getColorForItem = (item: any, index: number): string => {
+    // Si les intervalles personnalisés sont activés
+    if (data.config.useCustomIntervals && data.config.colorIntervals) {
+      const intervals: ColorInterval[] = data.config.colorIntervals;
+
+      // Rechercher une correspondance par nom
+      const matchingInterval = intervals.find(
+        (interval) => interval.value === item.name,
+      );
+
+      if (matchingInterval) {
+        return matchingInterval.color;
+      }
+    }
+
+    // Sinon, utiliser les couleurs par défaut
+    return COLORS[index % COLORS.length];
+  };
 
   const renderCustomizedLabel = ({
     percent,
@@ -51,8 +76,8 @@ const PieChartComponent = (data: { data: any[] | undefined; config: any }) => {
           label={renderCustomizedLabel}
         >
           {/* Ajout des couleurs des sections */}
-          {data.data.map((entry: any, index: number) => (
-            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+          {convertedData.map((entry: any, index: number) => (
+            <Cell key={`cell-${index}`} fill={getColorForItem(entry, index)} />
           ))}
         </Pie>
         <Legend />
