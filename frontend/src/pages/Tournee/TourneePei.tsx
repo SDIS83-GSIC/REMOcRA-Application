@@ -40,11 +40,11 @@ const TourneePei = ({
     {},
   );
 
-  const [data, setData] = useState<PeiInfoEntity[]>(null);
-  const [errorMessage, setErrorMessage] = useState<string>(null);
+  const [data, setData] = useState<PeiInfoEntity[] | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [displaySection, setDisplaySection] = useState<boolean>(false);
-  const [selectOptions, setSelectOptions] = useState<PeiInfoEntity[]>(null);
-  const [selectedPei, setSelectedPei] = useState<PeiInfoEntity>(null);
+  const [selectOptions, setSelectOptions] = useState<PeiInfoEntity[]>([]);
+  const [selectedPei, setSelectedPei] = useState<PeiInfoEntity | null>(null);
 
   const { success: successToast, error: errorToast } = useToastContext();
   const navigate = useNavigate();
