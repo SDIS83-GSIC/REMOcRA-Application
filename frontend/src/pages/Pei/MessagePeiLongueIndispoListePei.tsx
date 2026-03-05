@@ -16,7 +16,7 @@ const MessagePeiLongueIndispoListePei = () => {
       <Container>
         <PageTitle
           icon={<IconPei />}
-          title={`Liste des PEI indisponibles depuis plus de ${messagePeiLongueIndispoState?.data?.nbMois} mois et ${messagePeiLongueIndispoState?.data?.nbJour} jours`}
+          title={`Liste des PEI indisponibles depuis plus de${messagePeiLongueIndispoState?.data?.nbMois && messagePeiLongueIndispoState?.data?.nbMois !== 0 ? ` ${messagePeiLongueIndispoState.data.nbMois} mois et` : ""} ${messagePeiLongueIndispoState?.data?.nbJour && messagePeiLongueIndispoState?.data?.nbJour !== 0 ? `${messagePeiLongueIndispoState?.data?.nbJour} jours` : ""}`}
         />
       </Container>
       <Container fluid className={"px-5"}>
