@@ -1,4 +1,3 @@
-import React, { ReactNode, useState } from "react";
 import Toast from "react-bootstrap/Toast";
 import type { Variant } from "react-bootstrap/types";
 
@@ -7,15 +6,18 @@ const ToastAutohide = ({
   content,
   variant,
   delay,
+  id,
+  onClose,
 }: ToastAutohideType) => {
-  const [show, setShow] = useState(true);
+  const isPersistent = delay === null || delay === undefined;
+
   return (
     <Toast
       bg={variant.toLowerCase()}
-      onClose={() => setShow(false)}
-      show={show}
-      delay={delay}
-      autohide
+      onClose={() => onClose && id && onClose(id)}
+      show={true}
+      delay={isPersistent ? undefined : delay}
+      autohide={!isPersistent}
       className={"toast-fixed"}
     >
       <Toast.Header closeLabel={"Fermer"}>
@@ -28,9 +30,11 @@ const ToastAutohide = ({
 
 type ToastAutohideType = {
   header?: string;
-  content: ReactNode;
-  delay?: number;
+  content: React.ReactNode;
+  delay?: number | null;
   variant: Variant;
+  id?: number;
+  onClose?: (id: number) => void;
 };
 
 export default ToastAutohide;

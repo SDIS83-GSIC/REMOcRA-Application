@@ -49,7 +49,12 @@ import { filterValuesToVariable } from "./FilterTournee.tsx";
 const ListTournee = ({ peiId }: { peiId: string }) => {
   const { user } = useAppContext();
   const { fetchGeometry } = useLocalisation();
-  const { success: successToast, error: errorToast } = useToastContext();
+  const {
+    success: successToast,
+    error: errorToast,
+    persistent: persistentToast,
+    removeToast,
+  } = useToastContext();
   const { data: incomingTournee } = useGet(url`/api/tournee/incoming/`, {});
 
   const parametreGenerationCarteTournee = useGet(
@@ -331,11 +336,16 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
         ? "Carte de la tournée"
         : "Générer la carte de la tournée",
     classEnable: "success",
-    onClick: async (tourneeId) => {
+    onClick: async (tourneeId: string[] | object) => {
+      const toastId = persistentToast(
+        "Génération de la carte de la tournée",
+        "Génération de la carte en cours...",
+      );
       try {
         const response = await fetch(
           url`/api/tournee/genere-carte-tournee/${tourneeId}`,
         );
+        removeToast(toastId);
         if (!response.ok) {
           if (response.status === 500) {
             const errorText = await response.text();
@@ -370,6 +380,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
         a.remove();
         window.URL.revokeObjectURL(urlBlob);
       } catch (_error) {
+        removeToast(toastId);
         errorToast("Une erreur est survenue");
       }
     },
