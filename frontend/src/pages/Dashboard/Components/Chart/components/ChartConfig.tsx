@@ -12,9 +12,11 @@ export const mapAndConvertData = (
 ) => {
   return setSimpleValueMapped(rawData, config).map(
     (item: { value: string; max: string }) => {
-      const v = parseInt(item.value);
-      const m = parseInt(item.max);
-      const pct = m > 0 && Number.isFinite(m) ? (v / m) * 100 : 0;
+      // Conversion robuste en nombre (gère les zéros, vides, NaN)
+      const v = Number(item.value) ?? 0;
+      const m = Number(item.max) ?? 0;
+      const pct =
+        Number.isFinite(v) && Number.isFinite(m) && m > 0 ? (v / m) * 100 : 0;
 
       return {
         ...item,
