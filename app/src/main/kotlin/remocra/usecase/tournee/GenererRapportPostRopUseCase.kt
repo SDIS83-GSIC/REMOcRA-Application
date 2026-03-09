@@ -48,7 +48,7 @@ class GenererRapportPostRopUseCase @Inject constructor(
                 modeleCourrierId = modeleCourrier.modeleCourrierId,
                 courrierReference = courrierReference,
                 listParametres = listOf(
-                    NomValue("TOURNEE_ID", tourneeId.toString()),
+                    NomValue("TOURNEE_ID", tourneeId.toString(), false),
                 ),
             ),
             userInfo,

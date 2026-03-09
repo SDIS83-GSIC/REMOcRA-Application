@@ -65,6 +65,13 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
         userInfo: WrappedUserInfo,
         uriBuilder: UriBuilder,
     ): UrlCourrier {
+        // Vérifier chaque paramètre
+        parametreCourrierInput.listParametres?.forEach { param ->
+            if (param.estRequis && (param.valeur.isNullOrEmpty())) {
+                throw RemocraResponseException(ErrorType.COURRIER_PARAMETRE_NULL, param.nom)
+            }
+        }
+
         val pdfPath = executeInternal(parametreCourrierInput, userInfo)
 
         return UrlCourrier(
@@ -76,6 +83,8 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
             courrierReference = parametreCourrierInput.courrierReference,
         )
     }
+
+    private fun escapeApostrophes(input: String): String = input.replace("'", "''")
 
     /**
      * Fonction interne de génération de courrier
@@ -101,7 +110,7 @@ class CourrierGeneratorUseCase : AbstractUseCase() {
             parametreCourrierInput.listParametres?.forEach {
                 requete = requete.replace(
                     it.nom,
-                    it.valeur?.takeIf { it.isNotBlank() } ?: "null",
+                    escapeApostrophes(it.valeur?.takeIf { it.isNotBlank() } ?: "null"),
                 )
             }
 

@@ -23,7 +23,9 @@ import QueryTable, {
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
-import GenererForm from "../../utils/buildDynamicForm.tsx";
+import GenererForm, {
+  DynamicFormParametreFront,
+} from "../../utils/buildDynamicForm.tsx";
 import { getThematiqueFromTypeModule } from "../../utils/fonctionsUtils.tsx";
 import {
   getInitialValues,
@@ -42,6 +44,9 @@ type ContextType = {
 
 const GenereCourrier = () => {
   const { typeModule } = useParams();
+  const [listeParametres, setListeParametres] = useState<
+    DynamicFormParametreFront[]
+  >([]);
   const [urlCourrier, setUrlCourrier] = useState<{
     url: string;
     modeleCourrierId: string;
@@ -77,7 +82,9 @@ const GenereCourrier = () => {
                     validationSchema={validationSchema}
                     isPost={true}
                     submitUrl={`/api/courriers`}
-                    prepareVariables={(values) => prepareVariables(values)}
+                    prepareVariables={(values) =>
+                      prepareVariables(values, listeParametres)
+                    }
                     onSubmit={(url) => {
                       setUrlCourrier(url);
                       navigate(URLS.VIEW_COURRIER(typeModule!));
@@ -87,6 +94,7 @@ const GenereCourrier = () => {
                       listeIdLibelleDescription={data}
                       contexteLibelle="Modèle de courrier"
                       reference={true}
+                      onParametresChange={setListeParametres}
                       url="/api/courriers/parametres/"
                     />
                   </MyFormik>

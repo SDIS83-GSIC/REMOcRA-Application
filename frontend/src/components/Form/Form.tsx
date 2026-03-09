@@ -361,6 +361,7 @@ export const NumberInput = ({
       <Form.Control
         id={name}
         type="number"
+        required={required}
         min={min ?? 1}
         step={step ?? 0.1}
         readOnly={readOnly}
@@ -486,6 +487,7 @@ export const RangeInput = ({
         {...field}
         id={name}
         name={name}
+        required={required}
         min={min}
         max={max}
         step={step}
@@ -574,6 +576,7 @@ export const Multiselect = ({
         isMulti={true}
         placeholder={"Sélectionnez"}
         name={name}
+        required={required}
         options={options}
         getOptionValue={getOptionValue}
         getOptionLabel={getOptionLabel}

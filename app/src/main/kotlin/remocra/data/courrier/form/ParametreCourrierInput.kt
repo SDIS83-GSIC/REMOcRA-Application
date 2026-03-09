@@ -18,4 +18,5 @@ class ParametreCourrierInput(
 data class NomValue(
     val nom: String,
     val valeur: String?,
+    val estRequis: Boolean,
 )
