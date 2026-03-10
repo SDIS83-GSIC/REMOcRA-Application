@@ -1,4 +1,5 @@
 import { useFormikContext } from "formik";
+import { useEffect, useMemo, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { object } from "yup";
 import AddRemoveComponent from "../../components/AddRemoveComponent/AddRemoveComponent.tsx";
@@ -139,7 +140,12 @@ const DebitSimultane = () => {
           <Col>
             <AddRemoveComponent
               name="listeDebitSimultaneMesure"
-              createComponentToRepeat={createComponentToRepeat}
+              createComponentToRepeat={(index) => {
+                return createComponentToRepeat(
+                  index,
+                  values.listeDebitSimultaneMesure,
+                );
+              }}
               defaultElement={{
                 debitSimultaneMesureId: null,
                 debitSimultaneMesureDebitRequis: null,
@@ -148,7 +154,7 @@ const DebitSimultane = () => {
                 debitSimultaneMesureDateMesure: new Date(),
                 debitSimultaneMesureCommentaire: null,
                 debitSimultaneMesureIdentiqueReseauVille: false,
-                listePeiId: [],
+                listePeiId: undefined,
               }}
               listeElements={values.listeDebitSimultaneMesure}
             />
@@ -179,6 +185,70 @@ const ComposantToRepeat = ({
     });
   }
 
+  const defaultDateValue =
+    listeElements[index].debitSimultaneMesureDateMesure ?? new Date();
+  const defaultMesureValue =
+    listeElements[index].debitSimultaneMesureDebitMesure ??
+    Math.max(
+      1,
+      Math.floor(
+        values.vitesseEau *
+          Math.pow(Number(values.maxDiametreCanalisation) / 1000, 2) *
+          2826,
+      ),
+    );
+
+  useMemo(() => {
+    const currentMesure = values.listeDebitSimultaneMesure[index];
+
+    if (currentMesure.debitSimultaneMesureDateMesure === undefined) {
+      setFieldValue(
+        `listeDebitSimultaneMesure[${index}].debitSimultaneMesureDateMesure`,
+        defaultDateValue, // formaté dans le back donc pas de formatage
+      );
+    }
+
+    if (currentMesure.debitSimultaneMesureDebitMesure === undefined) {
+      setFieldValue(
+        `listeDebitSimultaneMesure[${index}].debitSimultaneMesureDebitMesure`,
+        defaultMesureValue,
+      );
+    }
+  }, [
+    index,
+    defaultDateValue,
+    setFieldValue,
+    defaultMesureValue,
+    values.listeDebitSimultaneMesure[index],
+  ]);
+
+  useEffect(() => {
+    const defaultPeiValue =
+      listeElements[index === 0 ? index : index - 1]?.listePeiId?.map((e) =>
+        values.listePeiSelectionnable?.find(
+          (c: IdCodeLibelleType) => c.id === e,
+        ),
+      ) ?? [];
+
+    if (values.listeDebitSimultaneMesure[index]) {
+      if (
+        values.listeDebitSimultaneMesure[index].listePeiId === undefined &&
+        defaultPeiValue.length > 0
+      ) {
+        setFieldValue(
+          `listeDebitSimultaneMesure[${index}].listePeiId`,
+          defaultPeiValue.map((e) => e.id),
+        );
+      }
+    }
+  }, [
+    index,
+    setFieldValue,
+    listeElements,
+    values.listeDebitSimultaneMesure,
+    values.listePeiSelectionnable,
+  ]);
+
   return (
     <Row>
       <Row className="align-items-center mt-3">
@@ -188,7 +258,8 @@ const ComposantToRepeat = ({
             label="Date de la mesure"
             required={true}
             value={formatDateTimeForDateTimeInput(
-              listeElements[index].debitSimultaneMesureDateMesure ?? new Date(),
+              values.listeDebitSimultaneMesure[index]
+                ?.debitSimultaneMesureDateMesure ?? defaultDateValue,
             )}
           />
         </Col>
@@ -207,11 +278,10 @@ const ComposantToRepeat = ({
               name={`listeDebitSimultaneMesure[${index}].debitSimultaneMesureDebitMesure`}
               label={"Débit mesuré (m³/h)"}
               required={false}
-              value={Math.floor(
-                values.vitesseEau *
-                  Math.pow(Number(values.maxDiametreCanalisation) / 1000, 2) *
-                  2826,
-              )}
+              value={
+                values.listeDebitSimultaneMesure[index]
+                  ?.debitSimultaneMesureDebitMesure ?? defaultMesureValue
+              }
             />
           </Col>
           <Col>
@@ -241,29 +311,23 @@ const ComposantToRepeat = ({
       <Row>
         <Col>
           <Multiselect
-            name={"listePei"}
+            key={index}
+            name={`listeDebitSimultaneMesure[${index}].listePeiId`}
             label="Liste des PEI"
             options={values.listePeiSelectionnable}
             getOptionValue={(t) => t.id}
-            getOptionLabel={(t) => t.libelle}
             value={
-              listeElements[index]?.listePeiId?.map((e) =>
-                values.listePeiSelectionnable?.find(
-                  (c: IdCodeLibelleType) => c.id === e,
-                ),
-              ) ?? undefined
+              values.listePeiSelectionnable?.filter((c: IdCodeLibelleType) =>
+                listeElements[index]?.listePeiId?.includes(c.id),
+              ) ?? []
             }
+            getOptionLabel={(t) => t.libelle}
             onChange={(pei) => {
-              const peiId = pei.map((e) => e.id);
-              peiId.length > 0
-                ? setFieldValue(
-                    `listeDebitSimultaneMesure[${index}].listePeiId`,
-                    peiId,
-                  )
-                : setFieldValue(
-                    `listeDebitSimultaneMesure[${index}].listePeiId`,
-                    undefined,
-                  );
+              const peiId = pei.map((e: { id: string }) => e.id);
+              setFieldValue(
+                `listeDebitSimultaneMesure[${index}].listePeiId`,
+                peiId.length > 0 ? peiId : [],
+              );
             }}
             isClearable={true}
           />
