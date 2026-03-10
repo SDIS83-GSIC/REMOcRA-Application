@@ -21,6 +21,7 @@ import {
 import { refreshLayerGeoserver } from "../../components/Map/MapUtils.tsx";
 import DeleteModal from "../../components/Modal/DeleteModal.tsx";
 import useModal from "../../components/Modal/ModalUtils.tsx";
+import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
 import { hasDroit } from "../../droits.tsx";
 import { CtrlDebitPressionEntity } from "../../Entities/CtrlDebitPressionEntity.tsx";
 import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
@@ -32,10 +33,8 @@ import referenceTypeVisite, {
 } from "../../enums/TypeVisiteEnum.tsx";
 import url from "../../module/fetch.tsx";
 import formatDateTime, {
-  formatDate,
   formatDateWithFallback,
   formatSqlDateStringToFr,
-  formatSqlDateStringToFrShort,
 } from "../../utils/formatDateUtils.tsx";
 import VisiteForm, {
   getInitialValues,
@@ -271,27 +270,39 @@ const Visite = ({
                       </td>
                       <td className={"text-nowrap"}>{element.visiteAgent1}</td>
                       <td>
-                        <Button
-                          variant="link"
-                          className={classnames("p-0 m-0 text-decoration-none")}
-                          onClick={() => {
-                            setCurrentVisite(element);
-                            setNewVisite(false);
-                          }}
+                        <TooltipCustom
+                          tooltipText="Consulter la visite"
+                          tooltipId={`tooltip-view-${index}`}
                         >
-                          <IconOverview />
-                        </Button>
+                          <Button
+                            variant="link"
+                            className={classnames(
+                              "p-0 m-0 text-decoration-none",
+                            )}
+                            onClick={() => {
+                              setCurrentVisite(element);
+                              setNewVisite(false);
+                            }}
+                          >
+                            <IconOverview />
+                          </Button>
+                        </TooltipCustom>
                         {index === 0 && hasRightToDelete(element) && (
                           <>
-                            <Button
-                              variant={"link"}
-                              className={
-                                "p-0 m-0 ps-1 text-decoration-none text-danger"
-                              }
-                              onClick={() => show()}
+                            <TooltipCustom
+                              tooltipText="Supprimer la visite"
+                              tooltipId={`tooltip-delete-${index}`}
                             >
-                              <IconDelete />
-                            </Button>
+                              <Button
+                                variant="link"
+                                className={
+                                  "p-0 m-0 ps-1 text-decoration-none text-danger"
+                                }
+                                onClick={() => show()}
+                              >
+                                <IconDelete />
+                              </Button>
+                            </TooltipCustom>
 
                             <DeleteModal
                               visible={visible}
