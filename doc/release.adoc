@@ -1,5 +1,31 @@
 = Release Notes
 
+== 3.0.4
+
+* https://redmine.atolcd.com/issues/253499[#253499]: [DROITS] ATTRIBUTION CATEGORIE GENERAL - relevé des incohérences
+* https://redmine.atolcd.com/issues/279586[#279586]: Consultation des documents du PEI
+* https://redmine.atolcd.com/issues/279661[#279661]: Documents : ajouter un document
+* https://redmine.atolcd.com/issues/282324[#282324]: Paramétrage des traitements : notifier une adresse mail saisie libre
+* https://redmine.atolcd.com/issues/282420[#282420]: Tableaux de bord : ajout de paramétrages pour les composants
+* https://redmine.atolcd.com/issues/282426[#282426]: Carto : Ajouter un PEI à une tournée
+* https://redmine.atolcd.com/issues/282552[#282552]: Uniformiser les libellés
+* https://redmine.atolcd.com/issues/282587[#282587]: Création indisponibilité temporaire
+* https://redmine.atolcd.com/issues/282600[#282600]: Zoom
+* https://redmine.atolcd.com/issues/282712[#282712]: Synchro SIG
+* https://redmine.atolcd.com/issues/282724[#282724]: Rafraichissement de la carte
+* https://redmine.atolcd.com/issues/282911[#282911]: Modèle de courrier : Suppression d'un choix sélectionné
+* https://redmine.atolcd.com/issues/282990[#282990]: Gestion des couches
+* https://redmine.atolcd.com/issues/283140[#283140]: Affichage de données < 1970
+* https://redmine.atolcd.com/issues/283143[#283143]: Tournées - colonne actif
+* https://redmine.atolcd.com/issues/283176[#283176]: Configuration page d'accueil: erreur lors du chargement d'une image
+* https://redmine.atolcd.com/issues/283247[#283247]: Carte - Infobulle Affecter des PEI à une tournée
+* https://redmine.atolcd.com/issues/283354[#283354]: Ajout de tâches personnalisées
+* https://redmine.atolcd.com/issues/283541[#283541]: Ajouter un PEI à une tournée
+* https://redmine.atolcd.com/issues/283682[#283682]: Indisponibilité temporaire : afficher le numéro d'un PEI
+* https://redmine.atolcd.com/issues/283692[#283692]: Tableau de bord : Titres des graphiques
+* https://redmine.atolcd.com/issues/283755[#283755]: Checkbox taille et position
+* https://redmine.atolcd.com/issues/284141[#284141]: Import CTP : Empêcher plusieurs enregistrements
+
 == 3.0.3
 
 * https://redmine.atolcd.com/issues/274812[#274812]: Genération de la carte des tournées
