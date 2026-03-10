@@ -12,6 +12,9 @@ import remocra.getStringOrNull
 import remocra.healthcheck.HealthChecker
 import remocra.healthcheck.HealthModule
 import remocra.utils.DateUtils
+import java.net.URI
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.time.Clock
 import java.time.ZoneId
 
@@ -51,11 +54,11 @@ class AppModule(private val settings: AppSettings) : RemocraModule() {
                         mock = config.getBoolean("nexsis.mock"),
                         codeStructure = config.getStringOrNull("nexsis.codeStructure"),
                         enabled = config.getBoolean("nexsis.enabled"),
-                        url = config.getString("nexsis.url"),
-                        user = config.getStringOrNull("nexsis.user"),
-                        password = config.getStringOrNull("nexsis.password"),
+                        url = URI(config.getString("nexsis.url")),
+                        tokenEndpoint = URI(config.getString("nexsis.tokenEndpoint")),
+                        tokenBody = "grant_type=client_credentials&client_id=${URLEncoder.encode(config.getStringOrNull("nexsis.user"), StandardCharsets.UTF_8)}" +
+                            "&client_secret=${URLEncoder.encode(config.getStringOrNull("nexsis.password"), StandardCharsets.UTF_8)}",
                         testToken = config.getStringOrNull("nexsis.testToken"),
-
                     ),
                 ),
             )

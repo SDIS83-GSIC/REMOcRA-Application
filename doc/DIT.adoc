@@ -153,12 +153,13 @@ GEOSERVER_PASSWORD=xxxxxxxxxxxxxxxxx
 | GEOSERVER_OTEL_JAVAAGENT_ENABLED | Activation d'OpenTelemetry pour geoserver |
 | GEOSERVER_OTEL_SERVICE_INSTANCE_ID | Identifiant de l'instance de REMOcRA (utile uniquement si vous avez plusieurs instances de GeoServer sur le même serveur) | 1
 
-.5+| *Nexsis*
+.6+| *Nexsis*
 | NEXSIS_ENABLED | Activation de nexsis | false
 | CODE_STRUCTURE | Code fourni par NexSIS pour la structure, à recopier exactement comme fourni. Exemple : "083-sis" pour le SDIS 83 |
 | NEXSIS_URL | Url de nexsis | http://nexsis.gouv.fr
 | NEXSIS_USER | Utilisateur de connexion à nexsis |
 | NEXSIS_PASSWORD | Mot de passe de l'utilisateur |
+| NEXIS_TOKEN_ENDPOINT | Url de l'endpoint pour récupérer le token d'authentification auprès de nexsis |
 
 .3+| *Geoserver*
 | GEOSERVER_URL | Url de Geoserver | http://localhost:8090/geoserver

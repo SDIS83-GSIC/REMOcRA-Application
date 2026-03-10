@@ -7,21 +7,17 @@ import com.fasterxml.jackson.datatype.guava.GuavaModule
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import com.google.common.eventbus.Subscribe
 import jakarta.inject.Inject
 import org.slf4j.LoggerFactory
 import remocra.app.AppSettings
-import remocra.app.DataCacheProvider
 import remocra.data.ModeleMinimalPeiForNexsisData
 import remocra.data.ModeleMinimalPeiForNexsisJsonData
-import remocra.data.enums.Environment
-import remocra.db.PeiRepository
-import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.eventbus.EventListener
 import remocra.json.NexSisJsonModule
 import remocra.usecase.modeleminimalpei.GetModeleMinimalPeiUseCase
-import remocra.utils.DateUtils
 import java.net.HttpURLConnection
 import java.net.URI
 import java.net.http.HttpClient
@@ -36,12 +32,9 @@ import java.util.UUID
 class PeiModifiedEventListener
 @Inject
 constructor(
-    private val visiteRepository: VisiteRepository,
-    private val peiRepository: PeiRepository,
     private val getModeleMinimalPeiUseCase: GetModeleMinimalPeiUseCase,
-    private val dataCacheProvider: DataCacheProvider,
-    private val dateUtils: DateUtils,
     private val appSettings: AppSettings,
+    private val objectMapper: ObjectMapper,
 ) :
     EventListener<PeiModifiedEvent> {
     companion object {
@@ -120,20 +113,58 @@ constructor(
     }
 
     /**
+     * Construit proprement une URI à partir de la base, du path et éventuellement des query params.
+     */
+    private fun buildNexsisUri(base: URI, path: String): URI {
+        val baseTrimmed = base.toString().trimEnd('/')
+        val pathTrimmed = path.trimStart('/')
+        return URI("$baseTrimmed/$pathTrimmed")
+    }
+
+    /**
      * Exécute la requête HTTP vers NexSIS, en fonction du Endpoint souhaité
      */
     private fun executeRequest(objectAsString: String?, endpoint: String, typeOperation: TypeOperation) {
-        if (appSettings.environment == Environment.PRODUCTION && appSettings.nexsis.testToken != null) {
-            throw IllegalStateException("Impossible d'utiliser un token prédéfini en production, il faut passer par l'a12n NexSIS !")
+        if (appSettings.nexsis.mock) {
+            logger.debug("Appel à l'API NexSIS : endpoint={}, typeOperation={}, objectAsString={}", endpoint, typeOperation, objectAsString)
+            return
         }
 
-        // TODO voir comment utiliser la brique d'a12n en production, pour l'instant ce n'est pas possible côté NexSIS, le token est en dur
-        val token = appSettings.nexsis.testToken
+        val requestToken = HttpRequest.newBuilder(appSettings.nexsis.tokenEndpoint)
+            .POST(
+                HttpRequest.BodyPublishers.ofString(
+                    appSettings.nexsis.tokenBody,
+                ),
+            )
+            .setHeader("Content-Type", "application/x-www-form-urlencoded")
+            .build()
 
+        // puis on essaie de récupérer le token d'authentification
         val httpClient: HttpClient = HttpClient.newHttpClient()
 
+        val responseToken =
+            try {
+                httpClient.send(requestToken, HttpResponse.BodyHandlers.ofString())
+            } catch (e: InterruptedException) {
+                logger.error("Erreur lors de la communication avec le serveur d'authentification ", e)
+                Thread.currentThread().interrupt()
+                throw IllegalStateException(e.message)
+            } catch (e: Exception) {
+                logger.error("Erreur lors de la communication avec le serveur d'authentification ", e)
+                throw IllegalStateException(e.message)
+            }
+
+        // on veut récupérer la propriété "access_token" de la réponse, qui contient le token d'authentification
+        val token = try {
+            objectMapper.readValue<InfosTokenNexsis>(responseToken.body()).accessToken
+        } catch (e: Exception) {
+            logger.error("Erreur lors de la récupération du token d'authentification ", e)
+            throw IllegalStateException(e.message)
+        }
+
+        val apiUri = buildNexsisUri(appSettings.nexsis.url, "/internet/api$endpoint")
         val request =
-            HttpRequest.newBuilder(URI(appSettings.nexsis.url.plus(endpoint)))
+            HttpRequest.newBuilder(apiUri)
                 .let {
                     val ofString = objectAsString?.let { HttpRequest.BodyPublishers.ofString(objectAsString) }
                     when (typeOperation) {
@@ -145,10 +176,7 @@ constructor(
                 .setHeader("Content-Type", "application/json")
                 .setHeader("Authorization", "Bearer $token")
                 .build()
-        if (appSettings.nexsis.mock) {
-            logger.debug("Appel à l'API NexSIS : {}", request)
-            return
-        }
+
         val response =
             try {
                 httpClient.send(request, HttpResponse.BodyHandlers.ofString())
