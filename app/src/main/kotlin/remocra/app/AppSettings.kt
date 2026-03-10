@@ -21,5 +21,4 @@ data class Nexsis(
     val url: URI,
     val tokenEndpoint: URI,
     val tokenBody: String,
-    val testToken: String?,
 )
