@@ -226,7 +226,7 @@ const TooltipMapPei = ({
                     tooltipText={
                       showFormPei || showFormVisite.show
                         ? textDisable
-                        : "Voir les visites du PEI"
+                        : "Gérer les visites du PEI"
                     }
                     tooltipId={"visite"}
                   >
