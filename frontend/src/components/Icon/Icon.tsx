@@ -95,7 +95,7 @@ export const IconCriseRapportPersonnalise = () => (
 export const IconList = () => <i className="fi fi-br-list" />;
 export const IconDuplicate = () => <i className="fi fi-br-duplicate" />;
 
-export const IconTournee = () => <i className="fi fi-br-document" />;
+export const IconTournee = () => <i className="fi fi-br-road" />;
 export const IconSortList = () => <i className="fi fi-br-apps-sort" />;
 export const IconDragNDrop = () => <i className="fi fi-rs-burger-menu" />;
 export const IconDesaffecter = () => <i className="fi fi-br-user-slash" />;
