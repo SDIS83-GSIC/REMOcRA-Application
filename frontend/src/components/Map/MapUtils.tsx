@@ -6,6 +6,7 @@ import { bbox as bboxStrategy } from "ol/loadingstrategy";
 import { transformExtent } from "ol/proj";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
+import { PeiInfoEntityElement } from "../../Entities/PeiEntity.tsx";
 import SOURCE_CARTO from "../../enums/SourceCartoEnum.tsx";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { EPSG_3857 } from "../../utils/constantsUtils.tsx";
@@ -21,13 +22,12 @@ import { optimizeVectorLayer } from "./MapPerformanceUtils.tsx";
  * @param onMoveEnd : la fonction qui sera appelée à la fin du déplacement
  * @param conditionObjetSelectionne : La condition pour pouvoir déplacer l'objet (par exemple, il doit s'agit d'un PEI en projet pour la couverture hydraulique)
  */
-
 function toggleDeplacerPoint(
   active = false,
   selectCtrl: Select,
   modifyCtrl: Modify,
   map: OLMap,
-  onMoveEnd: (feature: string, pointId: string) => void,
+  onMoveEnd: (feature: string, point: PeiInfoEntityElement) => void,
   conditionObjetSelectionne = (feature: Feature) => feature != null,
 ) {
   const idx1 = map?.getInteractions().getArray().indexOf(selectCtrl);
@@ -63,7 +63,7 @@ function toggleDeplacerPoint(
                 map.getView().getProjection().getCode().split(":").pop() +
                 ";" +
                 new WKT().writeFeature(feature),
-              feature.getProperties().elementId,
+              feature.getProperties(),
             );
           }
         });

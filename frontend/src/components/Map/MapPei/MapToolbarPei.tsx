@@ -6,10 +6,14 @@ import { Geometry } from "ol/geom";
 import { DragBox, Draw, Modify, Select } from "ol/interaction";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button, ButtonGroup, Row } from "react-bootstrap";
 import { object } from "yup";
 import { hasDroit, isAuthorized } from "../../../droits.tsx";
+import {
+  PeiEntity,
+  PeiInfoEntityElement,
+} from "../../../Entities/PeiEntity.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import PARAMETRE from "../../../enums/ParametreEnum.tsx";
 import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
@@ -90,14 +94,16 @@ export const useToolbarPeiContext = ({
 
   const [typeReseauId, setTypeReseauId] = useState<string>();
 
-  const [peiIdMove, setPeiIdMove] = useState<string | null>(null);
+  const [peiInfoMove, setPeiInfodMove] = useState<PeiInfoEntityElement | null>(
+    null,
+  );
 
   const [geometrieMove, setGeometrieMove] = useState<string | null>(null);
 
   const { data: deplacePei } = useGet(
-    peiIdMove && geometrieMove
-      ? url`/api/pei/doit-changer-commune/${peiIdMove}?${{ geometry: geometrieMove }}`
-      : null,
+    peiInfoMove?.elementId && geometrieMove
+      ? url`/api/pei/doit-changer-commune/${peiInfoMove.elementId}?${{ geometry: geometrieMove }}`
+      : "",
   );
 
   const tools = useMemo(() => {
@@ -419,15 +425,15 @@ export const useToolbarPeiContext = ({
         selectPeiCtrl,
         modifyCtrl,
         map,
-        (feature, pointId) => {
+        (feature, point) => {
           setGeometrieMove(feature);
-          setPeiIdMove(pointId);
+          setPeiInfodMove(point);
           showMove();
         },
       );
 
       if (!active) {
-        setPeiIdMove(null);
+        setPeiInfodMove(null);
         setGeometrieMove(null);
       }
     }
@@ -509,7 +515,7 @@ export const useToolbarPeiContext = ({
     ref,
     visible,
     close,
-    peiIdMove,
+    peiInfoMove,
     geometrieMove,
     closeMove,
     visibleMove,
@@ -552,7 +558,7 @@ const MapToolbarPei = ({
   showFormPei,
   peiIdUpdate,
   disabledTool,
-  peiIdMove,
+  peiInfoMove,
   geometrieMove,
   closeMove,
   visibleMove,
@@ -589,7 +595,7 @@ const MapToolbarPei = ({
   showFormPei: boolean;
   peiIdUpdate: string;
   disabledTool: (toolId: string) => void;
-  peiIdMove: string | null;
+  peiInfoMove: PeiInfoEntityElement | null;
   deplacePei: boolean | null;
   geometrieMove: string | null;
   closeMove: () => void;
@@ -609,7 +615,7 @@ const MapToolbarPei = ({
   ]);
 
   const voiesList = useGet(
-    geometrieMove ? url`/api/pei/voie?${{ geometry: geometrieMove }}` : null,
+    geometrieMove ? url`/api/pei/voie?${{ geometry: geometrieMove }}` : "",
   )?.data;
 
   const parametreVoieSaisieLibre = PARAMETRE.VOIE_SAISIE_LIBRE;
@@ -869,7 +875,7 @@ const MapToolbarPei = ({
         disabledCreateButton={() => disabledTool("create-pei")}
         coordonneesPeiCreate={coordonneesPeiCreate}
       />
-      {peiIdMove && geometrieMove && (
+      {peiInfoMove && geometrieMove && (
         <EditModal
           closeModal={() => {
             dataPeiLayer.getSource().refresh();
@@ -877,7 +883,7 @@ const MapToolbarPei = ({
             closeMove();
           }}
           canModify={canEditPei}
-          query={url`/api/pei/deplacer/${peiIdMove}`}
+          query={url`/api/pei/deplacer/${peiInfoMove.elementId}`}
           submitLabel={"Valider"}
           visible={visibleMove}
           validationSchema={
@@ -887,7 +893,7 @@ const MapToolbarPei = ({
                 ? ValidationSchemaLibelle
                 : object({})
           }
-          header={"Déplacer le PEI"}
+          header={`Déplacer le PEI ${peiInfoMove.peiNumeroComplet ?? ""}`}
           onSubmit={() => {
             dataPeiLayer.getSource().refresh();
             refreshLayerGeoserver(map);
@@ -901,7 +907,8 @@ const MapToolbarPei = ({
           prepareVariables={(values) => prepareVariables(values)}
         >
           <p>
-            Voulez-vous déplacer le PEI ? <br />
+            Voulez-vous déplacer le PEI ?
+            <br />
             Attention, le déplacement du PEI peut entraîner une modification sur
             son adresse, veuillez la mettre à jour en cas de besoin.
           </p>

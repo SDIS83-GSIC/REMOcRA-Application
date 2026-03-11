@@ -85,7 +85,7 @@ const MapPei = () => {
     visibleMove,
     refMove,
     closeMove,
-    peiIdMove,
+    peiInfoMove,
     geometrieMove,
     deplacePei,
   } = useToolbarPeiContext({
@@ -249,7 +249,7 @@ const MapPei = () => {
                   closeMove={closeMove}
                   refMove={refMove}
                   visibleMove={visibleMove}
-                  peiIdMove={peiIdMove}
+                  peiInfoMove={peiInfoMove}
                   geometrieMove={geometrieMove}
                   setShowFormVisite={setShowFormVisite}
                   showFormVisite={showFormVisite}

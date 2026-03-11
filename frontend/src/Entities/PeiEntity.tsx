@@ -79,6 +79,11 @@ export type PeiEntity = {
     }[];
 };
 
+export type PeiInfoEntityElement = {
+  elementId: string;
+  peiNumeroComplet: string;
+};
+
 /** Entity utilisé dans l'affichages des informations TourneePei */
 export type PeiInfoEntity = {
   id: string;

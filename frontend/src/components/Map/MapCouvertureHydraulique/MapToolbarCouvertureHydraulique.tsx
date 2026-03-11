@@ -482,9 +482,9 @@ export const useToolbarCouvertureHydrauliqueContext = ({
         selectProjetCtrl,
         modifyCtrl,
         map!,
-        (feature, pointId) => {
+        (feature, point) => {
           setGeometrieMove(feature);
-          setPeiProjetIdMove(pointId);
+          setPeiProjetIdMove(point.elementId);
           showMove();
         },
         (feature) => feature.getProperties().typeElementCarte === "PEI_PROJET",
