@@ -264,7 +264,7 @@ export const ActionButton = ({
               <TableActionColumn
                 key={key}
                 row={row}
-                textEnable={"Modifier"}
+                textEnable={_button.textEnable ?? "Modifier"}
                 icon={<IconEdit />}
                 classEnable={"info"}
                 textDisable={_button.textDisable}

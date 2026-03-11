@@ -171,6 +171,7 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
       disable: (v) => {
         return isDisabled(v);
       },
+      textEnable: "Renommer",
       route: (idTournee) => URLS.UPDATE_TOURNEE(idTournee),
       textDisable: textDisable,
     });
