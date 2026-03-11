@@ -25,4 +25,7 @@ class ProfilUtilisateurRepository @Inject constructor(private val dsl: DSLContex
 
     fun get(profilUtilisateurId: UUID): ProfilUtilisateur =
         dsl.selectFrom(PROFIL_UTILISATEUR).where(PROFIL_UTILISATEUR.ID.eq(profilUtilisateurId)).fetchSingleInto()
+
+    fun getByCode(code: String): ProfilUtilisateur? =
+        dsl.selectFrom(PROFIL_UTILISATEUR).where(PROFIL_UTILISATEUR.CODE.eq(code)).fetchOneInto()
 }

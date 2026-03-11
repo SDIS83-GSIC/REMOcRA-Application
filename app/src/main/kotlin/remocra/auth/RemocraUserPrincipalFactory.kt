@@ -6,10 +6,13 @@ import net.ltgt.oidc.servlet.KeycloakUserPrincipal
 import net.ltgt.oidc.servlet.SessionInfo
 import net.ltgt.oidc.servlet.UserPrincipal
 import net.ltgt.oidc.servlet.UserPrincipalFactory
+import remocra.app.ParametresProvider
+import remocra.data.enums.ParametreEnum
 import remocra.data.enums.TypeSourceModification
 import remocra.db.DroitsRepository
 import remocra.db.GroupeFonctionnalitesRepository
 import remocra.db.OrganismeRepository
+import remocra.db.ProfilUtilisateurRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
 import java.util.UUID
@@ -18,7 +21,9 @@ class RemocraUserPrincipalFactory @Inject constructor(
     private val utilisateurRepository: UtilisateurRepository,
     private val droitsRepository: DroitsRepository,
     private val organismeRepository: OrganismeRepository,
+    private val profilUtilisateurRepository: ProfilUtilisateurRepository,
     private val groupeFonctionnalitesRepository: GroupeFonctionnalitesRepository,
+    private val parametresProvider: ParametresProvider,
 ) : UserPrincipalFactory {
 
     companion object {
@@ -40,6 +45,12 @@ class RemocraUserPrincipalFactory @Inject constructor(
             email = sessionInfo.userInfo.emailAddress,
             username = sessionInfo.userInfo.preferredUsername,
             keycloakId = sessionInfo.userInfo.subject.value,
+            organismeId = parametresProvider.getParametreString(ParametreEnum.ORGANISME_DEFAUT.name)?.let {
+                organismeRepository.getByCode(it)?.organismeId
+            },
+            profilUtilisateurId = parametresProvider.getParametreString(ParametreEnum.PROFIL_UTILISATEUR_DEFAUT.name)?.let {
+                profilUtilisateurRepository.getByCode(it)?.profilUtilisateurId
+            },
         )
 
         // XXX: factoriser avec MobileUserPrincipalProvider

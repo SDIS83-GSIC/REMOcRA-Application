@@ -84,6 +84,8 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
         username: String,
         actif: Boolean = true,
         keycloakId: String,
+        profilUtilisateurId: UUID?,
+        organismeId: UUID?,
     ): Utilisateur =
         dsl.insertInto(UTILISATEUR)
             .set(UTILISATEUR.ID, id)
@@ -93,6 +95,8 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .set(UTILISATEUR.EMAIL, email)
             .set(UTILISATEUR.USERNAME, username)
             .set(UTILISATEUR.KEYCLOAK_ID, keycloakId)
+            .set(UTILISATEUR.PROFIL_UTILISATEUR_ID, profilUtilisateurId)
+            .set(UTILISATEUR.ORGANISME_ID, organismeId)
             .onConflict(UTILISATEUR.USERNAME)
             .doNothing()
             .returning()
@@ -108,6 +112,8 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
         email: String,
         username: String,
         keycloakId: String,
+        profilUtilisateurId: UUID?,
+        organismeId: UUID?,
     ): Utilisateur =
         dsl.insertInto(UTILISATEUR)
             .set(UTILISATEUR.ID, id)
@@ -118,6 +124,8 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .set(UTILISATEUR.KEYCLOAK_ID, keycloakId)
             .set(UTILISATEUR.DERNIERE_CONNEXION, dateUtils.now())
             .set(UTILISATEUR.ACTIF, true)
+            .set(UTILISATEUR.PROFIL_UTILISATEUR_ID, profilUtilisateurId)
+            .set(UTILISATEUR.ORGANISME_ID, organismeId)
             .onConflict(UTILISATEUR.KEYCLOAK_ID)
             .doUpdate()
             .set(UTILISATEUR.NOM, nom)

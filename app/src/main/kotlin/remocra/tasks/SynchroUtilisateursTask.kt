@@ -5,26 +5,29 @@ import org.jooq.exception.IOException
 import remocra.auth.AuthModule
 import remocra.auth.WrappedUserInfo
 import remocra.data.NotificationMailData
+import remocra.data.enums.ParametreEnum
+import remocra.db.OrganismeRepository
+import remocra.db.ProfilUtilisateurRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.keycloak.KeycloakApi
 import remocra.keycloak.KeycloakToken
 import remocra.keycloak.representations.UserRepresentation
+import remocra.utils.getStringOrNull
 import java.util.UUID
 
-class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtilisateurTaskParameters, SchedulableTaskResults>() {
+class SynchroUtilisateurTask @Inject constructor(
+    private val organismeRepository: OrganismeRepository,
+    private val profilUtilisateurRepository: ProfilUtilisateurRepository,
+    private val utilisateurRepository: UtilisateurRepository,
+    private val keycloakApi: KeycloakApi,
+    private val keycloakToken: KeycloakToken,
+    private val keycloakClient: AuthModule.KeycloakClient,
+) : SchedulableTask<SynchroUtilisateurTaskParameters, SchedulableTaskResults>() {
 
     companion object {
         const val MAX_RESULTS = 100
     }
-
-    @Inject lateinit var keycloakApi: KeycloakApi
-
-    @Inject lateinit var keycloakToken: KeycloakToken
-
-    @Inject lateinit var utilisateurRepository: UtilisateurRepository
-
-    @Inject lateinit var keycloakClient: AuthModule.KeycloakClient
 
     override fun execute(parameters: SynchroUtilisateurTaskParameters?, userInfo: WrappedUserInfo): SchedulableTaskResults? {
         var i = 0
@@ -99,6 +102,12 @@ class SynchroUtilisateurTask @Inject constructor() : SchedulableTask<SynchroUtil
                                 username = userRepresentation.username,
                                 actif = userRepresentation.enabled,
                                 keycloakId = userRepresentation.id,
+                                organismeId = parametresProvider.get().mapParametres.getStringOrNull(ParametreEnum.ORGANISME_DEFAUT.name)?.let {
+                                    organismeRepository.getByCode(it)?.organismeId
+                                },
+                                profilUtilisateurId = parametresProvider.get().mapParametres.getStringOrNull(ParametreEnum.PROFIL_UTILISATEUR_DEFAUT.name)?.let {
+                                    profilUtilisateurRepository.getByCode(it)?.profilUtilisateurId
+                                },
                             )
                             nbUtilisateurAdd++
                             logManager.info(
