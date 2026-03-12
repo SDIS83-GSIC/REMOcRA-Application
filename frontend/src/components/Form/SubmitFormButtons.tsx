@@ -19,7 +19,8 @@ const SubmitFormButtons = ({
   const navigate = useNavigate();
   const location = useLocation();
 
-  const isDisabled = formik.isSubmitting || disabledValide;
+  //Quand pas de formik/myformik (liste drag et drop), on se base uniquement sur le disableValide
+  const isDisabled = formik?.isSubmitting || disabledValide;
 
   return (
     <Row className={"my-3 d-flex justify-content-center"}>
