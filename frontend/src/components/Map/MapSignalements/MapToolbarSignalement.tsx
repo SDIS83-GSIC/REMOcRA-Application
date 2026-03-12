@@ -1,7 +1,9 @@
 import { Feature } from "ol";
 import { platformModifierKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
-import { DragBox, Draw, Select } from "ol/interaction";
+import { Geometry } from "ol/geom";
+import { DragBox, Draw, Interaction, Select } from "ol/interaction";
+import VectorLayer from "ol/layer/Vector";
 import OLMap from "ol/Map";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
@@ -33,53 +35,67 @@ import { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import { TooltipMapSignalement } from "../TooltipsMap.tsx";
 
-const drawStyle = new Style({
+const defaultStyle = new Style({
   fill: new Fill({
-    color: "rgba(255, 255, 255, 0.2)",
+    color: "#64C0FFFF",
   }),
   stroke: new Stroke({
-    color: "rgba(0, 0, 0, 0.5)",
+    color: "#64C0FFFF",
     width: 2,
   }),
   image: new CircleStyle({
     radius: 5,
     stroke: new Stroke({
-      color: "rgba(0, 0, 0, 0.7)",
+      color: "#64C0FFFF",
     }),
     fill: new Fill({
-      color: "rgba(255, 255, 255, 0.2)",
+      color: "#64C0FFFF",
     }),
   }),
 });
 
-export const useToolbarSignalementContext = ({ map, workingLayer }) => {
+export const useToolbarSignalement = ({
+  map,
+  cartographieSignalementLayer,
+}: {
+  map: OLMap;
+  cartographieSignalementLayer: VectorLayer;
+}) => {
+  const [featureStyle, setFeatureStyle] = useState(defaultStyle);
+  const [selectedFeatures, setSelectedFeatures] = useState<Feature<Geometry>[]>(
+    [],
+  );
   const [showCreateElement, setShowCreateElement] = useState(false);
+  const [sousTypeElement, setSousTypeElement] = useState<string | null>(null);
   const [listSignalementElement, setListSignalementElement] = useState<
     SignalementElementEntity[]
   >([]);
-  const [geometryElement, setGeometryElement] = useState<string | null>(null);
-  const [sousTypeElement, setSousTypeElement] = useState<string | null>(null);
-  const handleCloseElement = () => {
-    const lastFeature = workingLayer.getSource().getFeatures()[
-      workingLayer.getSource().getFeatures().length - 1
-    ];
-    workingLayer.getSource().removeFeature(lastFeature);
-    setShowCreateElement(false);
-  };
   const [showCreateSignalement, setShowCreateSignalement] = useState(false);
+  const [geometryElement, setGeometryElement] = useState<string | null>(null);
+
   const handleCloseSignalement = () => {
     setShowCreateSignalement(false);
   };
-  const [selectedFeatures, setSelectedFeatures] = useState([]);
+
+  const handleCloseElement = () => {
+    cartographieSignalementLayer
+      .getSource()
+      ?.removeFeature(
+        cartographieSignalementLayer.getSource()?.getFeatures()?.[
+          cartographieSignalementLayer.getSource()!.getFeatures().length - 1
+        ],
+      );
+    setShowCreateElement(false);
+  };
 
   function supprimerFeature() {
     if (selectedFeatures.length > 0) {
       // Suppression de l'objet visible
       selectedFeatures.forEach((f) => {
-        workingLayer.getSource().removeFeature(f);
+        cartographieSignalementLayer.getSource()?.removeFeature(f);
       });
       // Suppression de l'objet passé au formulaire
-      setListSignalementElement((prevList) =>
+      setListSignalementElement((prevList: any[]) =>
         prevList.filter(
           (signalement) =>
             !selectedFeatures.some(
@@ -95,52 +111,38 @@ export const useToolbarSignalementContext = ({ map, workingLayer }) => {
     if (!map) {
       return {};
     }
+    const wkt = new WKT();
 
-    //POINT
-    const createElementPointCtrl = new Draw({
-      source: workingLayer.getSource(),
+    const drawPointCtrl = new Draw({
+      source: cartographieSignalementLayer.getSource(),
       type: "Point",
-      style: (feature) => {
-        const geometryType = feature.getGeometry().getType();
-        if (geometryType === "Point") {
-          return drawStyle;
-        }
-      },
     });
-    createElementPointCtrl.on("drawend", async (event) => {
-      setGeometryElement(new WKT().writeFeature(event.feature));
-      setShowCreateElement(true);
-    });
-    //POLYGON
-    const createElementPolygonCtrl = new Draw({
-      source: workingLayer.getSource(),
-      type: "Polygon",
-      style: (feature) => {
-        const geometryType = feature.getGeometry().getType();
-        if (geometryType === "Polygon") {
-          return drawStyle;
-        }
-      },
-    });
-    createElementPolygonCtrl.on("drawend", async (event) => {
-      setGeometryElement(new WKT().writeFeature(event.feature));
-      setShowCreateElement(true);
-    });
-    //LINESTRING
-    const createElementLinestringCtrl = new Draw({
-      source: workingLayer.getSource(),
+
+    const drawLineCtrl = new Draw({
+      source: cartographieSignalementLayer.getSource(),
       type: "LineString",
     });
 
-    createElementLinestringCtrl.on("drawend", async (event) => {
-      setGeometryElement(new WKT().writeFeature(event.feature));
-      setShowCreateElement(true);
+    const drawShapeCtrl = new Draw({
+      source: cartographieSignalementLayer.getSource(),
+      type: "Polygon",
     });
 
+    const handleDrawEnd = (event: { feature: Feature<Geometry> }) => {
+      setGeometryElement(wkt.writeFeature(event.feature));
+      setShowCreateElement(true);
+      event.feature.setStyle(featureStyle.clone());
+    };
+
+    drawPointCtrl.on("drawend", handleDrawEnd);
+    drawLineCtrl.on("drawend", handleDrawEnd);
+    drawShapeCtrl.on("drawend", handleDrawEnd);
+
     const selectCtrl = new Select({
-      layers: [workingLayer],
+      layers: [cartographieSignalementLayer],
       toggleCondition: platformModifierKeyOnly,
     });
+
     const dragBoxCtrl = new DragBox({
       style: new Style({
         stroke: new Stroke({
@@ -155,12 +157,14 @@ export const useToolbarSignalementContext = ({ map, workingLayer }) => {
       if (!platformModifierKeyOnly(e.mapBrowserEvent)) {
         selectCtrl.getFeatures().clear();
       }
-      const boxExtent = dragBoxCtrl.getGeometry().getExtent();
-      const boxFeatures = workingLayer
-        .getSource()
-        .getFeaturesInExtent(boxExtent);
 
-      selectCtrl.getFeatures().extend(boxFeatures);
+      selectCtrl
+        .getFeatures()
+        .extend(
+          cartographieSignalementLayer
+            ?.getSource()
+            ?.getFeaturesInExtent(dragBoxCtrl.getGeometry().getExtent()) ?? [],
+        );
 
       if (selectedCtrlFeatures.length > 0) {
         setSelectedFeatures(selectedCtrlFeatures);
@@ -176,6 +180,7 @@ export const useToolbarSignalementContext = ({ map, workingLayer }) => {
         if (idx1 === -1 && idx2 === -1) {
           map.addInteraction(selectCtrl);
           map.addInteraction(dragBoxCtrl);
+
           if (
             selectCtrl.getFeatures().getArray().length !==
             selectedFeatures.length
@@ -190,55 +195,34 @@ export const useToolbarSignalementContext = ({ map, workingLayer }) => {
       }
     }
 
-    /**
-     * Permet de dessiner un point pour la création des alertes
-     */
-    function toggleCreatePointSignalement(active = false) {
-      const idx = map
-        ?.getInteractions()
-        .getArray()
-        .indexOf(createElementPointCtrl);
+    function toggleCtrl(active: boolean, ctrl: Interaction) {
+      const idx = map?.getInteractions().getArray().indexOf(ctrl);
       if (active) {
         if (idx === -1) {
-          map.addInteraction(createElementPointCtrl);
+          map.addInteraction(ctrl);
+
+          if (
+            selectCtrl.getFeatures().getArray().length !==
+            selectedFeatures.length
+          ) {
+            setSelectedFeatures(selectCtrl.getFeatures().getArray());
+          }
         }
       } else {
-        map.removeInteraction(createElementPointCtrl);
+        map.removeInteraction(ctrl);
       }
     }
 
-    /**
-     * Permet de dessiner un Polygon pour la création des alertes
-     */
-    function toggleCreatePolygonSignalement(active = false) {
-      const idx = map
-        ?.getInteractions()
-        .getArray()
-        .indexOf(createElementPolygonCtrl);
-      if (active) {
-        if (idx === -1) {
-          map.addInteraction(createElementPolygonCtrl);
-        }
-      } else {
-        map.removeInteraction(createElementPolygonCtrl);
-      }
+    function toggleDrawPoint(active = false) {
+      toggleCtrl(active, drawPointCtrl);
     }
 
-    /**
-     * Permet de dessiner une linestring pour la création des alertes
-     */
-    function toggleCreateLinestringSignalement(active = false) {
-      const idx = map
-        ?.getInteractions()
-        .getArray()
-        .indexOf(createElementLinestringCtrl);
-      if (active) {
-        if (idx === -1) {
-          map.addInteraction(createElementLinestringCtrl);
-        }
-      } else {
-        map.removeInteraction(createElementLinestringCtrl);
-      }
+    function toggleDrawLine(active = false) {
+      toggleCtrl(active, drawLineCtrl);
+    }
+
+    function toggleDrawShape(active = false) {
+      toggleCtrl(active, drawShapeCtrl);
     }
 
     const tools = {
@@ -246,85 +230,94 @@ export const useToolbarSignalementContext = ({ map, workingLayer }) => {
         action: toggleSelectDraw,
         actionPossibleEnDeplacement: false,
       },
-      "create-point": {
-        action: toggleCreatePointSignalement,
+      "draw-point": {
+        action: toggleDrawPoint,
       },
-      "create-polygon": {
-        action: toggleCreatePolygonSignalement,
+      "draw-linestring": {
+        action: toggleDrawLine,
       },
-      "create-linestring": {
-        action: toggleCreateLinestringSignalement,
+      "draw-polygon": {
+        action: toggleDrawShape,
       },
     };
 
     return tools;
-  }, [map, selectedFeatures.length, workingLayer]);
+  }, [
+    map,
+    cartographieSignalementLayer,
+    featureStyle.clone,
+    selectedFeatures.length,
+  ]);
 
   return {
     tools,
-    showCreateElement,
-    setShowCreateElement,
-    handleCloseElement,
-    showCreateSignalement,
-    setShowCreateSignalement,
-    handleCloseSignalement,
-    supprimerFeature,
+    featureStyle,
+    setFeatureStyle,
     selectedFeatures,
-    listSignalementElement,
-    setListSignalementElement,
-    geometryElement,
     setSousTypeElement,
+    supprimerFeature,
+    listSignalementElement,
+    setShowCreateSignalement,
+    handleCloseElement,
+    showCreateElement,
+    setListSignalementElement,
     sousTypeElement,
+    setShowCreateElement,
+    geometryElement,
+    handleCloseSignalement,
+    showCreateSignalement,
   };
 };
 
 const MapToolbarSignalement = ({
   map,
-  dataSignalementLayer,
-  handleCloseElement,
-  showCreateElement,
-  setShowCreateElement,
-  handleCloseSignalement,
-  showCreateSignalement,
-  setShowCreateSignalement,
   toggleTool: toggleToolCallback,
   activeTool,
-  supprimerFeature,
   selectedFeatures,
-  workingLayer,
-  listSignalementElement,
-  setListSignalementElement,
-  geometryElement,
+  cartographieSignalementLayer,
   setSousTypeElement,
+  supprimerFeature,
+  listSignalementElement,
+  setShowCreateSignalement,
+  handleCloseElement,
+  showCreateElement,
+  setListSignalementElement,
   sousTypeElement,
-  close,
+  setShowCreateElement,
+  geometryElement,
+  dataSignalementLayer,
+  handleCloseSignalement,
+  showCreateSignalement,
 }: {
   map?: OLMap;
-  dataSignalementLayer: any;
-  handleCloseElement: () => void;
-  showCreateElement: boolean;
-  setShowCreateElement: () => void;
-  handleCloseSignalement: () => void;
-  showCreateSignalement: boolean;
-  setShowCreateSignalement: () => void;
-  toggleTool: (toolId: string) => void;
   activeTool: string;
-  supprimerFeature: () => void;
   selectedFeatures: Feature[];
-  workingLayer: any;
+  cartographieSignalementLayer: VectorLayer;
   listSignalementElement: SignalementElementEntity[];
-  setListSignalementElement: (SignalementElementEntity) => void;
+  showCreateElement: boolean;
+  sousTypeElement: string | null;
   geometryElement: string;
-  setSousTypeElement: () => void;
-  sousTypeElement: string;
-  close: () => void;
+  dataSignalementLayer: any;
+  showCreateSignalement: boolean;
+  setSousTypeElement: (sousTypeId: string) => void;
+  setShowCreateSignalement: (show: boolean) => void;
+  setListSignalementElement: (
+    list:
+      | SignalementElementEntity[]
+      | ((prev: SignalementElementEntity[]) => SignalementElementEntity[]),
+  ) => void;
+  setShowCreateElement: (show: boolean) => void;
+  supprimerFeature: () => void;
+  toggleTool: (toolId: string) => void;
+  handleCloseElement: () => void;
+  handleCloseSignalement: () => void;
 }) => {
   const typeWithSousType = useGet(url`/api/signalements/type-sous-type`)?.data;
 
   return (
     typeWithSousType && (
       <Row>
-        <Col xs={"auto"}>
+        <Row xs={"auto"}>
           <VoletButtonListeDocumentThematique
             codeThematique={THEMATIQUE.SIGNALEMENT}
             titreVolet="Liste des documents liés aux signalements"
@@ -357,55 +350,62 @@ const MapToolbarSignalement = ({
               <IconDelete />
             </Button>
           </TooltipCustom>
-        </Col>
-        {typeWithSousType?.map((e, key) => {
-          return (
-            <Col xs={"auto"} className={"py-2"} key={key}>
-              <Dropdown>
-                <Dropdown.Toggle
-                  id={"dropdown-" + e.signalementTypeElementCode}
+
+          {typeWithSousType?.map(
+            (e: {
+              signalementTypeElementCode: string;
+              signalementTypeElementLibelle: string;
+              listSousType: any[];
+            }) => {
+              return (
+                <Dropdown
+                  className="py-2 d-flex align-items-center gap-2"
+                  key={e.signalementTypeElementCode}
                 >
-                  {e.signalementTypeElementLibelle?.toString()}
-                </Dropdown.Toggle>
+                  <Dropdown.Toggle
+                    id={"dropdown-" + e.signalementTypeElementCode}
+                  >
+                    {e.signalementTypeElementLibelle?.toString()}
+                  </Dropdown.Toggle>
 
-                <Dropdown.Menu>
-                  {e.listSousType.map((soustype, key) => {
-                    let icon;
-                    switch (soustype.signalementSousTypeElementTypeGeom) {
-                      case SOUS_TYPE_TYPE_GEOMETRIE.POINT:
-                        icon = <IconPoint />;
-                        break;
-                      case SOUS_TYPE_TYPE_GEOMETRIE.LINESTRING:
-                        icon = <IconLine />;
-                        break;
-                      case SOUS_TYPE_TYPE_GEOMETRIE.POLYGON:
-                        icon = <IconPolygon />;
-                        break;
-                    }
+                  <Dropdown.Menu>
+                    {e.listSousType.map((soustype, key) => {
+                      let icon;
+                      switch (soustype.signalementSousTypeElementTypeGeom) {
+                        case SOUS_TYPE_TYPE_GEOMETRIE.POINT:
+                          icon = <IconPoint />;
+                          break;
+                        case SOUS_TYPE_TYPE_GEOMETRIE.LINESTRING:
+                          icon = <IconLine />;
+                          break;
+                        case SOUS_TYPE_TYPE_GEOMETRIE.POLYGON:
+                          icon = <IconPolygon />;
+                          break;
+                      }
 
-                    return (
-                      <Dropdown.Item
-                        onClick={() => {
-                          toggleToolCallback(
-                            "create-" +
-                              soustype.signalementSousTypeElementTypeGeom.toLowerCase(),
-                          );
-                          setSousTypeElement(
-                            soustype.signalementSousTypeElementId,
-                          );
-                        }}
-                        key={key}
-                      >
-                        {icon} {soustype?.signalementSousTypeElementLibelle}
-                      </Dropdown.Item>
-                    );
-                  })}
-                </Dropdown.Menu>
-              </Dropdown>
-            </Col>
-          );
-        })}
-        <Col xs={"auto"} className={"ms-auto"}>
+                      return (
+                        <Dropdown.Item
+                          onClick={() => {
+                            toggleToolCallback(
+                              "draw-" +
+                                soustype.signalementSousTypeElementTypeGeom.toLowerCase(),
+                            );
+                            setSousTypeElement(
+                              soustype.signalementSousTypeElementId,
+                            );
+                          }}
+                          key={key}
+                        >
+                          {icon} {soustype?.signalementSousTypeElementLibelle}
+                        </Dropdown.Item>
+                      );
+                    })}
+                  </Dropdown.Menu>
+                </Dropdown>
+              );
+            },
+          )}
+
           <CreateButton
             classnames={"m-2"}
             onClick={() => {
@@ -414,7 +414,8 @@ const MapToolbarSignalement = ({
             title={"Ajouter un signalement"}
             disabled={listSignalementElement?.length <= 0}
           />
-        </Col>
+        </Row>
+
         <Volet
           handleClose={handleCloseElement}
           show={showCreateElement}
@@ -422,18 +423,20 @@ const MapToolbarSignalement = ({
           backdrop={true}
         >
           <CreatElementSignalement
-            srid={map.getView().getProjection().getCode().split(":").pop()}
-            layer={workingLayer}
+            srid={
+              map?.getView()?.getProjection()?.getCode()?.split(":").pop() ?? ""
+            }
+            layer={cartographieSignalementLayer}
             geometryString={geometryElement}
             onClick={(element: SignalementElementEntity) => {
-              setListSignalementElement((data) => {
+              setListSignalementElement((data: SignalementElementEntity[]) => {
                 return [...data, element];
               });
-              dataSignalementLayer.getSource().refresh();
+              dataSignalementLayer?.getSource()?.refresh();
               refreshLayerGeoserver(map);
               setShowCreateElement(false);
             }}
-            sousTypeElement={sousTypeElement}
+            sousTypeElement={sousTypeElement!}
           />
         </Volet>
 
@@ -452,7 +455,11 @@ const MapToolbarSignalement = ({
             prepareVariables={(values) => prepareVariables(values)}
             redirectUrl={URLS.SIGNALEMENTS}
             onSubmit={() => {
-              close();
+              dataSignalementLayer.getSource().refresh();
+              refreshLayerGeoserver(map);
+              setListSignalementElement([]);
+              cartographieSignalementLayer?.getSource()?.clear();
+              setShowCreateSignalement(false);
             }}
           >
             {/* j'envoie la liste d'élément juste pour les afficher */}
@@ -462,7 +469,7 @@ const MapToolbarSignalement = ({
             />
           </MyFormik>
         </Volet>
-        <TooltipMapSignalement map={map} />
+        <TooltipMapSignalement map={map!} />
       </Row>
     )
   );
@@ -480,25 +487,35 @@ export const prepareVariables = (values: any) => {
   formData.append(
     "listSignalementElement",
     JSON.stringify(
-      values.listSignalementElement.map((el) => ({
-        geometry: {
-          wkt: el.geometryString,
-          srid: el.srid,
-        },
-        anomalies: el.anomalies,
-        description: el.description,
-        sousType: el.sousType,
-      })),
+      values.listSignalementElement.map(
+        (el: {
+          geometryString: any;
+          srid: any;
+          anomalies: any;
+          description: any;
+          sousType: any;
+        }) => ({
+          geometry: {
+            wkt: el.geometryString,
+            srid: el.srid,
+          },
+          anomalies: el.anomalies,
+          description: el.description,
+          sousType: el.sousType,
+        }),
+      ),
     ),
   );
 
   return formData;
 };
+
 export const getInitialValues = (
   listSignalementElement: SignalementElementEntity[],
 ) => ({
   listSignalementElement: listSignalementElement,
 });
-MapToolbarSignalement.displayName = "MapToolbarSignalement";
+
+MapToolbarSignalement.displayName = "MapToolbarSignalement2";
 
 export default MapToolbarSignalement;

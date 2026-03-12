@@ -1,3 +1,7 @@
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
+import { Fill, Stroke, Style } from "ol/style";
+import CircleStyle from "ol/style/Circle";
 import { useMemo, useRef } from "react";
 import url from "../../../module/fetch.tsx";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
@@ -5,9 +9,9 @@ import { IconSignalement } from "../../Icon/Icon.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
-import { createPointLayer, refreshLayerGeoserver } from "../MapUtils.tsx";
+import { createPointLayer } from "../MapUtils.tsx";
 import MapToolbarSignalement, {
-  useToolbarSignalementContext,
+  useToolbarSignalement,
 } from "./MapToolbarSignalement.tsx";
 
 const MapSignalement = () => {
@@ -44,26 +48,56 @@ const MapSignalement = () => {
     );
   }, [map, projection]);
 
+  const cartographieSignalementLayer = useMemo(() => {
+    if (map) {
+      const wl = new VectorLayer({
+        source: new VectorSource(),
+        style: () => {
+          return new Style({
+            fill: new Fill({
+              color: "rgba(5, 176, 255, 1)",
+            }),
+            stroke: new Stroke({
+              color: "rgba(5, 176, 255, 1)",
+              width: 2,
+            }),
+            image: new CircleStyle({
+              radius: 7,
+              fill: new Fill({
+                color: "#00c3ffff",
+              }),
+            }),
+          });
+        },
+        opacity: 1,
+        zIndex: 9000,
+      });
+
+      map.addLayer(wl);
+      return wl;
+    }
+  }, [map]);
+
   const {
     tools: extraTools,
-    showCreateElement,
-    setShowCreateElement,
-    handleCloseElement,
-    showCreateSignalement,
-    setShowCreateSignalement,
-    handleCloseSignalement,
-    geometrySignalement,
-    supprimerFeature,
+    featureStyle,
+    setFeatureStyle,
     selectedFeatures,
-    geometryElement,
-    setListSignalementElement,
-    listSignalementElement,
     setSousTypeElement,
+    supprimerFeature,
+    listSignalementElement,
+    setShowCreateSignalement,
+    handleCloseElement,
+    showCreateElement,
+    setListSignalementElement,
     sousTypeElement,
-  } = useToolbarSignalementContext({
+    setShowCreateElement,
+    geometryElement,
+    handleCloseSignalement,
+    showCreateSignalement,
+  } = useToolbarSignalement({
     map,
-    workingLayer,
-    dataSignalementLayer,
+    cartographieSignalementLayer,
   });
 
   const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
@@ -86,38 +120,35 @@ const MapSignalement = () => {
         mapToolbarRef={mapToolbarRef}
         outilI={infoOutilI}
         handleCloseInfoI={handleCloseInfoI}
-        toolbarElement={
-          <MapToolbarSignalement
-            geometrySignalement={geometrySignalement}
-            toggleTool={toggleTool}
-            activeTool={activeTool}
-            map={map}
-            close={() => {
-              dataSignalementLayer.getSource().refresh();
-              refreshLayerGeoserver(map);
-              setListSignalementElement([]);
-              workingLayer.getSource().clear();
-              setShowCreateSignalement(false);
-            }}
-            showCreateElement={showCreateElement}
-            setShowCreateElement={setShowCreateElement}
-            handleCloseElement={handleCloseElement}
-            showCreateSignalement={showCreateSignalement}
-            setShowCreateSignalement={setShowCreateSignalement}
-            handleCloseSignalement={handleCloseSignalement}
-            dataSignalementLayer={dataSignalementLayer}
-            supprimerFeature={supprimerFeature}
-            selectedFeatures={selectedFeatures}
-            geometryElement={geometryElement}
-            setListSignalementElement={setListSignalementElement}
-            listSignalementElement={listSignalementElement}
-            setSousTypeElement={setSousTypeElement}
-            sousTypeElement={sousTypeElement}
-          />
-        }
         mapElement={mapElement}
         toggleTool={toggleTool}
         activeTool={activeTool}
+        toolbarElement={
+          mapToolbarRef.current && (
+            <MapToolbarSignalement
+              map={map}
+              toggleTool={toggleTool}
+              activeTool={activeTool!}
+              featureStyle={featureStyle}
+              setFeatureStyle={setFeatureStyle}
+              selectedFeatures={selectedFeatures}
+              setSousTypeElement={setSousTypeElement}
+              supprimerFeature={supprimerFeature}
+              listSignalementElement={listSignalementElement}
+              setShowCreateSignalement={setShowCreateSignalement}
+              handleCloseElement={handleCloseElement}
+              showCreateElement={showCreateElement}
+              setListSignalementElement={setListSignalementElement}
+              sousTypeElement={sousTypeElement}
+              setShowCreateElement={setShowCreateElement}
+              geometryElement={geometryElement!}
+              dataSignalementLayer={dataSignalementLayer}
+              handleCloseSignalement={handleCloseSignalement}
+              showCreateSignalement={showCreateSignalement}
+              cartographieSignalementLayer={cartographieSignalementLayer}
+            />
+          )
+        }
       />
     </>
   );
