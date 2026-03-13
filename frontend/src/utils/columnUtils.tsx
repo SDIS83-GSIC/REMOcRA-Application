@@ -632,7 +632,7 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
       case COLUMN_INDISPONIBILITE_TEMPORAIRE.MAIL_APRES:
         column.push(
           BooleanColumn({
-            Header: "Notification après date fin",
+            Header: "Notification avant date fin",
             accessor: "indisponibiliteTemporaireMailApresIndisponibilite",
             sortField: "indisponibiliteTemporaireMailApresIndisponibilite",
             Filter: (
