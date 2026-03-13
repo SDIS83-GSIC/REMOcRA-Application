@@ -6,6 +6,7 @@
 : "${POSTGRES_DB_PASSWORD:?}"
 : "${POSTGRES_DB_HOSTNAME:?}"
 : "${POSTGRES_DB_PORT:?}"
+: "${CLIENT_SECRET_APACHE_HOP}"
 
 # On copie le fichier template en remplaçant les placeholders
 sed -e "s|#DB_NAME|${POSTGRES_DB_NAME}|g" \
@@ -18,6 +19,7 @@ sed -e "s|#DB_NAME|${POSTGRES_DB_NAME}|g" \
     -e "s|#SIG_DBNAME|${SIG_DBNAME:-#SIG_DBNAME}|g" \
     -e "s|#SIG_USERNAME|${SIG_USERNAME:-#SIG_USERNAME}|g" \
     -e "s|#SIG_PASSWORD|${SIG_PASSWORD:-#SIG_PASSWORD}|g" \
+    -e "s|#CLIENT_SECRET_APACHE_HOP|${CLIENT_SECRET_APACHE_HOP}|g" \
     /opt/hop/variables.json \
     > /tmp/variables.json
 

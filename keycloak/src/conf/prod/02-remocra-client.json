@@ -33,6 +33,21 @@
       "attributes": {
         "post.logout.redirect.uris": "fr.sdis83.remocra.mobile:/logout"
       }
+    },
+    {
+      "clientId": "remocra-apache-hop",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "clientAuthenticatorType": "client-secret",
+      "secret": "$(env:CLIENT_SECRET_APACHE_HOP)",
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "serviceAccountsEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "attributes": {
+        "oauth2.device.authorization.grant.enabled": "true"
+      }
     }
   ],
   "users": [

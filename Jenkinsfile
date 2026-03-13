@@ -135,7 +135,7 @@ pipeline {
               ]) {
                 insideDocker(imageId: imageId, runExtraParams: '-e KEYCLOAK_URL=http://keycloak:8080 -e KEYCLOAK_USER=kcadmin -e KEYCLOAK_PASSWORD=kcadmin '
                     // configuration du realm "remocra"
-                    + '-e CLIENT_SECRET=remocra -e REMOCRA_URL=http://remocra:8881') {
+                    + '-e CLIENT_SECRET=remocra -e CLIENT_SECRET_APACHE_HOP=remocra-apache-hop -e REMOCRA_URL=http://remocra:8881') {
                   sh '/entrypoint.sh keycloak-config-cli'
                 }
               }

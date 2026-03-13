@@ -39,6 +39,7 @@ services:
       # configuration du realm "remocra"
       - CLIENT_SECRET=remocra
       - REMOCRA_URL=http://localhost:8881
+      - CLIENT_SECRET_APACHE_HOP="remocra-apache-hop"
     volumes:
       - ./keycloak/src/conf:/config:ro
 

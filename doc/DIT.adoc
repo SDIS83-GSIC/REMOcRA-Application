@@ -87,6 +87,7 @@ APACHE_HOP_ENABLE=true
 APACHE_HOP_URL=http://localhost:8060/hop
 APACHE_HOP_USERNAME=admin
 APACHE_HOP_PASSWORD=xxxxxxxxxxxxxxxxx
+CLIENT_SECRET_APACHE_HOP=xxxxxxxxxxxxxxxxx
 
 # Geoserver
 GEOSERVER_URL=http://localhost:8090/geoserver
@@ -126,13 +127,14 @@ GEOSERVER_PASSWORD=xxxxxxxxxxxxxxxxx
 | SIG_USERNAME | Nom de l’utilisateur de la base de données SIG |
 | SIG_PASSWORD | Mot de passe de l'utilisateur de la base de données SIG |
 
-.6+| *Keycloak*
+.7+| *Keycloak*
 | KC_BOOTSTRAP_ADMIN_USERNAME | Nom de l’utilisateur super-admin pour se connecter à Keycloak |
 | KC_BOOTSTRAP_ADMIN_PASSWORD | Mot de passe de l’utilisateur super-admin pour se connecter à Keycloak |
 | CLIENT_SECRET | |
 | CLIENT_ID | | remocra
 | REALM | Valeur pour le realm utilisé dans keycloak. | remocra
 | BASE_URI | L’adresse https permettant à accéder à l’interface keycloak |
+| CLIENT_SECRET_APACHE_HOP | Client secret du client apache hop (obligatoire) |
 
 .4+| *Apache Hop*
 | APACHE_HOP_ENABLE | Activation d'Apache Hop dans l'application | `false`

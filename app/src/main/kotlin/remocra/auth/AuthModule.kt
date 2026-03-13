@@ -1,6 +1,7 @@
 package remocra.auth
 
 import com.github.benmanes.caffeine.cache.Caffeine
+import com.google.inject.BindingAnnotation
 import com.google.inject.Provides
 import com.nimbusds.oauth2.sdk.GeneralException
 import com.nimbusds.oauth2.sdk.auth.ClientSecretBasic
@@ -50,6 +51,8 @@ class AuthModule(
                     config.getString("base-uri"),
                     config.getString("realm"),
                     config.getString("token-introspection-cache-spec"),
+                    config.getString("client-id-apache-hop"),
+                    config.getString("client-secret-apache-hop"),
                 ),
                 oidcProviderMetadata,
             )
@@ -88,12 +91,28 @@ class AuthModule(
         )
     }
 
+    @Provides
+    @Singleton // contient un cache mémoire
+    @ApacheHopToken
+    fun provideApacheHopTokenIntrospector(): TokenIntrospector {
+        return TokenIntrospector(
+            oidcProviderMetadata,
+            ClientSecretBasic(
+                ClientID(settings.clientIdApacheHop),
+                Secret(settings.clientSecreteApacheHop),
+            ),
+            Caffeine.from(settings.tokenIntrospectionCacheSpec),
+        )
+    }
+
     data class AuthnSettings(
         val clientId: String,
         val clientSecret: String,
         val baseUri: String,
         val realm: String,
         val tokenIntrospectionCacheSpec: String,
+        val clientIdApacheHop: String,
+        val clientSecreteApacheHop: String,
     )
 
     /**
@@ -102,3 +121,9 @@ class AuthModule(
      */
     class KeycloakClient(val clientId: String, val clientSecret: String)
 }
+
+/**
+ * Annotation permettant au moteur d'injection de distinguer le client connecté
+ */
+@BindingAnnotation
+annotation class ApacheHopToken

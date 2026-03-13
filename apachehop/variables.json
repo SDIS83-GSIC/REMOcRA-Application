@@ -9,6 +9,7 @@
     { "name": "SIG_SQL_DIALECT", "value": "#SIG_SQL_DIALECT"},
     { "name": "SIG_DBNAME", "value": "#SIG_DBNAME"},
     { "name": "SIG_USERNAME", "value": "#SIG_USERNAME"},
-    { "name": "SIG_PASSWORD", "value": "#SIG_PASSWORD"}
+    { "name": "SIG_PASSWORD", "value": "#SIG_PASSWORD"},
+    { "name": "CLIENT_SECRET_APACHE_HOP", "value": "#CLIENT_SECRET_APACHE_HOP"}
   ]
 }

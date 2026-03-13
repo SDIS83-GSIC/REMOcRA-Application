@@ -20,9 +20,11 @@ import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.constructors
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods
 import jakarta.ws.rs.Path
+import remocra.auth.ApacheHopAuthenticationFilter
 import remocra.auth.ApiAuthenticationFilter
 import remocra.auth.ApiMobileAuthenticationFilter
 import remocra.auth.Public
+import remocra.auth.RequireAuth
 import remocra.auth.RequireDroits
 import remocra.auth.RequireDroitsApi
 import remocra.db.AbstractRepository
@@ -140,7 +142,8 @@ class ArchitectureTest {
                             .or(type(AbstractRepository::class.java))
                             .or(type(AbstractUpsertDocumentUseCase::class.java))
                             .or(type(ApiMobileAuthenticationFilter::class.java))
-                            .or(type(ApiAuthenticationFilter::class.java)),
+                            .or(type(ApiAuthenticationFilter::class.java))
+                            .or(type(ApacheHopAuthenticationFilter::class.java)),
                     ),
                 ),
             )
@@ -180,4 +183,6 @@ class ApiArchitectureTest {
             .beAnnotatedWith(RequireDroitsApi::class.java)
             .orShould()
             .beAnnotatedWith(Public::class.java)
+            .orShould()
+            .beAnnotatedWith(RequireAuth::class.java)
 }

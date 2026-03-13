@@ -1,5 +1,6 @@
 package remocra.auth
 
+import ApacheHopPrincipalProvider
 import jakarta.annotation.Priority
 import jakarta.inject.Inject
 import jakarta.ws.rs.Priorities
@@ -34,6 +35,7 @@ class AuthenticationFeature : DynamicFeature {
         when {
             pkg.startsWith("remocra.api.") -> context.register(ApiAuthenticationFilter::class.java)
             pkg.startsWith("remocra.apimobile.") -> context.register(ApiMobileAuthenticationFilter::class.java)
+            pkg.startsWith("remocra.apiapachehop.") -> context.register(ApacheHopAuthenticationFilter::class.java)
         }
     }
 }
@@ -65,5 +67,21 @@ class ApiMobileAuthenticationFilter : TokenFilter() {
 
     override fun getTokenPrincipalProvider(): TokenPrincipalProvider {
         return mobileUserPrincipalProvider
+    }
+}
+
+@Priority(Priorities.AUTHENTICATION)
+class ApacheHopAuthenticationFilter : TokenFilter() {
+    @Inject @ApacheHopToken
+    lateinit var tokenIntrospector_: TokenIntrospector
+
+    @Inject lateinit var apacheHopPrincipalProvider: ApacheHopPrincipalProvider
+
+    override fun getTokenIntrospector(): TokenIntrospector {
+        return tokenIntrospector_
+    }
+
+    override fun getTokenPrincipalProvider(): TokenPrincipalProvider {
+        return apacheHopPrincipalProvider
     }
 }
