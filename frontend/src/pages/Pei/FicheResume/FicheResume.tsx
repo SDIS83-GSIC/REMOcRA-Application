@@ -275,6 +275,15 @@ const HistoriqueDebitPression = ({ pibiId }: { pibiId: string }) => {
     }}`,
   );
 
+  // Trie uniquement pour le chart
+  const chartData =
+    data && data.data.length > 0
+      ? [...data.data].sort(
+          (a, b) =>
+            new Date(a.visiteDate).getTime() - new Date(b.visiteDate).getTime(),
+        )
+      : [];
+
   return (
     data &&
     data.data.length !== 0 && (
@@ -286,7 +295,7 @@ const HistoriqueDebitPression = ({ pibiId }: { pibiId: string }) => {
               <BarChart
                 width={500}
                 height={300}
-                data={data.data}
+                data={chartData}
                 margin={{
                   top: 5,
                   right: 30,
