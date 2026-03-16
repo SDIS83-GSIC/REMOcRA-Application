@@ -63,16 +63,10 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             .limit(limit).offset(offset).fetchInto()
 
     fun getAll(userInfo: WrappedUserInfo? = null): Collection<GlobalData.IdCodeLibelleLienData> {
-        val conditions = mutableListOf(ORGANISME.ACTIF.isTrue)
-        userInfo?.let { user ->
-            conditions.add(
-                repositoryUtils.checkIsSuperAdminOrCondition(
-                    user.affiliatedOrganismeIds?.takeIf { it.isNotEmpty() }
-                        ?.let { ORGANISME.ID.`in`(it) }
-                        ?: DSL.falseCondition(),
-                    user.isSuperAdmin,
-                ),
-            )
+        val condition = when {
+            userInfo?.isSuperAdmin == true || userInfo?.droits?.contains(Droit.ADMIN_UTILISATEURS_A) == true -> DSL.trueCondition()
+            userInfo?.affiliatedOrganismeIds?.isNotEmpty() == true -> ORGANISME.ID.`in`(userInfo.affiliatedOrganismeIds)
+            else -> DSL.falseCondition()
         }
 
         return dsl.select(
@@ -82,7 +76,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             ORGANISME.PROFIL_ORGANISME_ID.`as`("lienId"),
         )
             .from(ORGANISME)
-            .where(conditions)
+            .where(ORGANISME.ACTIF.isTrue).and(condition)
             .orderBy(ORGANISME.LIBELLE)
             .fetchInto()
     }

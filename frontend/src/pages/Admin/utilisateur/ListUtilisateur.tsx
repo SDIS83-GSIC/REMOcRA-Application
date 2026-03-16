@@ -19,17 +19,11 @@ import {
   TYPE_BUTTON,
 } from "../../../components/Table/TableActionColumn.tsx";
 import { hasDroit } from "../../../droits.tsx";
-import UtilisateurEntity from "../../../Entities/UtilisateurEntity.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import VRAI_FAUX from "../../../enums/VraiFauxEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import FilterValues from "./FilterUtilisateur.tsx";
-
-const canAdministrate = (user: UtilisateurEntity | null | undefined): boolean =>
-  user?.isSuperAdmin ||
-  hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_A) ||
-  hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A);
 
 const ListUtilisateur = () => {
   const { user } = useAppContext();
@@ -51,8 +45,8 @@ const ListUtilisateur = () => {
       },
       route: (utilisateurId) => URLS.UPDATE_UTILISATEUR(utilisateurId),
       type: TYPE_BUTTON.UPDATE,
-      disable: () => {
-        return !canAdministrate(user);
+      disable: (v) => {
+        return !v.original.canAdministrate;
       },
       textDisable: "Vous n'avez pas de droits de mises à jour",
     });
@@ -63,7 +57,7 @@ const ListUtilisateur = () => {
       },
       type: TYPE_BUTTON.DELETE,
       disable: (v) => {
-        return v.value === user?.utilisateurId || !canAdministrate(user);
+        return v.value === user?.utilisateurId || !v.original.canAdministrate;
       },
       textDisable: "Vous n'avez pas de droits de suppression",
       pathname: url`/api/utilisateur/delete/`,

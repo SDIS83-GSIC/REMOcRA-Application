@@ -92,8 +92,8 @@ class UpdateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
             throw RemocraResponseException(ErrorType.UTILISATEUR_USERNAME_EXISTS)
         }
 
-        userInfo.affiliatedOrganismeIds?.contains(element.utilisateurOrganismeId)?.let {
-            if ((element.utilisateurOrganismeId == null) || (!it)) {
+        if (!userInfo.isSuperAdmin && !userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A)) {
+            if (!(userInfo.affiliatedOrganismeIds?.contains(element.utilisateurOrganismeId) ?: false)) {
                 throw RemocraResponseException(ErrorType.UTILISATEUR_FORBIDDEN)
             }
         }

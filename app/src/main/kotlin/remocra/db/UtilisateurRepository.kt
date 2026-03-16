@@ -205,12 +205,19 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
     fun getAllForAdmin(user: WrappedUserInfo, params: Params<Filter, Sort>): Collection<UtilisateurComplet> {
         val conditionBase = params.filterBy?.toCondition() ?: DSL.trueCondition()
 
+        val conditionAdmin = when {
+            user.isSuperAdmin || user.droits?.contains(Droit.ADMIN_UTILISATEURS_A) == true -> DSL.trueCondition()
+            user.affiliatedOrganismeIds?.isNotEmpty() == true && user.droits?.contains(Droit.ADMIN_UTILISATEURS_ORGA_A) == true -> ORGANISME.ID.`in`(user.affiliatedOrganismeIds)
+            else -> DSL.falseCondition()
+        }
+
         // On combine toutes les conditions dans la requête
         return dsl.select(
             *UTILISATEUR.fields(),
             ORGANISME.LIBELLE,
             PROFIL_UTILISATEUR.LIBELLE,
             GROUPE_FONCTIONNALITES.LIBELLE,
+            conditionAdmin.`as`("canAdministrate"),
         )
             .from(UTILISATEUR)
             .leftJoin(ORGANISME)
@@ -246,6 +253,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
         val organismeLibelle: String?,
         val profilUtilisateurLibelle: String?,
         val groupeFonctionnalitesLibelle: String?,
+        val canAdministrate: Boolean?,
     )
 
     fun countAllForAdmin(user: WrappedUserInfo, filterBy: Filter?): Int {

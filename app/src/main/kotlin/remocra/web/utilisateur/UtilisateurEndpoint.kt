@@ -138,7 +138,7 @@ class UtilisateurEndpoint : AbstractEndpoint() {
 
     @PUT
     @Path("/update/{utilisateurId}")
-    @RequireDroits([Droit.ADMIN_UTILISATEURS_A])
+    @RequireDroits([Droit.ADMIN_UTILISATEURS_A, Droit.ADMIN_UTILISATEURS_ORGA_A])
     fun update(
         @PathParam("utilisateurId")
         utilisateurId: UUID,
