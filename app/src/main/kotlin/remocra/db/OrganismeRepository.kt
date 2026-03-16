@@ -265,10 +265,10 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             }
 
             user.droits?.any { it == Droit.ADMIN_UTILISATEURS_ORGA_A || it == Droit.ADMIN_UTILISATEURS_ORGA_R } == true -> {
-                val zoneCode = user.zoneCompetence?.zoneIntegrationCode
+                val affiliatedOrganismes = user.affiliatedOrganismeIds
 
-                if (zoneCode != null) {
-                    ORGANISME.CODE.eq(zoneCode).or(parent.CODE.eq(zoneCode))
+                if (affiliatedOrganismes != null) {
+                    ORGANISME.ID.`in`(affiliatedOrganismes)
                 } else {
                     DSL.falseCondition()
                 }
