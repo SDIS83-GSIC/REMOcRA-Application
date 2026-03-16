@@ -236,18 +236,63 @@ export const useToolbarPeiContext = ({
         }),
       }),
       toggleCondition: platformModifierKeyOnly,
-      hitTolerance: 4,
+      multi: true,
+      hitTolerance: 16,
     });
     // Remplir listePeiId lors d'un Ctrl+clic (sélection individuelle)
     selectCtrl.on("select", function () {
       const newListe: any[] | ((prevState: string[]) => string[]) = [];
+      const peiPrivesDebitSimultane: any[] = [];
+      const peiIcpesDebitSimultane: any[] = [];
+      const totalFeatures = selectCtrl.getFeatures().getLength();
+
       selectCtrl.getFeatures().forEach((feature) => {
         const point = feature.getProperties();
         if (!newListe.includes(point.elementId)) {
           newListe.push(point.elementId);
         }
+        if (
+          point.natureDeciCode === TYPE_NATURE_DECI.PRIVE &&
+          point.pibiTypeReseauId != null
+        ) {
+          peiPrivesDebitSimultane.push(point);
+        } else if (
+          (point.natureDeciCode === TYPE_NATURE_DECI.ICPE ||
+            point.natureDeciCode === TYPE_NATURE_DECI.ICPE_CONVENTIONNE) &&
+          point.pibiTypeReseauId != null
+        ) {
+          peiIcpesDebitSimultane.push(point);
+        }
       });
       setListePeiId(newListe);
+
+      const peiDebitSimultane = [
+        ...peiPrivesDebitSimultane,
+        ...peiIcpesDebitSimultane,
+      ];
+
+      const distinctTypeReseau = peiDebitSimultane
+        .map((pei) => pei.pibiTypeReseauId)
+        .filter((value, index, self) => self.indexOf(value) === index);
+
+      const hasDebitSimultane = peiDebitSimultane
+        .map((pei) => pei.hasDebitSimultane)
+        .find((e) => e === true);
+
+      // Si TOUS les PEI sélectionnés sont éligibles (privés/ICPE), ont le même type de réseau, n'ont pas de débit simultané et sont au moins 2, on autorise la création
+      if (
+        peiDebitSimultane.length === totalFeatures &&
+        peiDebitSimultane.length >= 2 &&
+        distinctTypeReseau.length === 1 &&
+        hasDebitSimultane == null
+      ) {
+        setListePeiIdDebitSimultane(peiDebitSimultane.map((e) => e.elementId));
+        setTypeReseauId(distinctTypeReseau.at(0));
+      } else {
+        setListePeiIdDebitSimultane([]);
+        setTypeReseauId(undefined);
+      }
+
       associeNatureDeciPeiTournee(selectCtrl.getFeatures());
     });
 
@@ -275,6 +320,7 @@ export const useToolbarPeiContext = ({
       const newListe: string[] = [];
       const peiPrivesDebitSimultane: any[] = [];
       const peiIcpesDebitSimultane: any[] = [];
+      const totalFeatures = selectCtrl.getFeatures().getLength();
 
       selectCtrl.getFeatures().forEach((e) => {
         const point = e.getProperties();
@@ -309,13 +355,18 @@ export const useToolbarPeiContext = ({
         .map((pei) => pei.hasDebitSimultane)
         .find((e) => e === true);
 
-      // Si les PEI ont le même type de réseau et n'ont pas de débit simultané alors on autorise la création
-      if (distinctTypeReseau.length === 1 && hasDebitSimultane == null) {
+      // Si TOUS les PEI sélectionnés sont éligibles (privés/ICPE), ont le même type de réseau, n'ont pas de débit simultané et sont au moins 2, on autorise la création
+      if (
+        peiDebitSimultane.length === totalFeatures &&
+        peiDebitSimultane.length >= 2 &&
+        distinctTypeReseau.length === 1 &&
+        hasDebitSimultane == null
+      ) {
         setListePeiIdDebitSimultane(peiDebitSimultane.map((e) => e.elementId));
         setTypeReseauId(distinctTypeReseau.at(0));
       } else {
         setListePeiIdDebitSimultane([]);
-        setTypeReseauId(null);
+        setTypeReseauId(undefined);
       }
 
       // A retirer en 3.1 => ticket #126505
@@ -335,6 +386,8 @@ export const useToolbarPeiContext = ({
         setListePeiTourneePublic([]);
         setListePeiTourneeIcpe([]);
         setListePeiId([]);
+        setListePeiIdDebitSimultane([]);
+        setTypeReseauId(undefined);
         selectCtrl.getFeatures().clear();
         map.removeInteraction(selectCtrl);
         map.removeInteraction(dragBoxCtrl);
@@ -762,7 +815,7 @@ const MapToolbarPei = ({
               onClick={createDebitSimultane}
               className="rounded m-2"
               disabled={
-                listePeiIdDebitSimultane.length < 2 || typeReseauId === null
+                listePeiIdDebitSimultane.length < 2 || typeReseauId == null
               }
             >
               <IconDebitSimultane />
