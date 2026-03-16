@@ -662,7 +662,10 @@ const MapToolbarPei = ({
           >
             <CreateIndisponibiliteTemporaire
               listePeiId={listePeiId}
-              onSubmit={handleCloseIndispoTemp}
+              onSubmit={() => {
+                handleCloseIndispoTemp();
+                refreshLayerGeoserver(map);
+              }}
             />
           </Volet>
         </>

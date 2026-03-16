@@ -15,11 +15,14 @@ import remocra.db.jooq.remocra.tables.pojos.IndisponibiliteTemporaire
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
+import remocra.usecase.pei.UpdatePeiUseCase
 
 class CreateIndisponibiliteTemporaireUseCase
 @Inject constructor(
     private val indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository,
     private val peiRepository: PeiRepository,
+    private val updatePeiUseCase: UpdatePeiUseCase,
+
 ) :
     AbstractCUDGeometrieUseCase<IndisponibiliteTemporaireData>(TypeOperation.INSERT) {
     override fun postEvent(element: IndisponibiliteTemporaireData, userInfo: WrappedUserInfo) {
@@ -63,6 +66,14 @@ class CreateIndisponibiliteTemporaireUseCase
                 indisponibiliteTemporaireId = indisponibiliteTemporaire.indisponibiliteTemporaireId,
                 peiId,
             )
+        }
+
+        if (element.indisponibiliteTemporaireDateDebut.isBefore(dateUtils.now())) {
+            // C'est une indisponibilité immédiate, on met à jour les PEI concernés dès la création de l'indisponibilité temporaire
+            // pour que l'utilisateur puisse voir que les PEI passent en indispo
+            element.indisponibiliteTemporaireListePeiId.forEach { peiId ->
+                updatePeiUseCase.updatePeiWithId(peiId, userInfo)
+            }
         }
 
         return element
