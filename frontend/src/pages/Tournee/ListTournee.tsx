@@ -46,7 +46,13 @@ import { URLS } from "../../routes.tsx";
 import { formatDateWithFallback } from "../../utils/formatDateUtils.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
 
-const ListTournee = ({ peiId }: { peiId: string }) => {
+const ListTournee = ({
+  peiId,
+  peiNumeroComplet,
+}: {
+  peiId?: string;
+  peiNumeroComplet?: string;
+}) => {
   const { user } = useAppContext();
   const { fetchGeometry } = useLocalisation();
   const {
@@ -147,20 +153,17 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
   const [showTable, setShowTable] = useState(true); // Contrôle de l'affichage du tableau
   const [idTournee, setIdTournee] = useState(null); // Variable à mettre à jour
 
-  // Fonction qui sera appelée quand le bouton dans la cellule est cliqué
-  const handleButtonClick = (value) => {
-    setIdTournee(value); // Met à jour la valeur
-    setShowTable(false); // Cache le tableau actuel
-  };
-
   const listeButton: ButtonType[] = [];
 
   listeButton.push({
-    row: (row) => {
+    row: (row: { original: { tourneeLibelle: string } }) => {
       return row;
     },
-    type: TYPE_BUTTON.BUTTON,
-    onClick: (row) => handleButtonClick(row),
+    type: TYPE_BUTTON.LINK,
+    route: (tourneeId) => URLS.TOURNEE_LISTE_PEI(tourneeId),
+    state: (row: { original: { tourneeLibelle: string } }) => ({
+      tourneeLibelle: row.original.tourneeLibelle,
+    }),
     textEnable: "Lister les points d'eau",
     icon: <IconList />,
   });
@@ -486,8 +489,12 @@ const ListTournee = ({ peiId }: { peiId: string }) => {
       <Container>
         <PageTitle
           icon={<IconTournee />}
-          title={"Liste des tournées"}
-          displayReturnButton={peiId == null}
+          title={
+            peiNumeroComplet
+              ? `Liste des tournées du point d'eau n° ${peiNumeroComplet}`
+              : "Liste des tournées"
+          }
+          displayReturnButton={true}
           right={
             <Row>
               {/* Le super admin n'ayant pas d'organisme, on n'affiche pas ce bouton pour lui (sinon toutes les tournées seraient concernées) */}

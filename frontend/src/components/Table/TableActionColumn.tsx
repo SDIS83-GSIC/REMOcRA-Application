@@ -301,6 +301,7 @@ export const ActionButton = ({
                 reload={_button.reload}
                 textDisable={_button.textDisable}
                 search={_button.search?.(row)}
+                state={_button.state?.(row)}
               />
             );
           case TYPE_BUTTON.BUTTON:

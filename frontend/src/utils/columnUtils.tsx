@@ -19,6 +19,7 @@ import {
 } from "../components/Icon/Icon.tsx";
 import { GET_TYPE_GEOMETRY } from "../components/Localisation/useLocalisation.tsx";
 import { ActionColumn, BooleanColumn } from "../components/Table/columns.tsx";
+import { usePaginationState } from "../components/Table/Pagination.tsx";
 import { columnType } from "../components/Table/QueryTable.tsx";
 import {
   ButtonType,
@@ -145,7 +146,6 @@ type PeiRowType = {
 };
 
 function getColumnPeiByStringArray(
-  handleTourneeButtonClick: (value: any) => void,
   user: UtilisateurEntity,
   parametres: Array<COLUMN_PEI>,
   listeAnomaliePossible: Array<IdCodeLibelleType>,
@@ -158,6 +158,7 @@ function getColumnPeiByStringArray(
   libelleNonConforme: string,
 ): Array<columnType> {
   const column: Array<columnType> = [];
+  const [pagination] = usePaginationState();
   parametres.forEach((_parametre: COLUMN_PEI) => {
     switch (_parametre) {
       case COLUMN_PEI.NUMERO_COMPLET:
@@ -575,10 +576,30 @@ function getColumnPeiByStringArray(
     if (hasDroit(user, TYPE_DROIT.TOURNEE_R)) {
       listeButton.push({
         row: (row: PeiRowType) => row,
-        type: TYPE_BUTTON.BUTTON,
-        onClick: (row: PeiRowType) => handleTourneeButtonClick(row),
-        textEnable: "Voir les tournées associées",
+        type: TYPE_BUTTON.LINK,
+        route: () => URLS.PEI_TOURNEE,
+        search: (row: PeiRowType) => {
+          const filter = JSON.stringify({
+            peiId: row.original.peiId,
+          });
+          const searchParams = new URLSearchParams();
+          searchParams.set("filterBy", filter);
+          if (
+            typeof pagination === "object" &&
+            pagination !== null &&
+            "limit" in pagination &&
+            "offset" in pagination
+          ) {
+            searchParams.set("limit", String(pagination.limit ?? ""));
+            searchParams.set("offset", String(pagination.offset ?? ""));
+          }
+          return searchParams.toString();
+        },
+        state: (row: PeiRowType) => ({
+          peiNumeroComplet: row.original.peiNumeroComplet,
+        }),
         icon: <IconList />,
+        textEnable: "Voir les tournées associées",
       });
     }
     if (hasDroit(user, TYPE_DROIT.PEI_U)) {
@@ -820,8 +841,12 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
       row: (row) => {
         return row;
       },
-      type: TYPE_BUTTON.BUTTON,
-      onClick: (row) => handleButtonClick(row),
+      type: TYPE_BUTTON.LINK,
+      route: (indisponibiliteTemporaireId) =>
+        URLS.INDISPONIBILITE_TEMPORAIRE_LISTE_PEI(indisponibiliteTemporaireId),
+      state: (row: PeiRowType) => ({
+        peiNumeroComplet: row.original.peiNumeroComplet,
+      }),
       textEnable: "Lister les points d'eau",
       icon: <IconList />,
     });

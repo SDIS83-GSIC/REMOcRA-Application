@@ -1,43 +1,19 @@
-import classNames from "classnames";
-import { Button, Container, Row } from "react-bootstrap";
+import { Container } from "react-bootstrap";
+import { useLocation, useNavigate } from "react-router-dom";
 import ListTournee from "../../pages/Tournee/ListTournee.tsx";
+import useQueryParams from "../Fetch/useQueryParams.tsx";
 
-type QueryTableTourneeType = {
-  useFilterContext: any;
-  filterId: string | null;
-  setShowTable?: (value: ((prevState: boolean) => boolean) | boolean) => void;
-  setFilterId?: (value: ((prevState: null) => null) | null) => void;
-};
+const QueryTableTournee = () => {
+  const location = useLocation();
+  const queryParams = useQueryParams();
+  const filterBy = queryParams?.filterBy as any;
+  const peiId = filterBy?.peiId || null;
+  const peiNumeroComplet = location.state?.peiNumeroComplet || null;
 
-const QueryTableTournee = ({
-  filterId = null,
-  setShowTable,
-  setFilterId,
-}: QueryTableTourneeType) => {
   return (
     <Container>
-      <Row xs={"auto"}>
-        <Button
-          onClick={() => {
-            if (setShowTable) {
-              setShowTable(true);
-            }
-            if (setFilterId) {
-              setFilterId(null);
-            }
-          }}
-          className={classNames("mx-5 my-3 btn-secondary", {
-            "d-none": filterId == null,
-          })}
-        >
-          Retour à la liste précédente
-        </Button>
-      </Row>
-
-      {filterId != null && (
-        <>
-          <ListTournee peiId={filterId} />
-        </>
+      {peiId && (
+        <ListTournee peiId={peiId} peiNumeroComplet={peiNumeroComplet} />
       )}
     </Container>
   );

@@ -1,4 +1,5 @@
 import { Navigate } from "react-router-dom";
+import QueryTableTournee from "./components/ListeTourneeTable/QueryTableTournee.tsx";
 import MapDFCI from "./components/Map/MapDFCI/MapDFCI.tsx";
 import MapPei from "./components/Map/MapPei/MapPei.tsx";
 import MapPeiPrescrit from "./components/Map/MapPeiPrescrit/MapPeiPrescrit.tsx";
@@ -204,6 +205,8 @@ import AccueilPei from "./pages/Pei/AccueilPei.tsx";
 import CreatePei from "./pages/Pei/CreatePei.tsx";
 import DeclarationPei from "./pages/Pei/DeclarationPei.tsx";
 import FicheResume from "./pages/Pei/FicheResume/FicheResume.tsx";
+import ListePeiIndisponibiliteTemporaire from "./pages/Pei/ListePeiIndisponibiliteTemporaire.tsx";
+import ListePeiTournee from "./pages/Pei/ListePeiTournee.tsx";
 import MessagePeiLongueIndispoListePei from "./pages/Pei/MessagePeiLongueIndispoListePei.tsx";
 import UpdatePei from "./pages/Pei/UpdatePei.tsx";
 import AireAspiration from "./pages/Pena/AireAspiration.tsx";
@@ -238,8 +241,11 @@ export const URLS = {
   CREATE_INDISPONIBILITE_TEMPORAIRE: url`/deci/indisponibilite-temporaire/create`,
   UPDATE_INDISPONIBILITE_TEMPORAIRE: (indisponibiliteTemporaireId: string) =>
     url`/deci/indisponibilite-temporaire/` + indisponibiliteTemporaireId,
+  INDISPONIBILITE_TEMPORAIRE_LISTE_PEI: (indisponibiliteTemporaireId: string) =>
+    url`/deci/indisponibilite-temporaire/pei/` + indisponibiliteTemporaireId,
 
   UPDATE_PEI: (peiId: string) => url`/deci/pei/` + peiId,
+  PEI_TOURNEE: url`/deci/pei/tournee`,
   UPDATE_PENA_ASPIRATION: (peiId: string) =>
     url`/deci/pena-aspiration/` + peiId,
   VISITE: (peiId: string) => url`/deci/visite/` + peiId,
@@ -247,6 +253,8 @@ export const URLS = {
   CREATE_TOURNEE: url`/deci/tournee/create`,
   UPDATE_TOURNEE: (tourneeId: string) => url`/deci/tournee/update/` + tourneeId,
   TOURNEE_PEI: (tourneeId: string) => url`/deci/tournee/pei/` + tourneeId,
+  TOURNEE_LISTE_PEI: (tourneeId: string) =>
+    url`/deci/tournee/liste-pei/` + tourneeId,
   TOURNEE_VISITE: (tourneeId: string) =>
     url`/deci/tournee/visite-tournee/` + tourneeId,
   FICHE_RESUME: (peiId: string) => url`/deci/pei/fiche/` + peiId,
@@ -660,6 +668,15 @@ export default [
         ),
       },
       {
+        path: "pei/tournee",
+        element: (
+          <Authorization
+            Component={QueryTableTournee}
+            droits={[TYPE_DROIT.TOURNEE_R]}
+          />
+        ),
+      },
+      {
         path: "pei/fiche/:peiId",
         element: (
           <Authorization Component={FicheResume} droits={[TYPE_DROIT.PEI_R]} />
@@ -721,6 +738,15 @@ export default [
         ),
       },
       {
+        path: "tournee/liste-pei/:tourneeId",
+        element: (
+          <Authorization
+            Component={ListePeiTournee}
+            droits={[TYPE_DROIT.TOURNEE_R, TYPE_DROIT.PEI_R]}
+          />
+        ),
+      },
+      {
         path: "tournee/visite-tournee/:tourneeId",
         element: (
           <Authorization
@@ -750,6 +776,15 @@ export default [
           <Authorization
             Component={ListIndisponibiliteTemporaire}
             droits={[TYPE_DROIT.INDISPO_TEMP_R]}
+          />
+        ),
+      },
+      {
+        path: "indisponibilite-temporaire/pei/:indisponibiliteTemporaireId",
+        element: (
+          <Authorization
+            Component={ListePeiIndisponibiliteTemporaire}
+            droits={[TYPE_DROIT.INDISPO_TEMP_R, TYPE_DROIT.PEI_R]}
           />
         ),
       },

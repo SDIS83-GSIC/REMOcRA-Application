@@ -172,6 +172,7 @@ const TourneePei = ({
               onClick={showAddPeiSection}
             />
           }
+          displayReturnButton={tourneeMapId ? false : true}
         />
         <Row className="my-3 mx-2">
           <Col>
