@@ -84,14 +84,15 @@ constructor(
      * Fonction interne de génération de courrier
      * Retourne un [Path] vers le fichier PDF généré
      *
-     * N'utiliser que pour automatiser la génération de courriers, ne pas exposer directement via une API
-     *
      */
     fun executeInternal(
         parametreCourrierInput: ParametreCourrierInput,
         userInfo: WrappedUserInfo,
+        isApacheHop: Boolean = false,
     ): Path {
-        checkGroupeFonctionnalites(userInfo, parametreCourrierInput.modeleCourrierId)
+        if (!isApacheHop) {
+            checkGroupeFonctionnalites(userInfo, parametreCourrierInput.modeleCourrierId)
+        }
 
         var mapParameters: MutableMap<String, Any?>? = mutableMapOf()
         val modeleCourrier = modeleCourrierRepository.getModeleCourrier(parametreCourrierInput.modeleCourrierId)

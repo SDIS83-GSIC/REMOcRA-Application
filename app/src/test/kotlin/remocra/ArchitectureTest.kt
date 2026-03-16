@@ -53,6 +53,8 @@ class ArchitectureTest {
             .beAnnotatedWith(RequireDroits::class.java)
             .orShould()
             .beAnnotatedWith(Public::class.java)
+            .orShould()
+            .beAnnotatedWith(RequireAuth::class.java)
 
     @ArchTest
     val dontDependOnUseCases: ArchRule = classes()

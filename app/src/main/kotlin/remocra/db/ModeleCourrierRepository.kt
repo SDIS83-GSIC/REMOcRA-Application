@@ -35,6 +35,11 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             .where(MODELE_COURRIER.CODE.eq(code))
             .fetchSingleInto()
 
+    fun getIdByCode(code: String): UUID? =
+        dsl.select(MODELE_COURRIER.ID).from(MODELE_COURRIER)
+            .where(MODELE_COURRIER.CODE.eq(code))
+            .fetchOneInto()
+
     fun getById(modeleCourrierId: UUID): ModeleCourrier =
         dsl.selectFrom(MODELE_COURRIER)
             .where(MODELE_COURRIER.ID.eq(modeleCourrierId))
