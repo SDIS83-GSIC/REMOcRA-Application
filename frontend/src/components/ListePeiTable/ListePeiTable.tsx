@@ -1,4 +1,5 @@
 import { useFormik } from "formik";
+import { useState } from "react";
 import useQueryParams from "../../components/Fetch/useQueryParams.tsx";
 import QueryTable from "../../components/Table/QueryTable.tsx";
 import COLUMN_PEI from "../../enums/ColumnPeiEnum.tsx";
@@ -10,10 +11,12 @@ import {
   filterValuesToVariable,
   filterVariableToValues,
 } from "../../pages/Pei/FilterPei.tsx";
+import LeverIndispoTempsVolet from "../../pages/Pei/LeverIndispoTempsVolet.tsx";
 import getColumnPeiByStringArray from "../../utils/columnUtils.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import { useGet } from "../Fetch/useFetch.tsx";
 import useLocalisation from "../Localisation/useLocalisation.tsx";
+import Volet from "../Volet/Volet.tsx";
 
 const useFilterContextPei = (initialValues: any) => {
   const { filterBy } = useQueryParams();
@@ -46,6 +49,13 @@ const ListPei = ({
 }: ListePeiType) => {
   const { user } = useAppContext();
   const { fetchGeometry } = useLocalisation();
+
+  const [indispoTempPei, setIndispoTempPei] = useState(null);
+  const [showLeverIndispoTemp, setShowLeverIndispoTemp] = useState(false);
+
+  const handleCloseLeverIndispoTemp = () => {
+    setShowLeverIndispoTemp(false);
+  };
 
   const { data: listeAnomaliePossible } = useGet(
     url`/api/nomenclatures/list/` + NOMENCLATURE.ANOMALIE,
@@ -153,6 +163,10 @@ const ListPei = ({
         className={className}
         query={urlTable}
         columns={getColumnPeiByStringArray(
+          (value: any) => {
+            setIndispoTempPei(value);
+            setShowLeverIndispoTemp(true);
+          },
           user,
           peiColonnes,
           listeAnomaliePossible,
@@ -168,6 +182,22 @@ const ListPei = ({
         filterValuesToVariable={filterValuesToVariable}
         filterContext={queryTableFilterContext}
       />
+
+      {indispoTempPei && (
+        <Volet
+          handleClose={handleCloseLeverIndispoTemp}
+          show={showLeverIndispoTemp}
+          className="w-auto"
+        >
+          <LeverIndispoTempsVolet
+            idPei={indispoTempPei}
+            closeVolet={() => {
+              handleCloseLeverIndispoTemp();
+              window.location.reload();
+            }}
+          />
+        </Volet>
+      )}
     </>
   );
 };

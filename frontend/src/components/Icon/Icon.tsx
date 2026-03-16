@@ -45,6 +45,7 @@ import KeyIcon from "jsx:./flaticon-uicons/key.svg";
 import KeyRegenerateIcon from "jsx:./flaticon-uicons/key_regenerate.svg";
 import LandLayerLocationIcon from "jsx:./flaticon-uicons/land-layer-location.svg";
 import LayersIcon from "jsx:./flaticon-uicons/layers.svg";
+import LeverIndispoTempIcon from "jsx:./flaticon-uicons/lever_indispo_temp.svg";
 import LicenseIcon from "jsx:./flaticon-uicons/license.svg";
 import LightEmergencyOnIcon from "jsx:./flaticon-uicons/light-emergency-on.svg";
 import ListIcon from "jsx:./flaticon-uicons/list.svg";
@@ -196,6 +197,9 @@ export const IconRotateLeft = createIconComponent(RotateLeftIcon);
 
 export const IconCloseIndisponibiliteTemporaire =
   createIconComponent(HourglassEndIcon);
+export const IconLeverIndisponibiliteTemporaire =
+  createIconComponent(LeverIndispoTempIcon);
+
 export const IconCriseRapportPersonnalise = createIconComponent(MemberListIcon);
 export const IconList = createIconComponent(ListIcon);
 export const IconDuplicate = createIconComponent(DuplicateIcon);

@@ -97,6 +97,13 @@ class PeiEndpoint : AbstractEndpoint() {
         Response.ok().entity(peiRepository.getPeiByZoneIntegrationShortData(securityContext.userInfo)).build()
 
     @GET
+    @Path("/get-pei-indispo-temp/{idPei}")
+    @RequireDroits([Droit.INDISPO_TEMP_R])
+    fun getPeiIndispoTemp(
+        @PathParam("idPei") idPei: UUID,
+    ): Response = Response.ok(peiUseCase.getPeiIndispoTemp(idPei)).build()
+
+    @GET
     @Path("/acces-rapide")
     @RequireDroits([Droit.PEI_R])
     fun getPeiForAccesRapide(

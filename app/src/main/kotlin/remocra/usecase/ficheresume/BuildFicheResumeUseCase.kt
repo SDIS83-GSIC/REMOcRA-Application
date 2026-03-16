@@ -50,7 +50,9 @@ constructor(
                             titre = it.ficheResumeBlocTitre,
                             data = DisponibiliteWithIndispoTemp(
                                 disponibilite = peiData.peiDisponibiliteTerrestre,
-                                hasIndispoTemp = peiIndispoData.isNotEmpty(),
+                                hasIndispoTemp = peiIndispoData.any {
+                                    it.indisponibiliteTemporaireDateFin?.let { fin -> fin >= dateUtils.now() } ?: true
+                                },
                                 list = peiIndispoData.map {
                                     DataIndispoTemp(
                                         startDate = dateUtils.formatDateOnly(it.indisponibiliteTemporaireDateDebut),

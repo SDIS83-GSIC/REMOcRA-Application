@@ -1230,7 +1230,43 @@ class PeiRepository
             .from(PEI)
             .where(PEI.ID.eq(peiId))
             .fetchSingleInto()
+
+    fun getPeiIndispoTemp(peiId: UUID): List<PeiIndispoTemp> {
+        val listePeiField = DSL.coalesce(
+            DSL.select(
+                DSL.listAgg(PEI.NUMERO_COMPLET, ", ")
+                    .withinGroupOrderBy(PEI.NUMERO_COMPLET),
+            )
+                .from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+                .join(PEI)
+                .on(PEI.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID))
+                .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(INDISPONIBILITE_TEMPORAIRE.ID))
+                .asField<String>(),
+            DSL.inline(""),
+        ).`as`("listePei")
+
+        return dsl.select(
+            INDISPONIBILITE_TEMPORAIRE.ID,
+            INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT,
+            INDISPONIBILITE_TEMPORAIRE.DATE_FIN,
+            INDISPONIBILITE_TEMPORAIRE.MOTIF,
+            listePeiField,
+        )
+            .from(INDISPONIBILITE_TEMPORAIRE)
+            .join(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+            .on(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(INDISPONIBILITE_TEMPORAIRE.ID))
+            .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(peiId))
+            .fetchInto()
+    }
 }
+
+data class PeiIndispoTemp(
+    val indisponibiliteTemporaireId: UUID,
+    val indisponibiliteTemporaireDateDebut: ZonedDateTime,
+    val indisponibiliteTemporaireDateFin: ZonedDateTime?,
+    val indisponibiliteTemporaireMotif: String,
+    val listePei: String, // liste des NUMERO_COMPLET séparé par des virgules
+)
 
 data class IdNumeroComplet(
     val peiId: UUID,

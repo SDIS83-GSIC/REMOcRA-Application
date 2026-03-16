@@ -17,6 +17,7 @@ import ListIndisponibiliteTemporaire from "../../pages/IndisponibiliteTemporaire
 import UpdateEvenement from "../../pages/ModuleCrise/Evenement/UpdateEvenement.tsx";
 import DocumentPei from "../../pages/Pei/DocumentPei.tsx";
 import FicheResume from "../../pages/Pei/FicheResume/FicheResume.tsx";
+import LeverIndispoTempsVolet from "../../pages/Pei/LeverIndispoTempsVolet.tsx";
 import UpdatePeiPrescrit from "../../pages/PeiPrescrit/UpdatePeiPrescrit.tsx";
 import AireAspiration from "../../pages/Pena/AireAspiration.tsx";
 import UpdatePermis from "../../pages/Permis/UpdatePermis.tsx";
@@ -33,6 +34,7 @@ import {
   IconDocument,
   IconEdit,
   IconIndisponibiliteTemporaire,
+  IconLeverIndisponibiliteTemporaire,
   IconOeil,
   IconSee,
   IconTournee,
@@ -108,6 +110,9 @@ const TooltipMapPei = ({
 
   const [showIndispoTemp, setShowIndispoTemp] = useState(false);
   const handleCloseIndispoTemp = () => setShowIndispoTemp(false);
+
+  const [showLeverIndispoTempVolet, setShowLeverIndispoTempVolet] =
+    useState(false);
 
   const [showTournee, setShowTournee] = useState(false);
   const handleCloseTournee = () => setShowTournee(false);
@@ -246,27 +251,56 @@ const TooltipMapPei = ({
                 </Col>
               )}
               {featureSelect?.getProperties().hasIndispoTemp && (
-                <Col className="p-1" xs={"auto"}>
-                  <TooltipCustom
-                    tooltipText={
-                      showFormPei || showFormVisite.show
-                        ? textDisable
-                        : "Voir les indisponibilités temporaires du PEI"
-                    }
-                    tooltipId={"indispo-temp-carte"}
-                  >
-                    <Button
-                      variant="warning"
-                      onClick={() => {
-                        setShowIndispoTemp(true);
-                        overlay?.setPosition(undefined);
-                      }}
-                      disabled={showFormPei || showFormVisite.show}
+                <>
+                  <Col className="p-1" xs={"auto"}>
+                    <TooltipCustom
+                      tooltipText={
+                        showFormPei || showFormVisite.show
+                          ? textDisable
+                          : "Voir les indisponibilités temporaires du PEI"
+                      }
+                      tooltipId={"indispo-temp-carte"}
                     >
-                      <IconIndisponibiliteTemporaire />
-                    </Button>
-                  </TooltipCustom>
-                </Col>
+                      <Button
+                        variant="warning"
+                        onClick={() => {
+                          setShowIndispoTemp(true);
+                          overlay?.setPosition(undefined);
+                        }}
+                        disabled={showFormPei || showFormVisite.show}
+                      >
+                        <IconIndisponibiliteTemporaire />
+                      </Button>
+                    </TooltipCustom>
+                  </Col>
+
+                  {hasDroit(user, TYPE_DROIT.INDISPO_TEMP_U) &&
+                    featureSelect?.getProperties()?.hasIndispoTemp && (
+                      <Col className="p-1" xs={"auto"}>
+                        <TooltipCustom
+                          tooltipText={
+                            showFormPei || showFormVisite.show
+                              ? textDisable
+                              : "Lever une indisponibilité temporaire"
+                          }
+                          tooltipId={"indispo-temp-carte"}
+                        >
+                          <Button
+                            variant="danger"
+                            className="text-white"
+                            onClick={() => {
+                              dataPeiLayer.getSource().refresh();
+                              setShowLeverIndispoTempVolet(true);
+                              overlay?.setPosition(undefined);
+                            }}
+                            disabled={showFormPei || showFormVisite.show}
+                          >
+                            <IconLeverIndisponibiliteTemporaire />
+                          </Button>
+                        </TooltipCustom>
+                      </Col>
+                    )}
+                </>
               )}
               {featureSelect?.getProperties().hasTournee &&
                 hasDroit(user, TYPE_DROIT.TOURNEE_R) && (
@@ -371,6 +405,29 @@ const TooltipMapPei = ({
                   ]}
                 />
               </Volet>
+
+              <Volet
+                handleClose={() => {
+                  setShowLeverIndispoTempVolet(false);
+                }}
+                show={showLeverIndispoTempVolet}
+                className="w-auto"
+                backdrop={true}
+              >
+                <LeverIndispoTempsVolet
+                  onClick={() => {
+                    dataPeiLayer.getSource().refresh();
+                    refreshLayerGeoserver(map);
+                    overlay?.setPosition(undefined);
+                  }}
+                  idPei={elementId}
+                  closeVolet={() => {
+                    setShowLeverIndispoTempVolet(false);
+                    refreshLayerGeoserver(map);
+                  }}
+                />
+              </Volet>
+
               <Volet
                 handleClose={() => {
                   handleCloseTournee();

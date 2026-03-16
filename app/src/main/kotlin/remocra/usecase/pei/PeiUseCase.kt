@@ -18,6 +18,7 @@ import remocra.db.GestionnaireRepository
 import remocra.db.LieuDitRepository
 import remocra.db.ModelePibiRepository
 import remocra.db.OrganismeRepository
+import remocra.db.PeiIndispoTemp
 import remocra.db.PeiRepository
 import remocra.db.PenaRepository
 import remocra.db.PibiRepository
@@ -152,6 +153,10 @@ constructor(
             },
             userInfo,
         )
+    }
+
+    fun getPeiIndispoTemp(idPei: UUID): List<PeiIndispoTemp> {
+        return peiRepository.getPeiIndispoTemp(idPei)
     }
 
     // On renvoie que des listes de Id - Code - Libellé pour que ça colle avec notre SelectInput

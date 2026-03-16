@@ -24,6 +24,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.indisponibilitetemporaire.CloreIndisponibiliteTemporaireUseCase
 import remocra.usecase.indisponibilitetemporaire.CreateIndisponibiliteTemporaireUseCase
 import remocra.usecase.indisponibilitetemporaire.DeleteIndisponibiliteTemporaireUseCase
+import remocra.usecase.indisponibilitetemporaire.LeverIndispoTempPeiUseCase
 import remocra.usecase.indisponibilitetemporaire.UpdateIndisponibiliteTemporaireUseCase
 import remocra.web.AbstractEndpoint
 import java.time.ZonedDateTime
@@ -44,6 +45,9 @@ class IndisponibiliteTemporaireEndPoint() : AbstractEndpoint() {
 
     @Inject
     lateinit var cloreIndisponibiliteTemporaireUseCase: CloreIndisponibiliteTemporaireUseCase
+
+    @Inject
+    lateinit var leverIndispoTempPeiUseCase: LeverIndispoTempPeiUseCase
 
     @Inject
     lateinit var deleteIndisponibiliteTemporaireUseCase: DeleteIndisponibiliteTemporaireUseCase
@@ -157,6 +161,14 @@ class IndisponibiliteTemporaireEndPoint() : AbstractEndpoint() {
             indisponibiliteTemporaireRepository.getGeometrieIndispoTemp(indispoTemporaireId),
         ).build()
     }
+
+    @PUT
+    @Path("/lever-indispo-temp")
+    @RequireDroits([Droit.INDISPO_TEMP_U])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun leverIndispoTempPei(
+        peiIndispoTempId: List<UUID>,
+    ): Response = leverIndispoTempPeiUseCase.execute(securityContext.userInfo, peiIndispoTempId).wrap()
 }
 
 class IndisponibiliteTemporaireInput {

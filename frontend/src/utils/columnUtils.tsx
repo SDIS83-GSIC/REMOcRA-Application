@@ -12,6 +12,7 @@ import {
   IconAireAspiration,
   IconCloseIndisponibiliteTemporaire,
   IconDocument,
+  IconLeverIndisponibiliteTemporaire,
   IconList,
   IconLocation,
   IconOeil,
@@ -218,6 +219,7 @@ type PeiRowType = {
 };
 
 function getColumnPeiByStringArray(
+  handleLeverIndispoTemp: (value: any) => void,
   user: UtilisateurEntity,
   parametres: Array<COLUMN_PEI>,
   listeAnomaliePossible: Array<IdCodeLibelleType>,
@@ -644,6 +646,17 @@ function getColumnPeiByStringArray(
         ),
       });
     }
+    if (hasDroit(user, TYPE_DROIT.INDISPO_TEMP_U)) {
+      listeButton.push({
+        disable: (row: PeiRowType) => !row.original.hasIndispoTemp,
+        textDisable: "Aucune indisponibilité temporaire à lever pour ce PEI",
+        row: (row: PeiRowType) => row,
+        type: TYPE_BUTTON.BUTTON,
+        onClick: (row: PeiRowType) => handleLeverIndispoTemp(row),
+        textEnable: "Lever une indisponibilité temporaire",
+        icon: <IconLeverIndisponibiliteTemporaire />,
+      });
+    }
     if (hasDroit(user, TYPE_DROIT.VISITE_R)) {
       listeButton.push({
         row: (row: PeiRowType) => row,
@@ -716,7 +729,7 @@ function getColumnPeiByStringArray(
   return column;
 }
 
-function getStatutIndispo(
+export function getStatutIndispo(
   indisponibiliteTemporaireDateDebut: string,
   indisponibiliteTemporaireDateFin: string,
 ) {
