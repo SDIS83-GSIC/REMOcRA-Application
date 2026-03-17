@@ -8,8 +8,8 @@ import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import kotlin.io.path.Path
 import kotlin.io.path.extension
+import kotlin.io.path.name
 import kotlin.io.path.outputStream
-import kotlin.io.path.relativeTo
 
 class ImportShapeUtils {
     @Inject
@@ -23,12 +23,15 @@ class ImportShapeUtils {
             while (zipEntry != null) {
                 documentUtils.ensureDirectory(directory)
 
-                // il y a un risque de "sortir" de 'directory' donc on "sanitize" un peu zipEntry.name
-                // FIXME: le reste du code ne supporte que des fichiers, donc on pourrait:
-                //  - skip les zipEntry.isDirectory
-                //  - s'assurer qu'on n'a pas de niveau intermédiaire
-                //  - utiliser alors Path(zipEntry.name).name
-                val file = directory.resolve(Path(zipEntry.name).normalize().let { if (it.isAbsolute) it.relativeTo(Path("/")) else it })
+                // On ignore les dossiers et les fichiers dans des sous-dossiers
+                if (zipEntry.isDirectory) {
+                    zipInputStream.closeEntry()
+                    zipEntry = zipInputStream.nextEntry
+                    continue
+                }
+                // On extrait uniquement le nom du fichier (pas de sous-dossier)
+                val fileName = Path(zipEntry.name).name
+                val file = directory.resolve(fileName)
 
                 file.outputStream().use { output ->
                     zipInputStream.copyTo(output)
