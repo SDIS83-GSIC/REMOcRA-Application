@@ -1,5 +1,28 @@
 = Release Notes
 
+== 3.0.5
+
+* https://redmine.atolcd.com/issues/279447[#279447]: Ajout de nouveaux droits
+* https://redmine.atolcd.com/issues/279627[#279627]: Rapports personnalisés : critère DECI manquant
+* https://redmine.atolcd.com/issues/282579[#282579]: module gestion des points d'eau - liste des points d'eau vide lors d'une modification d'un débit simultané
+* https://redmine.atolcd.com/issues/282725[#282725]: Ajout d'un filtre disponibilité
+* https://redmine.atolcd.com/issues/283637[#283637]: Tableaux de bord - couleurs choisies pour les camemberts
+* https://redmine.atolcd.com/issues/283959[#283959]: Tableau de bord : Graphique en barre 0%
+* https://redmine.atolcd.com/issues/284030[#284030]: Page d'accueil : Message PEI indisponibles
+* https://redmine.atolcd.com/issues/284184[#284184]: Tournées : Renommer une tournée
+* https://redmine.atolcd.com/issues/284196[#284196]: Renommer le bouton Voir les visites
+* https://redmine.atolcd.com/issues/284209[#284209]: Icône d'action identique : différencier les 2 boutons
+* https://redmine.atolcd.com/issues/284269[#284269]: Synchronisation LDAP - Profil par défaut
+* https://redmine.atolcd.com/issues/284367[#284367]: PEI : Bouton d'action sans infobulle
+* https://redmine.atolcd.com/issues/284667[#284667]: Page blanche sur les pages de réordonnancement
+* https://redmine.atolcd.com/issues/284879[#284879]: Indisponibilité temporaire immédiate
+* https://redmine.atolcd.com/issues/285044[#285044]: Carto : Créer un débit simultané
+* https://redmine.atolcd.com/issues/285140[#285140]: Génération carte des tournées - Ajout d'un toast de chargement
+* https://redmine.atolcd.com/issues/285202[#285202]: indisponibilité temporaire - correction libellé
+* https://redmine.atolcd.com/issues/285204[#285204]: Navigation entre les pages des tableaux
+* https://redmine.atolcd.com/issues/285208[#285208]: Tri sur le tableau historique
+* https://redmine.atolcd.com/issues/285229[#285229]: Création aire d'aspiration déportée
+
 == 3.0.4
 
 * https://redmine.atolcd.com/issues/253499[#253499]: [DROITS] ATTRIBUTION CATEGORIE GENERAL - relevé des incohérences
