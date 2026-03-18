@@ -8,7 +8,7 @@ import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { useEffect, useMemo, useState } from "react";
 import { Button, ButtonGroup, Row } from "react-bootstrap";
-import { object } from "yup";
+import { object, string } from "yup";
 import { hasDroit, isAuthorized } from "../../../droits.tsx";
 import {
   PeiEntity,
@@ -635,7 +635,6 @@ const MapToolbarPei = ({
       listeParametre?.data[parametreVoieSaisieLibre].parametreValeur,
     );
   }, [listeParametre]);
-  const isVoiesListEmpty = !voiesList || voiesList.length === 0;
 
   // Pour afficher le *bon* bouton pour accéder à la fiche PEI (lecture, écriture)
   const canEditPei = isAuthorized(user, [
@@ -887,11 +886,15 @@ const MapToolbarPei = ({
           submitLabel={"Valider"}
           visible={visibleMove}
           validationSchema={
-            !isSaisieVoieEnabled
-              ? ValidationSchemaId
-              : isVoiesListEmpty
-                ? ValidationSchemaLibelle
-                : object({})
+            // Si commune change
+            deplacePei
+              ? // si pas saisie libre: voieId obligatoire
+                // si saisie libre : voieId ou voieLibelle
+                isSaisieVoieEnabled
+                ? ValidationSchemaVoieSaisieLibre
+                : ValidationSchemaVoieStandard
+              : // Commune ne change pas
+                object({})
           }
           header={`Déplacer le PEI ${peiInfoMove.peiNumeroComplet ?? ""}`}
           onSubmit={() => {
@@ -931,12 +934,26 @@ type MessageVoieFormProps = {
   isSaisieVoieEnabled: boolean;
 };
 
-export const ValidationSchemaId = object({
+// Si la saisie libre est désactivée : voieId obligatoire
+export const ValidationSchemaVoieStandard = object({
   voieId: requiredString,
 });
 
-export const ValidationSchemaLibelle = object({
-  voieLibelle: requiredString,
+// Validation : au moins voieId ou voieLibelle
+export const ValidationSchemaVoieSaisieLibre = object({
+  voieId: string().nullable(),
+  voieLibelle: string().nullable(),
+}).test((value) => {
+  if (!value) {
+    return false;
+  }
+  const { voieId, voieLibelle } = value as {
+    voieId?: string | null;
+    voieLibelle?: string | null;
+  };
+  return Boolean(
+    (voieId && voieId !== "") || (voieLibelle && voieLibelle !== ""),
+  );
 });
 
 const MessageVoieForm = ({
