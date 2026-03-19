@@ -290,6 +290,7 @@ class TourneeEndPoint : AbstractEndpoint() {
         return Response.ok(
             tourneeRepository.getGeometrieTournee(
                 tourneePei,
+                securityContext.userInfo.isSuperAdmin,
                 securityContext.userInfo.zoneCompetence?.zoneIntegrationId,
             ),
         ).build()

@@ -44,6 +44,7 @@ class GenereCarteTourneeUseCase @Inject constructor(
         // Récupération de la géométrie brute de la tournée
         val tourneeGeometrie = tourneeRepository.getGeometrieTournee(
             tourneeId,
+            userInfo.isSuperAdmin,
             userInfo.zoneCompetence?.zoneIntegrationId,
         )
 

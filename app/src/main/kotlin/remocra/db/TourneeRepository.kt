@@ -109,7 +109,12 @@ class TourneeRepository
             .on(TOURNEE.ID.eq(field(name("NEXT_ROP_CTE", "TOURNEE_ID"), SQLDataType.UUID)))
             .leftJoin(L_TOURNEE_PEI)
             .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
-            .where(ORGANISME.ID.`in`(affiliatedOrganismeIds))
+            .where(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    ORGANISME.ID.`in`(affiliatedOrganismeIds),
+                    isSuperAdmin,
+                ),
+            )
             .and(filter?.toCondition() ?: DSL.noCondition())
             .fetchInto()
     }
@@ -792,17 +797,21 @@ class TourneeRepository
             .fetchInto()
     }
 
-    fun getGeometrieTournee(tourneeId: UUID, zoneCompetence: UUID?): Collection<GeometrieWithPeiId> =
+    fun getGeometrieTournee(tourneeId: UUID, isSuperAdmin: Boolean, zoneCompetence: UUID?): Collection<GeometrieWithPeiId> =
         dsl.select(PEI.GEOMETRIE, PEI.ID)
             .from(PEI)
             .join(L_TOURNEE_PEI).on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
             .join(TOURNEE).on(TOURNEE.ID.eq(tourneeId)).and(TOURNEE.ID.eq(L_TOURNEE_PEI.TOURNEE_ID))
-            .join(ZONE_INTEGRATION).on(ZONE_INTEGRATION.ID.eq(zoneCompetence))
-            .where(
-                zoneCompetence?.let {
-                    ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)
-                } ?: DSL.noCondition(),
-            )
+            .let {
+                if (!isSuperAdmin) {
+                    it.join(ZONE_INTEGRATION).on(
+                        ZONE_INTEGRATION.ID.eq(zoneCompetence)
+                            .and(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE)),
+                    )
+                } else {
+                    it
+                }
+            }
             .fetchInto()
 
     fun getTourneeForSelect(): Collection<GlobalData.IdLibelleData> =
