@@ -422,21 +422,25 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     DOCUMENT_HABILITABLE_FORBIDDEN_UPDATE(10012, "Vous n'avez pas les droits de modification des blocs documents.", Status.FORBIDDEN),
     DOCUMENT_HABILITABLE_FORBIDDEN_DELETE(10013, "Vous n'avez pas les droits de suppression des blocs documents.", Status.FORBIDDEN),
     DOCUMENT_HABILITABLE_DOCUMENT_NOT_FOUND(10014, "Impossible de trouver le document associé au bloc document."),
-    DOCUMENT_FORBIDDEN_INSERT(10024, "Vous n'avez pas les droits pour déclarer un PEI.", Status.FORBIDDEN),
-    DFCI_FORBIDDEN_RECEPTION_TRAVAUX(10025, "Vous n'avez pas les droits pour réceptionner des travaux.", Status.FORBIDDEN),
+    DOCUMENT_FORBIDDEN_INSERT(10015, "Vous n'avez pas les droits pour déclarer un PEI.", Status.FORBIDDEN),
+    DFCI_FORBIDDEN_RECEPTION_TRAVAUX(10016, "Vous n'avez pas les droits pour réceptionner des travaux.", Status.FORBIDDEN),
 
     // Utilisateur
-    UTILISATEUR_FORBIDDEN(10015, "Vous n'avez pas les droits de gestion des utilisateurs.", Status.FORBIDDEN),
-    UTILISATEUR_USERNAME_LENGTH(10016, "L'identifiant doit avoir au minimum 3 caractères."),
+    UTILISATEUR_FORBIDDEN(10017, "Vous n'avez pas les droits de gestion des utilisateurs.", Status.FORBIDDEN),
+    UTILISATEUR_USERNAME_LENGTH(10018, "L'identifiant doit avoir au minimum 3 caractères."),
     UTILISATEUR_ERROR_INSERT(
-        10017,
+        10019,
         "Erreur lors de l'insertion de l'identifiant : $PLACEHOLDER_ERROR_TYPE. Vérifier que l'identifiant ne contient pas des caractères spéciaux.",
     ),
-    UTILISATEUR_USERNAME_EXISTS(10018, "L'identifiant saisi est déjà utilisé par un autre utilisateur."),
-    UTILISATEUR_ACTION_EMAIL(10020, "Impossible de créer un utilisateur et de lui envoyer un mail d'initialisation."),
-    UTILISATEUR_TOURNEE_RESERVEE(10021, "L'utilisateur a réservé une tournée."),
-    UTILISATEUR_SUPPRESSION_KEYCLOAK(10022, "Impossible de supprimer l'utilisateur dans keycloak."),
-    UTILISATEUR_MAJ_KEYCLOAK(10023, "Impossible de modifier l'utilisateur dans keycloak."),
+    UTILISATEUR_USERNAME_EXISTS(10020, "L'identifiant saisi est déjà utilisé par un autre utilisateur."),
+    UTILISATEUR_ACTION_EMAIL(10021, "Impossible de créer un utilisateur et de lui envoyer un mail d'initialisation."),
+    UTILISATEUR_TOURNEE_RESERVEE(10022, "L'utilisateur a réservé une tournée."),
+    UTILISATEUR_SUPPRESSION_KEYCLOAK(10023, "Impossible de supprimer l'utilisateur dans keycloak."),
+    UTILISATEUR_MAJ_KEYCLOAK(10024, "Impossible de modifier l'utilisateur dans keycloak."),
+
+    // utilisateur import fichier
+    UTILISATEUR_IMPORT_EMPTY_FILE(10025, "Le fichier d'import utilisateur est vide"),
+    UTILISATEUR_IMPORT_EMPTY_ROW(10026, "Certaines informations sont manquantes"),
 
     //
     // ********************************************************************************
