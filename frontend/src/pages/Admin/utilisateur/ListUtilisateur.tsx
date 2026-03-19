@@ -75,10 +75,18 @@ const ListUtilisateur = () => {
           right={
             (hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_A) ||
               hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A)) && (
-              <CreateButton
-                href={URLS.ADD_UTILISATEUR}
-                title={"Ajouter un utilisateur"}
-              />
+              <>
+                <CreateButton
+                  href={URLS.ADD_UTILISATEUR}
+                  title={"Ajouter un utilisateur"}
+                />
+
+                <CreateButton
+                  classnames={"ms-5"}
+                  href={URLS.IMPORT_UTILISATEUR}
+                  title={"Importer des utilisateurs"}
+                />
+              </>
             )
           }
         />

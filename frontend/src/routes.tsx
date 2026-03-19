@@ -109,8 +109,10 @@ import CreateProfilOrganisme from "./pages/Admin/profilOrganisme/CreateProfilOrg
 import ListProfilOrganisme from "./pages/Admin/profilOrganisme/ListProfilOrganisme.tsx";
 import UpdateProfilOrganisme from "./pages/Admin/profilOrganisme/UpdateProfilOrganisme.tsx";
 import CreateProfilUtilisateur from "./pages/Admin/profilUtilisateur/CreateProfilUtilisateur.tsx";
+import ImportUtilisateur from "./pages/Admin/profilUtilisateur/ImportUtilisateur.tsx";
 import ListProfilUtilisateur from "./pages/Admin/profilUtilisateur/ListProfilUtilisateur.tsx";
 import UpdateProfilUtilisateur from "./pages/Admin/profilUtilisateur/UpdateProfilUtilisateur.tsx";
+import VerificationImportUtilisateur from "./pages/Admin/profilUtilisateur/VerificationImportUtilisateur.tsx";
 import CreateRapportPersonnalise from "./pages/Admin/rapportPersonnalise/CreateRapportPersonnalise.tsx";
 import DuplicateRapportPersonnalise from "./pages/Admin/rapportPersonnalise/DuplicateRapportPersonnalise.tsx";
 import ImportRapportPersonnalise from "./pages/Admin/rapportPersonnalise/ImportRapportPersonnalise.tsx";
@@ -528,6 +530,8 @@ export const URLS = {
     url`/admin/anomalie/sort/${anomalieCategorieId}`,
 
   ADD_UTILISATEUR: url`/admin/utilisateur/create`,
+  IMPORT_UTILISATEUR: url`/admin/utilisateur/import`,
+  RESULTAT_VERIF_IMPORT_UTILISATEURS: url`/admin/utilisateur/verification-import`,
   LIST_UTILISATEUR: url`/admin/utilisateur`,
   UPDATE_UTILISATEUR: (utilisateurId: string) =>
     url`/admin/utilisateur/update/` + utilisateurId,
@@ -2306,6 +2310,30 @@ export default [
         element: (
           <Authorization
             Component={CreateUtilisateur}
+            droits={[
+              TYPE_DROIT.ADMIN_UTILISATEURS_A,
+              TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A,
+            ]}
+          />
+        ),
+      },
+      {
+        path: "utilisateur/import",
+        element: (
+          <Authorization
+            Component={ImportUtilisateur}
+            droits={[
+              TYPE_DROIT.ADMIN_UTILISATEURS_A,
+              TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A,
+            ]}
+          />
+        ),
+      },
+      {
+        path: "utilisateur/verification-import",
+        element: (
+          <Authorization
+            Component={VerificationImportUtilisateur}
             droits={[
               TYPE_DROIT.ADMIN_UTILISATEURS_A,
               TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A,
