@@ -183,6 +183,7 @@ import VerificationImportCTP from "./pages/ImportCTP/TableVerificationImportCTP.
 import CreateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/CreateIndisponibiliteTemporaire.tsx";
 import ListIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/ListIndisponibiliteTemporaire.tsx";
 import UpdateIndisponibiliteTemporaire from "./pages/IndisponibiliteTemporaire/UpdateIndisponibiliteTemporaire.tsx";
+import LoginError from "./pages/LoginError/LoginError.tsx";
 import CreateCrise from "./pages/ModuleCrise/Crise/CreateCrise.tsx";
 import ExportCrise from "./pages/ModuleCrise/Crise/ExportCrise.tsx";
 import ListCrise from "./pages/ModuleCrise/Crise/ListCrise.tsx";
@@ -221,6 +222,7 @@ export const URLS = {
   ACCUEIL: url`/`,
   LOGOUT: url`/logout`,
   LOGIN: url`/login`,
+  LOGINERROR: url`/loginerror`,
   LIST_INDISPONIBILITE_TEMPORAIRE: url`/deci/indisponibilite-temporaire/`,
   VIEW_COURRIER: (typeModule: string) =>
     url`/deci/create-courrier/${typeModule}/view-courrier`,
@@ -2584,6 +2586,10 @@ export default [
         ),
       },
     ],
+  },
+  {
+    path: "loginerror",
+    element: <LoginError />,
   },
   {
     path: "*",

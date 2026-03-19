@@ -25,10 +25,9 @@ class DroitsRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .and(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_ORGANISME_ID))
             .innerJoin(GROUPE_FONCTIONNALITES).on(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(GROUPE_FONCTIONNALITES.ID))
             .where(UTILISATEUR.ID.eq(userId))
-            .fetch().map { record ->
-                record.component1()!!
-            }.first()
-            .filterNotNull()
+            .fetch()
+            .mapNotNull { record -> record.component1() as? Array<*> }
+            .flatMap { it.filterIsInstance<Droit>() }
             .toSet()
     }
 
