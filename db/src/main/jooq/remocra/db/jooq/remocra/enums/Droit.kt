@@ -87,7 +87,7 @@ enum class Droit(@get:JvmName("literal") public val literal: String) : EnumType 
     RCCI_A("RCCI_A"),
     RCCI_R("RCCI_R"),
     RISQUE_R("RISQUE_R"),
-    RISQUE_KML_R("RISQUE_KML_R"),
+    IMPORT_UTILISATEUR_A("IMPORT_UTILISATEUR_A"),
     TOURNEE_A("TOURNEE_A"),
     TOURNEE_FORCER_POURCENTAGE_E("TOURNEE_FORCER_POURCENTAGE_E"),
     TOURNEE_R("TOURNEE_R"),

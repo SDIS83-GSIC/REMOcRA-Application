@@ -4,7 +4,7 @@ import jakarta.inject.Inject
 import org.slf4j.LoggerFactory
 import remocra.auth.AuthModule
 import remocra.auth.WrappedUserInfo
-import remocra.data.UtilisateurData
+import remocra.data.UtilisateurImportData
 import remocra.data.enums.ErrorType
 import remocra.db.OrganismeRepository
 import remocra.db.UtilisateurRepository
@@ -20,7 +20,7 @@ import remocra.keycloak.representations.UserRepresentation
 import remocra.usecase.AbstractCUDUseCase
 import java.util.UUID
 
-class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperation.INSERT) {
+class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurImportData>(TypeOperation.INSERT) {
     @Inject lateinit var keycloakToken: KeycloakToken
 
     @Inject lateinit var keycloakClient: AuthModule.KeycloakClient
@@ -34,18 +34,20 @@ class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
     private val logger = LoggerFactory.getLogger(CreateUtilisateurUseCase::class.java)
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
-        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A) &&
-            !userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_ORGA_A)
+        if ((
+                !userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A) &&
+                    !userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_ORGA_A)
+                ) || (!userInfo.hasDroit(droitWeb = Droit.IMPORT_UTILISATEUR_A))
         ) {
             throw RemocraResponseException(ErrorType.UTILISATEUR_FORBIDDEN)
         }
     }
 
-    override fun postEvent(element: UtilisateurData, userInfo: WrappedUserInfo) {
+    override fun postEvent(element: UtilisateurImportData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
-                pojo = element,
-                pojoId = element.utilisateurId,
+                pojo = element.utilisateurData,
+                pojoId = element.utilisateurData.utilisateurId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.UTILISATEUR,
                 auteurTracabilite = userInfo.getInfosTracabilite(),
@@ -54,7 +56,7 @@ class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
         )
     }
 
-    override fun execute(userInfo: WrappedUserInfo, element: UtilisateurData): UtilisateurData {
+    override fun execute(userInfo: WrappedUserInfo, element: UtilisateurImportData): UtilisateurImportData {
         val tokenResponse = keycloakToken.getToken(keycloakClient.clientId, keycloakClient.clientSecret).execute().body()!!
 
         try {
@@ -64,15 +66,15 @@ class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
             val listeUtilisateurKeycloak = keycloakApi.getUsers(token).execute().body()
 
             // Si l'utilisateur n'est pas dans keycloak, on le crée
-            if (listeUtilisateurKeycloak?.map { it.username }?.contains(element.utilisateurUsername) != true) {
+            if (listeUtilisateurKeycloak?.map { it.username }?.contains(element.utilisateurData.utilisateurUsername) != true) {
                 val response = keycloakApi.createUser(
                     token,
                     UserRepresentation(
                         id = "",
-                        username = element.utilisateurUsername,
-                        email = element.utilisateurEmail,
-                        lastName = element.utilisateurNom,
-                        firstName = element.utilisateurPrenom,
+                        username = element.utilisateurData.utilisateurUsername,
+                        email = element.utilisateurData.utilisateurEmail,
+                        lastName = element.utilisateurData.utilisateurNom,
+                        firstName = element.utilisateurData.utilisateurPrenom,
                         requiredActions = listOf(RequiredAction.VERIFY_EMAIL.name),
                     ),
                 ).execute()
@@ -85,10 +87,10 @@ class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
                     throw RemocraResponseException(ErrorType.UTILISATEUR_ERROR_INSERT, replacement)
                 }
 
-                logger.info("Utilisateur ${element.utilisateurUsername} inséré dans keycloak")
+                logger.info("Utilisateur ${element.utilisateurData.utilisateurUsername} inséré dans keycloak")
             }
 
-            val keycloakId = keycloakApi.getUsers(token, username = element.utilisateurUsername, max = 1)
+            val keycloakId = keycloakApi.getUsers(token, username = element.utilisateurData.utilisateurUsername, max = 1)
                 .execute().body()!!.first().id
 
             val responseMailKeycloak = keycloakApi.executeActionsEmail(
@@ -103,7 +105,7 @@ class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
             }
 
             utilisateurRepository.insertUtilisateur(
-                element.copy(utilisateurId = UUID.randomUUID()),
+                element.utilisateurData.copy(utilisateurId = UUID.randomUUID()),
                 keycloakId,
             )
 
@@ -113,16 +115,19 @@ class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
         }
     }
 
-    override fun checkContraintes(userInfo: WrappedUserInfo, element: UtilisateurData) {
-        if (element.utilisateurUsername.trim().length < 3) {
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: UtilisateurImportData) {
+        if (element.utilisateurData.utilisateurUsername.trim().length < 3) {
             throw RemocraResponseException(ErrorType.UTILISATEUR_USERNAME_LENGTH)
         }
-        if (utilisateurRepository.checkExistsUsername(element.utilisateurUsername, null)) {
+        if (utilisateurRepository.checkExistsUsername(element.utilisateurData.utilisateurUsername, null)) {
             throw RemocraResponseException(ErrorType.UTILISATEUR_USERNAME_EXISTS)
         }
 
-        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A) && (!userInfo.isSuperAdmin)) {
-            userInfo.affiliatedOrganismeIds?.contains(element.utilisateurOrganismeId)?.let {
+        if (element.isImported) {
+            return // si je suis dans un import, pas de PB d'organisme enfant
+        }
+        if ((!userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A) && (!userInfo.isSuperAdmin))) {
+            userInfo.affiliatedOrganismeIds?.contains(element.utilisateurData.utilisateurOrganismeId)?.let {
                 if (!(it)) {
                     throw RemocraResponseException(ErrorType.UTILISATEUR_FORBIDDEN)
                 }

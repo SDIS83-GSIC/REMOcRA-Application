@@ -2301,6 +2301,7 @@ export default [
               TYPE_DROIT.ADMIN_UTILISATEURS_R,
               TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A,
               TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_R,
+              TYPE_DROIT.IMPORT_UTILISATEUR_A,
             ]}
           />
         ),
@@ -2322,10 +2323,7 @@ export default [
         element: (
           <Authorization
             Component={ImportUtilisateur}
-            droits={[
-              TYPE_DROIT.ADMIN_UTILISATEURS_A,
-              TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A,
-            ]}
+            droits={[TYPE_DROIT.IMPORT_UTILISATEUR_A]}
           />
         ),
       },
@@ -2334,10 +2332,7 @@ export default [
         element: (
           <Authorization
             Component={VerificationImportUtilisateur}
-            droits={[
-              TYPE_DROIT.ADMIN_UTILISATEURS_A,
-              TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A,
-            ]}
+            droits={[TYPE_DROIT.IMPORT_UTILISATEUR_A]}
           />
         ),
       },

@@ -5,6 +5,7 @@ import remocra.auth.WrappedUserInfo
 import remocra.csv.CsvReader
 import remocra.data.LigneImportUtilisateur
 import remocra.data.UtilisateurData
+import remocra.data.UtilisateurImportData
 import remocra.data.enums.ErrorType
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
@@ -46,19 +47,23 @@ class ImportUtilisateurUseCase @Inject constructor(
             } else {
                 createUtilisateurUseCase.execute(
                     userInfo,
-                    UtilisateurData(
-                        utilisateurId = UUID.randomUUID(),
-                        utilisateurActif = utilisateur.actif ?: false,
-                        utilisateurEmail = utilisateur.mail ?: "",
-                        utilisateurNom = utilisateur.nom ?: "",
-                        utilisateurPrenom = utilisateur.prenom ?: "",
-                        utilisateurUsername = utilisateur.identifiant ?: "",
-                        utilisateurTelephone = utilisateur.telephone,
-                        utilisateurCanBeNotified = utilisateur.notifie,
-                        utilisateurProfilUtilisateurId = utilisateur.profilUtilisateurId,
-                        utilisateurOrganismeId = utilisateur.organismeId,
-                        utilisateurIsSuperAdmin = false,
+                    UtilisateurImportData(
+                        utilisateurData = UtilisateurData(
+                            utilisateurId = UUID.randomUUID(),
+                            utilisateurActif = utilisateur.actif ?: false,
+                            utilisateurEmail = utilisateur.mail ?: "",
+                            utilisateurNom = utilisateur.nom ?: "",
+                            utilisateurPrenom = utilisateur.prenom ?: "",
+                            utilisateurUsername = utilisateur.identifiant ?: "",
+                            utilisateurTelephone = utilisateur.telephone,
+                            utilisateurCanBeNotified = utilisateur.notifie,
+                            utilisateurProfilUtilisateurId = utilisateur.profilUtilisateurId,
+                            utilisateurOrganismeId = utilisateur.organismeId,
+                            utilisateurIsSuperAdmin = false,
+                        ),
+                        isImported = true,
                     ),
+
                 )
             }
         }

@@ -22,6 +22,7 @@ import remocra.data.DataTableau
 import remocra.data.LigneImportUtilisateur
 import remocra.data.Params
 import remocra.data.UtilisateurData
+import remocra.data.UtilisateurImportData
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.utilisateur.CreateUtilisateurUseCase
@@ -85,18 +86,21 @@ class UtilisateurEndpoint : AbstractEndpoint() {
     fun create(utilisateurInput: UtilisateurInput): Response =
         createUtilisateurUseCase.execute(
             securityContext.userInfo,
-            UtilisateurData(
-                utilisateurId = UUID.randomUUID(),
-                utilisateurActif = utilisateurInput.utilisateurActif,
-                utilisateurEmail = utilisateurInput.utilisateurEmail,
-                utilisateurNom = utilisateurInput.utilisateurNom,
-                utilisateurPrenom = utilisateurInput.utilisateurPrenom,
-                utilisateurUsername = utilisateurInput.utilisateurUsername,
-                utilisateurTelephone = utilisateurInput.utilisateurTelephone,
-                utilisateurCanBeNotified = utilisateurInput.utilisateurCanBeNotified,
-                utilisateurProfilUtilisateurId = utilisateurInput.utilisateurProfilUtilisateurId,
-                utilisateurOrganismeId = utilisateurInput.utilisateurOrganismeId,
-                utilisateurIsSuperAdmin = utilisateurInput.utilisateurIsSuperAdmin,
+            UtilisateurImportData(
+                utilisateurData = UtilisateurData(
+                    utilisateurId = UUID.randomUUID(),
+                    utilisateurActif = utilisateurInput.utilisateurActif,
+                    utilisateurEmail = utilisateurInput.utilisateurEmail,
+                    utilisateurNom = utilisateurInput.utilisateurNom,
+                    utilisateurPrenom = utilisateurInput.utilisateurPrenom,
+                    utilisateurUsername = utilisateurInput.utilisateurUsername,
+                    utilisateurTelephone = utilisateurInput.utilisateurTelephone,
+                    utilisateurCanBeNotified = utilisateurInput.utilisateurCanBeNotified,
+                    utilisateurProfilUtilisateurId = utilisateurInput.utilisateurProfilUtilisateurId,
+                    utilisateurOrganismeId = utilisateurInput.utilisateurOrganismeId,
+                    utilisateurIsSuperAdmin = utilisateurInput.utilisateurIsSuperAdmin,
+                ),
+                isImported = false,
             ),
         ).wrap()
 
@@ -184,7 +188,7 @@ class UtilisateurEndpoint : AbstractEndpoint() {
 
     @POST
     @Path("/import")
-    @RequireDroits([Droit.ADMIN_UTILISATEURS_A, Droit.ADMIN_UTILISATEURS_ORGA_A])
+    @RequireDroits([Droit.IMPORT_UTILISATEUR_A])
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.APPLICATION_JSON)
     fun importUtilisateur(
@@ -199,7 +203,7 @@ class UtilisateurEndpoint : AbstractEndpoint() {
 
     @POST
     @Path("/importer-utilisateur")
-    @RequireDroits([Droit.ADMIN_UTILISATEURS_A, Droit.ADMIN_UTILISATEURS_ORGA_A])
+    @RequireDroits([Droit.IMPORT_UTILISATEUR_A])
     @Consumes(MediaType.APPLICATION_JSON)
     fun importUtilisateurEnregistrement(importData: List<LigneImportUtilisateur>): Response =
         Response.ok(
@@ -211,7 +215,7 @@ class UtilisateurEndpoint : AbstractEndpoint() {
 
     @POST
     @Path("/download-user-template")
-    @RequireDroits([Droit.ADMIN_UTILISATEURS_A, Droit.ADMIN_UTILISATEURS_ORGA_A])
+    @RequireDroits([Droit.IMPORT_UTILISATEUR_A])
     @Produces(MediaType.TEXT_PLAIN + "; charset=ISO-8859-1")
     fun exportData(): Response =
         Response.ok(downloadTemplateImportUserUseCase.execute().toString(StandardCharsets.ISO_8859_1))

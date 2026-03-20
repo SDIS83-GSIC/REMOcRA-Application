@@ -28,6 +28,12 @@ import FilterValues from "./FilterUtilisateur.tsx";
 const ListUtilisateur = () => {
   const { user } = useAppContext();
 
+  const canManageUsers =
+    hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_A) ||
+    hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A);
+
+  const canImportUsers = hasDroit(user, TYPE_DROIT.IMPORT_UTILISATEUR_A);
+
   const { data: organismeList } = useGet(url`/api/organisme/get-all`);
   const { data: groupeFonctionnalitesList } = useGet(
     url`/api/groupe-fonctionnalites`,
@@ -35,10 +41,7 @@ const ListUtilisateur = () => {
   const { data: profilUtilisateurList } = useGet(url`/api/profil-utilisateur`);
 
   const listeButton: ButtonType[] = [];
-  if (
-    hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_A) ||
-    hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A)
-  ) {
+  if (canManageUsers) {
     listeButton.push({
       row: (row: any) => {
         return row;
@@ -73,19 +76,22 @@ const ListUtilisateur = () => {
           icon={<IconGererContact />}
           title={"Utilisateurs"}
           right={
-            (hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_A) ||
-              hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A)) && (
+            (canManageUsers || canImportUsers) && (
               <>
-                <CreateButton
-                  href={URLS.ADD_UTILISATEUR}
-                  title={"Ajouter un utilisateur"}
-                />
+                {canManageUsers && (
+                  <CreateButton
+                    href={URLS.ADD_UTILISATEUR}
+                    title="Ajouter un utilisateur"
+                  />
+                )}
 
-                <CreateButton
-                  classnames={"ms-5"}
-                  href={URLS.IMPORT_UTILISATEUR}
-                  title={"Importer des utilisateurs"}
-                />
+                {canImportUsers && (
+                  <CreateButton
+                    classnames="ms-5"
+                    href={URLS.IMPORT_UTILISATEUR}
+                    title="Importer des utilisateurs"
+                  />
+                )}
               </>
             )
           }

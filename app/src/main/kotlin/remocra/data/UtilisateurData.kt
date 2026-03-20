@@ -16,6 +16,11 @@ data class UtilisateurData(
     val utilisateurIsSuperAdmin: Boolean = false,
 )
 
+data class UtilisateurImportData(
+    val utilisateurData: UtilisateurData,
+    val isImported: Boolean,
+)
+
 class LigneImportUtilisateur {
     var mail: String? = null
     var identifiant: String? = null
