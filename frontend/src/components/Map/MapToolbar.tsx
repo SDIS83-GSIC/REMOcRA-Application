@@ -416,6 +416,7 @@ const MapToolbar = forwardRef(
       generalInfo,
       handleCloseInfoI,
       showOutilI,
+      showZoomPlace,
     }: {
       map: OLMap;
       toggleTool: (toolId: string) => void;
@@ -424,6 +425,7 @@ const MapToolbar = forwardRef(
       generalInfo: any;
       handleCloseInfoI: () => void;
       showOutilI: boolean;
+      showZoomPlace: boolean;
     },
     ref,
   ) => {
@@ -513,11 +515,13 @@ const MapToolbar = forwardRef(
                   }}
                 />
 
-                <ToponymieTypeBarre
-                  map={map!}
-                  dependentObject={commune}
-                  urlAPI={`/api/toponymie/parametres`}
-                />
+                {showZoomPlace && (
+                  <ToponymieTypeBarre
+                    map={map!}
+                    dependentObject={commune}
+                    urlAPI={`/api/toponymie/parametres`}
+                  />
+                )}
               </>
             )}
           </ButtonGroup>

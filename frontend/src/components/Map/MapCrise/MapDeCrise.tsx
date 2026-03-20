@@ -181,6 +181,7 @@ const MapCrise = ({
   return (
     <MapComponent
       map={map}
+      showZoomPlace={false}
       mapElement={mapElement}
       availableLayers={listeDesCouches}
       addOrRemoveLayer={addOrRemoveLayer} // les éléments de fonds IGN

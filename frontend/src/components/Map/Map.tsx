@@ -196,6 +196,7 @@ const MapComponent = ({
   handleCloseInfoI,
   showOutilI,
   printable = false,
+  showZoomPlace = true,
 }: {
   map?: OLMap;
   availableLayers: any[];
@@ -211,6 +212,7 @@ const MapComponent = ({
   showOutilI: boolean;
   handleCloseInfoI: () => void;
   printable?: boolean;
+  showZoomPlace?: boolean;
 }) => {
   useEffect(() => {
     const mapContainer = document.getElementById("map-container");
@@ -255,6 +257,7 @@ const MapComponent = ({
               generalInfo={outilI}
               handleCloseInfoI={handleCloseInfoI}
               showOutilI={showOutilI}
+              showZoomPlace={showZoomPlace}
             />
           </Col>
           <Col xs={"auto"}>{toolbarElement && toolbarElement}</Col>
