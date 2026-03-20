@@ -18,7 +18,10 @@ class UpdatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.UPD
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroits(
-                droitsWeb = setOf(Droit.PEI_U, Droit.PEI_CARACTERISTIQUES_U, Droit.PEI_NUMERO_INTERNE_U, Droit.PEI_DEPLACEMENT_U, Droit.PEI_ADRESSE_C),
+                droitsWeb = setOf(
+                    Droit.PEI_U, Droit.PEI_CARACTERISTIQUES_U, Droit.PEI_NUMERO_INTERNE_U, Droit.PEI_DEPLACEMENT_U, Droit.PEI_ADRESSE_C, Droit.VISITE_RECO_C, Droit.VISITE_CONTROLE_TECHNIQUE_C, Droit.VISITE_NON_PROGRAMME_C, Droit.VISITE_RECEP_C, Droit.VISITE_RECO_INIT_C,
+                    Droit.VISITE_CTP_D, Droit.VISITE_NP_D, Droit.VISITE_RECEP_D, Droit.VISITE_RECO_D, Droit.VISITE_RECO_INIT_D, Droit.INDISPO_TEMP_C, Droit.INDISPO_TEMP_D, Droit.INDISPO_TEMP_U,
+                ),
                 droitsApi = setOf(DroitApi.ADMINISTRER, DroitApi.TRANSMETTRE),
             )
         ) {
