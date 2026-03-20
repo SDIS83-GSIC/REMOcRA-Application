@@ -907,6 +907,7 @@ export const TooltipMapEditPermis = ({
             featureSelect?.getProperties().geometry.getFlatCoordinates()[1]
           }
           srid={map.getView().getProjection().getCode().split(":")[1]}
+          deplacement={false}
           onSubmit={() => {
             handleCloseUpdatePermis();
             overlay?.setPosition(undefined);
@@ -928,7 +929,12 @@ export const TooltipMapEditPermis = ({
             featureSelect?.getProperties().geometry.getFlatCoordinates()[1]
           }
           srid={map.getView().getProjection().getCode().split(":")[1]}
+          deplacement={false}
           readOnly={true}
+          onSubmit={() => {
+            handleClosePermisReadOnly();
+            overlay?.setPosition(undefined);
+          }}
         />
       </Volet>
     </div>

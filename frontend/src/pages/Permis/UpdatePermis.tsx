@@ -19,6 +19,7 @@ const UpdatePermis = ({
   srid,
   onSubmit,
   readOnly = false,
+  deplacement = false,
 }: UpdatePermisType) => {
   const data = useGet(url`/api/permis/${permisId}`);
 
@@ -34,11 +35,9 @@ const UpdatePermis = ({
     permisInstructeurUsername: string;
   } = data.data;
 
-  // Si mes coordonnées ont changé, c'est que j'ai déplacé mon permis
-  // Dans ce cas là, je réinitilise la commune, voie_id, voie_text, complement, parcelles
-  const contextDeplacement =
-    !resolvedData.permis.permisGeometrie.includes(coordonneeX) &&
-    !resolvedData.permis.permisGeometrie.includes(coordonneeY);
+  // Si le volet est ouvert suite à un déplacement sur la carte,
+  // on réinitialise commune, voie, complément, parcelles.
+  const contextDeplacement = !!deplacement;
 
   const pageTitle = readOnly
     ? resolvedData.permis.permisLibelle
@@ -47,7 +46,6 @@ const UpdatePermis = ({
     : resolvedData.permis.permisLibelle
       ? `Modification du permis ${resolvedData.permis.permisLibelle}`
       : "Modification d'un permis";
-
   return (
     <Container>
       <PageTitle
@@ -70,17 +68,19 @@ const UpdatePermis = ({
             : resolvedData.permisCadastreParcelle,
           voieSaisieText: contextDeplacement
             ? false
-            : resolvedData.permis.permisVoieText !== null ||
-              resolvedData.permis.permisVoieText.trim() !== "",
+            : !!(
+                resolvedData.permis.permisVoieText &&
+                resolvedData.permis.permisVoieText.trim() !== ""
+              ),
           permisVoieId: contextDeplacement
-            ? null
-            : resolvedData.permis.permisVoieId,
+            ? undefined
+            : (resolvedData.permis.permisVoieId ?? undefined),
           permisVoieText: contextDeplacement
-            ? null
-            : resolvedData.permis.permisVoieText,
+            ? undefined
+            : (resolvedData.permis.permisVoieText ?? undefined),
           permisComplement: contextDeplacement
-            ? null
-            : resolvedData.permis.permisComplement,
+            ? undefined
+            : (resolvedData.permis.permisComplement ?? undefined),
           permisLastUpdateDate: resolvedData.permisLastUpdateDate
             ? formatDateHeure(new Date(resolvedData.permisLastUpdateDate))
             : null,
@@ -108,7 +108,8 @@ type UpdatePermisType = {
   coordonneeY: number;
   srid: string;
   onSubmit: () => void;
-  readOnly: boolean;
+  readOnly?: boolean;
+  deplacement?: boolean;
 };
 
 export default UpdatePermis;

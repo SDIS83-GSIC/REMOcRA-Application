@@ -98,7 +98,7 @@ export const prepareVariables = (
 
 const Permis = ({ readOnly }: { readOnly: boolean }) => {
   const { user } = useAppContext();
-  const { values, setFieldValue }: { values: any } = useFormikContext();
+  const { values, setFieldValue } = useFormikContext<PermisEntity>();
 
   const fetchPermisData = useGet(
     url`/api/permis/fetch-permis-data?${{
@@ -192,9 +192,11 @@ const Permis = ({ readOnly }: { readOnly: boolean }) => {
           name="permisVoieId"
           listIdCodeLibelle={permisData.listeVoie}
           label="Voie"
-          defaultValue={permisData.listeVoie.find(
-            (e) => e.id === values.permisVoieId,
-          )}
+          defaultValue={
+            values.permisVoieId
+              ? permisData.listeVoie.find((e) => e.id === values.permisVoieId)
+              : undefined
+          }
           required={false}
           setFieldValue={setFieldValue}
           disabled={readOnly || values.voieSaisieText}

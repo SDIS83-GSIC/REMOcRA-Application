@@ -46,8 +46,9 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
         geometry: Field<Geometry?>,
         toleranceVoiesMetres: Int,
         listeIdCommune: List<UUID>,
-    ): List<VoieWithCommune> =
-        dsl.select(
+    ): List<VoieWithCommune> {
+        val transformedGeometry = ST_Transform(geometry, SRID)
+        return dsl.select(
             VOIE.ID.`as`("id"),
             VOIE.LIBELLE.`as`("code"),
             VOIE.LIBELLE.`as`("libelle"),
@@ -58,12 +59,13 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
             .and(
                 ST_DWithin(
                     VOIE.GEOMETRIE,
-                    ST_Transform(geometry, SRID),
+                    transformedGeometry,
                     toleranceVoiesMetres.toDouble(),
                 ),
             )
-            .orderBy(ST_Distance(geometry, VOIE.GEOMETRIE))
+            .orderBy(ST_Distance(transformedGeometry, VOIE.GEOMETRIE))
             .fetchInto()
+    }
 
     data class VoieWithCommune(
         val id: UUID,

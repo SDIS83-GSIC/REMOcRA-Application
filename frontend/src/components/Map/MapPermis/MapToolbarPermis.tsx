@@ -324,6 +324,7 @@ const MapToolbarPermis = ({
           coordonneeX={featureState?.geometry.getFlatCoordinates()[0]}
           coordonneeY={featureState?.geometry.getFlatCoordinates()[1]}
           srid={map.getView().getProjection().getCode().split(":")[1]}
+          deplacement={true}
           onSubmit={() => {
             handleCloseUpdatePermis();
             refreshLayerGeoserver(map);

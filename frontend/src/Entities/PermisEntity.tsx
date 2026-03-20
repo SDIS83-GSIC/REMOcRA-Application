@@ -20,6 +20,7 @@ type PermisEntity = {
   permisCoordonneeX: number;
   permisCoordonneeY: number;
   permisSrid: string;
+  permisGeometrie: string;
 
   permisCadastreParcelle?: string[];
 
