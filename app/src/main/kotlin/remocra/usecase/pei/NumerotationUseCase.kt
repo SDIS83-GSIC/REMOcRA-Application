@@ -160,7 +160,7 @@ constructor(
                 CodeSdis.SDIS_89,
                 CodeSdis.SDIS_973,
                 -> computeNumeroInterneMethodeB(pei)
-                CodeSdis.SDIS_39 -> computeNumeroInterneMethodeC(pei)
+                CodeSdis.SDIS_39 -> computeNumeroInterne39(pei)
                 CodeSdis.SDIS_49 -> computeNumeroInterne49()
                 CodeSdis.SDIS_53 -> computeNumeroInterne53(pei)
                 CodeSdis.SDIS_58 -> computeNumeroInterne58(pei)
@@ -173,6 +173,31 @@ constructor(
         } else {
             pei.peiNumeroInterne!!
         }
+
+    /**
+     * Numéro interne en fonction de la zone spéciale OU nature du PEI et commune
+     */
+    private fun computeNumeroInterne39(pei: PeiForNumerotationData): Int {
+        var listPei: Collection<Int?>?
+        if (pei.peiZoneSpecialeId != null) {
+            listPei = numerotationRepository.getListPeiNumeroInterne(
+                peiZoneSpecialeId = pei.peiZoneSpecialeId,
+                typePei = null,
+                peiNatureId = null,
+                peiCommuneId = null,
+                peiNatureDeciId = null,
+            )
+        } else {
+            checkCommuneId(pei)
+            checkNature(pei)
+            listPei = numerotationRepository.getListPeiNumeroInterneMethodeC(
+                peiCommuneId = pei.peiCommuneId!!,
+                peiNatureId = pei.nature!!.natureId,
+            )
+        }
+        val max = if (listPei.isEmpty()) MAX_PEI_NUMERO_INTERNE else listPei.last()
+        return listPei.getNextNumeroInterne(1, max)
+    }
 
     private fun computeNumeroInterne58(pei: PeiForNumerotationData): Int {
         checkCommuneId(pei)
@@ -311,20 +336,6 @@ constructor(
 
         val max = if (listPeiNumeroInterne.isEmpty()) MAX_PEI_NUMERO_INTERNE else listPeiNumeroInterne.last()
         return listPeiNumeroInterne.getNextNumeroInterne(1, max)
-    }
-
-    /**
-     * Numéro interne en fonction de la nature du PEI et de la commune
-     *
-     */
-    private fun computeNumeroInterneMethodeC(pei: PeiForNumerotationData): Int {
-        checkCommuneId(pei)
-        checkNature(pei)
-
-        val listPei = numerotationRepository.getListPeiNumeroInterneMethodeC(peiCommuneId = pei.peiCommuneId!!, peiNatureId = pei.nature!!.natureId)
-        val max = if (listPei.isEmpty()) MAX_PEI_NUMERO_INTERNE else listPei.last()
-
-        return listPei.getNextNumeroInterne(1, max)
     }
 
     /**
@@ -522,21 +533,24 @@ constructor(
     }
 
     /**
-     * <code nature><code insee commune>.<numéro interne>
+     * <code nature><code localité>.<numéro interne>
      * avec le numéro interne sur 5 chiffres
-     * *avec le code nature égal à P, B, A ou N*
-     * avec un point (.) entre insee et num_internee
-     * Exemple : P39473.00001, A39199.21547
-     *
+     * avec le code nature égal à PI, BI, A ou PEN
+     * avec le code localité représentant le code insee de la commune ou le code zone spéciale si renseigné
+     * avec un point (.) entre code localité et num_internee
+     * Exemple : P39473.00001, A600.00022
      */
     private fun computeNumero39(pei: PeiForNumerotationData): String {
         checkCommuneId(pei)
         checkNature(pei)
-
-        val commune = ensureCommune(pei)
         // Si c'est un PEA, on le préfixe d'un A, sinon on prend la nature
         val prefixe = if (pei.nature!!.natureCode == GlobalConstants.NATURE_PEA) "A" else pei.nature.natureCode
-        return prefixe + commune.communeCodeInsee + "." + "%05d".format(Locale.getDefault(), pei.peiNumeroInterne)
+        val codeLocal = if (pei.peiZoneSpecialeId != null) {
+            ensureZoneSpeciale(pei).zoneIntegrationCode
+        } else {
+            ensureCommune(pei).communeCodeInsee
+        }
+        return prefixe + codeLocal + "." + "%05d".format(Locale.getDefault(), pei.peiNumeroInterne)
     }
 
     private fun computeNumero53(pei: PeiForNumerotationData): String {
@@ -993,7 +1007,6 @@ constructor(
             CodeSdis.SDIS_01,
             CodeSdis.SDIS_16,
             CodeSdis.SDIS_22,
-            CodeSdis.SDIS_39,
             CodeSdis.SDIS_42,
             CodeSdis.SDIS_53,
             CodeSdis.SDIS_58,
@@ -1010,6 +1023,7 @@ constructor(
             CodeSdis.SDIS_09,
             CodeSdis.SDIS_21,
             CodeSdis.SDIS_38,
+            CodeSdis.SDIS_39,
             CodeSdis.SDIS_71,
             CodeSdis.SDIS_77,
             CodeSdis.SDIS_83,
