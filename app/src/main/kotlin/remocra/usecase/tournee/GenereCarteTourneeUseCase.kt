@@ -14,29 +14,29 @@ import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.ParametresProvider
 import remocra.auth.WrappedUserInfo
+import remocra.data.enums.ErrorType
 import remocra.data.enums.ParametreEnum
 import remocra.db.TourneeRepository
+import remocra.exception.RemocraResponseException
 import remocra.geoserver.GeoserverModule
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.DocumentUtils
 import remocra.utils.DateUtils
 import remocra.utils.addQueryParameters
+import java.io.ByteArrayInputStream
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.UUID
+import javax.imageio.ImageIO
 
 class GenereCarteTourneeUseCase @Inject constructor(
     private val parametresProvider: ParametresProvider,
+    private val tourneeRepository: TourneeRepository,
+    private val geoserverSettings: GeoserverModule.GeoserverSettings,
+    private val httpClient: OkHttpClient,
+    private val appSettings: AppSettings,
+    private val documentUtils: DocumentUtils,
 ) : AbstractUseCase() {
-    @Inject lateinit var tourneeRepository: TourneeRepository
-
-    @Inject lateinit var geoserverSettings: GeoserverModule.GeoserverSettings
-
-    @Inject lateinit var httpClient: OkHttpClient
-
-    @Inject lateinit var appSettings: AppSettings
-
-    @Inject lateinit var documentUtils: DocumentUtils
 
     fun getCarteTournee(userInfo: WrappedUserInfo, tourneeId: UUID): CarteTournee {
         val bufferCarteParam = parametresProvider.getParametreInt(ParametreEnum.BUFFER_CARTE.toString()) ?: 100
@@ -89,10 +89,6 @@ class GenereCarteTourneeUseCase @Inject constructor(
             "HEIGHT" to height.toString(),
         )
 
-        // On calcule l'échelle de la carte
-        val largeurReelle = buffer.bbox[2] - buffer.bbox[0] // maxX - minX
-        val scale = "1:" + (largeurReelle / (width / 10)).toInt()
-
         // Construction de l'URL + appel HTTP vers GeoServer
         val queryParameters = MultivaluedHashMap(map)
         val url = geoserverSettings.url
@@ -112,6 +108,13 @@ class GenereCarteTourneeUseCase @Inject constructor(
 
         // Détection dynamique de la taille de l'image
         val imageProvider = ByteArrayImageProvider(image)
+
+        // Extraction de la largeur réelle de l'image PNG
+        val imagePNGWidth = getImagePNGDimensions(image)
+
+        // Calcul de l'échelle de la carte basée sur la taille réelle de l'image
+        val largeurReelle = buffer.bbox[2] - buffer.bbox[0] // maxX - minX
+        val scale = "1:" + (largeurReelle / (imagePNGWidth.toFloat() / SCALE_FACTOR)).toInt()
 
         // On crée le fichier PDF
         val report = XDocReportRegistry.getRegistry().loadReport(
@@ -263,3 +266,26 @@ const val RATIO_XY_PORTRAIT = 1.4142
 const val RATIO_XY_PAYSAGE = 0.7070
 const val TAILLE_MIN_X_A4_PORTRAIT = 685.0 // correspond au nombre de pixel d'un A4 a 300 dpi (dixit RAI pour remocra v-2)
 const val TAILLE_MIN_Y_A4_PORTRAIT = 534.0
+const val SCALE_FACTOR = 10 // facteur d'échelle pour convertir les pixels en unités de carte
+
+/**
+ * Extrait la largeur réelle d'une image PNG à partir de ses bytes bruts.
+ *
+ * @param imageBytes Les bytes bruts du fichier PNG
+ * @return La largeur de l'image en pixels
+ * @throws RemocraResponseException si l'image est invalide ou illisible
+ */
+fun getImagePNGDimensions(imageBytes: ByteArray?): Int {
+    if (imageBytes == null || imageBytes.isEmpty()) {
+        throw RemocraResponseException(ErrorType.IMAGE_INVALIDE)
+    }
+
+    return try {
+        val image = ImageIO.read(ByteArrayInputStream(imageBytes))
+            ?: throw RemocraResponseException(ErrorType.IMAGE_PNG_ILLISIBLE)
+        image.width
+    } catch (e: Exception) {
+        if (e is RemocraResponseException) throw e
+        throw RemocraResponseException(ErrorType.IMAGE_PNG_ILLISIBLE)
+    }
+}

@@ -643,6 +643,14 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     RAPPORT_POST_ROP_NO_PEI(31011, "Aucun PEI dans la tournée"),
     RAPPORT_POST_ROP_ERREUR_GENERATION(31012, "Erreur lors de la création du courrier pour le rapport post ROP de la tournée"),
 
+    //
+    // ********************************************************************************
+    // Image
+    // ********************************************************************************
+    //
+    IMAGE_INVALIDE(32001, "L'image générée est invalide ou vide"),
+    IMAGE_PNG_ILLISIBLE(32002, "Impossible de lire l'image PNG"),
+
     ;
 
     override fun toString(): String {
