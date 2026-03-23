@@ -145,6 +145,7 @@ data class ParametresSectionPei(
     val peiLibelleNonConforme: String?,
     val receptionRecoInitObligatoire: Boolean,
     val valeurMinimaleHistogramme: Int?,
+    val conserverObservationVisite: Boolean,
 )
 
 data class ParametresSectionUtilisateur(

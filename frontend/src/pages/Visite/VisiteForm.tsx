@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useFormikContext } from "formik";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useMemo } from "react";
 import { Col, Row } from "react-bootstrap";
 import AccordionCustom, {
   useAccordionState,
@@ -33,6 +33,7 @@ export const getInitialValues = (
   _visitePeiId: string,
   _listeAnomaliesAssignable: AnomalieCompleteEntity[],
   _lastCDP: CtrlDebitPressionEntity,
+  _derniereObservation: string,
 ) => ({
   visiteId: null,
   visitePeiId: _visitePeiId,
@@ -40,7 +41,7 @@ export const getInitialValues = (
   visiteTypeVisite: null,
   visiteAgent1: null,
   visiteAgent2: null,
-  visiteObservation: null,
+  visiteObservation: _derniereObservation,
   listeAnomalie: _listeAnomaliesAssignable,
   isCtrlDebitPression: false,
   ctrlDebitPression: _lastCDP,
@@ -96,7 +97,14 @@ const VisiteForm = ({
     handleShowClose: handleShowCloseFormulaire,
     activesKeys: activesKeysFormulaire,
     show,
+    openState,
   } = useAccordionState([true, false, false, false]);
+
+  useEffect(() => {
+    if (values?.visiteObservation && !openState[2]) {
+      show(2); // Si visiteObservation est remplit, alors on affiche l'accordeon
+    }
+  }, [values?.visiteObservation, show, openState[2]]);
 
   const {
     handleShowClose: handleShowCloseAnomalies,

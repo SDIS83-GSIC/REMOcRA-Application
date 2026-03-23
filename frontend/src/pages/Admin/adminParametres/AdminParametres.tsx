@@ -105,6 +105,7 @@ type ParametresSectionPei = {
   receptionRecoInitObligatoire: boolean;
   peiRouteHistorique: string;
   valeurMinimaleHistogramme: number | undefined;
+  conserverObservationVisite: boolean;
 };
 
 type ParametresSectionPeiLongueIndispo = {
@@ -1345,6 +1346,21 @@ const AdminPei = ({
             )}
             tooltipText={
               "Le bouton pourra rediriger soit vers l'écran d'historique des opérations, en s'appuyant sur l'identifiant technique du PEI, soit vers le rapport personnalisé d'historique d'un PEI avec son numéro complet"
+            }
+          />
+        </AdminParametre>
+
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="pei.conserverObservationVisite"
+            label="Conserver la dernière observation lors de la saisie d'une nouvelle visite "
+            checked={values?.conserverObservationVisite}
+            tooltipText={
+              <>
+                Choisissez si vous souhaitez conserver l'observation précédente
+                lors de la saisie d'une nouvelle visite, afin d'éviter de la
+                saisir à nouveau.
+              </>
             }
           />
         </AdminParametre>

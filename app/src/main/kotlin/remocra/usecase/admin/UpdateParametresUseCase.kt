@@ -251,6 +251,10 @@ class UpdateParametresUseCase
                 ParametreEnum.VALEUR_HAUTE_MINIMALE_HISTOGRAMME,
                 parametresAdminData.pei.valeurMinimaleHistogramme?.toString(),
             )
+            updateParametre(
+                ParametreEnum.CONSERVER_OBSERVATION_VISITE,
+                parametresAdminData.pei.conserverObservationVisite.toString(),
+            )
         }
         // Mobile
         if (userInfo.hasDroit(droitWeb = Droit.ADMIN_PARAM_APPLI_MOBILE)) {

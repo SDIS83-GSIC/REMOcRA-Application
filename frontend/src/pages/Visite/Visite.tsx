@@ -1,6 +1,6 @@
 import classnames from "classnames";
 import { Map as OLMap } from "ol";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
 import { Button, Col, Container, Row, Table } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import { useParams } from "react-router-dom";
@@ -27,6 +27,7 @@ import { CtrlDebitPressionEntity } from "../../Entities/CtrlDebitPressionEntity.
 import UtilisateurEntity from "../../Entities/UtilisateurEntity.tsx";
 import { VisiteCompleteEntity } from "../../Entities/VisiteEntity.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import TYPE_PEI from "../../enums/TypePeiEnum.tsx";
 import referenceTypeVisite, {
   TYPE_VISITE,
@@ -378,6 +379,19 @@ const CreateVisite = ({
   user: UtilisateurEntity;
   onSubmit: () => void;
 }) => {
+  const listeParametre = useGet(
+    url`/api/parametres?${{ listeParametreCode: JSON.stringify(PARAMETRE.CONSERVER_OBSERVATION_VISITE) }}`,
+    {},
+  );
+
+  if (!listeParametre.isResolved) {
+    return null;
+  }
+
+  const needKeepObservation = JSON.parse(
+    listeParametre.data[PARAMETRE.CONSERVER_OBSERVATION_VISITE].parametreValeur,
+  );
+
   return (
     <Col xs={peiIdCarte ? "12" : "7"}>
       <div>
@@ -387,6 +401,9 @@ const CreateVisite = ({
             peiId!,
             listeAnomaliesAssignable.data,
             lastCDP,
+            needKeepObservation && listeVisite[0]?.visiteObservation != null
+              ? listeVisite[0].visiteObservation
+              : "",
           )}
           validationSchema={object({})}
           isPost={false}
