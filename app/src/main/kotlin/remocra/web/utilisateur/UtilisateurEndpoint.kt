@@ -64,7 +64,7 @@ class UtilisateurEndpoint : AbstractEndpoint() {
 
     @POST
     @Path("/create")
-    @RequireDroits([Droit.GEST_SITE_A, Droit.ADMIN_UTILISATEURS_A])
+    @RequireDroits([Droit.ADMIN_UTILISATEURS_A, Droit.ADMIN_UTILISATEURS_ORGA_A])
     @Produces(MediaType.APPLICATION_JSON)
     fun create(utilisateurInput: UtilisateurInput): Response =
         createUtilisateurUseCase.execute(
@@ -131,7 +131,7 @@ class UtilisateurEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/get/{utilisateurId}")
-    @RequireDroits([Droit.ADMIN_UTILISATEURS_R, Droit.ADMIN_UTILISATEURS_ORGA_R, Droit.ADMIN_UTILISATEURS_ORGA_A])
+    @RequireDroits([Droit.ADMIN_UTILISATEURS_R, Droit.ADMIN_UTILISATEURS_A, Droit.ADMIN_UTILISATEURS_ORGA_R, Droit.ADMIN_UTILISATEURS_ORGA_A])
     fun get(@PathParam("utilisateurId") utilisateurId: UUID): Response {
         return Response.ok(utilisateurRepository.getById(utilisateurId)).build()
     }

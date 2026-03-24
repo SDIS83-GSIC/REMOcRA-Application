@@ -20,7 +20,7 @@ class RoleEndPoint : AbstractEndpoint() {
 
     @GET
     @Path("/")
-    @RequireDroits([Droit.GEST_SITE_R])
+    @RequireDroits([Droit.GEST_SITE_R, Droit.GEST_SITE_A, Droit.GEST_CONTACT_A, Droit.ORGANISME_CONTACT_A])
     fun getRole(): Response {
         return Response.ok(roleRepository.getAll()).build()
     }

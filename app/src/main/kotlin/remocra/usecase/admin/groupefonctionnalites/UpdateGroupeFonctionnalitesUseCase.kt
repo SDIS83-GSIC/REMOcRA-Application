@@ -18,7 +18,7 @@ class UpdateGroupeFonctionnalitesUseCase @Inject constructor(private val groupeF
         TypeOperation.UPDATE,
     ) {
     override fun checkDroits(userInfo: WrappedUserInfo) {
-        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A)) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_DROITS)) {
             throw RemocraResponseException(ErrorType.GROUPE_FONCTIONNALITES_FORBIDDEN_UPDATE)
         }
     }

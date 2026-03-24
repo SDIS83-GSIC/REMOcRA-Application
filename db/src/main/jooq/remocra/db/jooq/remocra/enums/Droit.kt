@@ -114,7 +114,7 @@ enum class Droit(@get:JvmName("literal") public val literal: String) : EnumType 
     EVENEMENT_C("EVENEMENT_C"),
     ADMIN_ZONE_COMPETENCE("ADMIN_ZONE_COMPETENCE"),
     ADMIN_ANOMALIES("ADMIN_ANOMALIES"),
-    ADMIN_GROUPE_UTILISATEUR("ADMIN_GROUPE_UTILISATEUR"),
+    GEST_CONTACT_A("GEST_CONTACT_A"),
     ADMIN_COUCHE_CARTOGRAPHIQUE("ADMIN_COUCHE_CARTOGRAPHIQUE"),
     ADMIN_NOMENCLATURE("ADMIN_NOMENCLATURE"),
     ADMIN_ROLE_CONTACT("ADMIN_ROLE_CONTACT"),
@@ -124,6 +124,9 @@ enum class Droit(@get:JvmName("literal") public val literal: String) : EnumType 
     CARTO_METADATA_A("CARTO_METADATA_A"),
     RAZ_MES_ROP_E("RAZ_MES_ROP_E"),
     ADMIN_ROP_A("ADMIN_ROP_A"),
+    ORGANISME_CONTACT_A("ORGANISME_CONTACT_A"),
+    ADMIN_ORGANISME_A("ADMIN_ORGANISME_A"),
+    ADMIN_ORGANISME_R("ADMIN_ORGANISME_R"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA

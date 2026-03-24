@@ -26,9 +26,7 @@ class UpdateOrganismeUseCase @Inject constructor(
         TypeOperation.UPDATE,
     ) {
     override fun checkDroits(userInfo: WrappedUserInfo) {
-        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A) &&
-            !userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_ORGA_A)
-        ) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_ORGANISME_A)) {
             throw RemocraResponseException(ErrorType.ADMIN_ORGANISME_FORBIDDEN_UPDATE)
         }
     }

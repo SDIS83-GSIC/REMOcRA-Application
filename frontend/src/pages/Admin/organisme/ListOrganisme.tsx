@@ -33,38 +33,46 @@ const ListOrganisme = () => {
   const { user } = useAppContext();
 
   const listeButton: ButtonType[] = [];
-  if (hasDroit(user, TYPE_DROIT.ADMIN_DROITS)) {
-    listeButton.push(
-      {
-        row: (row) => {
-          return row;
-        },
-        route: (organismeId) => URLS.UPDATE_ORGANISME(organismeId),
-        type: TYPE_BUTTON.UPDATE,
+
+  if (
+    hasDroit(user, TYPE_DROIT.ORGANISME_CONTACT_A) ||
+    hasDroit(user, TYPE_DROIT.ADMIN_ORGANISME_R)
+  ) {
+    listeButton.push({
+      row: (row) => {
+        return row;
       },
-      {
-        row: (row) => {
-          return row;
-        },
-        route: (organismeId) => URLS.ADD_CONTACT(organismeId, "organisme"),
-        type: TYPE_BUTTON.LINK,
-        icon: <IconAddContact />,
-        textEnable: "Ajouter un contact",
-        classEnable: "warning",
+      route: (organismeId) => URLS.LIST_CONTACT(organismeId, "organisme"),
+      type: TYPE_BUTTON.LINK,
+      icon: <IconGererContact />,
+      textEnable: "Afficher les contacts",
+      textDisable: "Aucun contact pour cet organisme",
+      disable: (row) => !row.original.hasContact,
+      classEnable: "warning",
+    });
+  }
+
+  if (hasDroit(user, TYPE_DROIT.ADMIN_ORGANISME_A)) {
+    listeButton.push({
+      row: (row) => {
+        return row;
       },
-      {
-        row: (row) => {
-          return row;
-        },
-        route: (organismeId) => URLS.LIST_CONTACT(organismeId, "organisme"),
-        type: TYPE_BUTTON.LINK,
-        icon: <IconGererContact />,
-        textEnable: "Afficher les contacts",
-        textDisable: "Aucun contact pour cet organisme",
-        disable: (row) => !row.original.hasContact,
-        classEnable: "warning",
+      route: (organismeId) => URLS.UPDATE_ORGANISME(organismeId),
+      type: TYPE_BUTTON.UPDATE,
+    });
+  }
+
+  if (hasDroit(user, TYPE_DROIT.ORGANISME_CONTACT_A)) {
+    listeButton.push({
+      row: (row) => {
+        return row;
       },
-    );
+      route: (organismeId) => URLS.ADD_CONTACT(organismeId, "organisme"),
+      type: TYPE_BUTTON.LINK,
+      icon: <IconAddContact />,
+      textEnable: "Ajouter un contact",
+      classEnable: "warning",
+    });
   }
 
   if (hasDroit(user, TYPE_DROIT.ADMIN_API)) {
@@ -109,11 +117,12 @@ const ListOrganisme = () => {
           title="Organismes"
           icon={<IconPei />}
           right={
-            // TODO : ajouter droit qui convient
-            <CreateButton
-              title="Ajouter un organisme"
-              href={URLS.ADD_ORGANISME}
-            />
+            hasDroit(user, TYPE_DROIT.ADMIN_ORGANISME_A) && (
+              <CreateButton
+                title="Ajouter un organisme"
+                href={URLS.ADD_ORGANISME}
+              />
+            )
           }
         />
       </Container>

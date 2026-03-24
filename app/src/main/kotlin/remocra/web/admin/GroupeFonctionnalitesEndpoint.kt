@@ -31,7 +31,7 @@ class GroupeFonctionnalitesEndpoint : AbstractEndpoint() {
 
     @Path("/")
     @POST
-    @RequireDroits([Droit.ADMIN_GROUPE_UTILISATEUR])
+    @RequireDroits([Droit.ADMIN_DROITS])
     fun list(params: Params<GroupeFonctionnalitesRepository.Filter, GroupeFonctionnalitesRepository.Sort>): Response =
         Response.ok(
             DataTableau(
@@ -42,7 +42,7 @@ class GroupeFonctionnalitesEndpoint : AbstractEndpoint() {
 
     @Path("/{groupeFonctionnalitesId}")
     @GET
-    @RequireDroits([Droit.ADMIN_GROUPE_UTILISATEUR])
+    @RequireDroits([Droit.ADMIN_DROITS])
     fun get(@PathParam("groupeFonctionnalitesId") groupeFonctionnalitesId: UUID): Response =
         Response.ok(groupeFonctionnalitesRepository.getById(groupeFonctionnalitesId)).build()
 
@@ -50,7 +50,7 @@ class GroupeFonctionnalitesEndpoint : AbstractEndpoint() {
 
     @Path("/create")
     @POST
-    @RequireDroits([Droit.ADMIN_GROUPE_UTILISATEUR])
+    @RequireDroits([Droit.ADMIN_DROITS])
     fun post(element: GroupeFonctionnalitesData): Response =
         createGroupeFonctionnalitesUseCase.execute(securityContext.userInfo, element).wrap()
 
@@ -58,7 +58,7 @@ class GroupeFonctionnalitesEndpoint : AbstractEndpoint() {
 
     @Path("/update/{groupeFonctionnalitesId}")
     @PUT
-    @RequireDroits([Droit.ADMIN_GROUPE_UTILISATEUR])
+    @RequireDroits([Droit.ADMIN_DROITS])
     fun put(@PathParam("groupeFonctionnalitesId") groupeFonctionnalitesId: UUID, element: GroupeFonctionnalitesData): Response =
         updateGroupeFonctionnalitesUseCase.execute(securityContext.userInfo, element.copy(groupeFonctionnalitesId = groupeFonctionnalitesId)).wrap()
 }

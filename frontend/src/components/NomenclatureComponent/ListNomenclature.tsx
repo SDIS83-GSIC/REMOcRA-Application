@@ -51,7 +51,10 @@ const ListNomenclature = ({
 
   const listeButton: ButtonType[] = [];
 
-  if (hasDroit(user, TYPE_DROIT.ADMIN_PARAM_APPLI)) {
+  if (
+    hasDroit(user, TYPE_DROIT.ADMIN_PARAM_APPLI) ||
+    hasDroit(user, TYPE_DROIT.ADMIN_DROITS)
+  ) {
     if (additionalActionButton) {
       listeButton.push(additionalActionButton);
     }

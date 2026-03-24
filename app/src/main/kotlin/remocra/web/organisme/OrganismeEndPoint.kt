@@ -47,7 +47,7 @@ class OrganismeEndPoint : AbstractEndpoint() {
 
     @GET
     @Path("/get-libelle-organisme")
-    @Public("Les organismes ne sont pas liés à un droit")
+    @RequireDroits([Droit.ADMIN_ORGANISME_A, Droit.ADMIN_ORGANISME_R])
     @Produces(MediaType.APPLICATION_JSON)
     fun getOrganismeForSelect(): Response {
         return Response.ok(
@@ -100,7 +100,7 @@ class OrganismeEndPoint : AbstractEndpoint() {
 
     @GET
     @Path("/get-parent-from-type/{typeOrganismeId}")
-    @Public("Les organismes parent ne sont pas liés à un droit")
+    @Public("Les organismes ne sont pas liés à un droit")
     fun getOrganismeParentFromType(
         @PathParam("typeOrganismeId") typeOrganismeId: UUID,
     ): Response {

@@ -18,7 +18,6 @@ const MenuAdmin = () => {
     TYPE_DROIT.ADMIN_ANOMALIES,
   ]);
   const hasDroitGererLesDroits = isAuthorized(user, [
-    TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR,
     TYPE_DROIT.ADMIN_DROITS,
     TYPE_DROIT.ADMIN_UTILISATEURS_A,
     TYPE_DROIT.ADMIN_UTILISATEURS_R,
@@ -26,6 +25,9 @@ const MenuAdmin = () => {
     TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_R,
     TYPE_DROIT.ADMIN_COUCHE_CARTOGRAPHIQUE,
     TYPE_DROIT.ADMIN_API,
+    TYPE_DROIT.ADMIN_ORGANISME_R,
+    TYPE_DROIT.ADMIN_ORGANISME_A,
+    TYPE_DROIT.ORGANISME_CONTACT_A,
   ]);
   const hasDroitGererLesNomenclatures = isAuthorized(user, [
     TYPE_DROIT.ADMIN_NOMENCLATURE,
@@ -184,7 +186,7 @@ const MenuAdmin = () => {
               </div>
 
               <Nav className="flex-column">
-                {hasDroit(user, TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR) && (
+                {hasDroit(user, TYPE_DROIT.ADMIN_DROITS) && (
                   <Nav.Item>
                     <CustomLinkButton
                       className="text-underline text-start"
@@ -204,7 +206,7 @@ const MenuAdmin = () => {
                     </CustomLinkButton>
                   </Nav.Item>
                 )}
-                {hasDroit(user, TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR) && (
+                {hasDroit(user, TYPE_DROIT.ADMIN_DROITS) && (
                   <Nav.Item>
                     <CustomLinkButton
                       className="text-underline text-start"
@@ -214,7 +216,7 @@ const MenuAdmin = () => {
                     </CustomLinkButton>
                   </Nav.Item>
                 )}
-                {hasDroit(user, TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR) && (
+                {hasDroit(user, TYPE_DROIT.ADMIN_DROITS) && (
                   <Nav.Item>
                     <CustomLinkButton
                       className="text-underline text-start"
@@ -224,7 +226,7 @@ const MenuAdmin = () => {
                     </CustomLinkButton>
                   </Nav.Item>
                 )}
-                {hasDroit(user, TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR) && (
+                {hasDroit(user, TYPE_DROIT.ADMIN_DROITS) && (
                   <Nav.Item>
                     <CustomLinkButton
                       className="text-underline text-start"
@@ -234,7 +236,7 @@ const MenuAdmin = () => {
                     </CustomLinkButton>
                   </Nav.Item>
                 )}
-                {hasDroit(user, TYPE_DROIT.ADMIN_GROUPE_UTILISATEUR) && (
+                {hasDroit(user, TYPE_DROIT.ADMIN_DROITS) && (
                   <>
                     <Nav.Item>
                       <CustomLinkButton
@@ -247,9 +249,9 @@ const MenuAdmin = () => {
                     <br />
                   </>
                 )}
-                {(hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_A) ||
-                  hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_R) ||
-                  hasDroit(user, TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A)) && (
+                {(hasDroit(user, TYPE_DROIT.ADMIN_ORGANISME_A) ||
+                  hasDroit(user, TYPE_DROIT.ORGANISME_CONTACT_A) ||
+                  hasDroit(user, TYPE_DROIT.ADMIN_ORGANISME_R)) && (
                   <Nav.Item>
                     <CustomLinkButton
                       className="text-underline text-start"

@@ -14,9 +14,7 @@ import remocra.usecase.AbstractCUDUseCase
 
 class CreateOrganismeUseCase @Inject constructor(private val organismeRepository: OrganismeRepository) : AbstractCUDUseCase<OrganismeData>(TypeOperation.INSERT) {
     override fun checkDroits(userInfo: WrappedUserInfo) {
-        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A) &&
-            !userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_ORGA_A)
-        ) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_ORGANISME_A)) {
             throw RemocraResponseException(ErrorType.ADMIN_ORGANISME_FORBIDDEN_INSERT)
         }
     }

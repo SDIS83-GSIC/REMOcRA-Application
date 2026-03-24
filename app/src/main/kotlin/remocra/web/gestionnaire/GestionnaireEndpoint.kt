@@ -47,13 +47,13 @@ class GestionnaireEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/get")
-    @RequireDroits([Droit.GEST_SITE_R])
+    @RequireDroits([Droit.GEST_SITE_R, Droit.GEST_SITE_A])
     fun getAll(): Response =
         Response.ok(gestionnaireRepository.getAll()).build()
 
     @POST
     @Path("/")
-    @RequireDroits([Droit.GEST_SITE_R])
+    @RequireDroits([Droit.GEST_SITE_R, Droit.GEST_SITE_A])
     fun getAll(params: Params<GestionnaireRepository.Filter, GestionnaireRepository.Sort>): Response =
         Response.ok(
             DataTableau(
@@ -106,7 +106,7 @@ class GestionnaireEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/{gestionnaireId}")
-    @RequireDroits([Droit.GEST_SITE_R])
+    @RequireDroits([Droit.GEST_SITE_R, Droit.GEST_SITE_A])
     fun getById(@PathParam("gestionnaireId") gestionnaireId: UUID): Response =
         Response.ok(gestionnaireRepository.getById(gestionnaireId)).build()
 
@@ -123,7 +123,7 @@ class GestionnaireEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/get-libelle")
-    @RequireDroits([Droit.GEST_SITE_R, Droit.PEI_R])
+    @RequireDroits([Droit.GEST_SITE_R, Droit.PEI_R, Droit.GEST_SITE_A])
     @Produces(MediaType.APPLICATION_JSON)
     fun getGestionnaireForSelect(): Response {
         return Response.ok(

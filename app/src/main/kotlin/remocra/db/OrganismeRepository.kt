@@ -254,7 +254,11 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
 
     private fun buildDroitCondition(user: WrappedUserInfo, parent: remocra.db.jooq.remocra.tables.Organisme): Condition =
         when {
-            user.isSuperAdmin || user.droits?.contains(Droit.ADMIN_UTILISATEURS_A) == true -> {
+            user.isSuperAdmin ||
+                user.droits?.any {
+                    it == Droit.ADMIN_ORGANISME_A ||
+                        it == Droit.ADMIN_ORGANISME_R
+                } == true -> {
                 DSL.trueCondition()
             }
 

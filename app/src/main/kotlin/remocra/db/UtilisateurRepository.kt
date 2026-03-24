@@ -185,6 +185,10 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
 
     private fun buildDroitCondition(user: WrappedUserInfo): Condition =
         when {
+            user.droits?.contains(Droit.ADMIN_UTILISATEURS_ORGA_A) == true && user.droits?.contains(Droit.ADMIN_UTILISATEURS_A) == true -> {
+                DSL.trueCondition()
+            }
+
             user.isSuperAdmin || user.droits?.contains(Droit.ADMIN_UTILISATEURS_A) == true || user.droits?.contains(Droit.ADMIN_UTILISATEURS_R) == true -> {
                 DSL.trueCondition()
             }

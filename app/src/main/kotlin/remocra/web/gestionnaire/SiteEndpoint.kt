@@ -49,7 +49,7 @@ class SiteEndpoint : AbstractEndpoint() {
 
     @POST
     @Path("/")
-    @RequireDroits([Droit.GEST_SITE_R])
+    @RequireDroits([Droit.GEST_SITE_R, Droit.GEST_SITE_A])
     fun getAll(params: Params<SiteRepository.Filter, SiteRepository.Sort>): Response =
         Response.ok(
             DataTableau(
@@ -60,7 +60,7 @@ class SiteEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/{siteId}")
-    @RequireDroits([Droit.GEST_SITE_R])
+    @RequireDroits([Droit.GEST_SITE_R, Droit.GEST_SITE_A])
     fun getById(@PathParam("siteId") siteId: UUID): Response =
         Response.ok(siteRepository.getById(siteId)).build()
 
@@ -113,7 +113,7 @@ class SiteEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("gestionnaire/{gestionnaireId}")
-    @RequireDroits([Droit.GEST_SITE_R])
+    @RequireDroits([Droit.GEST_SITE_R, Droit.GEST_SITE_A, Droit.ORGANISME_CONTACT_A])
     fun getAllSiteByGestionnaire(
         @PathParam("gestionnaireId")
         gestionnaireId: UUID,

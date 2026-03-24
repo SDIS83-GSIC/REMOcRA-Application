@@ -21,7 +21,7 @@ class CreateLienProfilFonctionnaliteUseCase @Inject constructor(
         TypeOperation.INSERT,
     ) {
     override fun checkDroits(userInfo: WrappedUserInfo) {
-        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_GROUPE_UTILISATEUR)) {
+        if (!userInfo.hasDroits(droitWeb = Droit.ADMIN_DROITS)) {
             throw RemocraResponseException(ErrorType.GROUPE_FONCTIONNALITES_FORBIDDEN_UPDATE)
         }
     }

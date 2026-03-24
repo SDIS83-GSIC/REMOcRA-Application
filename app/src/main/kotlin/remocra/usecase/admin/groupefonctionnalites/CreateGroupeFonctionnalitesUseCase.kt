@@ -16,7 +16,7 @@ import remocra.usecase.AbstractCUDUseCase
 class CreateGroupeFonctionnalitesUseCase @Inject constructor(private val groupeFonctionnalitesRepository: GroupeFonctionnalitesRepository) :
     AbstractCUDUseCase<GroupeFonctionnalitesData>(TypeOperation.INSERT) {
     override fun checkDroits(userInfo: WrappedUserInfo) {
-        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A)) {
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_DROITS)) {
             throw RemocraResponseException(ErrorType.GROUPE_FONCTIONNALITES_FORBIDDEN_INSERT)
         }
     }

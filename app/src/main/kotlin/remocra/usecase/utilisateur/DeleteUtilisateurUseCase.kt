@@ -82,9 +82,11 @@ class DeleteUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperati
             throw RemocraResponseException(ErrorType.UTILISATEUR_TOURNEE_RESERVEE)
         }
 
-        userInfo.affiliatedOrganismeIds?.contains(element.utilisateurOrganismeId)?.let {
-            if ((element.utilisateurOrganismeId == null) || (!it)) {
-                throw RemocraResponseException(ErrorType.UTILISATEUR_FORBIDDEN)
+        if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A) && (!userInfo.isSuperAdmin)) {
+            userInfo.affiliatedOrganismeIds?.contains(element.utilisateurOrganismeId)?.let {
+                if (!it) {
+                    throw RemocraResponseException(ErrorType.UTILISATEUR_FORBIDDEN)
+                }
             }
         }
     }

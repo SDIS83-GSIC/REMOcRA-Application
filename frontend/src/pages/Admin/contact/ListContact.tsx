@@ -31,8 +31,10 @@ const ListContact = () => {
 
   const listeButton: ButtonType[] = [];
   if (
-    hasDroit(user, TYPE_DROIT.GEST_SITE_A) ||
-    hasDroit(user, TYPE_DROIT.ADMIN_DROITS)
+    (appartenance === "gestionnaire" &&
+      hasDroit(user, TYPE_DROIT.GEST_CONTACT_A)) ||
+    (appartenance === "organisme" &&
+      hasDroit(user, TYPE_DROIT.ORGANISME_CONTACT_A))
   ) {
     listeButton.push({
       row: (row) => {
@@ -58,8 +60,10 @@ const ListContact = () => {
           icon={<IconList />}
           title={"Liste des contacts"}
           right={
-            (hasDroit(user, TYPE_DROIT.GEST_SITE_A) ||
-              hasDroit(user, TYPE_DROIT.ADMIN_DROITS)) && (
+            ((hasDroit(user, TYPE_DROIT.ORGANISME_CONTACT_A) &&
+              appartenance === "organisme") ||
+              (hasDroit(user, TYPE_DROIT.GEST_CONTACT_A) &&
+                appartenance === "gestionnaire")) && (
               <CreateButton
                 href={URLS.ADD_CONTACT(appartenanceId, appartenance)}
                 title={"Ajouter un contact"}

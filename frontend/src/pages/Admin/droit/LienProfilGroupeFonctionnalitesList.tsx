@@ -162,7 +162,12 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                                   event.currentTarget.checked
                                                 ) {
                                                   // si un droit _A est coché, on rajoute les droits équivalents
-                                                  if (right === "A") {
+                                                  if (
+                                                    right === "A" &&
+                                                    value !==
+                                                      "ADMIN_UTILISATEURS_A" &&
+                                                    value !== "GEST_SITE_A"
+                                                  ) {
                                                     typeDroitList.forEach(
                                                       (typeDroit) => {
                                                         const substr =
@@ -189,6 +194,29 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                                   }
                                                   if (
                                                     value ===
+                                                    "ORGANISME_CONTACT_A"
+                                                  ) {
+                                                    arrayVal.push(
+                                                      "ADMIN_ORGANISME_A",
+                                                    );
+                                                  }
+                                                  if (
+                                                    value === "GEST_CONTACT_A"
+                                                  ) {
+                                                    arrayVal.push(
+                                                      "GEST_SITE_A",
+                                                    );
+                                                  }
+                                                  if (
+                                                    value ===
+                                                    "ADMIN_UTILISATEURS_A"
+                                                  ) {
+                                                    arrayVal.push(
+                                                      "ADMIN_UTILISATEURS_R",
+                                                    );
+                                                  }
+                                                  if (
+                                                    value ===
                                                     "ADMIN_UTILISATEURS_R"
                                                   ) {
                                                     arrayVal.push(
@@ -210,6 +238,7 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                                   ) {
                                                     arrayVal.push(
                                                       "ADMIN_UTILISATEURS_A",
+                                                      "ORGANISME_CONTACT_A",
                                                     );
                                                   }
                                                   if (

@@ -31,6 +31,26 @@ const ListGestionnaire = () => {
   const { user } = useAppContext();
 
   const listeButton: ButtonType[] = [];
+
+  if (
+    hasDroit(user, TYPE_DROIT.GEST_SITE_R) ||
+    hasDroit(user, TYPE_DROIT.GEST_CONTACT_A)
+  ) {
+    listeButton.push({
+      row: (row) => {
+        return row;
+      },
+      route: (gestionnaireId) =>
+        URLS.LIST_CONTACT(gestionnaireId, "gestionnaire"),
+      type: TYPE_BUTTON.LINK,
+      icon: <IconGererContact />,
+      textEnable: "Afficher les contacts",
+      textDisable: "Aucun contact pour ce gestionnaire",
+      disable: (row) => !row.original.hasContact,
+      classEnable: "warning",
+    });
+  }
+
   if (hasDroit(user, TYPE_DROIT.GEST_SITE_A)) {
     listeButton.push({
       row: (row) => {
@@ -51,31 +71,19 @@ const ListGestionnaire = () => {
       pathname: url`/api/gestionnaire/delete/`,
     });
 
-    listeButton.push({
-      row: (row) => {
-        return row;
-      },
-      route: (gestionnaireId) =>
-        URLS.ADD_CONTACT(gestionnaireId, "gestionnaire"),
-      type: TYPE_BUTTON.LINK,
-      icon: <IconAddContact />,
-      textEnable: "Ajouter un contact",
-      classEnable: "warning",
-    });
-
-    listeButton.push({
-      row: (row) => {
-        return row;
-      },
-      route: (gestionnaireId) =>
-        URLS.LIST_CONTACT(gestionnaireId, "gestionnaire"),
-      type: TYPE_BUTTON.LINK,
-      icon: <IconGererContact />,
-      textEnable: "Afficher les contacts",
-      textDisable: "Aucun contact pour ce gestionnaire",
-      disable: (row) => !row.original.hasContact,
-      classEnable: "warning",
-    });
+    if (hasDroit(user, TYPE_DROIT.GEST_CONTACT_A)) {
+      listeButton.push({
+        row: (row) => {
+          return row;
+        },
+        route: (gestionnaireId) =>
+          URLS.ADD_CONTACT(gestionnaireId, "gestionnaire"),
+        type: TYPE_BUTTON.LINK,
+        icon: <IconAddContact />,
+        textEnable: "Ajouter un contact",
+        classEnable: "warning",
+      });
+    }
   }
   return (
     <>
