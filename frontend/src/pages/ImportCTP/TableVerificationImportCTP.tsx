@@ -6,6 +6,7 @@ import { object } from "yup";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { FormContainer } from "../../components/Form/Form.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
+import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { IconExport, IconValidation } from "../../components/Icon/Icon.tsx";
 import { URLS } from "../../routes.tsx";
 
@@ -173,9 +174,7 @@ const ResultatsVerificationImportCTP = () => {
           </CSVLink>
         </Col>
         <Col>
-          <Button type="submit" variant="primary">
-            Importer les visites
-          </Button>
+          <SubmitFormButtons submitTitle="Importer les visites" />
         </Col>
       </Row>
     </FormContainer>
