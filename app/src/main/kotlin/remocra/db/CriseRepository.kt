@@ -60,7 +60,6 @@ class CriseRepository @Inject constructor(
             .join(L_COUCHE_MODULE)
             .on(L_COUCHE_MODULE.COUCHE_ID.eq(COUCHE.ID))
             .where(L_COUCHE_MODULE.MODULE_TYPE.eq(TypeModule.CRISE))
-            .and(COUCHE.ACTIVE.eq(true))
             .fetchInto()
 
     fun deleteCriseDocuments(documentsId: UUID) {

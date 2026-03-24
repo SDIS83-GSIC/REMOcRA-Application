@@ -5,6 +5,7 @@ import Row from "react-bootstrap/Row";
 import DeleteButton from "../Button/DeleteButton.tsx";
 import { FormLabel } from "../Form/Form.tsx";
 import { IconAdd } from "../Icon/Icon.tsx";
+import TooltipCustom from "../Tooltip/Tooltip.tsx";
 
 /**
  * ATTENTION : doit être utiliser dans un <MyFormik>
@@ -30,6 +31,7 @@ const AddRemoveComponent = ({
   typeModule,
   buttonLibelle,
   isDisabledButton = false,
+  disableText,
 }: AddRemoveComponentType) => {
   const { setFieldValue } = useFormikContext();
 
@@ -61,15 +63,32 @@ const AddRemoveComponent = ({
                   </Col>
                 )}
                 <Col xs={"auto"} className={"ms-auto"}>
-                  <Button
-                    onClick={() => {
-                      elements.push(defaultElement);
-                      scrollToBottom();
-                    }}
-                    disabled={isDisabledButton}
-                  >
-                    <IconAdd /> {buttonLibelle ?? "Ajouter"}
-                  </Button>
+                  {isDisabledButton && disableText ? (
+                    <TooltipCustom tooltipText={disableText} tooltipId={name}>
+                      <span>
+                        <Button
+                          onClick={() => {
+                            elements.push(defaultElement);
+                            scrollToBottom();
+                          }}
+                          disabled
+                          style={{ pointerEvents: "none" }}
+                        >
+                          <IconAdd /> {buttonLibelle ?? "Ajouter"}
+                        </Button>
+                      </span>
+                    </TooltipCustom>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        elements.push(defaultElement);
+                        scrollToBottom();
+                      }}
+                      disabled={isDisabledButton}
+                    >
+                      <IconAdd /> {buttonLibelle ?? "Ajouter"}
+                    </Button>
+                  )}
                 </Col>
               </Row>
             )}
@@ -132,6 +151,7 @@ type AddRemoveComponentType = {
   buttonLibelle?: string;
   typeModule?: string | null;
   isDisabledButton?: boolean;
+  disableText?: string;
 };
 
 export default AddRemoveComponent;

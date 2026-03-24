@@ -4,6 +4,12 @@ enum CriseStatutEnum {
   FUSIONNEE = "Fusionnée",
 }
 
+export type CoucheWMSType = {
+  coucheId: string | null;
+  operationnel: boolean;
+  anticipation: boolean;
+};
+
 export type CriseType = {
   criseId?: string;
   criseLibelle: string;
@@ -14,7 +20,7 @@ export type CriseType = {
   typeCriseId: string;
   listeCommuneId: string[];
   listeToponymieId: string[];
-  couchesWMS: string[];
+  couchesWMS: CoucheWMSType[];
 };
 
 export default CriseStatutEnum;

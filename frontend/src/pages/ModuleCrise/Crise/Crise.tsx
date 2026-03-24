@@ -15,7 +15,7 @@ import {
 } from "../../../components/Form/Form.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
-import { CriseType } from "../../../Entities/CriseEntity.tsx";
+import { CoucheWMSType, CriseType } from "../../../Entities/CriseEntity.tsx";
 import url from "../../../module/fetch.tsx";
 import {
   requiredArray,
@@ -45,13 +45,13 @@ export const criseValidationSchema = object({
 });
 
 export const prepareCriseValues = (values: {
-  typeCriseId: any;
-  criseLibelle: any;
-  criseDescription: any;
-  listeCommuneId: any;
+  typeCriseId: string | null;
+  criseLibelle: string | null;
+  criseDescription: string | null;
+  listeCommuneId: string[];
   criseDateDebut: Date;
-  listeToponymieId: any;
-  couchesWMS: any;
+  listeToponymieId: string[] | null;
+  couchesWMS: CoucheWMSType[];
 }) => ({
   typeCriseId: values.typeCriseId,
   criseLibelle: values.criseLibelle,
@@ -74,14 +74,29 @@ const Crise = () => {
     if (!typeCriseState.data) {
       return [];
     }
-    return typeCriseState.data.map((crise) => {
-      return {
-        id: crise.criseId,
-        code: crise.criseNom,
-        libelle: crise.criseNom,
-      };
-    });
+    return typeCriseState.data.map(
+      (crise: { criseId: string; criseNom: string }) => {
+        return {
+          id: crise.criseId,
+          code: crise.criseNom,
+          libelle: crise.criseNom,
+        };
+      },
+    );
   }, [typeCriseState.data]);
+
+  // Récupération des couches disponibles (toutes les couches WMS)
+  const couchesWMSState = useGet(url`/api/crise/get-couches-wms`);
+  const toutesLesCouches = couchesWMSState.data || [];
+
+  // Cas où il n'y a aucune couche associée au module de Crise
+  const aucuneCouchesAssociee = toutesLesCouches.length === 0;
+  // Cas où toutes les couches sont déjà ajoutées
+  const plusDeCouchesDispo =
+    toutesLesCouches.length > 0 &&
+    toutesLesCouches.every((c: { coucheId: string }) =>
+      values.couchesWMS?.some((w) => w.coucheId === c.coucheId),
+    );
 
   return (
     <FormContainer noValidate>
@@ -164,6 +179,14 @@ const Crise = () => {
           operationnel: false,
           anticipation: false,
         }}
+        isDisabledButton={plusDeCouchesDispo || aucuneCouchesAssociee}
+        disableText={
+          aucuneCouchesAssociee
+            ? "Aucune couche associée au module de Crise"
+            : plusDeCouchesDispo
+              ? "Toutes les couches disponibles ont déjà été ajoutées"
+              : undefined
+        }
       />
 
       <SubmitFormButtons returnLink={true} />
@@ -180,16 +203,18 @@ const ComposantToRepeat = ({
   listeElements,
 }: {
   index: number;
-  listeElements: any[];
+  listeElements: CoucheWMSType[];
 }) => {
   const couchesWMS = useGet(url`/api/crise/get-couches-wms`);
 
   // logique de mappage et d'unicité
-  const selectedIds = listeElements?.map((e) => e.coucheId).filter(Boolean);
+  const selectedIds = listeElements
+    ?.map(({ coucheId }) => coucheId)
+    .filter(Boolean);
   const TypesCouches = useMemo(
     () =>
       couchesWMS.data?.filter(
-        ({ coucheId }) => !selectedIds.includes(coucheId),
+        ({ coucheId }: { coucheId: string }) => !selectedIds.includes(coucheId),
       ) || [],
     [couchesWMS.data, selectedIds],
   );
@@ -209,12 +234,12 @@ const ComposantToRepeat = ({
             setFieldValue(
               `couchesWMS[${index}].coucheId`,
               TypesCouches.find(
-                (type: { coucheId: any }) => type.coucheId === e.coucheId,
+                (type: { coucheId: string }) => type.coucheId === e.coucheId,
               )?.coucheId,
             );
           }}
           defaultValue={couchesWMS.data?.find(
-            (type: { coucheId: any }) =>
+            (type: { coucheId: string }) =>
               type.coucheId === listeElements[index].coucheId,
           )}
           required={true}
