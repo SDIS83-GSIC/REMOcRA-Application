@@ -46,6 +46,7 @@ const MapCrise = ({
   } = useMapComponent({
     mapElement: mapElement,
     typeModule: TypeModuleRemocra.CRISE,
+    criseId: criseId,
   });
 
   const dataEvenementLayer = useMemo(() => {

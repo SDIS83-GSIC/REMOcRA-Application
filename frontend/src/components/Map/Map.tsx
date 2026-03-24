@@ -80,6 +80,7 @@ const tileGrid = new WMTSTileGrid({
 export function toOpenLayer(
   layer: any,
   etudeId?: string,
+  criseId?: string,
 ): TileSource | WMTS | VectorSource | ImageWMS | TileWMS | undefined {
   switch (layer.source) {
     case SOURCE_CARTO.WMS: {
@@ -96,6 +97,9 @@ export function toOpenLayer(
       // Ajout du paramètre viewParams seulement si etudeId est renseigné
       if (etudeId) {
         wmsParams.viewParams = `idEtude:${encodeURIComponent(etudeId)}`;
+      }
+      if (criseId) {
+        wmsParams.viewParams = `idCrise:${encodeURIComponent(criseId)}`;
       }
 
       return !layer.tuilage
@@ -273,11 +277,13 @@ export const useMapComponent = ({
   typeModule,
   displayPei = true,
   etudeId,
+  criseId,
 }: {
   mapElement: MutableRefObject<HTMLDivElement | undefined>;
   typeModule: TypeModuleRemocra;
   displayPei?: boolean;
   etudeId?: string;
+  criseId?: string;
 }) => {
   const { state, search } = useLocation();
   const navigate = useNavigate();
@@ -463,12 +469,12 @@ export const useMapComponent = ({
             layer.tuilage !== true
           ) {
             openlayer = new ImageLayer({
-              source: toOpenLayer(layer, etudeId) as ImageWMS,
+              source: toOpenLayer(layer, etudeId, criseId) as ImageWMS,
               zIndex,
             });
           } else {
             openlayer = new TileLayer({
-              source: toOpenLayer(layer, etudeId) as TileSource,
+              source: toOpenLayer(layer, etudeId, criseId) as TileSource,
               zIndex,
               preload: 1,
               useInterimTilesOnError: false,
@@ -487,7 +493,7 @@ export const useMapComponent = ({
         }),
       };
     });
-  }, [layersState.data, map, projection, etudeId]);
+  }, [layersState.data, map, projection, etudeId, criseId]);
 
   // Ajout / retrait d'une couche sur la carte
   const addOrRemoveLayer = (layer: any) => {
