@@ -75,7 +75,7 @@ export const usePagination = ({
       if (maxPage < 7) {
         return [1, 2, 3, 4, 5, 6].filter((page) => page <= maxPage);
       } else {
-        if (currentPage >= 0 && currentPage > 4 && currentPage + 2 < maxPage) {
+        if (currentPage >= 0 && currentPage > 3 && currentPage + 2 < maxPage) {
           return [1, currentPage, currentPage + 1, currentPage + 2, maxPage];
         } else if (
           currentPage >= 0 &&
