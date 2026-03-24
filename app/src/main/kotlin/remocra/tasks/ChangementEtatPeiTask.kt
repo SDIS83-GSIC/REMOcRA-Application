@@ -96,7 +96,7 @@ class ChangementEtatPeiTask : SchedulableTask<ChangementEtatPeiTaskParameter, Ch
             var corps = genericCorps
             corps = remplaceIfNotEmpty(corps, "#resultsDispo#", "Les PEIs suivants sont passés à l'état Disponible #liste#.\n", listePeiDispo)
             corps = remplaceIfNotEmpty(corps, "#resultsIndispo#", "Les PEI suivants sont passés à l'état Indisponible #liste#.\n", listePeiIndispo)
-            corps = remplaceIfNotEmpty(corps, "#resultsNonConforme#", "Les PEI suivants sont passés à l'état Disponible #liste#.\n", listePeiNonConforme)
+            corps = remplaceIfNotEmpty(corps, "#resultsNonConforme#", "Les PEI suivants sont passés à l'état Non-Conforme #liste#.\n", listePeiNonConforme)
 
             objetsANotifier.add(
                 NotificationMailData(
@@ -140,15 +140,20 @@ class ChangementEtatPeiTask : SchedulableTask<ChangementEtatPeiTaskParameter, Ch
 
         // Désérialisation des evenements de tracabilité
         val listTracaObjects: List<TracabiliteEvent<PeiData>> =
-            listeEventTraca.map { element ->
-                TracabiliteEvent(
-                    pojo = objectMapper.readValue<PeiData>(element.tracabiliteObjetData.toString()),
-                    pojoId = element.tracabiliteObjetId,
-                    typeOperation = element.tracabiliteTypeOperation,
-                    typeObjet = element.tracabiliteTypeObjet,
-                    auteurTracabilite = objectMapper.readValue<AuteurTracabiliteData>(element.tracabiliteAuteurData.toString()),
-                    date = element.tracabiliteDate,
-                )
+            listeEventTraca.mapNotNull { element ->
+                try {
+                    TracabiliteEvent(
+                        pojo = objectMapper.readValue<PeiData>(element.tracabiliteObjetData.toString()),
+                        pojoId = element.tracabiliteObjetId,
+                        typeOperation = element.tracabiliteTypeOperation,
+                        typeObjet = element.tracabiliteTypeObjet,
+                        auteurTracabilite = objectMapper.readValue<AuteurTracabiliteData>(element.tracabiliteAuteurData.toString()),
+                        date = element.tracabiliteDate,
+                    )
+                } catch (_: Exception) {
+                    // Ignorer les erreurs de désérialisation, objet V2
+                    null
+                }
             }
 
         // Pour chaque élément de traca
@@ -165,17 +170,21 @@ class ChangementEtatPeiTask : SchedulableTask<ChangementEtatPeiTaskParameter, Ch
                 }
 
                 if (pojo != null) {
-                    val previousTracaObject = TracabiliteEvent(
-                        pojo = pojo,
-                        pojoId = previousTracaEvent.tracabiliteObjetId,
-                        typeOperation = previousTracaEvent.tracabiliteTypeOperation,
-                        typeObjet = previousTracaEvent.tracabiliteTypeObjet,
-                        auteurTracabilite = objectMapper.readValue<AuteurTracabiliteData>(previousTracaEvent.tracabiliteAuteurData.toString()),
-                        date = previousTracaEvent.tracabiliteDate,
-                    )
-                    // Comparaison de la valeur DisponibilitéTerrestre entre l'état traca actuel et le précédent
-                    if (previousTracaObject.pojo.peiDisponibiliteTerrestre != tracaObject.pojo.peiDisponibiliteTerrestre) {
-                        listPei.addFirst(tracaObject)
+                    try {
+                        val previousTracaObject = TracabiliteEvent(
+                            pojo = pojo,
+                            pojoId = previousTracaEvent.tracabiliteObjetId,
+                            typeOperation = previousTracaEvent.tracabiliteTypeOperation,
+                            typeObjet = previousTracaEvent.tracabiliteTypeObjet,
+                            auteurTracabilite = objectMapper.readValue<AuteurTracabiliteData>(previousTracaEvent.tracabiliteAuteurData.toString()),
+                            date = previousTracaEvent.tracabiliteDate,
+                        )
+                        // Comparaison de la valeur DisponibilitéTerrestre entre l'état traca actuel et le précédent
+                        if (previousTracaObject.pojo.peiDisponibiliteTerrestre != tracaObject.pojo.peiDisponibiliteTerrestre) {
+                            listPei.addFirst(tracaObject)
+                        }
+                    } catch (_: Exception) {
+                        // Ignorer les erreurs de désérialisation de l'auteur, objet V2
                     }
                 }
             }
