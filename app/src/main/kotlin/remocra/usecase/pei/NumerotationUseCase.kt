@@ -8,6 +8,7 @@ import remocra.app.AppSettings
 import remocra.data.PeiForNumerotationData
 import remocra.data.enums.CodeSdis
 import remocra.db.CommuneRepository
+import remocra.db.DomaineRepository
 import remocra.db.GestionnaireRepository
 import remocra.db.NumerotationRepository
 import remocra.db.ZoneIntegrationRepository
@@ -22,6 +23,7 @@ import java.util.UUID
 /**
  * Constantes potentiellement globales
  */
+private const val MIN_PEI_NUMERO_INTERNE = 1
 private const val MAX_PEI_NUMERO_INTERNE = 99999
 private const val NATURE_DECI_PRIVE = "PRIVE"
 private const val NATURE_DECI_PUBLIC = "PUBLIC"
@@ -79,6 +81,7 @@ constructor(
     private val communeRepository: CommuneRepository,
     private val zoneIntegrationRepository: ZoneIntegrationRepository,
     private val gestionnaireRepository: GestionnaireRepository,
+    private val domaineRepository: DomaineRepository,
 ) :
     AbstractUseCase() {
 
@@ -148,7 +151,6 @@ constructor(
                 CodeSdis.SDIS_61,
                 CodeSdis.SDIS_62,
                 CodeSdis.SDIS_66,
-                CodeSdis.SDIS_78,
                 CodeSdis.SDIS_971,
                 CodeSdis.BSPP,
                 CodeSdis.SDMIS,
@@ -166,6 +168,7 @@ constructor(
                 CodeSdis.SDIS_58 -> computeNumeroInterne58(pei)
                 CodeSdis.SDIS_59 -> computeNumeroInterne59(pei)
                 CodeSdis.SDIS_71 -> computeNumeroInterne71(pei)
+                CodeSdis.SDIS_78 -> computeNumeroInterne78(pei)
                 CodeSdis.SDIS_83,
                 -> computeNumeroInterne83(pei)
                 CodeSdis.SDIS_95 -> computeNumeroInterne95(pei)
@@ -298,6 +301,30 @@ constructor(
             .takeWhile { it > 0 }
             .minus(listPeiNumeroInterne.toSet())
             .first()
+    }
+
+    /**
+     * Retourne le max +1 en fonction de la commune ou conditions spéciales :
+     * Si un PEI se trouve sur une Zone Spéciale ET a le domaine Autoroute, cette condition prend le dessus pour déterminer le numéro interne.
+     * Sinon, on se base sur la commune uniquement, en faisant abstraction des PEI remplissant la condition.
+     */
+    private fun computeNumeroInterne78(pei: PeiForNumerotationData): Int {
+        if (pei.peiZoneSpecialeId != null && pei.domaine?.domaineCode == CODE_DOMAINE_AUTOROUTE) {
+            return (
+                numerotationRepository.getMaxNumeroInterneByZoneSpecialeAndDomaineCode(
+                    peiZoneSpecialeId = pei.peiZoneSpecialeId,
+                    domaineCode = CODE_DOMAINE_AUTOROUTE,
+                )?.plus(1) ?: MIN_PEI_NUMERO_INTERNE
+                )
+        } else {
+            checkCommuneId(pei)
+            return (
+                numerotationRepository.getMaxNumeroInterneByCommuneExceptZoneSpecialeExceptListOfDomaine(
+                    peiCommuneId = pei.peiCommuneId!!,
+                    listOfDomaine = listOf(CODE_DOMAINE_AUTOROUTE),
+                )?.plus(1) ?: MIN_PEI_NUMERO_INTERNE
+                )
+        }
     }
 
     private fun computeNumeroInterneMethodeA(pei: PeiForNumerotationData): Int {
@@ -711,20 +738,23 @@ constructor(
     }
 
     /**
-     * <code insee commune><numéro interne> ou <code insee commune>A<numéro interne>
-     * sans espace
-     * avec num_interne sur 4 chiffres pour Autoroutes
-     * sinon num_interne sur 5 chiffres
-     * Exemple : 8904300012 ou  89043A0012 pour les Autoroutes
+     * Cas général :
+     * Code insee commune : 5 chiffres
+     * Numéro interne sur 5 caractères : calculé sur la commune max+1
      *
+     * Numéro PEI autoroute (Domaine Autoroute + Zone Spéciale):
+     * Code de la zone spéciale (N12, A86, ...)
+     * Numéro interne sur 7 caractères : calculé sur la zone spéciale max+1
+     *
+     * Exemple : 8904300012 ou N120000012 / A860000012 pour les autoroutes
      */
     private fun computeNumero78(pei: PeiForNumerotationData): String {
         checkCommuneId(pei)
-        if (pei.domaine != null) {
+        if (pei.domaine != null && pei.peiZoneSpecialeId != null) {
             val codeDomaine = pei.domaine.domaineCode
 
             if (CODE_DOMAINE_AUTOROUTE == codeDomaine) {
-                return ensureCommune(pei).communeCodeInsee + "A" + "%04d".format(Locale.getDefault(), pei.peiNumeroInterne)
+                return ensureZoneSpeciale(pei).zoneIntegrationCode + "%07d".format(Locale.getDefault(), pei.peiNumeroInterne)
             }
         }
         return ensureCommune(pei).communeCodeInsee + "%05d".format(Locale.getDefault(), pei.peiNumeroInterne)

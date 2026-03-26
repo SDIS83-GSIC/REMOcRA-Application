@@ -4,6 +4,7 @@ import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.impl.DSL
 import remocra.db.jooq.remocra.enums.TypePei
+import remocra.db.jooq.remocra.tables.references.DOMAINE
 import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.PEI
 import java.util.UUID
@@ -42,6 +43,43 @@ class NumerotationRepository @Inject constructor(private val dsl: DSLContext) : 
         )
         .orderBy(PEI.NUMERO_INTERNE)
         .fetchInto()
+
+    /**
+     * Retourne le plus grand numéro interne replissant la condition suivante :
+     * - Le PEI est sur la commune indiquée
+     * - Le PEI n'est pas sur une zone spéciale OU n'a pas pour domaine une des valeurs spécifiées
+     */
+    fun getMaxNumeroInterneByCommuneExceptZoneSpecialeExceptListOfDomaine(peiCommuneId: UUID, listOfDomaine: List<String>): Int? =
+        dsl.select(DSL.max(PEI.NUMERO_INTERNE))
+            .from(PEI)
+            .join(DOMAINE).on(PEI.DOMAINE_ID.eq(DOMAINE.ID))
+            .where(
+                DSL.and(
+                    PEI.COMMUNE_ID.eq(peiCommuneId),
+                    DSL.or(
+                        PEI.ZONE_SPECIALE_ID.isNull,
+                        DOMAINE.CODE.notIn(listOfDomaine),
+                    ),
+                ),
+            )
+            .fetchOneInto()
+
+    /**
+     * Retourne le plus grand numéro interne replissant la condition suivante :
+     * - Le PEI est sur la zone spéciale indiquée
+     * - Le PEI a pour domaine la valeur spécifiée
+     */
+    fun getMaxNumeroInterneByZoneSpecialeAndDomaineCode(peiZoneSpecialeId: UUID?, domaineCode: String): Int? =
+        dsl.select(DSL.max(PEI.NUMERO_INTERNE))
+            .from(PEI)
+            .join(DOMAINE).on(PEI.DOMAINE_ID.eq(DOMAINE.ID))
+            .where(
+                DSL.and(
+                    PEI.ZONE_SPECIALE_ID.eq(peiZoneSpecialeId),
+                    DOMAINE.CODE.eq(domaineCode),
+                ),
+            )
+            .fetchOneInto()
 
     fun getMaxPeiNumeroInterne(): Int = dsl.select(DSL.max(PEI.NUMERO_INTERNE)).from(PEI).fetchSingleInto()
 }
