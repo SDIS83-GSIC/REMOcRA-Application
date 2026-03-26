@@ -167,17 +167,15 @@ function QueryTable({
 
   const debounceSearch = useDebouncedCallback(historyPush, 500);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: on a besoin que ce useEffect soit appelé à chaque changement de formik.values
+  // Synchronise l'URL avec les valeurs des filtres
   useEffect(() => {
-    debounceSearch();
-  }, [formik?.values, debounceSearch]);
+    const searchParams = new URLSearchParams(location?.search);
+    const filterByParams = searchParams.get("filterBy");
+    if (!filterByParams && Object.keys(formik?.values || {}).length > 0) {
+      historyPush();
+    }
+  }, [formik?.values, historyPush, location?.search]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: on veut que ce useEffect soit appelé à chaque changement de watchedValues, même si historyPush ne change pas
-  useEffect(() => {
-    historyPush();
-  }, [...watchedValues]);
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: pour les tris, on ne peut pas mettre les sortBy
   useEffect(() => {
     const searchParams = new URLSearchParams(location?.search);
     const filterByParams = searchParams.get("filterBy");
@@ -185,17 +183,10 @@ function QueryTable({
     const offsetParams = searchParams.get("offset");
     const limitParams = searchParams.get("limit");
 
-    if (filterByParams || (!filterByParams && formik?.values)) {
-      const temp = filterValuesToVariable(formik?.values);
-      const filter = Object.values(temp).filter(Boolean).length
-        ? JSON.stringify(temp)
-        : null;
-      if (filter !== filterByParams) {
-        // initializer && setValues(initializer(JSON.parse(filterByParams) ?? {}));
-        setValues(formik?.values);
-        setFilterBy(filterValuesToVariable(formik?.values));
-      }
+    if (filterByParams) {
+      setFilterBy(JSON.parse(filterByParams));
     }
+
     if (sortByParams || (!sortByParams && sortBy)) {
       const sort = Object.values(sortBy).filter(Boolean).length
         ? JSON.stringify(sortBy)
@@ -204,6 +195,7 @@ function QueryTable({
         setSortBy(JSON.parse(sortByParams) ?? {});
       }
     }
+
     if (
       offsetParams &&
       limitParams &&
@@ -214,11 +206,11 @@ function QueryTable({
     }
   }, [
     location,
-    filterValuesToVariable,
-    formik?.values,
-    pagination.limit.toString,
-    pagination.offset.toString,
     setSortBy,
+    pagination.limit,
+    pagination.offset,
+    navigate,
+    sortBy,
   ]);
 
   const { isRejected, isLoading, data, run } = usePost(
@@ -370,8 +362,11 @@ function QueryTable({
             <Row>
               <Col xs={12}>
                 {React.cloneElement(Filter, {
-                  onChange: ({ name, value }) =>
-                    formik.setFieldValue(name, value),
+                  onChange: ({ name, value }) => {
+                    formik.setFieldValue(name, value);
+                    debounceSearch();
+                  },
+
                   onBlur: formik.handleBlur,
                   defaultValue: formik?.values[Filter?.props?.name] || "",
                   value: formik?.values[Filter?.props?.name] || "",
