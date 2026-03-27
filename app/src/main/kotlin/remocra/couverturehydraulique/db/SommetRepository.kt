@@ -2,7 +2,6 @@ package remocra.couverturehydraulique.db
 
 import jakarta.inject.Inject
 import org.jooq.DSLContext
-import org.jooq.TableRecord
 import org.locationtech.jts.geom.Point
 import remocra.db.AbstractRepository
 import remocra.db.fetchOneInto
@@ -98,15 +97,14 @@ class SommetRepository @Inject constructor(private val dsl: DSLContext) : Abstra
      */
     fun batchInsert(sommets: List<Triple<UUID, Point, UUID?>>) {
         if (sommets.isEmpty()) return
-        val records: List<TableRecord<*>> = sommets.map { (id, geom, etudeId) ->
-            (
-                dsl.newRecord(SOMMET).apply {
-                    set(SOMMET.ID, id)
-                    set(SOMMET.GEOMETRIE, geom)
-                    set(SOMMET.ETUDE_ID, etudeId)
-                } as TableRecord<*>
-                )
-        }
-        dsl.batchInsert(records).execute()
+        dsl.batch(
+            sommets.map { (id, geom, etudeId) ->
+                val record = dsl.newRecord(SOMMET)
+                record.set(SOMMET.ID, id)
+                record.set(SOMMET.GEOMETRIE, geom)
+                record.set(SOMMET.ETUDE_ID, etudeId)
+                dsl.insertInto(SOMMET).set(record)
+            },
+        ).execute()
     }
 }
