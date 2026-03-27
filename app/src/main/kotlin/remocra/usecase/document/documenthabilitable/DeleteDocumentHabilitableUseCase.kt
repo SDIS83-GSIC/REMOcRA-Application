@@ -12,6 +12,7 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
+import java.nio.file.Files
 import java.nio.file.Paths
 
 class DeleteDocumentHabilitableUseCase
@@ -50,8 +51,20 @@ constructor(
 
         // On supprime le document sur le disque
         val path = Paths.get(document.documentRepertoire)
-        documentUtils.deleteFile(document.documentNomFichier, path)
-        documentUtils.deleteDirectory(path)
+
+        // Vérification des droits de fichier système
+        if (Files.exists(path) && !Files.isWritable(path)) {
+            throw RemocraResponseException(ErrorType.DOCUMENT_FORBIDDEN_SYSTEM)
+        }
+
+        // Si le document ou le répertoire n'existe pas, on continue sans erreur
+        if (Files.exists(path)) {
+            val file = path.resolve(document.documentNomFichier)
+            if (Files.exists(file)) {
+                documentUtils.deleteFile(document.documentNomFichier, path)
+            }
+            documentUtils.deleteDirectory(path)
+        }
 
         // Puis on supprime les données en base
         documentHabilitableRepository.deleteThematiqueDocumentHabilitable(element.documentHabilitableId)
