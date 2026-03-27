@@ -123,6 +123,12 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
                 element.peiNumeroComplet = pair.first
             }
 
+            // Vérification unicité du numéro complet
+            val existingPei = peiRepository.getPeiFromNumero(element.peiNumeroComplet!!)
+            if (existingPei != null && (typeOperation == TypeOperation.INSERT || existingPei.peiId != element.peiId)) {
+                throw RemocraResponseException(ErrorType.PEI_NUMERO_COMPLET_EXISTS)
+            }
+
             // Si c'est une insertion, on met directement le PEI indisponible si les visite reception et reco init sont obligatoires
             // (Il n'est pas encore présent en base et n'a pas de visites)
             if (typeOperation == TypeOperation.INSERT && parametresProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name) == true) {

@@ -33,6 +33,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     PEI_VOIE_SAISIE_LIBRE_FORBIDDEN(1007, "La saisie libre d'une voie n'est pas autorisée pour votre SDIS"),
     PEI_VOIE_OBLIGATOIRE(1008, "La saisie d'une voie est obligatoire"),
     PEI_VOIE_XOR(1009, "Vous ne pouvez pas à la fois sélectionner une voie et saisir une valeur textuelle"),
+    PEI_NUMERO_COMPLET_EXISTS(1011, "Un PEI existe déjà avec ce numéro"),
 
     /*
         Erreur si on essaie de supprimer une IT en cascade de la suppression d'un PEI mais qu'on n'a pas les droits de suppresion
