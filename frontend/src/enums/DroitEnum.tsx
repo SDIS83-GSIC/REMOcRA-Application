@@ -299,8 +299,8 @@ export const TypeDroitLabel = new Map<string, string>([
   [TYPE_DROIT.ETUDE_R, "Consulter une étude"],
   [TYPE_DROIT.ETUDE_U, "Modifier une étude"],
   [TYPE_DROIT.GEST_CONTACT_A, "Administrer les contacts des gestionnaires"],
-  [TYPE_DROIT.GEST_SITE_A, "Administrer les gestionnaires et leurs sites."],
-  [TYPE_DROIT.GEST_SITE_R, "Consulter les gestionnaires et leurs sites."],
+  [TYPE_DROIT.GEST_SITE_A, "Administrer les gestionnaires et leurs sites"],
+  [TYPE_DROIT.GEST_SITE_R, "Consulter les gestionnaires et leurs sites"],
   [TYPE_DROIT.IMPORT_CTP_A, "Importer des fichiers CTP"],
   [
     TYPE_DROIT.IMPORT_CTP_PEI_DEPLACEMENT_U,
