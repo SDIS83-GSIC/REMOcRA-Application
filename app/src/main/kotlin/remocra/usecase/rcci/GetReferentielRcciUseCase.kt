@@ -35,10 +35,10 @@ class GetReferentielRcciUseCase @Inject constructor(
     }
 
     data class ReferentielRcci(
-        val ddtmonf: Collection<GlobalData.IdCodeLibelleData>,
-        val sdis: Collection<GlobalData.IdCodeLibelleData>,
-        val gendarmerie: Collection<GlobalData.IdCodeLibelleData>,
-        val police: Collection<GlobalData.IdCodeLibelleData>,
+        val ddtmonf: Collection<GlobalData.IdLibelleData>,
+        val sdis: Collection<GlobalData.IdLibelleData>,
+        val gendarmerie: Collection<GlobalData.IdLibelleData>,
+        val police: Collection<GlobalData.IdLibelleData>,
         val listCommune: Collection<GlobalData.IdCodeLibelleData>,
         val listVoie: Collection<VoieRepository.VoieWithCommune>,
     )

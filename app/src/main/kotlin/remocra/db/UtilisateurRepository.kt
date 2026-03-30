@@ -428,11 +428,21 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .fetchSingleInto()
     }
 
-    private fun getUtilisteurListByTypeOrganisme(vararg typeOrganismeList: String): List<GlobalData.IdCodeLibelleData> =
+    private fun getUtilisteurListByTypeOrganisme(vararg typeOrganismeList: String): List<GlobalData.IdLibelleData> =
         dsl
             .select(UTILISATEUR.ID.`as`("id"))
-            .select(DSL.concat(UTILISATEUR.NOM, DSL.value(" "), UTILISATEUR.PRENOM).`as`("code"))
-            .select(DSL.concat(UTILISATEUR.NOM, DSL.value(" "), UTILISATEUR.PRENOM).`as`("libelle"))
+            .select(
+                DSL.coalesce(
+                    DSL.trim(
+                        DSL.concat(
+                            UTILISATEUR.NOM,
+                            DSL.value(" "),
+                            UTILISATEUR.PRENOM,
+                        ),
+                    ),
+                    UTILISATEUR.USERNAME,
+                ).`as`("libelle"),
+            )
             .from(UTILISATEUR)
             .join(PROFIL_UTILISATEUR).on(PROFIL_UTILISATEUR.ID.eq(UTILISATEUR.PROFIL_UTILISATEUR_ID))
             .join(TYPE_ORGANISME).on(TYPE_ORGANISME.ID.eq(PROFIL_UTILISATEUR.TYPE_ORGANISME_ID).and(TYPE_ORGANISME.CODE.`in`(*typeOrganismeList)))
