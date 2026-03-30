@@ -1014,7 +1014,6 @@ const useTooltipMap = ({
               });
               map.addOverlay(over);
               setOverlay(over);
-              map.getView().setCenter(coordinate);
               return true; // stop
             }
             return false; // continue cherche une autre feature
