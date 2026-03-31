@@ -3,31 +3,25 @@ import { platformModifierKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
 import { DragBox, Draw, Modify, Select } from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
-import { Stroke, Style } from "ol/style";
-import { useMemo, useState } from "react";
-import { Button, ButtonGroup, Col, Row } from "react-bootstrap";
+import { Fill, Stroke, Style } from "ol/style";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ButtonGroup } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
-import DeleteButtonWithModal from "../../components/Button/DeleteButtonWithModal.tsx";
-import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import {
   IconCreate,
   IconEdit,
-  IconOldeb,
   IconTransformGeometrie,
 } from "../../components/Icon/Icon.tsx";
 import VoletButtonListeDocumentThematique from "../../components/ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 import { refreshLayerGeoserver } from "../../components/Map/MapUtils.tsx";
 import ToolbarButton from "../../components/Map/ToolbarButton.tsx";
-import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
-import Volet from "../../components/Volet/Volet.tsx";
 import { hasDroit } from "../../droits.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import THEMATIQUE from "../../enums/ThematiqueEnum.tsx";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
-import OldebUpdate from "./OldebUpdate.tsx";
 
 export const useToolbarOldebContext = ({
   map,
@@ -282,6 +276,7 @@ export const useToolbarOldebContext = ({
   return {
     tools,
     editOldebs,
+    setEditOldebs,
     closeEdit,
   };
 };
@@ -289,26 +284,49 @@ export const useToolbarOldebContext = ({
 const OldebMapToolbar = ({
   toggleTool: toggleToolCallback,
   activeTool,
-  editOldebs,
-  closeEdit,
+  selectedOldebId,
   dataOldebLayer,
-  map,
 }: {
-  toggleTool: (toolId: string) => void;
-  activeTool: string;
-  editOldebs: string | null;
-  closeEdit: () => void;
+  toggleTool: (toolName: string, active: boolean) => void;
+  activeTool: string | null;
+  selectedOldebId: string | null;
   dataOldebLayer: VectorLayer;
-  map: OLMap;
 }) => {
   const { user } = useAppContext();
-
-  const [oldebIdModifie, setOldebIdModifie] = useState(null);
-
-  let oldebsArray: { oldebId: string; properties: string }[] = [];
-  if (editOldebs) {
-    oldebsArray = JSON.parse(editOldebs);
-  }
+  // Style de surbrillance bleu
+  const blueHighlightStyle = new Style({
+    stroke: new Stroke({ color: "blue", width: 3 }),
+    fill: new Fill({ color: "rgba(0, 0, 255, 0.1)" }),
+  });
+  // Surbrillance sur la carte lors de la sélection
+  const lastHighlightedRef = useRef<any>(null);
+  useEffect(() => {
+    if (!dataOldebLayer) {
+      return;
+    }
+    const features = dataOldebLayer.getSource()?.getFeatures() || [];
+    // Enlève la surbrillance de l'ancien
+    if (lastHighlightedRef.current) {
+      lastHighlightedRef.current.setStyle(null);
+      lastHighlightedRef.current = null;
+    }
+    // Applique la surbrillance uniquement sur le nouveau
+    if (selectedOldebId) {
+      const feat = features.find(
+        (f) => f.getProperties().elementId === selectedOldebId,
+      );
+      if (feat) {
+        feat.setStyle(blueHighlightStyle);
+        lastHighlightedRef.current = feat;
+      }
+    }
+    return () => {
+      if (lastHighlightedRef.current) {
+        lastHighlightedRef.current.setStyle(null);
+        lastHighlightedRef.current = null;
+      }
+    };
+  }, [selectedOldebId, dataOldebLayer, blueHighlightStyle]);
 
   return (
     <ButtonGroup>
@@ -316,6 +334,7 @@ const OldebMapToolbar = ({
         codeThematique={THEMATIQUE.OLDEBS}
         titreVolet="Liste des documents liés aux OLDEB"
       />
+      {/* Boutons principaux */}
       {hasDroit(user, TYPE_DROIT.OLDEB_C) && (
         <ToolbarButton
           toolName={"create-oldeb"}
@@ -344,83 +363,6 @@ const OldebMapToolbar = ({
           activeTool={activeTool}
         />
       )}
-
-      <Volet
-        handleClose={() => closeEdit()}
-        show={oldebsArray.length > 0 && oldebIdModifie === null}
-        className="w-auto"
-      >
-        <PageTitle
-          icon={<IconOldeb />}
-          displayReturnButton={false}
-          title={"Modifier une OLDEB"}
-        />
-        {oldebsArray.map((oldebs) => (
-          <div key={oldebs.oldebId} className="card bg-secondary mb-3 rounded">
-            <div className="card-body">
-              <Row className="justify-content-center align-items-center">
-                <Col
-                  xs={8}
-                  className="card-text"
-                  dangerouslySetInnerHTML={{ __html: oldebs.properties }}
-                />
-                <Col
-                  xs={1}
-                  className="d-flex justify-content-center align-items-center"
-                >
-                  <TooltipCustom
-                    tooltipText={"Modifier cette OLDEB"}
-                    tooltipId={oldebs.oldebId}
-                  >
-                    <Button
-                      variant={"link"}
-                      className={"p-0 m-0 text-decoration-none text-info"}
-                      onClick={() => setOldebIdModifie(oldebs.oldebId)}
-                    >
-                      <IconEdit />
-                    </Button>
-                  </TooltipCustom>
-                </Col>
-                <Col className="d-flex justify-content-center align-items-center">
-                  <TooltipCustom
-                    tooltipText={"Supprimer cette OLDEB"}
-                    tooltipId={oldebs.oldebId}
-                  >
-                    <DeleteButtonWithModal
-                      path={`/api/oldeb/${oldebs.oldebId}`}
-                      disabled={!hasDroit(user, TYPE_DROIT.OLDEB_D)}
-                      title={false}
-                      variant="link"
-                      className="text-decoration-none text-danger"
-                      reload={() => {
-                        closeEdit();
-                        dataOldebLayer.getSource()?.refresh();
-                        refreshLayerGeoserver(map);
-                      }}
-                    />
-                  </TooltipCustom>
-                </Col>
-              </Row>
-            </div>
-          </div>
-        ))}
-      </Volet>
-
-      <Volet
-        handleClose={() => setOldebIdModifie(null)}
-        show={oldebIdModifie !== null}
-        className="w-auto"
-      >
-        <OldebUpdate
-          oldebIdCarte={oldebIdModifie}
-          onClose={() => {
-            closeEdit();
-            dataOldebLayer.getSource()?.refresh();
-            refreshLayerGeoserver(map);
-            setOldebIdModifie(null);
-          }}
-        />
-      </Volet>
     </ButtonGroup>
   );
 };
