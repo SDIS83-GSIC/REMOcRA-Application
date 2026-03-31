@@ -8,10 +8,11 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.auth.Public
 import remocra.db.LieuDitRepository
+import remocra.web.AbstractEndpoint
 
 @Path("/lieu-dit")
 @Produces(MediaType.APPLICATION_JSON)
-class LieuDitEndPoint {
+class LieuDitEndPoint : AbstractEndpoint() {
 
     @Inject
     lateinit var lieuDitRepository: LieuDitRepository

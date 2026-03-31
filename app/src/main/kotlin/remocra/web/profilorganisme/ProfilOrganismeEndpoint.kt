@@ -9,10 +9,11 @@ import jakarta.ws.rs.core.Response
 import remocra.auth.Public
 import remocra.db.ProfilOrganismeRepository
 import remocra.security.NoCsrf
+import remocra.web.AbstractEndpoint
 
 @Path("/profil-organisme")
 @Produces(MediaType.APPLICATION_JSON)
-class ProfilOrganismeEndPoint {
+class ProfilOrganismeEndpoint : AbstractEndpoint() {
     @Inject
     lateinit var profilOrganismeRepository: ProfilOrganismeRepository
 

@@ -6,7 +6,7 @@ import remocra.web.registerResources
 
 object AnomalieModule : Module {
     override fun configure(binder: Binder) {
-        binder.registerResources(AnomalieEndPoint::class)
+        binder.registerResources(AnomalieEndpoint::class)
         binder.registerResources(TriAnomalieEndpoint::class)
     }
 }

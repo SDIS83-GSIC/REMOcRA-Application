@@ -9,10 +9,11 @@ import jakarta.ws.rs.core.Response
 import remocra.app.DataCacheProvider
 import remocra.auth.Public
 import remocra.data.GlobalData
+import remocra.web.AbstractEndpoint
 
 @Path("/marque-pibi")
 @Produces(MediaType.APPLICATION_JSON)
-class MarquePibiEndPoint {
+class MarquePibiEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var dataCacheProvider: DataCacheProvider

@@ -22,7 +22,7 @@ import java.util.UUID
 
 @Path("/pena")
 @Produces(MediaType.APPLICATION_JSON)
-class PenaEndPoint : AbstractEndpoint() {
+class PenaEndpoint : AbstractEndpoint() {
 
     @Inject lateinit var aireAspirationRepository: AireAspirationRepository
 

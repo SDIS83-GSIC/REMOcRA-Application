@@ -45,7 +45,7 @@ import java.util.UUID
 
 @Path("/tournee")
 @Produces(MediaType.APPLICATION_JSON)
-class TourneeEndPoint : AbstractEndpoint() {
+class TourneeEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var tourneeRepository: TourneeRepository

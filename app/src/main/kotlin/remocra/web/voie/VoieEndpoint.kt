@@ -12,11 +12,12 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.Public
 import remocra.auth.userInfo
 import remocra.db.VoieRepository
+import remocra.web.AbstractEndpoint
 import java.util.UUID
 
 @Path("/voie")
 @Produces(MediaType.APPLICATION_JSON)
-class VoieEndPoint {
+class VoieEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var voieRepository: VoieRepository

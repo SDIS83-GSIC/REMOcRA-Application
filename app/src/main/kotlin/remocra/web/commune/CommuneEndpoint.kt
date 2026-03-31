@@ -16,11 +16,12 @@ import remocra.db.CommuneRepository
 import remocra.db.LieuDitRepository
 import remocra.db.VoieRepository
 import remocra.usecase.commune.CommuneUseCase
+import remocra.web.AbstractEndpoint
 import java.util.UUID
 
 @Path("/commune")
 @Produces(MediaType.APPLICATION_JSON)
-class CommuneEndPoint {
+class CommuneEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var communeUseCase: CommuneUseCase

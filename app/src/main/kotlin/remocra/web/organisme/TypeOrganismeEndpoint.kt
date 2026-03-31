@@ -9,10 +9,11 @@ import jakarta.ws.rs.core.Response
 import remocra.auth.Public
 import remocra.data.GlobalData
 import remocra.db.TypeOrganismeRepository
+import remocra.web.AbstractEndpoint
 
 @Path("/type-organisme")
 @Produces(MediaType.APPLICATION_JSON)
-class TypeOrganismeEndPoint {
+class TypeOrganismeEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var typeOrganismeRepository: TypeOrganismeRepository

@@ -8,10 +8,11 @@ import jakarta.ws.rs.core.Response
 import remocra.app.AppSettings
 import remocra.auth.Public
 import remocra.usecase.emprisenative.GetEmpriseNativeUseCase
+import remocra.web.AbstractEndpoint
 
 @Path("/app-settings")
 @Produces("application/json; charset=UTF-8")
-class AppSettingsEndPoint {
+class AppSettingsEndPoint : AbstractEndpoint() {
 
     @Inject lateinit var appSettings: AppSettings
 

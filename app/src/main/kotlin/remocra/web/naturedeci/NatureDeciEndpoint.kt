@@ -8,10 +8,11 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import remocra.auth.Public
 import remocra.usecase.naturedeci.NatureDeciUseCase
+import remocra.web.AbstractEndpoint
 
 @Path("/natureDeci")
 @Produces(MediaType.APPLICATION_JSON)
-class NatureDeciEndPoint {
+class NatureDeciEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var natureDeciUseCase: NatureDeciUseCase

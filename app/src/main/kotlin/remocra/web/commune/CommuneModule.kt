@@ -6,6 +6,6 @@ import remocra.web.registerResources
 
 object CommuneModule : Module {
     override fun configure(binder: Binder) {
-        binder.registerResources(CommuneEndPoint::class)
+        binder.registerResources(CommuneEndpoint::class)
     }
 }

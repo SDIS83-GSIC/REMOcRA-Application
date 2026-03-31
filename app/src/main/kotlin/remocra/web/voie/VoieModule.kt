@@ -6,6 +6,6 @@ import remocra.web.registerResources
 
 object VoieModule : Module {
     override fun configure(binder: Binder) {
-        binder.registerResources(VoieEndPoint::class)
+        binder.registerResources(VoieEndpoint::class)
     }
 }

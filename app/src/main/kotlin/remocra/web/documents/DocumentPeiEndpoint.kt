@@ -12,6 +12,7 @@ import jakarta.ws.rs.core.UriInfo
 import remocra.auth.RequireDroits
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.document.DocumentPeiUseCase
+import remocra.web.AbstractEndpoint
 import java.io.File
 import java.nio.file.Paths
 import java.util.UUID
@@ -19,7 +20,7 @@ import kotlin.io.path.pathString
 
 @Path("/documents/pei")
 @Produces(MediaType.APPLICATION_JSON)
-class DocumentPeiEndPoint {
+class DocumentPeiEndpoint : AbstractEndpoint() {
 
     @Inject lateinit var documentPeiUseCase: DocumentPeiUseCase
 

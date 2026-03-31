@@ -24,12 +24,13 @@ import remocra.security.NoCsrf
 import remocra.usecase.document.DocumentUtils
 import remocra.usecase.pei.InsertDocumentUseCase
 import remocra.utils.notFound
+import remocra.web.AbstractEndpoint
 import java.util.UUID
 import kotlin.io.path.Path
 
 @Path("/documents")
 @Produces(MediaType.APPLICATION_JSON)
-class DocumentEndPoint {
+class DocumentEndpoint : AbstractEndpoint() {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     @Inject lateinit var documentRepository: DocumentRepository

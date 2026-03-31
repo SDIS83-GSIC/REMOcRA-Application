@@ -1,8 +1,6 @@
 package remocra.usecase.rcci
 
 import jakarta.inject.Inject
-import jakarta.ws.rs.core.UriBuilder
-import remocra.auth.AuthnConstants
 import remocra.auth.WrappedUserInfo
 import remocra.data.DataCache
 import remocra.data.RcciDocument
@@ -13,9 +11,8 @@ import remocra.db.RcciRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
-import remocra.web.documents.DocumentEndPoint
+import remocra.web.documentTelechargerRessourceUrl
 import java.util.UUID
-import kotlin.reflect.jvm.javaMethod
 
 class SelectRcciUseCase @Inject constructor(
     private val rcciRepository: RcciRepository,
@@ -66,11 +63,7 @@ class SelectRcciUseCase @Inject constructor(
                     RcciDocument(
                         documentId = document.documentId,
                         documentNom = document.documentNomFichier,
-                        documentUrl = UriBuilder.fromPath(AuthnConstants.API_PATH)
-                            .path(DocumentEndPoint::class.java)
-                            .path(DocumentEndPoint::telechargerRessource.javaMethod)
-                            .build(document.documentId)
-                            .toString(),
+                        documentUrl = documentTelechargerRessourceUrl(document.documentId),
                     )
                 },
                 rcciVoieTexte = it.rcciVoieTexte,

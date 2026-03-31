@@ -49,7 +49,7 @@ import java.util.UUID
 
 @Path("/pei")
 @Produces(MediaType.APPLICATION_JSON)
-class PeiEndPoint : AbstractEndpoint() {
+class PeiEndpoint : AbstractEndpoint() {
 
     @Inject lateinit var peiUseCase: PeiUseCase
 

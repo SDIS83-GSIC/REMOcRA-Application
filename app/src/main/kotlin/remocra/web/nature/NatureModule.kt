@@ -6,6 +6,6 @@ import remocra.web.registerResources
 
 object NatureModule : Module {
     override fun configure(binder: Binder) {
-        binder.registerResources(NatureEndPoint::class)
+        binder.registerResources(NatureEndpoint::class)
     }
 }

@@ -2,18 +2,15 @@ package remocra.eventbus.notification
 
 import com.google.common.eventbus.Subscribe
 import jakarta.inject.Inject
-import jakarta.ws.rs.core.UriBuilder
 import org.apache.commons.mail2.core.EmailException
 import org.owasp.html.PolicyFactory
 import org.slf4j.LoggerFactory
-import remocra.auth.AuthnConstants
 import remocra.db.JobRepository
 import remocra.eventbus.EventListener
 import remocra.log.LogManagerFactory
 import remocra.mail.MailService
 import remocra.mail.MailSettings
-import remocra.web.documents.DocumentEndPoint
-import kotlin.reflect.jvm.javaMethod
+import remocra.web.documentTelechargerRessourceFrom
 
 class NotificationEventListener @Inject constructor(
     private val logManagerFactory: LogManagerFactory,
@@ -36,13 +33,10 @@ class NotificationEventListener @Inject constructor(
                     if (event.notificationData.documentId != null) {
                         event.notificationData.corps.replace(
                             "#[LIEN_TELECHARGEMENT]#",
-                            UriBuilder
-                                .fromUri(settings.urlSite)
-                                .path(AuthnConstants.API_PATH)
-                                .path(DocumentEndPoint::class.java)
-                                .path(DocumentEndPoint::telechargerRessource.javaMethod)
-                                .build(event.notificationData.documentId)
-                                .toString(),
+                            documentTelechargerRessourceFrom(
+                                urlSite = settings.urlSite,
+                                documentId = event.notificationData.documentId,
+                            ),
                         )
                     } else {
                         event.notificationData.corps

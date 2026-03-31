@@ -1,8 +1,6 @@
 package remocra.usecase.oldeb
 
 import jakarta.inject.Inject
-import jakarta.ws.rs.core.UriBuilder
-import remocra.auth.AuthnConstants
 import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.data.oldeb.OldebForm
@@ -16,9 +14,8 @@ import remocra.db.OldebRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
-import remocra.web.documents.DocumentEndPoint
+import remocra.web.documentTelechargerRessourceUrl
 import java.util.UUID
-import kotlin.reflect.jvm.javaMethod
 
 class SelectOldebUseCase @Inject constructor(
     private val oldebRepository: OldebRepository,
@@ -97,11 +94,7 @@ class SelectOldebUseCase @Inject constructor(
                     OldebVisiteDocument(
                         documentId = document.documentId,
                         documentNom = document.documentNomFichier,
-                        documentUrl = UriBuilder.fromPath(AuthnConstants.API_PATH)
-                            .path(DocumentEndPoint::class.java)
-                            .path(DocumentEndPoint::telechargerRessource.javaMethod)
-                            .build(document.documentId)
-                            .toString(),
+                        documentUrl = documentTelechargerRessourceUrl(document.documentId),
                     )
                 },
             )

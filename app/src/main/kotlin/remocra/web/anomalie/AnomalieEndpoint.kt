@@ -10,11 +10,12 @@ import jakarta.ws.rs.core.Response
 import remocra.auth.RequireDroits
 import remocra.db.AnomalieRepository
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.web.AbstractEndpoint
 import java.util.UUID
 
 @Path("/anomalie")
 @Produces(MediaType.APPLICATION_JSON)
-class AnomalieEndPoint {
+class AnomalieEndpoint : AbstractEndpoint() {
 
     @Inject lateinit var anomalieRepository: AnomalieRepository
 
