@@ -10,6 +10,7 @@ import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
+import jakarta.ws.rs.QueryParam
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
@@ -356,13 +357,12 @@ class SynchroEndpoint : AbstractEndpoint() {
     @GET
     @RequireDroits([Droit.MOBILE_DEPLACER_PEI_U])
     fun checkZoneCompetence(
-        @FormParam("lat") lat: Double,
-        @FormParam("lon") lon: Double,
+        @QueryParam("lat") lat: Double,
+        @QueryParam("lon") lon: Double,
 
-    ): Response =
-        checkZoneCompetenceUseCase.execute(
-            lon = lon,
-            lat = lat,
-            userInfo = securityContext.userInfo,
-        ).wrap()
+    ): Response = checkZoneCompetenceUseCase.execute(
+        lon = lon,
+        lat = lat,
+        userInfo = securityContext.userInfo,
+    ).wrap()
 }
