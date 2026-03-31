@@ -7,13 +7,12 @@ import remocra.db.CourrierRepository
 import remocra.db.ModuleRepository
 import java.util.UUID
 
-class CourrierUsecase {
-
-    @Inject
-    lateinit var courrierRepository: CourrierRepository
-
-    @Inject
-    lateinit var moduleRepository: ModuleRepository
+class CourrierUsecase
+@Inject
+constructor(
+    private val courrierRepository: CourrierRepository,
+    private val moduleRepository: ModuleRepository,
+) {
 
     fun getCourrierCompletWithThematique(
         moduleId: UUID,

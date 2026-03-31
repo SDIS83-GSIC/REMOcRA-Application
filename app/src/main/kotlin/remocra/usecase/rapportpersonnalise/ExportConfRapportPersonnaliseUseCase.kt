@@ -12,13 +12,13 @@ import java.util.UUID
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-class ExportConfRapportPersonnaliseUseCase : AbstractUseCase() {
-
-    @Inject
-    private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
-
-    @Inject
-    private lateinit var csvWriter: CsvWriter
+class ExportConfRapportPersonnaliseUseCase
+@Inject
+constructor(
+    private val rapportPersonnaliseRepository: RapportPersonnaliseRepository,
+    private val csvWriter: CsvWriter,
+) :
+    AbstractUseCase() {
 
     companion object {
         const val NOM_FICHIER_RAPPORT_PERSO = "remocra-rapport-personnalise.csv"

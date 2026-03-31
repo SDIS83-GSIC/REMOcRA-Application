@@ -20,16 +20,16 @@ import remocra.keycloak.representations.UserRepresentation
 import remocra.usecase.AbstractCUDUseCase
 import java.util.UUID
 
-class CreateUtilisateurUseCase : AbstractCUDUseCase<UtilisateurImportData>(TypeOperation.INSERT) {
-    @Inject lateinit var keycloakToken: KeycloakToken
-
-    @Inject lateinit var keycloakClient: AuthModule.KeycloakClient
-
-    @Inject lateinit var keycloakApi: KeycloakApi
-
-    @Inject lateinit var utilisateurRepository: UtilisateurRepository
-
-    @Inject lateinit var organismeRepository: OrganismeRepository
+class CreateUtilisateurUseCase
+@Inject
+constructor(
+    private val keycloakToken: KeycloakToken,
+    private val keycloakClient: AuthModule.KeycloakClient,
+    private val keycloakApi: KeycloakApi,
+    private val utilisateurRepository: UtilisateurRepository,
+    private val organismeRepository: OrganismeRepository,
+) :
+    AbstractCUDUseCase<UtilisateurImportData>(TypeOperation.INSERT) {
 
     private val logger = LoggerFactory.getLogger(CreateUtilisateurUseCase::class.java)
 

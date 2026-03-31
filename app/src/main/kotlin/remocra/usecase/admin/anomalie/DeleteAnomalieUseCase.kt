@@ -14,10 +14,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class DeleteAnomalieUseCase : AbstractCUDUseCase<Anomalie>(TypeOperation.DELETE) {
-
-    @Inject
-    lateinit var anomalieRepository: AnomalieRepository
+class DeleteAnomalieUseCase
+@Inject
+constructor(
+    private val anomalieRepository: AnomalieRepository,
+) :
+    AbstractCUDUseCase<Anomalie>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_ANOMALIES)) {

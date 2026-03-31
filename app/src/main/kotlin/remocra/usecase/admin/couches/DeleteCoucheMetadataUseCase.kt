@@ -12,9 +12,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class DeleteCoucheMetadataUseCase : AbstractCUDUseCase<CoucheMetadata>(TypeOperation.DELETE) {
-
-    @Inject lateinit var coucheMetadataRepository: CoucheMetadataRepository
+class DeleteCoucheMetadataUseCase
+@Inject
+constructor(
+    private val coucheMetadataRepository: CoucheMetadataRepository,
+) :
+    AbstractCUDUseCase<CoucheMetadata>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.CARTO_METADATA_A)) {

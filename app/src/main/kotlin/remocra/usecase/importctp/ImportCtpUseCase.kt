@@ -47,7 +47,22 @@ import java.time.ZonedDateTime
 import java.util.Locale
 import java.util.UUID
 
-class ImportCtpUseCase : AbstractUseCase() {
+class ImportCtpUseCase
+@Inject
+constructor(
+    private val appSettings: AppSettings,
+    private val dataCacheProvider: DataCacheProvider,
+    private val parametresProvider: ParametresProvider,
+    private val peiRepository: PeiRepository,
+    private val visiteRepository: VisiteRepository,
+    private val anomalieRepository: AnomalieRepository,
+    private val updatePeiUseCase: UpdatePeiUseCase,
+    private val movePeiUseCase: MovePeiUseCase,
+    private val createVisiteUseCase: CreateVisiteUseCase,
+    private val transactionManager: TransactionManager,
+    private val checkZoneCompetenceContainsUseCase: CheckZoneCompetenceContainsUseCase,
+) :
+    AbstractUseCase() {
 
     companion object {
         // Constantes correspondant à la structure du fichier d'entrée
@@ -70,39 +85,6 @@ class ImportCtpUseCase : AbstractUseCase() {
 
         private const val ANOMALIES_SEPARATEUR = "-"
     }
-
-    @Inject
-    lateinit var appSettings: AppSettings
-
-    @Inject
-    lateinit var dataCacheProvider: DataCacheProvider
-
-    @Inject
-    lateinit var parametresProvider: ParametresProvider
-
-    @Inject
-    lateinit var peiRepository: PeiRepository
-
-    @Inject
-    lateinit var visiteRepository: VisiteRepository
-
-    @Inject
-    lateinit var anomalieRepository: AnomalieRepository
-
-    @Inject
-    lateinit var updatePeiUseCase: UpdatePeiUseCase
-
-    @Inject
-    lateinit var movePeiUseCase: MovePeiUseCase
-
-    @Inject
-    lateinit var createVisiteUseCase: CreateVisiteUseCase
-
-    @Inject
-    lateinit var transactionManager: TransactionManager
-
-    @Inject
-    lateinit var checkZoneCompetenceContainsUseCase: CheckZoneCompetenceContainsUseCase
 
     /**
      * Crée un noeud d'erreur global

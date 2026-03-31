@@ -32,34 +32,20 @@ import remocra.utils.DisponibiliteDecorator
 import remocra.utils.getLibelleTypeVisite
 import java.util.UUID
 
-class BuildReferentielUseCase : AbstractUseCase() {
-
-    @Inject
-    lateinit var dataCacheProvider: DataCacheProvider
-
-    @Inject
-    lateinit var referentielRepository: ReferentielRepository
-
-    @Inject
-    lateinit var gestionnaireRepository: GestionnaireRepository
-
-    @Inject
-    lateinit var fonctionContactRepository: FonctionContactRepository
-
-    @Inject
-    lateinit var roleRepository: RoleRepository
-
-    @Inject
-    lateinit var parametresProvider: ParametresProvider
-
-    @Inject
-    lateinit var decorateListPeiForApi: DecorateListPeiForApi
-
-    @Inject
-    lateinit var peiCaracteristiquesUseCase: PeiCaracteristiquesUseCase
-
-    @Inject
-    lateinit var dispoDecorator: DisponibiliteDecorator
+class BuildReferentielUseCase
+@Inject
+constructor(
+    private val dataCacheProvider: DataCacheProvider,
+    private val referentielRepository: ReferentielRepository,
+    private val gestionnaireRepository: GestionnaireRepository,
+    private val fonctionContactRepository: FonctionContactRepository,
+    private val roleRepository: RoleRepository,
+    private val parametresProvider: ParametresProvider,
+    private val decorateListPeiForApi: DecorateListPeiForApi,
+    private val peiCaracteristiquesUseCase: PeiCaracteristiquesUseCase,
+    private val dispoDecorator: DisponibiliteDecorator,
+) :
+    AbstractUseCase() {
 
     fun execute(userInfo: WrappedUserInfo): ReferentielResponse {
         val nomPrenom = userInfo.nom + " " + userInfo.prenom

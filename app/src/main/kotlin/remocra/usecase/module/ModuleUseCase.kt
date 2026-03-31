@@ -9,10 +9,13 @@ import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class ModuleUseCase : AbstractUseCase() {
-    @Inject lateinit var moduleRepository: ModuleRepository
-
-    @Inject lateinit var moduleDocumentCourrierUseCase: ModuleDocumentCourrierUseCase
+class ModuleUseCase
+@Inject
+constructor(
+    private val moduleRepository: ModuleRepository,
+    private val moduleDocumentCourrierUseCase: ModuleDocumentCourrierUseCase,
+) :
+    AbstractUseCase() {
 
     fun execute(uriInfo: UriBuilder, userInfo: WrappedUserInfo): List<ModuleWithImageLink> {
         val listeModule = moduleRepository.getModules()

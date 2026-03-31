@@ -19,13 +19,14 @@ import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
 import kotlin.io.path.Path
 
-class UpdateDocumentHabilitableUseCase : AbstractCUDUseCase<DocumentHabilitableData>(TypeOperation.UPDATE) {
-
-    @Inject lateinit var documentRepository: DocumentRepository
-
-    @Inject lateinit var documentHabilitableRepository: DocumentHabilitableRepository
-
-    @Inject lateinit var documentUtils: DocumentUtils
+class UpdateDocumentHabilitableUseCase
+@Inject
+constructor(
+    private val documentRepository: DocumentRepository,
+    private val documentHabilitableRepository: DocumentHabilitableRepository,
+    private val documentUtils: DocumentUtils,
+) :
+    AbstractCUDUseCase<DocumentHabilitableData>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.DOCUMENTS_A)) {

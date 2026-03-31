@@ -16,16 +16,14 @@ import java.util.UUID
  * UseCase permettant de gérer la récupération dynamique des caractéristiques des PEI, et leur
  * transformation en vue d'être affichées par l'appli mobile
  */
-class PeiCaracteristiquesUseCase : AbstractUseCase() {
-    @Inject
-    lateinit var referentielRepository: ReferentielRepository
-
-    @Inject
-    lateinit var parametresProvider: ParametresProvider
-
-    @Inject
-    lateinit var objectMapper: ObjectMapper
-
+class PeiCaracteristiquesUseCase
+@Inject
+constructor(
+    private val referentielRepository: ReferentielRepository,
+    private val parametresProvider: ParametresProvider,
+    private val objectMapper: ObjectMapper,
+) :
+    AbstractUseCase() {
     fun getPeiCaracteristiquesMobile() =
         getPeiCaracteristiques(
             parametresProvider.getParametreString(ParametreEnum.CARACTERISTIQUE_PIBI.name),

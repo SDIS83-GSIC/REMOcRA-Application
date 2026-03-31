@@ -12,9 +12,12 @@ import remocra.utils.DateUtils
 import java.util.UUID
 import kotlin.text.isNullOrBlank
 
-class BuildFicheResumeUseCase : AbstractUseCase() {
-    @Inject
-    private lateinit var ficheResumeRepository: FicheResumeRepository
+class BuildFicheResumeUseCase
+@Inject
+constructor(
+    private val ficheResumeRepository: FicheResumeRepository,
+) :
+    AbstractUseCase() {
 
     fun execute(peiId: UUID): MutableList<ResumeElement> {
         // On remonte tous les éléments qui devront apparaître dans la fiche ordonner par colonnes / lignes

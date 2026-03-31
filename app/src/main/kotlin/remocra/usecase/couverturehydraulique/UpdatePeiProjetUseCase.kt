@@ -14,8 +14,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
 
-class UpdatePeiProjetUseCase : AbstractCUDGeometrieUseCase<PeiProjetData>(TypeOperation.UPDATE) {
-    @Inject lateinit var couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository
+class UpdatePeiProjetUseCase
+@Inject
+constructor(
+    private val couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository,
+) :
+    AbstractCUDGeometrieUseCase<PeiProjetData>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ETUDE_U)) {

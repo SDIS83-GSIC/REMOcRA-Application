@@ -17,10 +17,12 @@ import remocra.usecase.document.AbstractUpsertDocumentUseCase
 import java.nio.file.Path
 import java.util.UUID
 
-class AddSignalementDocumentUseCase : AbstractUpsertDocumentUseCase<DocumentsData.DocumentsEvenement>() {
-
-    @Inject
-    lateinit var signalementRepository: SignalementRepository
+class AddSignalementDocumentUseCase
+@Inject
+constructor(
+    private val signalementRepository: SignalementRepository,
+) :
+    AbstractUpsertDocumentUseCase<DocumentsData.DocumentsEvenement>() {
 
     override fun insertLDocument(documentId: UUID, element: DocumentsData.DocumentsEvenement, newDoc: AbstractDocumentData, mainTransactionManager: TransactionManager?) {
         (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {

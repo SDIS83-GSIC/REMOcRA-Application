@@ -16,15 +16,15 @@ import remocra.db.jooq.remocra.enums.TypeTask
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
-class SynchronisationSIGTask : SchedulableTask<SynchronisationSIGTaskParameter, SchedulableTaskResults>() {
-
-    @Inject lateinit var communeRepository: CommuneRepository
-
-    @Inject lateinit var voieRepository: VoieRepository
-
-    @Inject lateinit var entrepotSigRepository: EntrepotSigRepository
-
-    @Inject lateinit var sigRepository: SigRepository
+class SynchronisationSIGTask
+@Inject
+constructor(
+    private val communeRepository: CommuneRepository,
+    private val voieRepository: VoieRepository,
+    private val entrepotSigRepository: EntrepotSigRepository,
+    private val sigRepository: SigRepository,
+) :
+    SchedulableTask<SynchronisationSIGTaskParameter, SchedulableTaskResults>() {
 
     override fun execute(parameters: SynchronisationSIGTaskParameter?, userInfo: WrappedUserInfo): SchedulableTaskResults? {
         // La vérification des paramètres a déja été faite par checkParameters, pour éviter de spécifier !! a chaque appel, on duplique le dit paramètre

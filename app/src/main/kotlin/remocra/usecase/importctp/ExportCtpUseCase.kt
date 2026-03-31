@@ -16,13 +16,14 @@ import java.io.FileNotFoundException
 import java.util.UUID
 import kotlin.io.path.inputStream
 
-class ExportCtpUseCase : AbstractUseCase() {
-
-    @Inject lateinit var peiRepository: PeiRepository
-
-    @Inject lateinit var anomalieRepository: AnomalieRepository
-
-    @Inject lateinit var parametresProvider: ParametresProvider
+class ExportCtpUseCase
+@Inject
+constructor(
+    private val peiRepository: PeiRepository,
+    private val anomalieRepository: AnomalieRepository,
+    private val parametresProvider: ParametresProvider,
+) :
+    AbstractUseCase() {
 
     companion object {
         private const val ONGLET_SAISIE_INDEX = 1

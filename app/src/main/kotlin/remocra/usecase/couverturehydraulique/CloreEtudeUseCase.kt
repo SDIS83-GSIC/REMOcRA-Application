@@ -13,10 +13,12 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import java.util.UUID
 
-class CloreEtudeUseCase : AbstractCUDUseCase<UUID>(TypeOperation.UPDATE) {
-
-    @Inject
-    lateinit var couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository
+class CloreEtudeUseCase
+@Inject
+constructor(
+    private val couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository,
+) :
+    AbstractCUDUseCase<UUID>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ETUDE_U)) {

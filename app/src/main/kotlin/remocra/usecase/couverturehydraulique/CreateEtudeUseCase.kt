@@ -13,11 +13,13 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.UpsertDocumentEtudeUseCase
 
-class CreateEtudeUseCase : AbstractCUDUseCase<EtudeData>(TypeOperation.INSERT) {
-
-    @Inject lateinit var couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository
-
-    @Inject lateinit var upsertDocumentEtudeUseCase: UpsertDocumentEtudeUseCase
+class CreateEtudeUseCase
+@Inject
+constructor(
+    private val couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository,
+    private val upsertDocumentEtudeUseCase: UpsertDocumentEtudeUseCase,
+) :
+    AbstractCUDUseCase<EtudeData>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ETUDE_C)) {

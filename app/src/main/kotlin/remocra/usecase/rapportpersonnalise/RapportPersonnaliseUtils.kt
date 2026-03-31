@@ -12,15 +12,13 @@ import remocra.utils.parseParam
 /**
  * Utilitaires pour les rapports personnalisés
  */
-class RapportPersonnaliseUtils {
-
-    @Inject
-    private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
-
-    @Inject
-    lateinit var requestUtils: RequestUtils
-
-    @Inject lateinit var appSettings: AppSettings
+class RapportPersonnaliseUtils
+@Inject
+constructor(
+    private val rapportPersonnaliseRepository: RapportPersonnaliseRepository,
+    private val requestUtils: RequestUtils,
+    private val appSettings: AppSettings,
+) {
 
     /**
      *  Construit les données du rapport personnalisé en fonction des paramètres fournis

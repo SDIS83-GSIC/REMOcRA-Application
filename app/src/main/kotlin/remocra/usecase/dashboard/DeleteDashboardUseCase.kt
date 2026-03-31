@@ -12,10 +12,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class DeleteDashboardUseCase : AbstractCUDUseCase<DashboardConfigData>(TypeOperation.DELETE) {
-
-    @Inject
-    lateinit var dashboardRepository: DashboardRepository
+class DeleteDashboardUseCase
+@Inject
+constructor(
+    private val dashboardRepository: DashboardRepository,
+) :
+    AbstractCUDUseCase<DashboardConfigData>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.DASHBOARD_A)) {

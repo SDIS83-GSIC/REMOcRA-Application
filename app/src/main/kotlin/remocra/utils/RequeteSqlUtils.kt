@@ -13,19 +13,14 @@ import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import remocra.exception.RemocraResponseException
 import java.util.UUID
 
-class RequeteSqlUtils {
-
-    @Inject
-    private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
-
-    @Inject
-    private lateinit var dateUtils: DateUtils
-
-    @Inject
-    private lateinit var requestUtils: RequestUtils
-
-    @Inject
-    private lateinit var appSettings: AppSettings
+class RequeteSqlUtils
+@Inject
+constructor(
+    private val rapportPersonnaliseRepository: RapportPersonnaliseRepository,
+    private val dateUtils: DateUtils,
+    private val requestUtils: RequestUtils,
+    private val appSettings: AppSettings,
+) {
 
     private fun testParametreRequeteSql(userInfo: WrappedUserInfo, parametreRequete: RapportCourrierParametreData): List<IdLibelleRapportPersonnalise> {
         try {

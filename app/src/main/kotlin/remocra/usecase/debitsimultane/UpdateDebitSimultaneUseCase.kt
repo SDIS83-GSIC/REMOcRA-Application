@@ -28,22 +28,16 @@ import java.util.UUID
 import kotlin.io.path.Path
 import kotlin.io.path.pathString
 
-class UpdateDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeOperation.UPDATE) {
-
-    @Inject
-    private lateinit var debitSimultaneRepository: DebitSimultaneRepository
-
-    @Inject
-    private lateinit var documentRepository: DocumentRepository
-
-    @Inject
-    private lateinit var peiRepository: PeiRepository
-
-    @Inject
-    private lateinit var appSettings: AppSettings
-
-    @Inject
-    private lateinit var documentUtils: DocumentUtils
+class UpdateDebitSimultaneUseCase
+@Inject
+constructor(
+    private val debitSimultaneRepository: DebitSimultaneRepository,
+    private val documentRepository: DocumentRepository,
+    private val peiRepository: PeiRepository,
+    private val appSettings: AppSettings,
+    private val documentUtils: DocumentUtils,
+) :
+    AbstractCUDUseCase<DebitSimultaneData>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.DEBITS_SIMULTANES_A)) {

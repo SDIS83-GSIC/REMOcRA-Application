@@ -7,9 +7,12 @@ import remocra.db.jooq.remocra.tables.pojos.Organisme
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class OrganismeUseCase : AbstractUseCase() {
-    @Inject
-    lateinit var organismeRepository: OrganismeRepository
+class OrganismeUseCase
+@Inject
+constructor(
+    private val organismeRepository: OrganismeRepository,
+) :
+    AbstractUseCase() {
 
     fun getOrganismeForSelect(): List<IdCodeLibelleData> = organismeRepository.getOrganismeForSelect()
     fun getOrganismeFilterWithPeiForSelect(listePei: Set<UUID>): List<IdCodeLibelleData> = organismeRepository.getOrganismeFilterWithPeiForSelect(listePei)

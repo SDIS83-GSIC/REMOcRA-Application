@@ -11,13 +11,13 @@ import java.io.ByteArrayOutputStream
 /**
  * Permet d'exporter les données de la requêtes en csv
  */
-class ExportDataRapportPersonnaliseUseCase : AbstractUseCase() {
-
-    @Inject
-    private lateinit var rapportPersonnaliseUtils: RapportPersonnaliseUtils
-
-    @Inject
-    private lateinit var csvWriter: CsvWriter
+class ExportDataRapportPersonnaliseUseCase
+@Inject
+constructor(
+    private val rapportPersonnaliseUtils: RapportPersonnaliseUtils,
+    private val csvWriter: CsvWriter,
+) :
+    AbstractUseCase() {
 
     fun execute(userInfo: WrappedUserInfo, genererRapportPersonnaliseData: GenererRapportPersonnaliseData): ByteArrayOutputStream {
         val result = rapportPersonnaliseUtils.buildRapportPersonnaliseData(genererRapportPersonnaliseData, userInfo)

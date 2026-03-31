@@ -17,13 +17,14 @@ import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
 import java.util.UUID
 
-class CreateScreenCriseUseCase : AbstractCUDUseCase<CreateDoc>(TypeOperation.INSERT) {
-
-    @Inject private lateinit var documentUtils: DocumentUtils
-
-    @Inject private lateinit var documentRepository: DocumentRepository
-
-    @Inject private lateinit var criseRepository: CriseRepository
+class CreateScreenCriseUseCase
+@Inject
+constructor(
+    private val documentUtils: DocumentUtils,
+    private val documentRepository: DocumentRepository,
+    private val criseRepository: CriseRepository,
+) :
+    AbstractCUDUseCase<CreateDoc>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.CRISE_C)) {

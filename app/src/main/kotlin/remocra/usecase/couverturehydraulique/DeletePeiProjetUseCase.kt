@@ -12,9 +12,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class DeletePeiProjetUseCase : AbstractCUDUseCase<PeiProjetData>(TypeOperation.DELETE) {
-    @Inject
-    lateinit var couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository
+class DeletePeiProjetUseCase
+@Inject
+constructor(
+    private val couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository,
+) :
+    AbstractCUDUseCase<PeiProjetData>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ETUDE_U)) {

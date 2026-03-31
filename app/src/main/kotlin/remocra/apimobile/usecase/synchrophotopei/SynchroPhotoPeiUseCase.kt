@@ -14,13 +14,13 @@ import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
 import kotlin.io.path.absolutePathString
 
-class SynchroPhotoPeiUseCase : AbstractCUDUseCase<PhotoPeiForApiMobileData>(TypeOperation.INSERT) {
-
-    @Inject
-    private lateinit var incomingRepository: IncomingRepository
-
-    @Inject
-    private lateinit var documentUtils: DocumentUtils
+class SynchroPhotoPeiUseCase
+@Inject
+constructor(
+    private val incomingRepository: IncomingRepository,
+    private val documentUtils: DocumentUtils,
+) :
+    AbstractCUDUseCase<PhotoPeiForApiMobileData>(TypeOperation.INSERT) {
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(SynchroPhotoPeiUseCase::class.java)

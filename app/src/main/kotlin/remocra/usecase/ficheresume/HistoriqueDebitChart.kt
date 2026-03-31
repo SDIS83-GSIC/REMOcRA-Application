@@ -11,16 +11,14 @@ import remocra.usecase.AbstractUseCase
 import java.math.BigDecimal
 import java.util.UUID
 
-class HistoriqueDebitChart : AbstractUseCase() {
-
-    @Inject
-    lateinit var pibiRepository: PibiRepository
-
-    @Inject
-    lateinit var parametresProvider: ParametresProvider
-
-    @Inject
-    lateinit var objectMapper: ObjectMapper
+class HistoriqueDebitChart
+@Inject
+constructor(
+    private val pibiRepository: PibiRepository,
+    private val parametresProvider: ParametresProvider,
+    private val objectMapper: ObjectMapper,
+) :
+    AbstractUseCase() {
 
     fun execute(pibiId: UUID): DebitPressionChartWithMoyenne? {
         val nombreHistorique = parametresProvider.getParametreInt(ParametreEnum.PEI_NOMBRE_HISTORIQUE.name)

@@ -9,13 +9,13 @@ import remocra.db.DebitSimultaneRepository
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class GetDebitSimultaneCompletUseCase : AbstractUseCase() {
-
-    @Inject
-    private lateinit var debitSimultaneRepository: DebitSimultaneRepository
-
-    @Inject
-    private lateinit var parametresProvider: ParametresProvider
+class GetDebitSimultaneCompletUseCase
+@Inject
+constructor(
+    private val debitSimultaneRepository: DebitSimultaneRepository,
+    private val parametresProvider: ParametresProvider,
+) :
+    AbstractUseCase() {
 
     fun execute(userInfo: WrappedUserInfo, debitSimultaneId: UUID): DebitSimultaneComplet {
         val debitSimultaneInfo = debitSimultaneRepository.getDebitSimultane(debitSimultaneId, userInfo.isSuperAdmin, userInfo.zoneCompetence?.zoneIntegrationId)

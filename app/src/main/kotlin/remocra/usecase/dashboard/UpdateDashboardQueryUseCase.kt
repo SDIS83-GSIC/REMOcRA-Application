@@ -15,13 +15,13 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.utils.RequestUtils
 
-class UpdateDashboardQueryUseCase : AbstractCUDUseCase<DashboardQueryData>(TypeOperation.UPDATE) {
-
-    @Inject
-    lateinit var dashboardRepository: DashboardRepository
-
-    @Inject
-    lateinit var requestUtils: RequestUtils
+class UpdateDashboardQueryUseCase
+@Inject
+constructor(
+    private val dashboardRepository: DashboardRepository,
+    private val requestUtils: RequestUtils,
+) :
+    AbstractCUDUseCase<DashboardQueryData>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.DASHBOARD_A)) {

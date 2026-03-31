@@ -17,9 +17,12 @@ import remocra.usecase.document.AbstractUpsertDocumentUseCase
 import java.nio.file.Path
 import java.util.UUID
 
-class UpsertDocumentPermisUseCase : AbstractUpsertDocumentUseCase<DocumentsData.DocumentsPermis>() {
-
-    @Inject lateinit var permisRepository: PermisRepository
+class UpsertDocumentPermisUseCase
+@Inject
+constructor(
+    private val permisRepository: PermisRepository,
+) :
+    AbstractUpsertDocumentUseCase<DocumentsData.DocumentsPermis>() {
 
     override fun insertLDocument(
         documentId: UUID,

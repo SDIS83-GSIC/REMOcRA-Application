@@ -14,16 +14,14 @@ import kotlin.coroutines.EmptyCoroutineContext
  * Classe de base des tâches, correspondant à la définition d'un travail à effectuer sous forme de
  * [Job]
  */
-class ApacheHopTask : CoroutineScope {
-    @Inject
-    private lateinit var taskRepository: TaskRepository
-
-    @Inject
-    private lateinit var objectMapper: ObjectMapper
-
-    @Inject
-    private lateinit var apacheHopApi: ApacheHopApi
-
+class ApacheHopTask
+@Inject
+constructor(
+    private val taskRepository: TaskRepository,
+    private val objectMapper: ObjectMapper,
+    private val apacheHopApi: ApacheHopApi,
+) :
+    CoroutineScope {
     var schedulableTask: Job? = null
 
     fun getTaskApacheHop() = taskRepository.getTaskApacheHop()

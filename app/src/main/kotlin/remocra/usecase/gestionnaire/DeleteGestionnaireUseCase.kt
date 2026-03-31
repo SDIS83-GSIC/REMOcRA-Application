@@ -12,9 +12,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class DeleteGestionnaireUseCase : AbstractCUDUseCase<Gestionnaire>(TypeOperation.DELETE) {
-
-    @Inject lateinit var gestionnaireRepository: GestionnaireRepository
+class DeleteGestionnaireUseCase
+@Inject
+constructor(
+    private val gestionnaireRepository: GestionnaireRepository,
+) :
+    AbstractCUDUseCase<Gestionnaire>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.GEST_SITE_A)) {

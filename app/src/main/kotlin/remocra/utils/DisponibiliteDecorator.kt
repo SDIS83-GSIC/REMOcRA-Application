@@ -11,10 +11,11 @@ import remocra.db.jooq.remocra.enums.Disponibilite
  * @param parametresProvider le provider des paramètres applicatifs
  *
  */
-class DisponibiliteDecorator {
-
-    @Inject
-    lateinit var parametresProvider: ParametresProvider
+class DisponibiliteDecorator
+@Inject
+constructor(
+    private val parametresProvider: ParametresProvider,
+) {
 
     fun decorateDisponibilite(disponibilite: Disponibilite): String {
         val libelleNonConforme = parametresProvider.getParametreString(ParametreEnum.PEI_LIBELLE_NON_CONFORME.name)?.takeUnless { it.isBlank() } ?: "Non conforme"

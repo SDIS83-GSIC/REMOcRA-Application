@@ -16,12 +16,13 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class UpdateEvenementSousCategorieUseCase :
+class UpdateEvenementSousCategorieUseCase
+@Inject
+constructor(
+    private val evenementSousCategorieRepository: EvenementSousCategorieRepository,
+    private val evenementRepository: EvenementRepository,
+) :
     AbstractCUDUseCase<EvenementSousCategorieWithComplementData>(TypeOperation.UPDATE) {
-
-    @Inject private lateinit var evenementSousCategorieRepository: EvenementSousCategorieRepository
-
-    @Inject private lateinit var evenementRepository: EvenementRepository
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_NOMENCLATURE)) {

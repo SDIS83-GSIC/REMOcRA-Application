@@ -12,9 +12,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class DeleteSiteUseCase : AbstractCUDUseCase<SiteData>(TypeOperation.DELETE) {
-
-    @Inject lateinit var siteRepository: SiteRepository
+class DeleteSiteUseCase
+@Inject
+constructor(
+    private val siteRepository: SiteRepository,
+) :
+    AbstractCUDUseCase<SiteData>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.GEST_SITE_A)) {

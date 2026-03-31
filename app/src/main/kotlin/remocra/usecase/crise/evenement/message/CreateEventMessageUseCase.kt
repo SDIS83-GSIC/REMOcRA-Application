@@ -12,10 +12,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class CreateEventMessageUseCase : AbstractCUDUseCase<MessageData>(TypeOperation.INSERT) {
-
-    @Inject
-    lateinit var messageRepository: MessageRepository
+class CreateEventMessageUseCase
+@Inject
+constructor(
+    private val messageRepository: MessageRepository,
+) :
+    AbstractCUDUseCase<MessageData>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.CRISE_C)) {

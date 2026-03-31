@@ -71,21 +71,16 @@ const val NATURE_PUISARD = "PU"
  * Ce useCase est stateless, et doit être utilisé par les services d'enregistrement d'un PEI au sein d'une transaction (sinon le nextNuméro peut être faussé !)
  *
  */
-class NumerotationUseCase : AbstractUseCase() {
-    @Inject
-    private lateinit var appSettings: AppSettings
-
-    @Inject
-    private lateinit var numerotationRepository: NumerotationRepository
-
-    @Inject
-    private lateinit var communeRepository: CommuneRepository
-
-    @Inject
-    private lateinit var zoneIntegrationRepository: ZoneIntegrationRepository
-
-    @Inject
-    private lateinit var gestionnaireRepository: GestionnaireRepository
+class NumerotationUseCase
+@Inject
+constructor(
+    private val appSettings: AppSettings,
+    private val numerotationRepository: NumerotationRepository,
+    private val communeRepository: CommuneRepository,
+    private val zoneIntegrationRepository: ZoneIntegrationRepository,
+    private val gestionnaireRepository: GestionnaireRepository,
+) :
+    AbstractUseCase() {
 
     /**
      * Point d'entrée pour calculer le numéro complet d'un PEI.

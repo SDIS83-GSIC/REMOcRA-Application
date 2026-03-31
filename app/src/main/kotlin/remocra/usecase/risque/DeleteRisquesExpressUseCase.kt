@@ -15,10 +15,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class DeleteRisquesExpressUseCase() : AbstractCUDUseCase<Collection<RisqueExpress>>(TypeOperation.DELETE) {
-
-    @Inject
-    lateinit var risqueExpressRepository: RisqueExpressRepository
+class DeleteRisquesExpressUseCase
+@Inject
+constructor(
+    private val risqueExpressRepository: RisqueExpressRepository,
+) :
+    AbstractCUDUseCase<Collection<RisqueExpress>>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.RISQUE_EXPRESS_A)) {

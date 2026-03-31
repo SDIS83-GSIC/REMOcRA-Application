@@ -17,13 +17,13 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import java.util.UUID
 
-class SynchroNewPeiUseCase : AbstractCUDUseCase<NewPeiForMobileApiData>(TypeOperation.INSERT) {
-
-    @Inject
-    private lateinit var incomingRepository: IncomingRepository
-
-    @Inject
-    private lateinit var appSettings: AppSettings
+class SynchroNewPeiUseCase
+@Inject
+constructor(
+    private val incomingRepository: IncomingRepository,
+    private val appSettings: AppSettings,
+) :
+    AbstractCUDUseCase<NewPeiForMobileApiData>(TypeOperation.INSERT) {
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(SynchroNewPeiUseCase::class.java)

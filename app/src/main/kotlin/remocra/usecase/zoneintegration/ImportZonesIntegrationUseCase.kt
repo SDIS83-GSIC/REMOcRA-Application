@@ -26,25 +26,17 @@ import java.io.InputStream
 import java.nio.file.Path
 import java.util.UUID
 
-class ImportZonesIntegrationUseCase : AbstractUseCase() {
-
-    @Inject
-    lateinit var documentUtils: DocumentUtils
-
-    @Inject
-    lateinit var importShapeUtils: ImportShapeUtils
-
-    @Inject
-    lateinit var zoneIntegrationRepository: ZoneIntegrationRepository
-
-    @Inject
-    lateinit var dataCacheProvider: DataCacheProvider
-
-    @Inject
-    lateinit var eventBus: EventBus
-
-    @Inject
-    lateinit var appSettings: AppSettings
+class ImportZonesIntegrationUseCase
+@Inject
+constructor(
+    private val documentUtils: DocumentUtils,
+    private val importShapeUtils: ImportShapeUtils,
+    private val zoneIntegrationRepository: ZoneIntegrationRepository,
+    private val dataCacheProvider: DataCacheProvider,
+    private val eventBus: EventBus,
+    private val appSettings: AppSettings,
+) :
+    AbstractUseCase() {
 
     fun checkDroits(userInfo: WrappedUserInfo) {
         // TODO quel droit pour l'administration des zones de compétence / intégration ?

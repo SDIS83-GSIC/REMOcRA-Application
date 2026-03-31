@@ -17,11 +17,13 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class UpdateCoucheUseCase : AbstractCUDUseCase<CoucheFormDataWithImage>(TypeOperation.UPDATE) {
-
-    @Inject lateinit var coucheRepository: CoucheRepository
-
-    @Inject lateinit var objectMapper: ObjectMapper
+class UpdateCoucheUseCase
+@Inject
+constructor(
+    private val coucheRepository: CoucheRepository,
+    private val objectMapper: ObjectMapper,
+) :
+    AbstractCUDUseCase<CoucheFormDataWithImage>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_COUCHE_CARTOGRAPHIQUE)) {

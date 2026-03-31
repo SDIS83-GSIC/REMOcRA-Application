@@ -18,22 +18,16 @@ import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
 import java.util.UUID
 
-class ImportRisqueExpressUseCase : AbstractCUDUseCase<ImportRisqueExpressData>(TypeOperation.INSERT) {
-
-    @Inject
-    lateinit var documentUtils: DocumentUtils
-
-    @Inject
-    lateinit var dataCacheProvider: DataCacheProvider
-
-    @Inject
-    lateinit var appSettings: AppSettings
-
-    @Inject
-    lateinit var objectMapper: ObjectMapper
-
-    @Inject
-    lateinit var risqueExpressRepository: RisqueExpressRepository
+class ImportRisqueExpressUseCase
+@Inject
+constructor(
+    private val documentUtils: DocumentUtils,
+    private val dataCacheProvider: DataCacheProvider,
+    private val appSettings: AppSettings,
+    private val objectMapper: ObjectMapper,
+    private val risqueExpressRepository: RisqueExpressRepository,
+) :
+    AbstractCUDUseCase<ImportRisqueExpressData>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.RISQUE_EXPRESS_A)) {

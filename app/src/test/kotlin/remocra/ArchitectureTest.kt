@@ -5,12 +5,20 @@ import com.google.inject.Module
 import com.google.inject.Provider
 import com.google.inject.Singleton
 import com.google.inject.name.Named
+import com.tngtech.archunit.base.DescribedPredicate.describe
+import com.tngtech.archunit.base.DescribedPredicate.empty
+import com.tngtech.archunit.base.DescribedPredicate.not
+import com.tngtech.archunit.core.domain.JavaClass.Predicates.assignableTo
+import com.tngtech.archunit.core.domain.JavaClass.Predicates.type
 import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests
 import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.ArchRule
+import com.tngtech.archunit.lang.conditions.ArchConditions.have
 import com.tngtech.archunit.lang.conditions.ArchConditions.haveNameMatching
+import com.tngtech.archunit.lang.conditions.ArchPredicates.are
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
+import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.constructors
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods
 import jakarta.ws.rs.Path
 import remocra.auth.Public
@@ -18,7 +26,12 @@ import remocra.auth.RequireDroits
 import remocra.auth.RequireDroitsApi
 import remocra.db.AbstractRepository
 import remocra.db.TransactionManager
+import remocra.tasks.SimpleTask
+import remocra.usecase.AbstractCUDGeometrieUseCase
+import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.AbstractUseCase
+import remocra.usecase.document.AbstractUpsertDocumentUseCase
+import remocra.usecase.pei.AbstractCUDPeiUseCase
 import remocra.web.AbstractEndpoint
 
 @AnalyzeClasses(packages = ["remocra"], importOptions = [DoNotIncludeTests::class])
@@ -110,6 +123,42 @@ class ArchitectureTest {
             Provider::class.java,
             Named::class.java,
         )
+
+    @ArchTest
+    val `@Inject ne doit pas être utilisé sur des champs sauf cas spécial et endpoint` =
+        classes()
+            .that(
+                are(
+                    not(
+                        assignableTo(AbstractEndpoint::class.java)
+                            .or(type(AbstractCUDUseCase::class.java))
+                            .or(type(AbstractUseCase::class.java))
+                            .or(type(AbstractCUDGeometrieUseCase::class.java))
+                            .or(type(SimpleTask::class.java))
+                            .or(type(AbstractCUDPeiUseCase::class.java))
+                            .or(type(AbstractRepository::class.java))
+                            .or(type(AbstractUpsertDocumentUseCase::class.java)),
+                    ),
+                ),
+            )
+            .should(
+                have(
+                    describe("no field annotated @Inject") { javaClass ->
+                        javaClass.fields.count {
+                            it.isAnnotatedWith(jakarta.inject.Inject::class.java)
+                        } == 0
+                    },
+                ),
+            )
+
+    // Pour les endpoints il faut utiliser @Inject sur les fields
+    @ArchTest
+    val `aucun constructeur pour les endpoints` =
+        constructors()
+            .that()
+            .areDeclaredInClassesThat(assignableTo(AbstractEndpoint::class.java))
+            .should()
+            .haveRawParameterTypes(empty())
 }
 
 /**

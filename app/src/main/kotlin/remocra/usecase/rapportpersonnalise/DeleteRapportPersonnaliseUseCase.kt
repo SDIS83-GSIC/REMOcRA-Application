@@ -12,10 +12,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class DeleteRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseData>(TypeOperation.DELETE) {
-
-    @Inject
-    private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
+class DeleteRapportPersonnaliseUseCase
+@Inject
+constructor(
+    private val rapportPersonnaliseRepository: RapportPersonnaliseRepository,
+) :
+    AbstractCUDUseCase<RapportPersonnaliseData>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_RAPPORTS_PERSO)) {

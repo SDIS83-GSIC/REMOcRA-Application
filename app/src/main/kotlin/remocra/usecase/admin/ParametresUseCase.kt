@@ -29,13 +29,13 @@ import remocra.utils.getStringOrNull
 /**
  * Usecase permettant de manipuler les paramètres de l'application.
  */
-class ParametresUseCase : AbstractUseCase() {
-    @Inject
-    private lateinit var parametreRepository: ParametreRepository
-
-    @Inject
-    private lateinit var objectMapper: ObjectMapper
-
+class ParametresUseCase
+@Inject
+constructor(
+    private val parametreRepository: ParametreRepository,
+    private val objectMapper: ObjectMapper,
+) :
+    AbstractUseCase() {
     fun getParametresData(): ParametresAdminData {
         val mapParametres = parametreRepository.getMapParametres()
 

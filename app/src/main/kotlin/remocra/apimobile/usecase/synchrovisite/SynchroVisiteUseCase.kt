@@ -12,13 +12,13 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class SynchroVisiteUseCase : AbstractCUDUseCase<VisiteForApiMobileData>(TypeOperation.INSERT) {
-
-    @Inject
-    private lateinit var incomingRepository: IncomingRepository
-
-    @Inject
-    private lateinit var peiRepository: PeiRepository
+class SynchroVisiteUseCase
+@Inject
+constructor(
+    private val incomingRepository: IncomingRepository,
+    private val peiRepository: PeiRepository,
+) :
+    AbstractCUDUseCase<VisiteForApiMobileData>(TypeOperation.INSERT) {
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(SynchroVisiteUseCase::class.java)

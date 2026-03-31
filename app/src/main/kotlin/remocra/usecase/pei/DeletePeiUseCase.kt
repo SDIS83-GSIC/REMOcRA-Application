@@ -21,37 +21,21 @@ import remocra.usecase.indisponibilitetemporaire.UpdateIndisponibiliteTemporaire
 import remocra.usecase.visites.DeleteVisiteUseCase
 import java.util.UUID
 
-class DeletePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.DELETE) {
-
-    @Inject
-    lateinit var indisponibiliteTemporaireUseCase: IndisponibiliteTemporaireRepository
-
-    @Inject
-    lateinit var debitSimultaneRepository: DebitSimultaneRepository
-
-    @Inject
-    lateinit var deleIndisponibiliteTemporaireUseCase: DeleteIndisponibiliteTemporaireUseCase
-
-    @Inject
-    lateinit var updateIndisponibiliteTemporaireUseCase: UpdateIndisponibiliteTemporaireUseCase
-
-    @Inject
-    lateinit var tourneeRepository: TourneeRepository
-
-    @Inject
-    lateinit var anomalieRepository: AnomalieRepository
-
-    @Inject
-    lateinit var aireAspirationRepository: AireAspirationRepository
-
-    @Inject
-    lateinit var upsertDocument: UpsertDocumentPeiUseCase
-
-    @Inject
-    lateinit var documentRepository: DocumentRepository
-
-    @Inject
-    lateinit var deleteVisiteUseCase: DeleteVisiteUseCase
+class DeletePeiUseCase
+@Inject
+constructor(
+    private val indisponibiliteTemporaireUseCase: IndisponibiliteTemporaireRepository,
+    private val debitSimultaneRepository: DebitSimultaneRepository,
+    private val deleIndisponibiliteTemporaireUseCase: DeleteIndisponibiliteTemporaireUseCase,
+    private val updateIndisponibiliteTemporaireUseCase: UpdateIndisponibiliteTemporaireUseCase,
+    private val tourneeRepository: TourneeRepository,
+    private val anomalieRepository: AnomalieRepository,
+    private val aireAspirationRepository: AireAspirationRepository,
+    private val upsertDocument: UpsertDocumentPeiUseCase,
+    private val documentRepository: DocumentRepository,
+    private val deleteVisiteUseCase: DeleteVisiteUseCase,
+) :
+    AbstractCUDPeiUseCase(typeOperation = TypeOperation.DELETE) {
 
     override fun executeSpecific(userInfo: WrappedUserInfo, element: PeiData) {
         // Gestion des Indisponibilités temporaires

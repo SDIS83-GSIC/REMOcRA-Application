@@ -6,9 +6,11 @@ import remocra.GlobalConstants
 import java.io.InputStream
 
 /** Classe injectable permettant de lire un flux CSV et de le retourner */
-class CsvReader {
-    @Inject lateinit var csvMapper: CsvMapper
-
+class CsvReader
+@Inject
+constructor(
+    val csvMapper: CsvMapper,
+) {
     inline fun <reified T> readCsvFileInternal(
         inputStream: InputStream,
         delimiter: Char,

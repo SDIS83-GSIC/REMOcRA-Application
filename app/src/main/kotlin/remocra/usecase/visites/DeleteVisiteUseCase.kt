@@ -19,17 +19,11 @@ import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.pei.UpdatePeiUseCase
 
 class DeleteVisiteUseCase @Inject constructor(
+    private val updatePeiUseCase: UpdatePeiUseCase,
+    private val peiRepository: PeiRepository,
+    private val anomalieRepository: AnomalieRepository,
     private val visiteRepository: VisiteRepository,
 ) : AbstractCUDUseCase<VisiteData>(TypeOperation.DELETE) {
-
-    @Inject
-    lateinit var updatePeiUseCase: UpdatePeiUseCase
-
-    @Inject
-    lateinit var peiRepository: PeiRepository
-
-    @Inject
-    lateinit var anomalieRepository: AnomalieRepository
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
     }

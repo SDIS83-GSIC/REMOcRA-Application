@@ -7,9 +7,12 @@ import org.locationtech.jts.geom.Point
 import remocra.GlobalConstants
 import remocra.usecase.AbstractUseCase
 
-class CalculGeometrieUseCase : AbstractUseCase() {
-
-    @Inject lateinit var getCoordonneesBySrid: GetCoordonneesBySrid
+class CalculGeometrieUseCase
+@Inject
+constructor(
+    private val getCoordonneesBySrid: GetCoordonneesBySrid,
+) :
+    AbstractUseCase() {
 
     fun createPointWithSridFromCoordinates(coordonneeX: String?, coordonneeY: String?, srid: Int): Point? {
         if (coordonneeX.isNullOrEmpty() || coordonneeY.isNullOrEmpty()) {

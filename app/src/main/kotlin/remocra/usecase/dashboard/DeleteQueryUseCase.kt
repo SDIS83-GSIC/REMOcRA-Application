@@ -11,9 +11,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class DeleteQueryUseCase : AbstractCUDUseCase<DashboardQueryData>(TypeOperation.DELETE) {
-    @Inject
-    lateinit var dashboardRepository: DashboardRepository
+class DeleteQueryUseCase
+@Inject
+constructor(
+    private val dashboardRepository: DashboardRepository,
+) :
+    AbstractCUDUseCase<DashboardQueryData>(TypeOperation.DELETE) {
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.DASHBOARD_A)) {
             throw RemocraResponseException(ErrorType.DASHBOARD_FORBIDDEN_CUD)

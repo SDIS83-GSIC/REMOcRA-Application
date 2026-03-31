@@ -23,13 +23,13 @@ import java.util.*
  * * d'identifier, depuis la dernière exécution, tous les PEI ayant changé d'état de disponibilité
  * * de notifier les bons interlocuteurs en s'appuyant sur le paramétrage
  */
-class ChangementEtatPeiTask : SchedulableTask<ChangementEtatPeiTaskParameter, ChangementEtatPeiJobResult>() {
-
-    @Inject
-    lateinit var tracabiliteRepository: TracabiliteRepository
-
-    @Inject
-    lateinit var jobRepository: JobRepository
+class ChangementEtatPeiTask
+@Inject
+constructor(
+    private val tracabiliteRepository: TracabiliteRepository,
+    private val jobRepository: JobRepository,
+) :
+    SchedulableTask<ChangementEtatPeiTaskParameter, ChangementEtatPeiJobResult>() {
 
     override fun getType(): TypeTask {
         return TypeTask.NOTIFIER_CHANGEMENTS_ETAT

@@ -20,13 +20,14 @@ import remocra.usecase.document.DocumentUtils
 import java.util.UUID
 import kotlin.io.path.absolutePathString
 
-class CreateRcciUseCase : AbstractCUDGeometrieUseCase<RcciFormInput>(TypeOperation.INSERT) {
-
-    @Inject lateinit var documentUtils: DocumentUtils
-
-    @Inject lateinit var rcciRepository: RcciRepository
-
-    @Inject lateinit var documentRepository: DocumentRepository
+class CreateRcciUseCase
+@Inject
+constructor(
+    private val documentUtils: DocumentUtils,
+    private val rcciRepository: RcciRepository,
+    private val documentRepository: DocumentRepository,
+) :
+    AbstractCUDGeometrieUseCase<RcciFormInput>(TypeOperation.INSERT) {
 
     override fun getListGeometrie(element: RcciFormInput): Collection<Geometry> {
         return listOf(element.rcci.rcciGeometrie)

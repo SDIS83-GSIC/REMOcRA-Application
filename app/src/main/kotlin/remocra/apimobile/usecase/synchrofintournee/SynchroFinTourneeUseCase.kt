@@ -9,13 +9,13 @@ import remocra.eventbus.mobile.IntegrationTourneeEvent
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class SynchroFinTourneeUseCase : AbstractUseCase() {
-    @Inject
-    private lateinit var incomingRepository: IncomingRepository
-
-    @Inject
-    private lateinit var eventBus: EventBus
-
+class SynchroFinTourneeUseCase
+@Inject
+constructor(
+    private val incomingRepository: IncomingRepository,
+    private val eventBus: EventBus,
+) :
+    AbstractUseCase() {
     private val logger = LoggerFactory.getLogger(javaClass)
 
     fun execute(tourneeId: UUID, userInfo: WrappedUserInfo) {

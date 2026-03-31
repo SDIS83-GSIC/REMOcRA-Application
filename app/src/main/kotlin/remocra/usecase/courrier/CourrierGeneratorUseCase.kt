@@ -30,22 +30,16 @@ import java.util.UUID
 /**
  * Cette classe permet de demander la génération d'un courrier en vérifiant les droits de l'utilisateur.
  */
-class CourrierGeneratorUseCase : AbstractUseCase() {
-
-    @Inject
-    lateinit var transactionManager: TransactionManager
-
-    @Inject
-    lateinit var modeleCourrierRepository: ModeleCourrierRepository
-
-    @Inject
-    lateinit var requestUtils: RequestUtils
-
-    @Inject
-    lateinit var documentUtils: DocumentUtils
-
-    @Inject
-    lateinit var objectMapper: ObjectMapper
+class CourrierGeneratorUseCase
+@Inject
+constructor(
+    private val transactionManager: TransactionManager,
+    private val modeleCourrierRepository: ModeleCourrierRepository,
+    private val requestUtils: RequestUtils,
+    private val documentUtils: DocumentUtils,
+    private val objectMapper: ObjectMapper,
+) :
+    AbstractUseCase() {
 
     /**
      * Vérifie les droits de l'utilisateur, et déclenche une [ForbiddenException] si l'utilisateur

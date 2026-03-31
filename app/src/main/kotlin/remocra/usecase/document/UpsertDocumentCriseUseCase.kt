@@ -17,10 +17,12 @@ import java.nio.file.Path
 import java.util.UUID
 
 // Utilisation de "DocumentsEvenement" pour les crises, car les documents des crises ont les mêmes caractèristiques que ceux des évènements
-class UpsertDocumentCriseUseCase : AbstractUpsertDocumentUseCase<DocumentsData.DocumentsEvenement>() {
-
-    @Inject
-    lateinit var criseRepository: CriseRepository
+class UpsertDocumentCriseUseCase
+@Inject
+constructor(
+    private val criseRepository: CriseRepository,
+) :
+    AbstractUpsertDocumentUseCase<DocumentsData.DocumentsEvenement>() {
 
     override fun insertLDocument(documentId: UUID, element: DocumentsData.DocumentsEvenement, newDoc: AbstractDocumentData, mainTransactionManager: TransactionManager?) {
         (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {

@@ -14,9 +14,12 @@ import remocra.utils.toGeomFromText
 /**
  * Vérifie si la liste de géométrie est dans la zone de compétence de l'utilisateur connecté
  */
-class CheckZoneCompetenceContainsUseCase : AbstractUseCase() {
-
-    @Inject private lateinit var zoneIntegrationRepository: ZoneIntegrationRepository
+class CheckZoneCompetenceContainsUseCase
+@Inject
+constructor(
+    private val zoneIntegrationRepository: ZoneIntegrationRepository,
+) :
+    AbstractUseCase() {
 
     fun checkContains(userInfo: WrappedUserInfo, geometries: Collection<Geometry>) {
         // Si c'est un super admin, on ne prend pas en compte la zone de compétence

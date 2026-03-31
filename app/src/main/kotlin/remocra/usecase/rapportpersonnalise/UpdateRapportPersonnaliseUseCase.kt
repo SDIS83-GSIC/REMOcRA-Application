@@ -18,13 +18,13 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.utils.RequeteSqlUtils
 
-class UpdateRapportPersonnaliseUseCase : AbstractCUDUseCase<RapportPersonnaliseData>(TypeOperation.UPDATE) {
-
-    @Inject
-    private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
-
-    @Inject
-    private lateinit var requeteSqlUtils: RequeteSqlUtils
+class UpdateRapportPersonnaliseUseCase
+@Inject
+constructor(
+    private val rapportPersonnaliseRepository: RapportPersonnaliseRepository,
+    private val requeteSqlUtils: RequeteSqlUtils,
+) :
+    AbstractCUDUseCase<RapportPersonnaliseData>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_RAPPORTS_PERSO)) {

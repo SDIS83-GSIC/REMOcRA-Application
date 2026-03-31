@@ -14,11 +14,13 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
 import remocra.usecase.document.documenthabilitable.UpsertDocumentPermisUseCase
 
-class DeletePermisUseCase : AbstractCUDGeometrieUseCase<PermisData>(TypeOperation.DELETE) {
-
-    @Inject lateinit var permisRepository: PermisRepository
-
-    @Inject lateinit var upsertDocumentPermisUseCase: UpsertDocumentPermisUseCase
+class DeletePermisUseCase
+@Inject
+constructor(
+    private val permisRepository: PermisRepository,
+    private val upsertDocumentPermisUseCase: UpsertDocumentPermisUseCase,
+) :
+    AbstractCUDGeometrieUseCase<PermisData>(TypeOperation.DELETE) {
 
     override fun getListGeometrie(element: PermisData): Collection<Geometry> =
         listOf(element.permis.permisGeometrie)

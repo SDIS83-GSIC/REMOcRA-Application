@@ -6,9 +6,12 @@ import remocra.data.GlobalData.IdCodeLibelleData
 import remocra.db.CommuneRepository
 import remocra.usecase.AbstractUseCase
 
-class CommuneUseCase : AbstractUseCase() {
-    @Inject
-    lateinit var communeRepository: CommuneRepository
+class CommuneUseCase
+@Inject
+constructor(
+    private val communeRepository: CommuneRepository,
+) :
+    AbstractUseCase() {
 
     fun getCommuneForSelect(userInfo: WrappedUserInfo): List<IdCodeLibelleData> {
         return if (userInfo.isSuperAdmin) {

@@ -12,10 +12,11 @@ import remocra.app.AppSettings
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class GetCoordonneesBySrid {
-    @Inject
-    lateinit var settings: AppSettings
-
+class GetCoordonneesBySrid
+@Inject
+constructor(
+    private val settings: AppSettings,
+) {
     companion object {
         // Contrat avec le front
         const val SRID_4326_SEXAGECIMAL = -1

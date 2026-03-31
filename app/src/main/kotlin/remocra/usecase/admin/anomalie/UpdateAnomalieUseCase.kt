@@ -21,17 +21,16 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.pei.UpdatePeiUseCase
 
-class UpdateAnomalieUseCase : AbstractCUDUseCase<AnomalieData>(TypeOperation.UPDATE) {
-
-    @Inject lateinit var anomalieRepository: AnomalieRepository
-
-    @Inject lateinit var peiRepository: PeiRepository
-
-    @Inject lateinit var pibiRepository: PibiRepository
-
-    @Inject lateinit var penaRepository: PenaRepository
-
-    @Inject lateinit var peiUseCase: UpdatePeiUseCase
+class UpdateAnomalieUseCase
+@Inject
+constructor(
+    private val anomalieRepository: AnomalieRepository,
+    private val peiRepository: PeiRepository,
+    private val pibiRepository: PibiRepository,
+    private val penaRepository: PenaRepository,
+    private val peiUseCase: UpdatePeiUseCase,
+) :
+    AbstractCUDUseCase<AnomalieData>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_ANOMALIES)) {

@@ -4,9 +4,11 @@ import jakarta.inject.Inject
 import remocra.db.VisiteRepository
 import java.util.UUID
 
-class GetVisiteWithAnomalies {
-
-    @Inject lateinit var visiteRepository: VisiteRepository
+class GetVisiteWithAnomalies
+@Inject
+constructor(
+    private val visiteRepository: VisiteRepository,
+) {
 
     fun getVisiteWithAnomalies(peiUUID: UUID): List<VisiteRepository.VisiteComplete> {
         val listVisite = visiteRepository.getAllVisiteByPeiId(peiUUID)

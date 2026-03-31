@@ -16,10 +16,12 @@ import remocra.exception.RemocraResponseException
 import java.nio.file.Path
 import java.util.UUID
 
-class UpsertDocumentEvenementUseCase : AbstractUpsertDocumentUseCase<DocumentsData.DocumentsEvenement>() {
-
-    @Inject
-    lateinit var evenementRepository: EvenementRepository
+class UpsertDocumentEvenementUseCase
+@Inject
+constructor(
+    private val evenementRepository: EvenementRepository,
+) :
+    AbstractUpsertDocumentUseCase<DocumentsData.DocumentsEvenement>() {
 
     override fun insertLDocument(documentId: UUID, element: DocumentsData.DocumentsEvenement, newDoc: AbstractDocumentData, mainTransactionManager: TransactionManager?) {
         (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {

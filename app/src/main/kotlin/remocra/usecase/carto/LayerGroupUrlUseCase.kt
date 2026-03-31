@@ -9,11 +9,13 @@ import remocra.geoserver.response.LayerGroupResponse
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class LayerGroupUrlUseCase : AbstractUseCase() {
-
-    @Inject lateinit var coucheRepository: CoucheRepository
-
-    @Inject lateinit var geoServerApi: GeoserverApi
+class LayerGroupUrlUseCase
+@Inject
+constructor(
+    private val coucheRepository: CoucheRepository,
+    private val geoServerApi: GeoserverApi,
+) :
+    AbstractUseCase() {
 
     fun execute(coucheId: UUID): LayerGroupResponse {
         val name = coucheRepository.getCoucheById(coucheId).coucheNom?.split(":")?.lastOrNull() ?: throw RemocraResponseException(ErrorType.ADMIN_COUCHES_NAME_NULL)

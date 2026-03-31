@@ -15,10 +15,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class CreateDashboardUseCase : AbstractCUDUseCase<DashboardConfigData>(TypeOperation.INSERT) {
-
-    @Inject
-    lateinit var dashboardRepository: DashboardRepository
+class CreateDashboardUseCase
+@Inject
+constructor(
+    private val dashboardRepository: DashboardRepository,
+) :
+    AbstractCUDUseCase<DashboardConfigData>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.DASHBOARD_A)) {

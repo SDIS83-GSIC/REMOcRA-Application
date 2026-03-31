@@ -12,9 +12,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class UpdateZoneIntegrationUseCase : AbstractCUDUseCase<ZoneIntegrationData>(TypeOperation.UPDATE) {
-
-    @Inject lateinit var zoneIntegrationRepository: ZoneIntegrationRepository
+class UpdateZoneIntegrationUseCase
+@Inject
+constructor(
+    private val zoneIntegrationRepository: ZoneIntegrationRepository,
+) :
+    AbstractCUDUseCase<ZoneIntegrationData>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_ZONE_COMPETENCE)) {

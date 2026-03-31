@@ -11,10 +11,12 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class SynchroTourneeUseCase : AbstractCUDUseCase<TourneeSynchroForApiMobileData>(TypeOperation.INSERT) {
-
-    @Inject
-    private lateinit var incomingRepository: IncomingRepository
+class SynchroTourneeUseCase
+@Inject
+constructor(
+    private val incomingRepository: IncomingRepository,
+) :
+    AbstractCUDUseCase<TourneeSynchroForApiMobileData>(TypeOperation.INSERT) {
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(SynchroTourneeUseCase::class.java)

@@ -15,8 +15,12 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
 import java.util.UUID
 
-class AireAspirationUseCase : AbstractCUDGeometrieUseCase<AireAspirationUseCase.PenaAspirationData>(TypeOperation.UPDATE) {
-    @Inject lateinit var aireAspirationRepository: AireAspirationRepository
+class AireAspirationUseCase
+@Inject
+constructor(
+    private val aireAspirationRepository: AireAspirationRepository,
+) :
+    AbstractCUDGeometrieUseCase<AireAspirationUseCase.PenaAspirationData>(TypeOperation.UPDATE) {
 
     data class PenaAspirationData(
         val listeAireAspiration: List<AireAspirationUpsertData>,

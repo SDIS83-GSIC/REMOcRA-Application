@@ -11,13 +11,13 @@ import remocra.usecase.AbstractUseCase
 import remocra.utils.RequestUtils
 import java.util.UUID
 
-class GetDashboardQueryUseCase : AbstractUseCase() {
-
-    @Inject
-    lateinit var dashboardRepository: DashboardRepository
-
-    @Inject
-    lateinit var requestUtils: RequestUtils
+class GetDashboardQueryUseCase
+@Inject
+constructor(
+    private val dashboardRepository: DashboardRepository,
+    private val requestUtils: RequestUtils,
+) :
+    AbstractUseCase() {
 
     /**
      * Valide que la requête est formée convenablement, en remplaçant les placeholders statiques.

@@ -15,16 +15,14 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
 
-class DeleteModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeOperation.DELETE) {
-
-    @Inject
-    private lateinit var modeleCourrierRepository: ModeleCourrierRepository
-
-    @Inject
-    private lateinit var documentRepository: DocumentRepository
-
-    @Inject
-    private lateinit var documentUtils: DocumentUtils
+class DeleteModeleCourrierUseCase
+@Inject
+constructor(
+    private val modeleCourrierRepository: ModeleCourrierRepository,
+    private val documentRepository: DocumentRepository,
+    private val documentUtils: DocumentUtils,
+) :
+    AbstractCUDUseCase<ModeleCourrierData>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_DROITS)) {

@@ -13,16 +13,14 @@ import remocra.db.PeiRepository
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 
-class ClosestPeiUseCase : AbstractUseCase() {
-
-    @Inject
-    lateinit var couvertureHydrauliqueCalculRepository: CouvertureHydrauliqueCalculRepository
-
-    @Inject
-    lateinit var peiRepository: PeiRepository
-
-    @Inject
-    lateinit var parametresProvider: ParametresProvider
+class ClosestPeiUseCase
+@Inject
+constructor(
+    private val couvertureHydrauliqueCalculRepository: CouvertureHydrauliqueCalculRepository,
+    private val peiRepository: PeiRepository,
+    private val parametresProvider: ParametresProvider,
+) :
+    AbstractUseCase() {
 
     fun execute(element: ClosestPeiData): CouvertureHydrauliqueCalculRepository.ClosestPeiResult? {
         val distanceMaxParcours = parametresProvider.getParametreInt(ParametreEnum.DECI_DISTANCE_MAX_PARCOURS.name)

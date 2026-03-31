@@ -28,28 +28,15 @@ import java.util.UUID
  * Doit être morcelé (morcelable) afin de s'intégrer dans l'enregistrement transactionnel d'un PEI.
  */
 class CalculDispoUseCase @Inject constructor(
+    private val appSettings: AppSettings,
+    private val dataCacheProvider: DataCacheProvider,
+    private val calculDispoRepository: CalculDispoRepository,
+    private val visiteRepository: VisiteRepository,
+    private val poidsAnomalieRepository: PoidsAnomalieRepository,
+    private val anomalieRepository: AnomalieRepository,
+    private val indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository,
     private val parametreProvider: Provider<ParametresProvider>,
 ) : AbstractUseCase() {
-    @Inject
-    private lateinit var appSettings: AppSettings
-
-    @Inject
-    private lateinit var dataCacheProvider: DataCacheProvider
-
-    @Inject
-    private lateinit var calculDispoRepository: CalculDispoRepository
-
-    @Inject
-    private lateinit var visiteRepository: VisiteRepository
-
-    @Inject
-    private lateinit var poidsAnomalieRepository: PoidsAnomalieRepository
-
-    @Inject
-    private lateinit var anomalieRepository: AnomalieRepository
-
-    @Inject
-    private lateinit var indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository
 
     private fun getAnomalieIdFromCode(code: String): UUID {
         return (dataCacheProvider.getAnomalies().values).find { ano -> ano.anomalieCode == code }!!.anomalieId

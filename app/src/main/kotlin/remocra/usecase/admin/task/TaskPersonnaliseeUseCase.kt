@@ -9,11 +9,13 @@ import remocra.tasks.ApacheHopTask
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class TaskPersonnaliseeUseCase : AbstractUseCase() {
-
-    @Inject lateinit var taskRepository: TaskRepository
-
-    @Inject lateinit var objectMapper: ObjectMapper
+class TaskPersonnaliseeUseCase
+@Inject
+constructor(
+    private val taskRepository: TaskRepository,
+    private val objectMapper: ObjectMapper,
+) :
+    AbstractUseCase() {
 
     fun getAllTaskPersonnaliseeData(): List<TaskPersonnaliseInfo> {
         val listMoulinette = taskRepository.getTaskApacheHopForAdmin()

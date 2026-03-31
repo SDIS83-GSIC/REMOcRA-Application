@@ -20,13 +20,14 @@ import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
 import java.util.UUID
 
-class CreateDocumentHabilitableUseCase : AbstractCUDUseCase<DocumentHabilitableData>(TypeOperation.INSERT) {
-
-    @Inject lateinit var documentRepository: DocumentRepository
-
-    @Inject lateinit var documentHabilitableRepository: DocumentHabilitableRepository
-
-    @Inject lateinit var documentUtils: DocumentUtils
+class CreateDocumentHabilitableUseCase
+@Inject
+constructor(
+    private val documentRepository: DocumentRepository,
+    private val documentHabilitableRepository: DocumentHabilitableRepository,
+    private val documentUtils: DocumentUtils,
+) :
+    AbstractCUDUseCase<DocumentHabilitableData>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.DOCUMENTS_A)) {

@@ -13,11 +13,13 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class CreateCoucheMetadataUseCase : AbstractCUDUseCase<CoucheMetadata>(TypeOperation.INSERT) {
-
-    @Inject lateinit var coucheMetadataRepository: CoucheMetadataRepository
-
-    @Inject lateinit var groupeFonctionnalitesRepository: GroupeFonctionnalitesRepository
+class CreateCoucheMetadataUseCase
+@Inject
+constructor(
+    private val coucheMetadataRepository: CoucheMetadataRepository,
+    private val groupeFonctionnalitesRepository: GroupeFonctionnalitesRepository,
+) :
+    AbstractCUDUseCase<CoucheMetadata>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.CARTO_METADATA_A)) {

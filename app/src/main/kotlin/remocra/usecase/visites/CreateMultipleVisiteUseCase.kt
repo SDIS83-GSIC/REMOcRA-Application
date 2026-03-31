@@ -7,9 +7,12 @@ import remocra.data.VisiteTourneeInput
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class CreateMultipleVisiteUseCase : AbstractUseCase() {
-
-    @Inject lateinit var createVisiteUseCase: CreateVisiteUseCase
+class CreateMultipleVisiteUseCase
+@Inject
+constructor(
+    private val createVisiteUseCase: CreateVisiteUseCase,
+) :
+    AbstractUseCase() {
 
     /** Le useCase reçoit un objet visiteTourneeInput pour boucler et obtenir X objets VisiteData pour pouvoir les insérer
      * Pour chaque insert, on regarde le AbstractEndpoint.Result :

@@ -11,16 +11,14 @@ import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class ModuleDocumentCourrierUseCase : AbstractUseCase() {
-
-    @Inject
-    lateinit var groupeFonctionnalitesRepository: GroupeFonctionnalitesRepository
-
-    @Inject
-    lateinit var moduleRepository: ModuleRepository
-
-    @Inject
-    lateinit var thematiqueRepository: ThematiqueRepository
+class ModuleDocumentCourrierUseCase
+@Inject
+constructor(
+    private val groupeFonctionnalitesRepository: GroupeFonctionnalitesRepository,
+    private val moduleRepository: ModuleRepository,
+    private val thematiqueRepository: ThematiqueRepository,
+) :
+    AbstractUseCase() {
 
     val defaultNbDocument = 5
 

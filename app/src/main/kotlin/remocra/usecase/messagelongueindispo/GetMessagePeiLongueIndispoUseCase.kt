@@ -13,22 +13,16 @@ import remocra.utils.getListOfString
 import java.time.Period
 import java.util.UUID
 
-class GetMessagePeiLongueIndispoUseCase : AbstractUseCase() {
-
-    @Inject
-    lateinit var parametresProvider: ParametresProvider
-
-    @Inject
-    lateinit var typeOrganismeRepository: TypeOrganismeRepository
-
-    @Inject
-    lateinit var tracabiliteRepository: TracabiliteRepository
-
-    @Inject
-    lateinit var peiRepository: PeiRepository
-
-    @Inject
-    lateinit var objectMapper: ObjectMapper
+class GetMessagePeiLongueIndispoUseCase
+@Inject
+constructor(
+    private val parametresProvider: ParametresProvider,
+    private val typeOrganismeRepository: TypeOrganismeRepository,
+    private val tracabiliteRepository: TracabiliteRepository,
+    private val peiRepository: PeiRepository,
+    private val objectMapper: ObjectMapper,
+) :
+    AbstractUseCase() {
 
     companion object {
         const val PLACEHOLDER_MOIS = "#MOIS#"

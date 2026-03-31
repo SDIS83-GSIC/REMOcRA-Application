@@ -11,9 +11,12 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class TourneeUseCase : AbstractUseCase() {
-    @Inject
-    lateinit var tourneeRepository: TourneeRepository
+class TourneeUseCase
+@Inject
+constructor(
+    private val tourneeRepository: TourneeRepository,
+) :
+    AbstractUseCase() {
 
     fun getTourneesDisponibles(userInfo: WrappedUserInfo) =
         tourneeRepository.getTourneesMobile(userInfo.isSuperAdmin, userInfo.affiliatedOrganismeIds!!)

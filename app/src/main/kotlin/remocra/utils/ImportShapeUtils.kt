@@ -11,10 +11,11 @@ import kotlin.io.path.extension
 import kotlin.io.path.name
 import kotlin.io.path.outputStream
 
-class ImportShapeUtils {
-    @Inject
-    lateinit var documentUtils: DocumentUtils
-
+class ImportShapeUtils
+@Inject
+constructor(
+    private val documentUtils: DocumentUtils,
+) {
     fun readZipFile(inputStream: InputStream, directory: Path): Path? {
         var fileShp: Path? = null
         ZipInputStream(inputStream).use { zipInputStream ->

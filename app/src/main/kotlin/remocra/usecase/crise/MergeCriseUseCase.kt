@@ -16,13 +16,14 @@ import remocra.usecase.AbstractCUDUseCase
 import remocra.web.crise.CriseEndpoint.CriseDataMerge
 import java.util.UUID
 
-class MergeCriseUseCase : AbstractCUDUseCase<CriseDataMerge>(TypeOperation.UPDATE) {
-
-    @Inject lateinit var criseRepository: CriseRepository
-
-    @Inject lateinit var toponymieRepository: ToponymieRepository
-
-    @Inject lateinit var evenementRepository: EvenementRepository
+class MergeCriseUseCase
+@Inject
+constructor(
+    private val criseRepository: CriseRepository,
+    private val toponymieRepository: ToponymieRepository,
+    private val evenementRepository: EvenementRepository,
+) :
+    AbstractCUDUseCase<CriseDataMerge>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.CRISE_U)) {

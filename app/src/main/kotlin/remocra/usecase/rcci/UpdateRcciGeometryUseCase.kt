@@ -13,9 +13,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
 
-class UpdateRcciGeometryUseCase : AbstractCUDGeometrieUseCase<RcciGeometryForm>(TypeOperation.UPDATE) {
-
-    @Inject lateinit var rcciRepository: RcciRepository
+class UpdateRcciGeometryUseCase
+@Inject
+constructor(
+    private val rcciRepository: RcciRepository,
+) :
+    AbstractCUDGeometrieUseCase<RcciGeometryForm>(TypeOperation.UPDATE) {
 
     override fun getListGeometrie(element: RcciGeometryForm): Collection<Geometry> {
         return listOf(element.rcciGeometrie)

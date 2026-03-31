@@ -33,16 +33,14 @@ import kotlin.io.path.writeText
 /**
  * Permet d'exporter les données de la requêtes en csv
  */
-class ExportDataCarteRapportPersonnaliseUseCase : AbstractUseCase() {
-
-    @Inject
-    private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
-
-    @Inject
-    private lateinit var documentUtils: DocumentUtils
-
-    @Inject
-    private lateinit var appSettings: AppSettings
+class ExportDataCarteRapportPersonnaliseUseCase
+@Inject
+constructor(
+    private val rapportPersonnaliseRepository: RapportPersonnaliseRepository,
+    private val documentUtils: DocumentUtils,
+    private val appSettings: AppSettings,
+) :
+    AbstractUseCase() {
 
     companion object {
         private val DOSSIER_TMP_RAPPORT_PERONNALISE = GlobalConstants.DOSSIER_DATA.resolve("rapport_personnalise")

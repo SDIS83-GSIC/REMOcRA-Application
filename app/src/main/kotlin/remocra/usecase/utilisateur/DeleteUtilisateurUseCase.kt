@@ -17,16 +17,16 @@ import remocra.keycloak.KeycloakApi
 import remocra.keycloak.KeycloakToken
 import remocra.usecase.AbstractCUDUseCase
 
-class DeleteUtilisateurUseCase : AbstractCUDUseCase<UtilisateurData>(TypeOperation.DELETE) {
-    @Inject lateinit var keycloakToken: KeycloakToken
-
-    @Inject lateinit var keycloakClient: AuthModule.KeycloakClient
-
-    @Inject lateinit var keycloakApi: KeycloakApi
-
-    @Inject lateinit var utilisateurRepository: UtilisateurRepository
-
-    @Inject lateinit var organismeRepository: OrganismeRepository
+class DeleteUtilisateurUseCase
+@Inject
+constructor(
+    private val keycloakToken: KeycloakToken,
+    private val keycloakClient: AuthModule.KeycloakClient,
+    private val keycloakApi: KeycloakApi,
+    private val utilisateurRepository: UtilisateurRepository,
+    private val organismeRepository: OrganismeRepository,
+) :
+    AbstractCUDUseCase<UtilisateurData>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A) &&

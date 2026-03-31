@@ -9,11 +9,13 @@ import remocra.tasks.NotificationRaw
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class TaskUseCase : AbstractUseCase() {
-
-    @Inject lateinit var taskRepository: TaskRepository
-
-    @Inject lateinit var objectMapper: ObjectMapper
+class TaskUseCase
+@Inject
+constructor(
+    private val taskRepository: TaskRepository,
+    private val objectMapper: ObjectMapper,
+) :
+    AbstractUseCase() {
 
     fun getTaskData(): List<TaskInfo> {
         val listMoulinette = taskRepository.getAllTaskInfoToAdmin()

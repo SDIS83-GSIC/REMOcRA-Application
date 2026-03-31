@@ -12,9 +12,12 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.UpsertDocumentCriseUseCase
 
-class CreateCriseDocument : AbstractCUDUseCase<CriseDocumentData>(TypeOperation.INSERT) {
-
-    @Inject lateinit var upsertDocumentCriseUseCase: UpsertDocumentCriseUseCase
+class CreateCriseDocument
+@Inject
+constructor(
+    private val upsertDocumentCriseUseCase: UpsertDocumentCriseUseCase,
+) :
+    AbstractCUDUseCase<CriseDocumentData>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.CRISE_C)) {

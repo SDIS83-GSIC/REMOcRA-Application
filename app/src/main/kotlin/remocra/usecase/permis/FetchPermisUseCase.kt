@@ -15,20 +15,18 @@ import remocra.usecase.AbstractUseCase
 import remocra.usecase.nomenclature.NomenclatureUseCase
 import remocra.utils.toGeomFromText
 
-class FetchPermisUseCase : AbstractUseCase() {
-    @Inject lateinit var communeRepository: CommuneRepository
-
-    @Inject lateinit var voieRepository: VoieRepository
-
-    @Inject lateinit var permisRepository: PermisRepository
-
-    @Inject lateinit var cadastreRepository: CadastreRepository
-
-    @Inject lateinit var nomenclatureUseCase: NomenclatureUseCase
-
-    @Inject lateinit var parametresProvider: ParametresProvider
-
-    @Inject lateinit var appSettings: AppSettings
+class FetchPermisUseCase
+@Inject
+constructor(
+    private val communeRepository: CommuneRepository,
+    private val voieRepository: VoieRepository,
+    private val permisRepository: PermisRepository,
+    private val cadastreRepository: CadastreRepository,
+    private val nomenclatureUseCase: NomenclatureUseCase,
+    private val parametresProvider: ParametresProvider,
+    private val appSettings: AppSettings,
+) :
+    AbstractUseCase() {
 
     // On décide de remonter les 25 parcelles les plus proches de notre point de déclaration de permis
     companion object {

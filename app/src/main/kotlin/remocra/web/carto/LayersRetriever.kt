@@ -13,19 +13,14 @@ import remocra.geoserver.GeoserverModule
 import java.util.UUID
 import kotlin.reflect.jvm.javaMethod
 
-class LayersRetriever {
-    @Inject
-    lateinit var droitsRepository: DroitsRepository
-
-    @Inject
-    lateinit var coucheRepository: CoucheRepository
-
-    @Inject
-    lateinit var coucheMetadataRepository: CoucheMetadataRepository
-
-    @Inject
-    lateinit var geoserverSettings: GeoserverModule.GeoserverSettings
-
+class LayersRetriever
+@Inject
+constructor(
+    private val droitsRepository: DroitsRepository,
+    private val coucheRepository: CoucheRepository,
+    private val coucheMetadataRepository: CoucheMetadataRepository,
+    private val geoserverSettings: GeoserverModule.GeoserverSettings,
+) {
     fun getData(module: TypeModule, userInfo: WrappedUserInfo): List<LayerGroupData> {
         val profil = userInfo.utilisateurId?.let {
             droitsRepository.getGroupeFonctionnalitesFromUser(it)

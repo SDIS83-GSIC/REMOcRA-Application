@@ -26,16 +26,16 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
 
-class CreateCourrierUseCase : AbstractCUDUseCase<CourrierData>(TypeOperation.INSERT) {
-    @Inject private lateinit var documentUtils: DocumentUtils
-
-    @Inject private lateinit var modeleCourrierRepository: ModeleCourrierRepository
-
-    @Inject private lateinit var documentRepository: DocumentRepository
-
-    @Inject private lateinit var courrierRepository: CourrierRepository
-
-    @Inject private lateinit var thematiqueRepository: ThematiqueRepository
+class CreateCourrierUseCase
+@Inject
+constructor(
+    private val documentUtils: DocumentUtils,
+    private val modeleCourrierRepository: ModeleCourrierRepository,
+    private val documentRepository: DocumentRepository,
+    private val courrierRepository: CourrierRepository,
+    private val thematiqueRepository: ThematiqueRepository,
+) :
+    AbstractCUDUseCase<CourrierData>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.COURRIER_C)) {

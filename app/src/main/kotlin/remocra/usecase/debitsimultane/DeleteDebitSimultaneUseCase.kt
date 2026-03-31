@@ -14,13 +14,13 @@ import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
 import kotlin.io.path.Path
 
-class DeleteDebitSimultaneUseCase : AbstractCUDUseCase<DebitSimultaneData>(TypeOperation.DELETE) {
-
-    @Inject
-    private lateinit var debitSimultaneRepository: DebitSimultaneRepository
-
-    @Inject
-    private lateinit var documentUtils: DocumentUtils
+class DeleteDebitSimultaneUseCase
+@Inject
+constructor(
+    private val debitSimultaneRepository: DebitSimultaneRepository,
+    private val documentUtils: DocumentUtils,
+) :
+    AbstractCUDUseCase<DebitSimultaneData>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.DEBITS_SIMULTANES_A)) {

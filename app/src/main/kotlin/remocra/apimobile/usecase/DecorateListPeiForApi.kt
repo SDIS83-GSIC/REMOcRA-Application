@@ -5,10 +5,12 @@ import remocra.apimobile.data.PeiForApiMobileData
 import remocra.usecase.AbstractUseCase
 import remocra.utils.DisponibiliteDecorator
 
-class DecorateListPeiForApi : AbstractUseCase() {
-    @Inject
-    lateinit var dispoDecorator: DisponibiliteDecorator
-
+class DecorateListPeiForApi
+@Inject
+constructor(
+    private val dispoDecorator: DisponibiliteDecorator,
+) :
+    AbstractUseCase() {
     fun execute(listeHydrant: List<PeiForApiMobileData>): List<PeiForApiMobileData> {
         for (pei in listeHydrant) {
             // Adresse complète

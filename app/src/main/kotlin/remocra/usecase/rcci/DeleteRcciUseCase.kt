@@ -15,16 +15,14 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
 
-class DeleteRcciUseCase : AbstractCUDUseCase<Rcci>(TypeOperation.DELETE) {
-
-    @Inject
-    lateinit var documentUtils: DocumentUtils
-
-    @Inject
-    lateinit var rcciRepository: RcciRepository
-
-    @Inject
-    lateinit var documentRepository: DocumentRepository
+class DeleteRcciUseCase
+@Inject
+constructor(
+    private val documentUtils: DocumentUtils,
+    private val rcciRepository: RcciRepository,
+    private val documentRepository: DocumentRepository,
+) :
+    AbstractCUDUseCase<Rcci>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.RCCI_A)) {

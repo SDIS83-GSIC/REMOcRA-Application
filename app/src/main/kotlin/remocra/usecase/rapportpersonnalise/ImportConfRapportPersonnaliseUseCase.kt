@@ -20,19 +20,15 @@ import java.util.UUID
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
-class ImportConfRapportPersonnaliseUseCase : AbstractUseCase() {
-
-    @Inject
-    private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
-
-    @Inject
-    private lateinit var rappportPersonnaliseUtils: RequeteSqlUtils
-
-    @Inject
-    private lateinit var csvReader: CsvReader
-
-    @Inject
-    private lateinit var transactionManager: TransactionManager
+class ImportConfRapportPersonnaliseUseCase
+@Inject
+constructor(
+    private val rapportPersonnaliseRepository: RapportPersonnaliseRepository,
+    private val rappportPersonnaliseUtils: RequeteSqlUtils,
+    private val csvReader: CsvReader,
+    private val transactionManager: TransactionManager,
+) :
+    AbstractUseCase() {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 

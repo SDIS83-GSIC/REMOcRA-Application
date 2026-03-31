@@ -22,19 +22,15 @@ import remocra.usecase.document.DocumentUtils
 import remocra.utils.RequeteSqlUtils
 import java.nio.file.Paths
 
-class UpdateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeOperation.UPDATE) {
-
-    @Inject
-    private lateinit var modeleCourrierRepository: ModeleCourrierRepository
-
-    @Inject
-    private lateinit var documentRepository: DocumentRepository
-
-    @Inject
-    private lateinit var documentUtils: DocumentUtils
-
-    @Inject
-    private lateinit var requeteSqlUtils: RequeteSqlUtils
+class UpdateModeleCourrierUseCase
+@Inject
+constructor(
+    private val modeleCourrierRepository: ModeleCourrierRepository,
+    private val documentRepository: DocumentRepository,
+    private val documentUtils: DocumentUtils,
+    private val requeteSqlUtils: RequeteSqlUtils,
+) :
+    AbstractCUDUseCase<ModeleCourrierData>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_DROITS)) {

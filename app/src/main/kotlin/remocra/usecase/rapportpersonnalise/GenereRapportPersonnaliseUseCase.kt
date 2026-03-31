@@ -11,13 +11,13 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class GenereRapportPersonnaliseUseCase : AbstractUseCase() {
-
-    @Inject
-    private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
-
-    @Inject
-    private lateinit var rapportPersonnaliseUtils: RapportPersonnaliseUtils
+class GenereRapportPersonnaliseUseCase
+@Inject
+constructor(
+    private val rapportPersonnaliseRepository: RapportPersonnaliseRepository,
+    private val rapportPersonnaliseUtils: RapportPersonnaliseUtils,
+) :
+    AbstractUseCase() {
 
     companion object {
         private const val FIELD_GEOMETRIE = "geometrie"

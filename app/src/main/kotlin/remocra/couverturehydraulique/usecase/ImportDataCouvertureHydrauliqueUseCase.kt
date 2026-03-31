@@ -24,18 +24,16 @@ import remocra.utils.ImportShapeUtils
 import java.io.InputStream
 import java.util.UUID
 
-class ImportDataCouvertureHydrauliqueUseCase : AbstractCUDUseCase<ReseauBatimentPeiProjet>(TypeOperation.UPDATE) {
-
-    @Inject lateinit var documentUtils: DocumentUtils
-
-    @Inject lateinit var couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository
-
-    @Inject lateinit var dataCacheProvider: DataCacheProvider
-
-    @Inject lateinit var appSettings: AppSettings
-
-    @Inject
-    lateinit var importShapeUtils: ImportShapeUtils
+class ImportDataCouvertureHydrauliqueUseCase
+@Inject
+constructor(
+    private val documentUtils: DocumentUtils,
+    private val couvertureHydrauliqueRepository: CouvertureHydrauliqueRepository,
+    private val dataCacheProvider: DataCacheProvider,
+    private val appSettings: AppSettings,
+    private val importShapeUtils: ImportShapeUtils,
+) :
+    AbstractCUDUseCase<ReseauBatimentPeiProjet>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ETUDE_U)) {

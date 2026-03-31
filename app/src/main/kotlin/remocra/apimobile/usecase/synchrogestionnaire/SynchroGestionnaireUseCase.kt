@@ -13,13 +13,13 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class SynchroGestionnaireUseCase : AbstractCUDUseCase<Gestionnaire>(TypeOperation.INSERT) {
-    @Inject
-    private lateinit var incomingRepository: IncomingRepository
-
-    @Inject
-    private lateinit var gestionnaireRepository: GestionnaireRepository
-
+class SynchroGestionnaireUseCase
+@Inject
+constructor(
+    private val incomingRepository: IncomingRepository,
+    private val gestionnaireRepository: GestionnaireRepository,
+) :
+    AbstractCUDUseCase<Gestionnaire>(TypeOperation.INSERT) {
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(SynchroGestionnaireUseCase::class.java)
     }

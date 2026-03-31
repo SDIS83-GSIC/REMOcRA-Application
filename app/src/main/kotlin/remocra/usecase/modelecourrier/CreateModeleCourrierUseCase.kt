@@ -23,19 +23,15 @@ import remocra.usecase.document.DocumentUtils
 import remocra.utils.RequeteSqlUtils
 import java.util.UUID
 
-class CreateModeleCourrierUseCase : AbstractCUDUseCase<ModeleCourrierData>(TypeOperation.INSERT) {
-
-    @Inject
-    private lateinit var modeleCourrierRepository: ModeleCourrierRepository
-
-    @Inject
-    private lateinit var documentUtils: DocumentUtils
-
-    @Inject
-    private lateinit var documentRepository: DocumentRepository
-
-    @Inject
-    private lateinit var requeteSqlUtils: RequeteSqlUtils
+class CreateModeleCourrierUseCase
+@Inject
+constructor(
+    private val modeleCourrierRepository: ModeleCourrierRepository,
+    private val documentUtils: DocumentUtils,
+    private val documentRepository: DocumentRepository,
+    private val requeteSqlUtils: RequeteSqlUtils,
+) :
+    AbstractCUDUseCase<ModeleCourrierData>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_DROITS)) {

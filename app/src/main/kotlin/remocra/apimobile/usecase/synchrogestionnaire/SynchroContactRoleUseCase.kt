@@ -12,10 +12,12 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class SynchroContactRoleUseCase : AbstractCUDUseCase<ContactRoleForApiMobileData>(TypeOperation.INSERT) {
-
-    @Inject
-    private lateinit var incomingRepository: IncomingRepository
+class SynchroContactRoleUseCase
+@Inject
+constructor(
+    private val incomingRepository: IncomingRepository,
+) :
+    AbstractCUDUseCase<ContactRoleForApiMobileData>(TypeOperation.INSERT) {
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(SynchroContactRoleUseCase::class.java)

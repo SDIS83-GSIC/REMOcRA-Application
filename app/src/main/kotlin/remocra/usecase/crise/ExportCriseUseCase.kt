@@ -18,17 +18,16 @@ import java.util.UUID
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
-class ExportCriseUseCase : AbstractUseCase() {
-
-    @Inject lateinit var criseRepository: CriseRepository
-
-    @Inject lateinit var evenementRepository: EvenementRepository
-
-    @Inject lateinit var messageRepository: MessageRepository
-
-    @Inject lateinit var communeRepository: CommuneRepository
-
-    @Inject lateinit var documentUtils: DocumentUtils
+class ExportCriseUseCase
+@Inject
+constructor(
+    private val criseRepository: CriseRepository,
+    private val evenementRepository: EvenementRepository,
+    private val messageRepository: MessageRepository,
+    private val communeRepository: CommuneRepository,
+    private val documentUtils: DocumentUtils,
+) :
+    AbstractUseCase() {
 
     data class ElementHTML(
         val criseLibelle: String?,

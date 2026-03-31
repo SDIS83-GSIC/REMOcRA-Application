@@ -10,10 +10,12 @@ import remocra.db.jooq.remocra.tables.pojos.TypeOrganisme
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class UpdateTypeOrganismeDroitApiUseCase : AbstractCUDUseCase<Collection<TypeOrganisme>>(TypeOperation.UPDATE) {
-
-    @Inject
-    lateinit var typeOrganismeRepository: TypeOrganismeRepository
+class UpdateTypeOrganismeDroitApiUseCase
+@Inject
+constructor(
+    private val typeOrganismeRepository: TypeOrganismeRepository,
+) :
+    AbstractCUDUseCase<Collection<TypeOrganisme>>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_API)) {

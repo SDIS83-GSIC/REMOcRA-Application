@@ -13,11 +13,13 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class CreateCriseUseCase : AbstractCUDUseCase<CriseData>(TypeOperation.INSERT) {
-
-    @Inject lateinit var criseRepository: CriseRepository
-
-    @Inject lateinit var toponymieRepository: ToponymieRepository
+class CreateCriseUseCase
+@Inject
+constructor(
+    private val criseRepository: CriseRepository,
+    private val toponymieRepository: ToponymieRepository,
+) :
+    AbstractCUDUseCase<CriseData>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.CRISE_C)) {

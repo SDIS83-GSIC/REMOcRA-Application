@@ -16,15 +16,14 @@ import remocra.utils.sridFromEpsgCode
 import remocra.utils.toGeomFromText
 import java.util.UUID
 
-class GetPointCarteUseCase : AbstractUseCase() {
-    @Inject
-    lateinit var utilisateurRepository: UtilisateurRepository
-
-    @Inject
-    lateinit var carteRepository: CarteRepository
-
-    @Inject
-    lateinit var peiCaracteristiquesUseCase: PeiCaracteristiquesUseCase
+class GetPointCarteUseCase
+@Inject
+constructor(
+    private val utilisateurRepository: UtilisateurRepository,
+    private val carteRepository: CarteRepository,
+    private val peiCaracteristiquesUseCase: PeiCaracteristiquesUseCase,
+) :
+    AbstractUseCase() {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 

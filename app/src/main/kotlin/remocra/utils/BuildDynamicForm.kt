@@ -14,13 +14,13 @@ import java.util.UUID
 /**
  * Permet de renvoyer dynamiquement les paramètres d'un formulaire
  */
-class BuildDynamicForm : AbstractUseCase() {
-
-    @Inject
-    private lateinit var requeteSqlRepository: RequeteSqlRepository
-
-    @Inject
-    private lateinit var requestUtils: RequestUtils
+class BuildDynamicForm
+@Inject
+constructor(
+    private val requeteSqlRepository: RequeteSqlRepository,
+    private val requestUtils: RequestUtils,
+) :
+    AbstractUseCase() {
 
     fun executeForModeleCourrier(userInfo: WrappedUserInfo, modeleCourrier: ModeleCourrierRepository.ModeleCourrierGenere) =
         execute(

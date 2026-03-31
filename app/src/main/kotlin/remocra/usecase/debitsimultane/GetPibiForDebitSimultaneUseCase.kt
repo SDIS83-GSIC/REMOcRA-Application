@@ -10,16 +10,14 @@ import remocra.usecase.AbstractUseCase
 import remocra.utils.calculerCentroide
 import java.util.UUID
 
-class GetPibiForDebitSimultaneUseCase : AbstractUseCase() {
-
-    @Inject
-    private lateinit var debitSimultaneRepository: DebitSimultaneRepository
-
-    @Inject
-    private lateinit var peiRepository: PeiRepository
-
-    @Inject
-    private lateinit var appSettings: AppSettings
+class GetPibiForDebitSimultaneUseCase
+@Inject
+constructor(
+    private val debitSimultaneRepository: DebitSimultaneRepository,
+    private val peiRepository: PeiRepository,
+    private val appSettings: AppSettings,
+) :
+    AbstractUseCase() {
 
     fun execute(geometry: Geometry?, listePibiId: Set<UUID>?, typeReseauId: UUID): Collection<GlobalData.IdCodeLibelleData> {
         // Si on est dans le cas d'une création et qu'on a donc pas la géométrie du débit simultané

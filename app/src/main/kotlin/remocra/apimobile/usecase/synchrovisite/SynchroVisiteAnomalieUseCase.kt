@@ -12,13 +12,13 @@ import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class SynchroVisiteAnomalieUseCase : AbstractCUDUseCase<VisiteAnomalieForApiMobileData>(TypeOperation.INSERT) {
-
-    @Inject
-    private lateinit var incomingRepository: IncomingRepository
-
-    @Inject
-    private lateinit var dataCacheProvider: DataCacheProvider
+class SynchroVisiteAnomalieUseCase
+@Inject
+constructor(
+    private val incomingRepository: IncomingRepository,
+    private val dataCacheProvider: DataCacheProvider,
+) :
+    AbstractCUDUseCase<VisiteAnomalieForApiMobileData>(TypeOperation.INSERT) {
 
     companion object {
         private val logger: Logger = LoggerFactory.getLogger(SynchroVisiteAnomalieUseCase::class.java)

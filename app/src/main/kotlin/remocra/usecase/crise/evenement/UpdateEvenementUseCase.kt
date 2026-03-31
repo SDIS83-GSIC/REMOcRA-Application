@@ -20,15 +20,15 @@ import remocra.usecase.AbstractCUDGeometrieUseCase
 import remocra.usecase.document.UpsertDocumentEvenementUseCase
 import java.util.UUID
 
-class UpdateEvenementUseCase : AbstractCUDGeometrieUseCase<EvenementData>(TypeOperation.UPDATE) {
-
-    @Inject lateinit var evenementRepository: EvenementRepository
-
-    @Inject lateinit var messageRepository: MessageRepository
-
-    @Inject lateinit var typeCriseEvenementRepository: EvenementSousCategorieRepository
-
-    @Inject private lateinit var upsertDocumentEvenementUseCase: UpsertDocumentEvenementUseCase
+class UpdateEvenementUseCase
+@Inject
+constructor(
+    private val evenementRepository: EvenementRepository,
+    private val messageRepository: MessageRepository,
+    private val typeCriseEvenementRepository: EvenementSousCategorieRepository,
+    private val upsertDocumentEvenementUseCase: UpsertDocumentEvenementUseCase,
+) :
+    AbstractCUDGeometrieUseCase<EvenementData>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.EVENEMENT_U)) {

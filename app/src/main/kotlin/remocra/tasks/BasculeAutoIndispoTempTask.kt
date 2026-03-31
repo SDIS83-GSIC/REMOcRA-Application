@@ -9,13 +9,14 @@ import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.usecase.pei.UpdatePeiUseCase
 import java.util.UUID
 
-class BasculeAutoIndispoTempTask : SchedulableTask<BasculeAutoIndispoTempTaskParameter, SchedulableTaskResults>() {
-
-    @Inject lateinit var indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository
-
-    @Inject lateinit var peiRepository: PeiRepository
-
-    @Inject lateinit var updatePeiUseCase: UpdatePeiUseCase
+class BasculeAutoIndispoTempTask
+@Inject
+constructor(
+    private val indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository,
+    private val peiRepository: PeiRepository,
+    private val updatePeiUseCase: UpdatePeiUseCase,
+) :
+    SchedulableTask<BasculeAutoIndispoTempTaskParameter, SchedulableTaskResults>() {
 
     private val identificationJob = this.getType().toString()
 

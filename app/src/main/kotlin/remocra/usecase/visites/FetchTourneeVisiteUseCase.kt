@@ -5,9 +5,12 @@ import remocra.db.TourneeRepository
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class FetchTourneeVisiteUseCase : AbstractUseCase() {
-
-    @Inject lateinit var tourneeRepository: TourneeRepository
+class FetchTourneeVisiteUseCase
+@Inject
+constructor(
+    private val tourneeRepository: TourneeRepository,
+) :
+    AbstractUseCase() {
 
     fun fetchTourneeVisite(tourneeId: UUID): TourneeInformation =
         TourneeInformation(

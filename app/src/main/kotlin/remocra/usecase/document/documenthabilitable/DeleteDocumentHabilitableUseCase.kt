@@ -14,11 +14,13 @@ import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
 import java.nio.file.Paths
 
-class DeleteDocumentHabilitableUseCase : AbstractCUDUseCase<DocumentHabilitableData>(TypeOperation.DELETE) {
-
-    @Inject lateinit var documentHabilitableRepository: DocumentHabilitableRepository
-
-    @Inject lateinit var documentUtils: DocumentUtils
+class DeleteDocumentHabilitableUseCase
+@Inject
+constructor(
+    private val documentHabilitableRepository: DocumentHabilitableRepository,
+    private val documentUtils: DocumentUtils,
+) :
+    AbstractCUDUseCase<DocumentHabilitableData>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.DOCUMENTS_A)) {

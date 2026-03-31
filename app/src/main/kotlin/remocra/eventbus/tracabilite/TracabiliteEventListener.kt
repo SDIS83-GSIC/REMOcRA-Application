@@ -9,16 +9,14 @@ import remocra.db.TracabiliteRepository
 import remocra.db.TransactionManager
 import remocra.eventbus.EventListener
 
-class TracabiliteEventListener<T> : EventListener<TracabiliteEvent<T>> {
-
-    @Inject
-    lateinit var objectMapper: ObjectMapper
-
-    @Inject
-    lateinit var tracabiliteRepository: TracabiliteRepository
-
-    @Inject
-    lateinit var transactionManager: TransactionManager
+class TracabiliteEventListener<T>
+@Inject
+constructor(
+    private val objectMapper: ObjectMapper,
+    private val tracabiliteRepository: TracabiliteRepository,
+    private val transactionManager: TransactionManager,
+) :
+    EventListener<TracabiliteEvent<T>> {
 
     private val logger = LoggerFactory.getLogger(TracabiliteEventListener::class.java)
 

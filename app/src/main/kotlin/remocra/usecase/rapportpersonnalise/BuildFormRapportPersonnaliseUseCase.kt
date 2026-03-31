@@ -11,13 +11,13 @@ import java.util.UUID
  * Permet de récupérer tous les rapports personnalisés et les paramètres de ces derniers
  * Ce usecase permettra de fabriquer les formulaires dynamiquement dans le front
  */
-class BuildFormRapportPersonnaliseUseCase : AbstractUseCase() {
-
-    @Inject
-    private lateinit var rapportPersonnaliseRepository: RapportPersonnaliseRepository
-
-    @Inject
-    private lateinit var buildDynamicForm: BuildDynamicForm
+class BuildFormRapportPersonnaliseUseCase
+@Inject
+constructor(
+    private val rapportPersonnaliseRepository: RapportPersonnaliseRepository,
+    private val buildDynamicForm: BuildDynamicForm,
+) :
+    AbstractUseCase() {
 
     fun execute(userInfo: WrappedUserInfo, rapportPersonnaliseId: UUID) = buildDynamicForm.executeForRapportPerso(
         userInfo,

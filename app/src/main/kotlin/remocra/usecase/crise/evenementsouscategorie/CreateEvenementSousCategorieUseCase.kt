@@ -14,9 +14,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class CreateEvenementSousCategorieUseCase : AbstractCUDUseCase<EvenementSousCategorieWithComplementData>(TypeOperation.INSERT) {
-
-    @Inject lateinit var evenementSousCategorieRepository: EvenementSousCategorieRepository
+class CreateEvenementSousCategorieUseCase
+@Inject
+constructor(
+    private val evenementSousCategorieRepository: EvenementSousCategorieRepository,
+) :
+    AbstractCUDUseCase<EvenementSousCategorieWithComplementData>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_NOMENCLATURE)) {

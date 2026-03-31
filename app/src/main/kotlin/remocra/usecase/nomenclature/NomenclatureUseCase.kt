@@ -11,9 +11,12 @@ private const val SUFFIXE_ID = "Id"
 private const val SUFFIXE_LIBELLE = "Libelle"
 private const val SUFFIXE_CODE = "Code"
 
-class NomenclatureUseCase : AbstractUseCase() {
-
-    @Inject lateinit var dataCacheProvider: DataCacheProvider
+class NomenclatureUseCase
+@Inject
+constructor(
+    private val dataCacheProvider: DataCacheProvider,
+) :
+    AbstractUseCase() {
 
     fun getListIdLibelle(typeNomenclature: TypeDataCache): List<GlobalData.IdCodeLibelleLienData> {
         val clazz = dataCacheProvider.getPojoClassFromType(typeNomenclature)

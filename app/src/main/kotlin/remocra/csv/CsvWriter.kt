@@ -12,9 +12,11 @@ import java.nio.charset.StandardCharsets
  * Classe injectable permettant d'écrire un flux CSV et de le retourner pour incorporation dans un
  * objet Response par exemple
  */
-class CsvWriter {
-    @Inject lateinit var csvMapper: CsvMapper
-
+class CsvWriter
+@Inject
+constructor(
+    val csvMapper: CsvMapper,
+) {
     inline fun <reified T> writeCsvStream(
         data: Collection<T>,
         delimiter: Char = GlobalConstants.DELIMITER_CSV,

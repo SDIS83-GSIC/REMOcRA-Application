@@ -13,9 +13,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
 
-class UpdatePeiPrescritUseCase : AbstractCUDGeometrieUseCase<PeiPrescrit>(TypeOperation.UPDATE) {
-
-    @Inject lateinit var peiPrescritRepository: PeiPrescritRepository
+class UpdatePeiPrescritUseCase
+@Inject
+constructor(
+    private val peiPrescritRepository: PeiPrescritRepository,
+) :
+    AbstractCUDGeometrieUseCase<PeiPrescrit>(TypeOperation.UPDATE) {
 
     override fun getListGeometrie(element: PeiPrescrit): Collection<Geometry> =
         listOf(element.peiPrescritGeometrie)

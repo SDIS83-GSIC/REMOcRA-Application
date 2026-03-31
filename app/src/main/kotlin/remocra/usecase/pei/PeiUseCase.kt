@@ -39,55 +39,27 @@ import java.util.UUID
  * * [UpdatePeiUseCase]
  * * [DeletePeiUseCase]
  */
-class PeiUseCase : AbstractUseCase() {
-
-    @Inject
-    lateinit var peiRepository: PeiRepository
-
-    @Inject
-    lateinit var pibiRepository: PibiRepository
-
-    @Inject
-    lateinit var penaRepository: PenaRepository
-
-    @Inject
-    lateinit var communeRepository: CommuneRepository
-
-    @Inject
-    lateinit var voieRepository: VoieRepository
-
-    @Inject
-    lateinit var organismeRepository: OrganismeRepository
-
-    @Inject
-    lateinit var gestionnaireRepository: GestionnaireRepository
-
-    @Inject
-    lateinit var siteRepository: SiteRepository
-
-    @Inject
-    lateinit var lieuDitRepository: LieuDitRepository
-
-    @Inject
-    lateinit var modelePibiRepository: ModelePibiRepository
-
-    @Inject
-    lateinit var parametresProvider: ParametresProvider
-
-    @Inject
-    lateinit var diametreRepository: DiametreRepository
-
-    @Inject
-    lateinit var getMessagePeiLongueIndispoUseCase: GetMessagePeiLongueIndispoUseCase
-
-    @Inject
-    lateinit var getCommuneVoieUseCase: GetCommuneVoieUseCase
-
-    @Inject
-    lateinit var listePeiUseCase: ListPeiUseCase
-
-    @Inject
-    lateinit var appSettings: AppSettings
+class PeiUseCase
+@Inject
+constructor(
+    private val peiRepository: PeiRepository,
+    private val pibiRepository: PibiRepository,
+    private val penaRepository: PenaRepository,
+    private val communeRepository: CommuneRepository,
+    private val voieRepository: VoieRepository,
+    private val organismeRepository: OrganismeRepository,
+    private val gestionnaireRepository: GestionnaireRepository,
+    private val siteRepository: SiteRepository,
+    private val lieuDitRepository: LieuDitRepository,
+    private val modelePibiRepository: ModelePibiRepository,
+    private val parametresProvider: ParametresProvider,
+    private val diametreRepository: DiametreRepository,
+    private val getMessagePeiLongueIndispoUseCase: GetMessagePeiLongueIndispoUseCase,
+    private val getCommuneVoieUseCase: GetCommuneVoieUseCase,
+    private val listePeiUseCase: ListPeiUseCase,
+    private val appSettings: AppSettings,
+) :
+    AbstractUseCase() {
 
     fun getInfoPei(idPei: UUID): PeiData {
         val typePei = peiRepository.getTypePei(idPei)

@@ -9,9 +9,12 @@ import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.db.jooq.remocra.tables.pojos.IndisponibiliteTemporaire
 import remocra.eventbus.notification.NotificationEvent
 
-class NotifAvantFinIndispoTempTask : SchedulableTask<NotifAvantFinIndispoTempTaskParameter, NotifAvantFinIndispoTempJobResult>() {
-
-    @Inject lateinit var indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository
+class NotifAvantFinIndispoTempTask
+@Inject
+constructor(
+    private val indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository,
+) :
+    SchedulableTask<NotifAvantFinIndispoTempTaskParameter, NotifAvantFinIndispoTempJobResult>() {
 
     private val identificationJob = this.getType().toString()
 

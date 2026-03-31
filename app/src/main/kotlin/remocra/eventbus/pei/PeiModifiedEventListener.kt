@@ -33,7 +33,16 @@ import java.util.UUID
  * EventListener écoutant les modifications effectuées sur une PEI hors schéma "classique" (traçabilité par exemple)
  *
  */
-class PeiModifiedEventListener @Inject constructor() :
+class PeiModifiedEventListener
+@Inject
+constructor(
+    private val visiteRepository: VisiteRepository,
+    private val peiRepository: PeiRepository,
+    private val getModeleMinimalPeiUseCase: GetModeleMinimalPeiUseCase,
+    private val dataCacheProvider: DataCacheProvider,
+    private val dateUtils: DateUtils,
+    private val appSettings: AppSettings,
+) :
     EventListener<PeiModifiedEvent> {
     companion object {
         val nexSisObjectMapper: ObjectMapper = jacksonObjectMapper().apply {
@@ -47,25 +56,7 @@ class PeiModifiedEventListener @Inject constructor() :
         }
     }
 
-    @Inject
-    lateinit var visiteRepository: VisiteRepository
-
-    @Inject
-    lateinit var peiRepository: PeiRepository
-
-    @Inject
-    lateinit var getModeleMinimalPeiUseCase: GetModeleMinimalPeiUseCase
-
-    @Inject
-    lateinit var dataCacheProvider: DataCacheProvider
-
-    @Inject
-    lateinit var dateUtils: DateUtils
-
     private val logger = LoggerFactory.getLogger(PeiModifiedEventListener::class.java)
-
-    @Inject
-    private lateinit var appSettings: AppSettings
 
     @Subscribe
     override fun onEvent(event: PeiModifiedEvent) {

@@ -6,9 +6,12 @@ import remocra.db.DocumentRepository
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class DocumentPeiUseCase : AbstractUseCase() {
-
-    @Inject lateinit var documentRepository: DocumentRepository
+class DocumentPeiUseCase
+@Inject
+constructor(
+    private val documentRepository: DocumentRepository,
+) :
+    AbstractUseCase() {
 
     fun execute(peiId: UUID): List<DocumentData> {
         val listeDocument = documentRepository.getDocumentByPei(peiId)

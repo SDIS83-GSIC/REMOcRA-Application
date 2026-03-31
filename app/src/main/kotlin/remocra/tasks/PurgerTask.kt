@@ -9,13 +9,14 @@ import remocra.db.LogLineRepository
 import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.usecase.document.DocumentUtils
 
-class PurgerTask : SchedulableTask<PurgerTaskParameter, SchedulableTaskResults>() {
-
-    @Inject lateinit var documentUtils: DocumentUtils
-
-    @Inject lateinit var jobRepository: JobRepository
-
-    @Inject lateinit var logLineRepository: LogLineRepository
+class PurgerTask
+@Inject
+constructor(
+    private val documentUtils: DocumentUtils,
+    private val jobRepository: JobRepository,
+    private val logLineRepository: LogLineRepository,
+) :
+    SchedulableTask<PurgerTaskParameter, SchedulableTaskResults>() {
 
     override fun execute(parameters: PurgerTaskParameter?, userInfo: WrappedUserInfo): SchedulableTaskResults? {
         logManager.info("Exécution du job")

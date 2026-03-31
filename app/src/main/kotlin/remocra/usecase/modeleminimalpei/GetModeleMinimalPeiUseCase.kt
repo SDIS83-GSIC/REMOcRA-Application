@@ -1,6 +1,5 @@
 package remocra.usecase.modeleminimalpei
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
@@ -32,32 +31,15 @@ import java.util.UUID
 
 class GetModeleMinimalPeiUseCase @Inject
 constructor(
+    private val voieRepository: VoieRepository,
+    private val visiteRepository: VisiteRepository,
+    private val tracabiliteRepository: TracabiliteRepository,
+    private val diametreDecorator: DiametreDecorator,
+    private val adresseDecorator: AdresseDecorator,
+    private val appSettings: AppSettings,
+    private val getCoordonneesBySrid: GetCoordonneesBySrid,
     override val peiRepository: PeiRepository,
 ) : AbstractApiPeiUseCase(peiRepository) {
-
-    @Inject
-    lateinit var voieRepository: VoieRepository
-
-    @Inject
-    lateinit var visiteRepository: VisiteRepository
-
-    @Inject
-    lateinit var tracabiliteRepository: TracabiliteRepository
-
-    @Inject
-    lateinit var diametreDecorator: DiametreDecorator
-
-    @Inject
-    lateinit var adresseDecorator: AdresseDecorator
-
-    @Inject
-    lateinit var appSettings: AppSettings
-
-    @Inject
-    lateinit var objectMapper: ObjectMapper
-
-    @Inject
-    lateinit var getCoordonneesBySrid: GetCoordonneesBySrid
 
     // NexSIS attend "reseau_aep" comme source pour les PEI de type BI ou PI, sinon on laisse vide
     private val RESEAU_AEP = "reseau_aep"

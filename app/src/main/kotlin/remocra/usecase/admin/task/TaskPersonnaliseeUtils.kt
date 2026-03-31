@@ -14,13 +14,12 @@ import kotlin.io.path.name
 import kotlin.io.path.outputStream
 import kotlin.io.path.writeText
 
-class TaskPersonnaliseeUtils {
-
-    @Inject
-    lateinit var documentUtils: DocumentUtils
-
-    @Inject
-    lateinit var objectMapper: ObjectMapper
+class TaskPersonnaliseeUtils
+@Inject
+constructor(
+    private val documentUtils: DocumentUtils,
+    private val objectMapper: ObjectMapper,
+) {
 
     fun saveTask(element: TaskPersonnaliseeInputData) {
         val directory = GlobalConstants.DOSSIER_APACHE_HOP_TASK.resolve(element.taskId.toString())

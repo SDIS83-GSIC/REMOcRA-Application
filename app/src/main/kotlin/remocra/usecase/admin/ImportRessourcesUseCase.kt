@@ -20,10 +20,12 @@ import kotlin.io.path.relativeTo
  * Certains "contrats" sont mis en place pour simplifier l'utilisation dans l'application, autant sur le répertoire
  * contenant la ressource que sur son nommage.
  */
-class ImportRessourcesUseCase : AbstractUseCase() {
-
-    @Inject
-    lateinit var documentUtils: DocumentUtils
+class ImportRessourcesUseCase
+@Inject
+constructor(
+    private val documentUtils: DocumentUtils,
+) :
+    AbstractUseCase() {
 
     fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_PARAM_APPLI)) {

@@ -17,22 +17,16 @@ import remocra.usecase.AbstractUseCase
 import remocra.utils.toGeomFromText
 import java.util.UUID
 
-class MovePeiUseCase : AbstractUseCase() {
-
-    @Inject
-    lateinit var peiRepository: PeiRepository
-
-    @Inject
-    lateinit var pibiRepository: PibiRepository
-
-    @Inject
-    lateinit var penaRepository: PenaRepository
-
-    @Inject
-    lateinit var communeRepository: CommuneRepository
-
-    @Inject
-    lateinit var appSettings: AppSettings
+class MovePeiUseCase
+@Inject
+constructor(
+    private val peiRepository: PeiRepository,
+    private val pibiRepository: PibiRepository,
+    private val penaRepository: PenaRepository,
+    private val communeRepository: CommuneRepository,
+    private val appSettings: AppSettings,
+) :
+    AbstractUseCase() {
 
     fun execute(
         geometry: Geometry,

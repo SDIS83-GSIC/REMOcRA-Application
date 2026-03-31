@@ -21,13 +21,14 @@ import java.nio.file.Paths
 import java.util.UUID
 import kotlin.io.path.absolutePathString
 
-class UpdateRcciUseCase : AbstractCUDGeometrieUseCase<RcciFormInput>(TypeOperation.UPDATE) {
-
-    @Inject lateinit var documentUtils: DocumentUtils
-
-    @Inject lateinit var rcciRepository: RcciRepository
-
-    @Inject lateinit var documentRepository: DocumentRepository
+class UpdateRcciUseCase
+@Inject
+constructor(
+    private val documentUtils: DocumentUtils,
+    private val rcciRepository: RcciRepository,
+    private val documentRepository: DocumentRepository,
+) :
+    AbstractCUDGeometrieUseCase<RcciFormInput>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.RCCI_A)) {

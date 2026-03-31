@@ -18,18 +18,17 @@ import remocra.utils.BuildDynamicForm
 import remocra.utils.toGeomFromText
 import java.util.UUID
 
-class CriseUseCase : AbstractUseCase() {
-    @Inject lateinit var criseRepository: CriseRepository
-
-    @Inject lateinit var evenementRepository: EvenementRepository
-
-    @Inject lateinit var evenementSousCategorieRepository: EvenementSousCategorieRepository
-
-    @Inject lateinit var communeRepository: CommuneRepository
-
-    @Inject lateinit var appSettings: AppSettings
-
-    @Inject private lateinit var buildDynamicForm: BuildDynamicForm
+class CriseUseCase
+@Inject
+constructor(
+    private val criseRepository: CriseRepository,
+    private val evenementRepository: EvenementRepository,
+    private val evenementSousCategorieRepository: EvenementSousCategorieRepository,
+    private val communeRepository: CommuneRepository,
+    private val appSettings: AppSettings,
+    private val buildDynamicForm: BuildDynamicForm,
+) :
+    AbstractUseCase() {
 
     fun getTypeCriseForSelect(): Collection<TypeCriseComplete> = criseRepository.getCriseForSelect()
 

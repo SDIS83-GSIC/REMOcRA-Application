@@ -9,13 +9,14 @@ import remocra.tasks.TypeDestinataire
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
-class TaskUseCase() : AbstractUseCase() {
-    @Inject lateinit var organismeRepository: OrganismeRepository
-
-    @Inject lateinit var gestionnaireRepository: GestionnaireRepository
-
-    @Inject lateinit var utilisateurRepository: UtilisateurRepository
-
+class TaskUseCase
+@Inject
+constructor(
+    private val organismeRepository: OrganismeRepository,
+    private val gestionnaireRepository: GestionnaireRepository,
+    private val utilisateurRepository: UtilisateurRepository,
+) :
+    AbstractUseCase() {
     fun getDestinataireByListPei(listPeiId: List<UUID>, contactRole: String, typeDestinataire: TypeDestinataire): MutableMap<Destinataire, List<UUID?>> {
         val destinataireContactOrganisme: Map<Destinataire, List<UUID?>> =
             if (typeDestinataire.contactOrganisme.isNotEmpty()) {

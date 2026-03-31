@@ -25,25 +25,17 @@ import java.io.InputStream
 import java.nio.file.Path
 import java.util.UUID
 
-class ImportSitesUseCase : AbstractUseCase() {
-
-    @Inject
-    lateinit var documentUtils: DocumentUtils
-
-    @Inject
-    lateinit var importShapeUtils: ImportShapeUtils
-
-    @Inject
-    lateinit var siteRepository: SiteRepository
-
-    @Inject
-    lateinit var dataCacheProvider: DataCacheProvider
-
-    @Inject
-    lateinit var eventBus: EventBus
-
-    @Inject
-    lateinit var appSettings: AppSettings
+class ImportSitesUseCase
+@Inject
+constructor(
+    private val documentUtils: DocumentUtils,
+    private val importShapeUtils: ImportShapeUtils,
+    private val siteRepository: SiteRepository,
+    private val dataCacheProvider: DataCacheProvider,
+    private val eventBus: EventBus,
+    private val appSettings: AppSettings,
+) :
+    AbstractUseCase() {
 
     fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.GEST_SITE_A)) {

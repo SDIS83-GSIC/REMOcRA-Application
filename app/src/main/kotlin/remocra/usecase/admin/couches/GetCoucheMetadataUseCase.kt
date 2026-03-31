@@ -8,8 +8,12 @@ import remocra.data.ResponseCouche
 import remocra.db.CoucheMetadataRepository
 import remocra.usecase.AbstractUseCase
 
-class GetCoucheMetadataUseCase : AbstractUseCase() {
-    @Inject lateinit var coucheMetadataRepository: CoucheMetadataRepository
+class GetCoucheMetadataUseCase
+@Inject
+constructor(
+    private val coucheMetadataRepository: CoucheMetadataRepository,
+) :
+    AbstractUseCase() {
 
     fun getCouchesMetadataForTableau(params: Params<CoucheMetadataRepository.FilterCoucheMetadata, CoucheMetadataRepository.SortCouche>): List<ResponseCouche> {
         return coucheMetadataRepository.getCouchesMetadataForTableau(params)

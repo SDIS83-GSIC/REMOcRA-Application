@@ -15,15 +15,15 @@ import remocra.usecase.AbstractUseCase
 import remocra.utils.addQueryParameters
 import java.util.UUID
 
-class GetFeaturesTypeUseCase : AbstractUseCase() {
-
-    @Inject lateinit var coucheRepository: CoucheRepository
-
-    @Inject lateinit var geoserverSettings: GeoserverModule.GeoserverSettings
-
-    @Inject lateinit var layerGroupUrlUseCase: LayerGroupUrlUseCase
-
-    @Inject lateinit var httpClient: OkHttpClient
+class GetFeaturesTypeUseCase
+@Inject
+constructor(
+    private val coucheRepository: CoucheRepository,
+    private val geoserverSettings: GeoserverModule.GeoserverSettings,
+    private val layerGroupUrlUseCase: LayerGroupUrlUseCase,
+    private val httpClient: OkHttpClient,
+) :
+    AbstractUseCase() {
 
     fun execute(coucheId: UUID, uriInfo: UriInfo): List<CoucheInfo> {
         val couche = coucheRepository.getCoucheById(coucheId)

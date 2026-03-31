@@ -12,9 +12,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class DeleteContactUseCase : AbstractCUDUseCase<ContactData>(TypeOperation.DELETE) {
-
-    @Inject lateinit var contactRepository: ContactRepository
+class DeleteContactUseCase
+@Inject
+constructor(
+    private val contactRepository: ContactRepository,
+) :
+    AbstractCUDUseCase<ContactData>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         // Les droits sont gérés dans le checkContraintes puisqu'on a besoin de savoir si c'est un gestionnaire ou organisme

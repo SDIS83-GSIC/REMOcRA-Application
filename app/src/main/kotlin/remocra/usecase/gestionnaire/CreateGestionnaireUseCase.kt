@@ -12,9 +12,12 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class CreateGestionnaireUseCase : AbstractCUDUseCase<Gestionnaire>(TypeOperation.INSERT) {
-
-    @Inject lateinit var gestionnaireRepository: GestionnaireRepository
+class CreateGestionnaireUseCase
+@Inject
+constructor(
+    private val gestionnaireRepository: GestionnaireRepository,
+) :
+    AbstractCUDUseCase<Gestionnaire>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.GEST_SITE_A)) {

@@ -16,11 +16,13 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
 import java.util.UUID
 
-class UpdateEventGeometryUseCase : AbstractCUDGeometrieUseCase<EvenementGeometrieData>(TypeOperation.UPDATE) {
-
-    @Inject private lateinit var eventRepository: EvenementRepository
-
-    @Inject private lateinit var messageRepository: MessageRepository
+class UpdateEventGeometryUseCase
+@Inject
+constructor(
+    private val eventRepository: EvenementRepository,
+    private val messageRepository: MessageRepository,
+) :
+    AbstractCUDGeometrieUseCase<EvenementGeometrieData>(TypeOperation.UPDATE) {
 
     override fun getListGeometrie(element: EvenementGeometrieData): Collection<Geometry> {
         return listOf(element.eventGeometrie)
