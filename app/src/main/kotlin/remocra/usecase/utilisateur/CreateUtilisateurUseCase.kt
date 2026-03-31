@@ -62,8 +62,10 @@ constructor(
         try {
             val token = "${tokenResponse.tokenType} ${tokenResponse.accessToken}"
 
-            // FIXME: ça ne retourne qu'une "page" de résultats, l'utilisateur pourrait exister mais ne pas être retourné
-            val listeUtilisateurKeycloak = keycloakApi.getUsers(token).execute().body()
+            // Remonte le résultat de la recherche de l'identifiant dans keycloak
+            // soit la map contient un élément, c'est notre utilisateur qui existe déjà dans keycloak
+            // soit elle est vide, l'utilisateur n'existe pas dans keycloak
+            val listeUtilisateurKeycloak = keycloakApi.getUsersByUsername(token, element.utilisateurData.utilisateurUsername).execute().body()
 
             // Si l'utilisateur n'est pas dans keycloak, on le crée
             if (listeUtilisateurKeycloak?.map { it.username }?.contains(element.utilisateurData.utilisateurUsername) != true) {
@@ -90,8 +92,7 @@ constructor(
                 logger.info("Utilisateur ${element.utilisateurData.utilisateurUsername} inséré dans keycloak")
             }
 
-            val keycloakId = keycloakApi.getUsers(token, username = element.utilisateurData.utilisateurUsername, max = 1)
-                .execute().body()!!.first().id
+            val keycloakId = keycloakApi.getUsersByUsername(token, element.utilisateurData.utilisateurUsername).execute().body()!!.first().id
 
             val responseMailKeycloak = keycloakApi.executeActionsEmail(
                 token,

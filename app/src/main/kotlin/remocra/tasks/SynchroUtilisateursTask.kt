@@ -51,10 +51,7 @@ class SynchroUtilisateurTask @Inject constructor(
 
         while (!fini) {
             try {
-                val usersKeycloak =
-                    keycloakApi
-                        .getUsers(token, i, i + MAX_RESULTS)
-                        .execute()
+                val usersKeycloak = keycloakApi.getUsers(authorization = token, first = i, max = i + MAX_RESULTS).execute()
                 if (!usersKeycloak.isSuccessful) {
                     logManager.error("[TASK_SYNCHRO_UTILISATEUR] Erreur lors de la récupération des utilisateurs de keycloak : ${usersKeycloak.errorBody()}")
                     return null

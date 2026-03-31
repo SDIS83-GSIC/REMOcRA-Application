@@ -29,7 +29,13 @@ interface KeycloakApi {
         @Header(HttpHeaders.AUTHORIZATION) authorization: String,
         @Query("first") first: Int? = null,
         @Query("max") max: Int? = null,
-        @Query("username") username: String? = null,
+    ): Call<List<UserRepresentation>>
+
+    @GET("users")
+    fun getUsersByUsername(
+        @Header(HttpHeaders.AUTHORIZATION) authorization: String,
+        @Query("username") username: String,
+        @Query("exact") exact: Boolean = true,
     ): Call<List<UserRepresentation>>
 
     @PUT("users/{id}/execute-actions-email")
