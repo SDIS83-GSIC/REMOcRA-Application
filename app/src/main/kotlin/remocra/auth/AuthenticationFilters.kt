@@ -39,13 +39,10 @@ class AuthenticationFeature : DynamicFeature {
 }
 
 @Priority(Priorities.AUTHENTICATION)
-private class ApiAuthenticationFilter
-@Inject
-constructor(
-    private var tokenIntrospector_: TokenIntrospector,
-    private var organismePrincipalProvider: OrganismePrincipalProvider,
-) :
-    TokenFilter() {
+class ApiAuthenticationFilter : TokenFilter() {
+    @Inject lateinit var tokenIntrospector_: TokenIntrospector
+
+    @Inject lateinit var organismePrincipalProvider: OrganismePrincipalProvider
 
     override fun getTokenIntrospector(): TokenIntrospector {
         return tokenIntrospector_
@@ -57,13 +54,11 @@ constructor(
 }
 
 @Priority(Priorities.AUTHENTICATION)
-private class ApiMobileAuthenticationFilter
-@Inject
-constructor(
-    private val tokenIntrospector_: TokenIntrospector,
-    private val mobileUserPrincipalProvider: MobileUserPrincipalProvider,
-) :
-    TokenFilter() {
+class ApiMobileAuthenticationFilter : TokenFilter() {
+    @Inject lateinit var tokenIntrospector_: TokenIntrospector
+
+    @Inject lateinit var mobileUserPrincipalProvider: MobileUserPrincipalProvider
+
     override fun getTokenIntrospector(): TokenIntrospector {
         return tokenIntrospector_
     }

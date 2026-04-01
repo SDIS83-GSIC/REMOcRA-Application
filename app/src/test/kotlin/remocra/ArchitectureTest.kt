@@ -15,12 +15,13 @@ import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.ArchRule
 import com.tngtech.archunit.lang.conditions.ArchConditions.have
-import com.tngtech.archunit.lang.conditions.ArchConditions.haveNameMatching
 import com.tngtech.archunit.lang.conditions.ArchPredicates.are
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.constructors
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.methods
 import jakarta.ws.rs.Path
+import remocra.auth.ApiAuthenticationFilter
+import remocra.auth.ApiMobileAuthenticationFilter
 import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.RequireDroitsApi
@@ -137,7 +138,9 @@ class ArchitectureTest {
                             .or(type(SimpleTask::class.java))
                             .or(type(AbstractCUDPeiUseCase::class.java))
                             .or(type(AbstractRepository::class.java))
-                            .or(type(AbstractUpsertDocumentUseCase::class.java)),
+                            .or(type(AbstractUpsertDocumentUseCase::class.java))
+                            .or(type(ApiMobileAuthenticationFilter::class.java))
+                            .or(type(ApiAuthenticationFilter::class.java)),
                     ),
                 ),
             )
