@@ -66,7 +66,7 @@ class CouvertureHydrauliqueRepository @Inject constructor(
             .on(ETUDE.TYPE_ETUDE_ID.eq(TYPE_ETUDE.ID))
             .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
             .and(repositoryUtils.checkIsSuperAdminOrCondition(ETUDE.ORGANISME_ID.`in`(affiliatedOrganismeIds), isSuperAdmin))
-            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(ETUDE.LIBELLE))
+            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: listOf(ETUDE.DATE_MAJ.desc()))
             .limit(params.limit)
             .offset(params.offset)
             .fetchInto()
