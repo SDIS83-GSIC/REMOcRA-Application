@@ -41,7 +41,7 @@ licensee {
     allowUrl("https://repository.jboss.org/licenses/apache-2.0.txt") {
         because("Apache-2.0")
     }
-    allowUrl("https://flywaydb.org/licenses/flyway-oss") {
+    allowUrl("https://github.com/flyway/flyway/blob/main/README.txt") {
         because("Erreur 404 mais FlywayDB est Apache-2.0")
     }
     allowUrl("http://www.gnu.org/copyleft/lesser.txt") {
