@@ -74,6 +74,7 @@ const ListModuleCourrier = () => {
             {
               Header: "Destinataires",
               accessor: "emailDestinataire",
+              sortField: "emailDestinataire",
               Filter: <FilterInput type="text" name="emailDestinataire" />,
               Cell: (value) => {
                 return value.value.map((v, key) => {

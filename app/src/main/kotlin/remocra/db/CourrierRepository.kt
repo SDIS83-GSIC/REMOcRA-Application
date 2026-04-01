@@ -116,6 +116,7 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
             COURRIER.OBJET,
             DOCUMENT.DATE,
             COURRIER.DOCUMENT_ID,
+            DSL.groupConcat(destinataireCte.field("destinataire_email")).separator(", "),
             multiset(
                 dsl.select(
                     destinataireCte.field("courrier_id", UUID::class.java),
@@ -123,7 +124,8 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
                     destinataireCte.field("accuse_reception", Boolean::class.java),
                 )
                     .from(destinataireCte)
-                    .where(destinataireCte.field("courrier_id", UUID::class.java)!!.eq(COURRIER.ID)),
+                    .where(destinataireCte.field("courrier_id", UUID::class.java)!!.eq(COURRIER.ID))
+                    .orderBy(destinataireCte.field("destinataire_email")),
             ).convertFrom { record ->
                 record?.map { r ->
                     Destinataire(
@@ -155,6 +157,14 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
                 ),
             )
             .and(params?.filterBy?.toCondition(expediteurAlias, destinataireCte, dateUtils) ?: DSL.noCondition())
+            .groupBy(
+                COURRIER.ID,
+                COURRIER.REFERENCE,
+                expediteurAlias.field(ORGANISME.LIBELLE),
+                COURRIER.OBJET,
+                DOCUMENT.DATE,
+                COURRIER.DOCUMENT_ID,
+            )
             .orderBy(
                 params?.sortBy?.toCondition()
                     .takeIf { !it.isNullOrEmpty() } ?: listOf(DOCUMENT.DATE.desc()),
@@ -236,12 +246,14 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
         val courrierObjet: Int?,
         val courrierReference: Int?,
         val courrierExpediteur: Int?,
+        val emailDestinataire: Int?,
         val documentDate: Int?,
     ) {
         fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
             courrierObjet?.let { "courrierObjet" to it },
             courrierReference?.let { "courrierReference" to it },
             courrierExpediteur?.let { "courrierExpediteur" to it },
+            emailDestinataire?.let { "emailDestinataire" to it },
             documentDate?.let { "documentDate" to it },
         )
         fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
@@ -249,6 +261,7 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
                 "courrierObjet" -> COURRIER.OBJET.getSortField(pair.second)
                 "courrierReference" -> COURRIER.REFERENCE.getSortField(pair.second)
                 "courrierExpediteur" -> expediteurAlias.field(ORGANISME.LIBELLE)?.getSortField(pair.second)
+                "emailDestinataire" -> DSL.groupConcat(destinataireCte.field("destinataire_email")).separator(", ").getSortField(pair.second)
                 "documentDate" -> DOCUMENT.DATE.getSortField(pair.second)
                 else -> null
             }
