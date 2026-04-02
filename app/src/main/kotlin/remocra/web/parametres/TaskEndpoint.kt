@@ -3,11 +3,13 @@ package remocra.web.parametres
 import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.ws.rs.DELETE
 import jakarta.ws.rs.FormParam
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
+import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
 import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
@@ -18,13 +20,16 @@ import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.TaskInputData
 import remocra.data.TaskPersonnaliseeInputData
+import remocra.db.TaskRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.usecase.admin.task.CreateTaskPersonnaliseeUseCase
+import remocra.usecase.admin.task.DeleteTaskPersonnaliseeUseCase
 import remocra.usecase.admin.task.TaskPersonnaliseeUseCase
 import remocra.usecase.admin.task.TaskUseCase
 import remocra.usecase.admin.task.UpdateTaskPersonnaliseeUseCase
 import remocra.usecase.admin.task.UpdateTaskUseCase
+import remocra.utils.badRequest
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -41,6 +46,10 @@ class TaskEndpoint : AbstractEndpoint() {
     @Inject lateinit var updateTaskPersonnaliseeUseCase: UpdateTaskPersonnaliseeUseCase
 
     @Inject lateinit var createTaskPersonnaliseeUseCase: CreateTaskPersonnaliseeUseCase
+
+    @Inject lateinit var deleteTaskPersonnaliseeUseCase: DeleteTaskPersonnaliseeUseCase
+
+    @Inject lateinit var taskRepository: TaskRepository
 
     @Context lateinit var securityContext: SecurityContext
 
@@ -112,6 +121,25 @@ class TaskEndpoint : AbstractEndpoint() {
                 zip = httpRequest.getPart("zipFile")?.inputStream,
             ),
         ).wrap()
+
+    @Path("/personnalisee/{taskId}/delete")
+    @DELETE
+    @RequireDroits([Droit.ADMIN_PARAM_TRAITEMENTS])
+    fun deleteTaskPersonnalisee(
+        @PathParam("taskId") taskId: UUID,
+    ): Response {
+        val task = taskRepository.getTaskById(taskId) ?: return badRequest().build()
+        return deleteTaskPersonnaliseeUseCase.execute(
+            securityContext.userInfo,
+            TaskPersonnaliseeInputData(
+                taskId = taskId,
+                taskActif = task.taskActif ?: false,
+                taskPlanification = task.taskPlanification,
+                taskParametres = task.taskParametres,
+                zip = null,
+            ),
+        ).wrap()
+    }
 
     class TaskInput {
         @FormParam("taskId")

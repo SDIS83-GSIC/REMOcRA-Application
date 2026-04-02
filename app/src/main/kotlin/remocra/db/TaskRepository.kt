@@ -5,6 +5,7 @@ import org.jooq.DSLContext
 import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.db.jooq.remocra.tables.pojos.Task
 import remocra.db.jooq.remocra.tables.references.TASK
+import java.util.UUID
 
 class TaskRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
@@ -38,4 +39,10 @@ class TaskRepository @Inject constructor(private val dsl: DSLContext) : Abstract
 
     fun getTaskApacheHop(): Collection<Task> =
         dsl.selectFrom(TASK).where(TASK.TYPE.eq(TypeTask.PERSONNALISE)).and(TASK.ACTIF.eq(true)).fetchInto()
+
+    fun deleteTaskPersonnalisee(taskId: UUID) =
+        dsl.deleteFrom(TASK).where(TASK.ID.eq(taskId).and(TASK.TYPE.eq(TypeTask.PERSONNALISE))).execute()
+
+    fun getTaskById(taskId: UUID): Task? =
+        dsl.selectFrom(TASK).where(TASK.ID.eq(taskId)).fetchOneInto()
 }

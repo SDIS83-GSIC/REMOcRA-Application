@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
 import CustomLinkButton from "../../../components/Button/CustomLinkButton.tsx";
+import DeleteButtonWithModal from "../../../components/Button/DeleteButtonWithModal.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import MyFormik from "../../../components/Form/MyFormik.tsx";
@@ -51,12 +52,39 @@ const ListeTaskPersonnalisee = () => {
           <div className="bg-light p-2 border rounded mx-2">
             {listTasks.map((e) => (
               <Row key={e.taskLibelle}>
-                <CustomLinkButton
-                  key={e.taskLibelle}
-                  onClick={() => setCurrentTask(e)}
-                >
-                  {e.taskLibelle}
-                </CustomLinkButton>
+                <Col>
+                  <Button
+                    variant="link"
+                    key={e.taskLibelle}
+                    onClick={() => setCurrentTask(e)}
+                  >
+                    {e.taskLibelle}
+                  </Button>
+                </Col>
+                <Col>
+                  <DeleteButtonWithModal
+                    path={`/api/task/personnalisee/${e.taskId}/delete`}
+                    disabled={false}
+                    title={false}
+                    variant="link"
+                    header={"Supprimer la tâche"}
+                    content={
+                      <>
+                        Attention en supprimant cette tâche, vous allez perdre
+                        tout l'historique de ses exécutions. Si vous ne
+                        souhaitez pas perdre cet historique, vous pouvez
+                        simplement désactiver la tâche.
+                        <br />
+                        <br />
+                        Êtes-vous sûr de vouloir supprimer cette tâche ?
+                      </>
+                    }
+                    className="text-decoration-none text-danger"
+                    reload={() => {
+                      taskInfo.reload();
+                    }}
+                  />
+                </Col>
               </Row>
             ))}
           </div>
@@ -66,7 +94,8 @@ const ListeTaskPersonnalisee = () => {
             <h3>{currentTask.taskLibelle}</h3>
             <MyFormik
               initialValues={getInitialValues(
-                listTasks.find((e) => e.taskId === currentTask.taskId),
+                listTasks.find((e) => e.taskId === currentTask.taskId) ??
+                  currentTask,
               )}
               isPost={false}
               submitUrl={"/api/task/personnalisee"}

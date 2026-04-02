@@ -84,6 +84,14 @@ class DocumentUtils {
      */
     fun deleteFile(nomFichier: String, repertoire: Path) = repertoire.resolve(nomFichier).deleteExisting()
 
+    fun deleteFileIfExists(nomFichier: String, repertoire: Path) {
+        if (repertoire.resolve(nomFichier).exists()) {
+            repertoire.resolve(nomFichier).deleteExisting()
+        } else {
+            logger.warn("Fichier ${repertoire.resolve(nomFichier).pathString} non présent sur le disque")
+        }
+    }
+
     /**
      * Déplace un fichier sur disque.
      *

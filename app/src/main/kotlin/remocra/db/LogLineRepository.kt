@@ -65,4 +65,8 @@ class LogLineRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             }
         }
     }
+
+    fun deleteByJobsId(jobsId: Collection<UUID>) {
+        dsl.deleteFrom(LOG_LINE).where(LOG_LINE.JOB_ID.`in`(jobsId)).execute()
+    }
 }

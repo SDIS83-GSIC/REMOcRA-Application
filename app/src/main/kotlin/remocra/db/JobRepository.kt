@@ -192,4 +192,13 @@ class JobRepository @Inject constructor(private val dsl: DSLContext) : AbstractR
 
     fun purgeJobFromSetJobId(setJobId: Set<UUID>) =
         dsl.deleteFrom(JOB).where(JOB.ID.`in`(setJobId)).execute()
+
+    fun getJobsId(taskId: UUID): Collection<UUID> =
+        dsl.select(JOB.ID)
+            .from(JOB)
+            .where(JOB.TASK_ID.eq(taskId))
+            .fetchInto(UUID::class.java)
+
+    fun deleteByIdJob(jobsIds: Collection<UUID>) =
+        dsl.deleteFrom(JOB).where(JOB.ID.`in`(jobsIds)).execute()
 }
