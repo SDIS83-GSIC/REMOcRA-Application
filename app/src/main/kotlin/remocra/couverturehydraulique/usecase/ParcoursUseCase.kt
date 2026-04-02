@@ -72,6 +72,8 @@ class ParcoursUseCase @Inject constructor(
             }
 
             emptyTablesTemporaires()
+            // Nettoyage systématique des champs reseau_pei_troncon pour ce PEI
+            cleanupPeiTroncon(depart)
             return 1
         } catch (e: Exception) {
             logger.error("ERREUR: ${e.message}")
@@ -460,6 +462,13 @@ class ParcoursUseCase @Inject constructor(
     private fun emptyTablesTemporaires() {
         voiesLateralesUseCase.emptyTable()
         tempDistanceRepository.emptyTable()
+    }
+
+    /**
+     * Nettoie tous les champs reseau_pei_troncon pour un PEI donné à la fin d'un parcours.
+     */
+    private fun cleanupPeiTroncon(peiId: UUID) {
+        reseauRepository.resetPeiTronconByPei(peiId)
     }
 
     // Méthodes utilitaires simplifiées pour l'exemple

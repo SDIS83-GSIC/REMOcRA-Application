@@ -308,4 +308,24 @@ class ReseauRepository @Inject constructor(
             },
         ).execute()
     }
+
+    /**
+     * Remet à NULL le champ reseau_pei_troncon pour tous les tronçons liés à un PEI
+     */
+    fun resetPeiTronconByPei(peiId: UUID) {
+        dsl.update(RESEAU)
+            .set(RESEAU.PEI_TRONCON, null as UUID?)
+            .where(RESEAU.PEI_TRONCON.eq(peiId))
+            .execute()
+    }
+
+    /**
+     * Remet à NULL le champ reseau_pei_troncon pour tous les tronçons de l'étude
+     */
+    fun resetPeiTronconByEtude(etudeId: UUID) {
+        dsl.update(RESEAU)
+            .set(RESEAU.PEI_TRONCON, null as UUID?)
+            .where(RESEAU.ETUDE_ID.eq(etudeId))
+            .execute()
+    }
 }

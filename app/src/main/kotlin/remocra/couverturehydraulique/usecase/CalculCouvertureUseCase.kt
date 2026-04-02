@@ -17,7 +17,6 @@ import remocra.usecase.AbstractCUDUseCase
 class CalculCouvertureUseCase @Inject constructor(
     private val couvertureHydrauliqueUseCase: CouvertureHydrauliqueUseCase,
     private val reseauUseCase: ReseauUseCase,
-    private val createTopologieUseCase: CreateTopologieUseCase,
     private val parametresProvider: ParametresProvider,
     private val objectMapper: ObjectMapper,
 ) : AbstractCUDUseCase<CalculData>(TypeOperation.UPDATE) {
@@ -46,6 +45,9 @@ class CalculCouvertureUseCase @Inject constructor(
         // Si on utilise que le réseau importé dans l'étude en question, on utilise l'etudeId
         val etudeId = if (element.useReseauImporte || element.useReseauImporteWithReseauCourant) element.etudeId else null
         val listePeiIdWithProjets = element.listPeiId.plus(element.listPeiProjetId)
+
+        // Nettoyage préventif des champs reseau_pei_troncon pour l'étude avant tout parcours
+        reseauUseCase.resetPeiTronconForEtude(element.etudeId)
 
         // Insérer les jonctions PEI pour les PEI avant de commencer les parcours
         listePeiIdWithProjets.forEach { peiId ->
@@ -76,12 +78,17 @@ class CalculCouvertureUseCase @Inject constructor(
                 profondeurCouverture = profondeurCouverture,
             )
         } finally {
-            // Retirer les jonctions PEI après tous les calculs
+            // Retirer les jonctions PEI et les tronçons créés pour chaque PEI après tous les calculs
             listePeiIdWithProjets.forEach { peiId ->
                 try {
+                    // Suppression des tronçons créés spécifiquement pour ce PEI
+                    reseauUseCase.getAndClearTronconsCrees(peiId).forEach { tronconId ->
+                        reseauUseCase.deleteTroncon(tronconId)
+                    }
+                    // Retrait logique de la jonction PEI (fusion éventuelle)
                     reseauUseCase.removeJonctionPei(peiId)
                 } catch (e: Exception) {
-                    logger.warn("WARN: Échec de suppression de la jonction PEI pour PEI: $peiId - ${e.message}")
+                    logger.warn("WARN: Échec de suppression de la jonction PEI ou des tronçons créés pour PEI: $peiId - ${e.message}")
                 }
             }
         }
