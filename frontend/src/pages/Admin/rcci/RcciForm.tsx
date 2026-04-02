@@ -188,10 +188,13 @@ export const getInitialValues = (
   };
 };
 
-export const prepareValues = (values: {
-  rcci: RcciFormType;
-  documentList?: object;
-}) => {
+export const prepareValues = (
+  values: {
+    rcci: RcciFormType;
+    documentList?: object;
+  },
+  appSrid: string,
+) => {
   const formData = new FormData();
   formData.append(
     "rcci",
@@ -215,7 +218,7 @@ export const prepareValues = (values: {
       rcciGelLieux: values.rcci?.rcciGelLieux,
       rcciGeometrie:
         "SRID=" +
-        values.rcci?.rcciSrid +
+        appSrid +
         ";POINT(" +
         values.rcci?.rcciX +
         " " +

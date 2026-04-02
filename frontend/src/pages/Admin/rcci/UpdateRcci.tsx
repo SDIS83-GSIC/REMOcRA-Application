@@ -17,7 +17,7 @@ const UpdateRcci = ({
   rcciId: string;
   onSubmit: () => void;
 }) => {
-  const { user } = useAppContext();
+  const { user, epsg } = useAppContext();
 
   const { data } = useGet(`/api/rcci/${rcciId}/`, {});
 
@@ -35,7 +35,9 @@ const UpdateRcci = ({
           isPost={false}
           isMultipartFormData={true}
           submitUrl={`/api/rcci/${rcciId}/`}
-          prepareVariables={(values) => prepareValues(values)}
+          prepareVariables={(values) =>
+            prepareValues(values, epsg.name.split(":").pop()!)
+          }
           onSubmit={onSubmit}
         >
           <RcciForm />

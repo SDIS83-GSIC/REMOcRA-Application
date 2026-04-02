@@ -17,7 +17,7 @@ const CreateRcci = ({
   creationRcciGeometrie: { rcci: { rcciGeometrie: string } } | null;
   onSubmit: () => void;
 }) => {
-  const { user } = useAppContext();
+  const { user, epsg } = useAppContext();
   return (
     <Container>
       <PageTitle
@@ -36,7 +36,9 @@ const CreateRcci = ({
         isPost={true}
         isMultipartFormData={true}
         submitUrl={`/api/rcci/create/`}
-        prepareVariables={(values) => prepareValues(values)}
+        prepareVariables={(values) =>
+          prepareValues(values, epsg.name.split(":").pop()!)
+        }
         onSubmit={onSubmit}
       >
         <RcciForm />
