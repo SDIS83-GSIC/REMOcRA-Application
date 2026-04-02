@@ -2,6 +2,7 @@ import { Container } from "react-bootstrap";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import MyFormik from "../../../components/Form/MyFormik.tsx";
 import { IconOverview } from "../../../components/Icon/Icon.tsx";
+import { URLS } from "../../../routes.tsx";
 import ParametreTaskForm, {
   getCronTab,
   getInitialValues,
@@ -39,7 +40,7 @@ const CreateTaskPersonnalisee = () => {
           return formData;
         }}
         isMultipartFormData={true}
-        onSubmit={() => window.location.reload()}
+        redirectUrl={URLS.LIST_TASK_SPECIFIQUE}
       >
         <ParametreTaskForm />
       </MyFormik>

@@ -34,7 +34,7 @@ import { TypeOrganismeType } from "../organisme/Organisme.tsx";
 
 export const getInitialValues = (currentTask: TaskEntity) => ({
   taskId: currentTask?.taskId,
-  taskType: currentTask?.taskType ?? TaskType.PERSONNALISEE.id,
+  taskType: currentTask?.taskType ?? TaskType.PERSONNALISE.id,
   taskActif: currentTask?.taskActif ?? false,
   taskPlanification: currentTask?.taskPlanification,
   taskExecManuelle: currentTask?.taskExecManuelle ?? false,
@@ -265,7 +265,7 @@ const ParametreTaskForm = () => {
                     }
                   />
                 </div>
-                {TaskType[values.taskType] !== TaskType.PERSONNALISEE && (
+                {TaskType[values.taskType] !== TaskType.PERSONNALISE && (
                   <div>
                     <CheckBoxInput
                       name="taskExecManuelle"
@@ -284,7 +284,7 @@ const ParametreTaskForm = () => {
                 },
               ]
             : []),
-          ...(TaskType[values.taskType] === TaskType.PERSONNALISEE
+          ...(TaskType[values.taskType] === TaskType.PERSONNALISE
             ? [
                 {
                   header: "Fichiers de la tâche",

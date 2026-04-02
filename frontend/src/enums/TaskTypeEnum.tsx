@@ -132,10 +132,10 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
     notification: false,
     isConfigurable: true,
   },
-  PERSONNALISEE: {
-    id: "PERSONNALISEE",
+  PERSONNALISE: {
+    id: "PERSONNALISE",
     code: "personnalisee",
-    label: "Perso",
+    label: "Tâche personnalisée",
     commentaire: "",
     parametre: {
       taskLibelle: {
