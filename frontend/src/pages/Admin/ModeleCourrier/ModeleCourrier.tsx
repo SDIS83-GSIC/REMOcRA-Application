@@ -102,17 +102,6 @@ export const getInitialValues = (data?: ModeleCourrierType) => ({
   part: null,
 });
 
-function ensureHashWrapped(value: string): string {
-  let result = value;
-  if (!result.startsWith("#")) {
-    result = `#${result}`;
-  }
-  if (!result.endsWith("#")) {
-    result = `${result}#`;
-  }
-  return result;
-}
-
 export const validationSchema = object({});
 
 export const prepareVariables = (values: ModeleCourrierType) => {
@@ -143,9 +132,7 @@ export const prepareVariables = (values: ModeleCourrierType) => {
         (e, index) => {
           return {
             ...e,
-            modeleCourrierParametreCode: ensureHashWrapped(
-              e.modeleCourrierParametreCode,
-            ),
+            modeleCourrierParametreCode: e.modeleCourrierParametreCode,
             modeleCourrierParametreOrdre: index,
             modeleCourrierParametreSourceSql:
               e.modeleCourrierParametreSourceSqlDebut +
@@ -365,9 +352,7 @@ const ModeleCourrier = () => {
               <ul>
                 {values.listeModeleCourrierParametre.length > 0 &&
                   values.listeModeleCourrierParametre.map((e, key) => (
-                    <li key={key}>
-                      {ensureHashWrapped(e.modeleCourrierParametreCode)}
-                    </li>
+                    <li key={key}>{e.modeleCourrierParametreCode}</li>
                   ))}
                 {userParamRapportCourrier.map((param: string) => (
                   <li key={param}>{param}</li>
