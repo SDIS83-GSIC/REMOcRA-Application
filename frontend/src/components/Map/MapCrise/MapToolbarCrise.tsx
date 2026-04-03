@@ -280,11 +280,19 @@ export const useToolbarCriseContext = ({
       toggleInteraction(active, drawLineString);
     }
 
-    /**
-     * Permet de déplacer un évènement
-     */
     function toggleMoveEvent(active = false) {
-      toggleInteraction(active, moveCtrl);
+      const idx = map?.getInteractions().getArray().indexOf(moveCtrl);
+      if (active) {
+        // Délai pour synchroniser l'interaction avec les features chargées sur la carte, afin d'éviter des bugs d'interaction
+        setTimeout(() => {
+          if (idx === -1) {
+            map.addInteraction(moveCtrl);
+          }
+          desactiveMoveMap(map);
+        });
+      } else if (!active && idx !== -1) {
+        map.removeInteraction(moveCtrl);
+      }
     }
 
     const tools = {
@@ -604,7 +612,7 @@ const MapToolbarCrise = forwardRef(
           state={state}
           map={map}
           dataEvenementLayer={dataCriseLayer}
-          disabled={false}
+          disabled={"move-event" === activeTool}
           criseId={criseId}
           onClose={() => {
             dataCriseLayer.getSource().refresh();

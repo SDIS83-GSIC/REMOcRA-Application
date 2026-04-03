@@ -1,5 +1,7 @@
 import { Feature, Map as OLMap, Overlay } from "ol";
 import { WKT } from "ol/format";
+import VectorLayer from "ol/layer/Vector";
+import VectorSource from "ol/source/Vector";
 import { ReactNode, Ref, useEffect, useMemo, useRef, useState } from "react";
 import { Button, Col, Popover, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -706,12 +708,14 @@ export const TooltipMapEditEvenement = ({
   criseId,
   state,
   onClose,
+  dataEvenementLayer,
 }: {
   map: OLMap;
   disabled: boolean;
   criseId: string;
   state: string;
   onClose: () => void;
+  dataEvenementLayer: VectorLayer<VectorSource>;
 }) => {
   const ref = useRef(null);
   const [showUpdateEvenement, setShowUpdateEvenement] = useState(false);
@@ -722,6 +726,13 @@ export const TooltipMapEditEvenement = ({
     ref: ref,
     map: map,
     disabled: disabled,
+    filterFeature: (feature) => {
+      // Ne détecte que les features de la couche événements
+      return (
+        dataEvenementLayer?.getSource()?.getFeatures()?.includes(feature) ??
+        false
+      );
+    },
   });
   const eventId = featureSelect?.getProperties().elementId;
   const displayButton = featureSelect?.getProperties().elementId != null;
