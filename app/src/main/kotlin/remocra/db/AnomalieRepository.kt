@@ -36,6 +36,9 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
     fun getAnomalieById(anomalieId: UUID): Anomalie =
         dsl.selectFrom(ANOMALIE).where(ANOMALIE.ID.eq(anomalieId)).fetchSingleInto()
 
+    fun getAllAnomalie(): List<Anomalie> =
+        dsl.selectFrom(ANOMALIE).fetchInto()
+
     /**
      * Retourne l'ensemble des anomalies
      */
@@ -210,6 +213,7 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
     fun getAllAnomalieAssignable(peiId: UUID): List<CompletedAnomalie> =
         dsl.select(
             ANOMALIE.ID,
+            ANOMALIE.ACTIF,
             ANOMALIE.CODE,
             ANOMALIE.LIBELLE,
             ANOMALIE.COMMENTAIRE,
@@ -240,7 +244,6 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
                 (L_PEI_ANOMALIE.PEI_ID.eq(peiId))
                     .and(L_PEI_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID)),
             )
-            .where(isActiveCondition(isActive = true))
             .orderBy(ANOMALIE_CATEGORIE.ORDRE, ANOMALIE.ORDRE)
             .fetchInto()
 
@@ -248,6 +251,7 @@ class AnomalieRepository @Inject constructor(private val dsl: DSLContext) : Nome
 
     data class CompletedAnomalie(
         val anomalieId: UUID,
+        val anomalieActif: Boolean,
         val anomalieCode: String,
         val anomalieLibelle: String,
         val anomalieCommentaire: String?,

@@ -179,8 +179,6 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
             .innerJoin(ANOMALIE).on(POIDS_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID))
             .innerJoin(ANOMALIE_CATEGORIE).on(ANOMALIE.ANOMALIE_CATEGORIE_ID.eq(ANOMALIE_CATEGORIE.ID))
             .where(ANOMALIE_CATEGORIE.CODE.notEqual(GlobalConstants.CATEGORIE_ANOMALIE_SYSTEME))
-            .and(NATURE.ACTIF)
-            .and(ANOMALIE.ACTIF)
             .fetchInto()
 
     /**

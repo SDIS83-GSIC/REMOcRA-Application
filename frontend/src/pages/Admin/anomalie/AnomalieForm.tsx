@@ -153,7 +153,13 @@ const AnomalieForm = () => {
         disabled={values.anomalieProtected}
       />
       {!values.anomalieProtected && (
-        <CheckBoxInput name={"anomalieActif"} label={"Actif"} />
+        <CheckBoxInput
+          name={"anomalieActif"}
+          label={"Actif"}
+          tooltipText={
+            "Si l’anomalie est inactive, elle ne pourra plus être assignée à un PEI ; cependant elle pourra être désassignée d’un PEI qui l’a déjà."
+          }
+        />
       )}
       {!values.anomalieProtected && (
         <CheckBoxInput

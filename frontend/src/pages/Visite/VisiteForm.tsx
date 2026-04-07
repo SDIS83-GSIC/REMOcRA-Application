@@ -153,31 +153,41 @@ const VisiteForm = ({
     switch (values.visiteTypeVisite) {
       case TYPE_VISITE.RECEPTION: {
         filteredListAnomalie = listeAnomaliesAssignable.filter(
-          (e) => e.isReceptionAssignable === true || e.isAssigned === true,
+          (e) =>
+            (e.isReceptionAssignable === true && e.anomalieActif === true) ||
+            e.isAssigned === true,
         );
         break;
       }
       case TYPE_VISITE.RECO_INIT: {
         filteredListAnomalie = listeAnomaliesAssignable.filter(
-          (e) => e.isRecoInitAssignable === true || e.isAssigned === true,
+          (e) =>
+            (e.isRecoInitAssignable === true && e.anomalieActif === true) ||
+            e.isAssigned === true,
         );
         break;
       }
       case TYPE_VISITE.CTP: {
         filteredListAnomalie = listeAnomaliesAssignable.filter(
-          (e) => e.isCTPAssignable === true || e.isAssigned === true,
+          (e) =>
+            (e.isCTPAssignable === true && e.anomalieActif === true) ||
+            e.isAssigned === true,
         );
         break;
       }
       case TYPE_VISITE.ROP: {
         filteredListAnomalie = listeAnomaliesAssignable.filter(
-          (e) => e.isRopAssignable === true || e.isAssigned === true,
+          (e) =>
+            (e.isRopAssignable === true && e.anomalieActif === true) ||
+            e.isAssigned === true,
         );
         break;
       }
       case TYPE_VISITE.NP: {
         filteredListAnomalie = listeAnomaliesAssignable.filter(
-          (e) => e.isNPAssignable === true || e.isAssigned === true,
+          (e) =>
+            (e.isNPAssignable === true && e.anomalieActif === true) ||
+            e.isAssigned === true,
         );
         break;
       }
@@ -212,6 +222,7 @@ const VisiteForm = ({
                 )}
               >
                 {element.anomalieLibelle}
+                {element.anomalieActif === false ? " (inactive)" : null}
               </span>
             }
           />

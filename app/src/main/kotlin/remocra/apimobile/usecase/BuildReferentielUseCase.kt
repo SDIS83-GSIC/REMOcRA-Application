@@ -10,6 +10,7 @@ import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider
 import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ParametreEnum
+import remocra.db.AnomalieRepository
 import remocra.db.FonctionContactRepository
 import remocra.db.GestionnaireRepository
 import remocra.db.RoleRepository
@@ -43,6 +44,7 @@ constructor(
     private val parametresProvider: ParametresProvider,
     private val decorateListPeiForApi: DecorateListPeiForApi,
     private val peiCaracteristiquesUseCase: PeiCaracteristiquesUseCase,
+    private val anomalieRepository: AnomalieRepository,
     private val dispoDecorator: DisponibiliteDecorator,
 ) :
     AbstractUseCase() {
@@ -84,8 +86,9 @@ constructor(
             listTypePei = TypePei.entries,
             listNature = dataCacheProvider.getNatures().values,
             listNatureDeci = dataCacheProvider.getNaturesDeci().values,
-            listAnomalie = dataCacheProvider.getAnomalies().values,
-            listAnomalieCategorie = dataCacheProvider.getAnomaliesCategories().values,
+            // on remonte toutes les anomalies / catégories et même les inactives pour pouvoir faire les désassigner si elles sont affectées à un PEI
+            listAnomalie = anomalieRepository.getAllAnomalie(),
+            listAnomalieCategorie = anomalieRepository.getAllAnomalieCategorieForAdmin(),
             listPoidsAnomalie = referentielRepository.getAnomaliePoidsList()
                 .filter { it.poidsAnomalieTypeVisite?.intersect(setTypeVisiteAutorisees)?.isNotEmpty() ?: false }
                 .map { poidsAnomalie ->

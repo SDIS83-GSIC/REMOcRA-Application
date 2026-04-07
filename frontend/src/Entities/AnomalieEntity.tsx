@@ -1,5 +1,6 @@
 export type AnomalieCompleteEntity = {
   anomalieId: string;
+  anomalieActif: boolean;
   anomalieCode: string;
   anomalieLibelle?: string;
   anomalieCommentaire?: string;
