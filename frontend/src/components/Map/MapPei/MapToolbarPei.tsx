@@ -42,7 +42,7 @@ import useModal from "../../Modal/ModalUtils.tsx";
 import SimpleModal from "../../Modal/SimpleModal.tsx";
 import TooltipCustom from "../../Tooltip/Tooltip.tsx";
 import Volet from "../../Volet/Volet.tsx";
-import toggleDeplacerPoint, { refreshLayerGeoserver } from "../MapUtils.tsx";
+import { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
 import TooltipMapPei from "../TooltipsMap.tsx";
 
@@ -447,19 +447,37 @@ export const useToolbarPeiContext = ({
     });
 
     function toggleDeplacerPei(active = false) {
-      toggleDeplacerPoint(
-        active,
-        selectPeiCtrl,
-        modifyCtrl,
-        map,
-        (feature, point) => {
-          setGeometrieMove(feature);
-          setPeiInfodMove(point);
-          showMove();
-        },
-      );
+      if (active) {
+        if (
+          map?.getInteractions().getArray().includes(selectPeiCtrl) &&
+          map?.getInteractions().getArray().includes(modifyCtrl)
+        ) {
+          return;
+        }
 
-      if (!active) {
+        map.addInteraction(selectPeiCtrl);
+        // Délai pour permettre le chargement des features via la stratégie bbox
+        setTimeout(() => {
+          map.addInteraction(modifyCtrl);
+        });
+
+        modifyCtrl.on("modifyend", function (evt) {
+          evt.features.forEach(async function (feature) {
+            const featureGeometry =
+              "SRID=" +
+              map.getView().getProjection().getCode().split(":").pop() +
+              ";" +
+              new WKT().writeFeature(feature);
+            const featureProps =
+              feature.getProperties() as PeiInfoEntityElement;
+            setGeometrieMove(featureGeometry);
+            setPeiInfodMove(featureProps);
+            showMove();
+          });
+        });
+      } else {
+        map.removeInteraction(selectPeiCtrl);
+        map.removeInteraction(modifyCtrl);
         setPeiInfodMove(null);
         setGeometrieMove(null);
       }
@@ -686,7 +704,9 @@ const MapToolbarPei = ({
         <ToolbarButton
           toolName={"create-pei"}
           toolIcon={<IconCreate />}
-          disabled={(showFormPei && peiIdUpdate) || showFormVisite.show}
+          disabled={
+            ((showFormPei && peiIdUpdate) || showFormVisite.show) as boolean
+          }
           toolLabelTooltip={
             (showFormPei && peiIdUpdate) || showFormVisite.show
               ? "Un formulaire est en cours d'édition"
@@ -926,9 +946,13 @@ const MapToolbarPei = ({
           }
           header={`Déplacer le PEI ${peiInfoMove.peiNumeroComplet ?? ""}`}
           onSubmit={() => {
+            // Fermer toutes les tooltips avant le refresh
+            map.getOverlays().forEach((overlay) => {
+              overlay.setPosition(undefined);
+            });
+
             dataPeiLayer.getSource().refresh();
             refreshLayerGeoserver(map);
-            window.location.reload();
           }}
           getInitialValues={() => ({
             geometrie: geometrieMove,
