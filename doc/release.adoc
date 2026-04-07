@@ -1,5 +1,34 @@
 = Release Notes
 
+== 3.0.6
+
+* https://redmine.atolcd.com/issues/277845[#277845]: Module RCCI : créer feu par x,y
+* https://redmine.atolcd.com/issues/278019[#278019]: Création d'un PEI : "Voies non trouvée"
+* https://redmine.atolcd.com/issues/279447[#279447]: Ajout de nouveaux droits
+* https://redmine.atolcd.com/issues/279906[#279906]: Carte personnalisée : Affichage de la légende
+* https://redmine.atolcd.com/issues/280805[#280805]: Carte des PEI : affichage de l'infobulle
+* https://redmine.atolcd.com/issues/281308[#281308]: Déplacement d'un PEI : message d'avertissement
+* https://redmine.atolcd.com/issues/283671[#283671]: Ajouter une visite : conserver les observations
+* https://redmine.atolcd.com/issues/283734[#283734]: Générer un courrier : valeur par défaut non prise en compte
+* https://redmine.atolcd.com/issues/284001[#284001]: Générer un courrier : champ texte saisie libre non pris en compte
+* https://redmine.atolcd.com/issues/284141[#284141]: Import CTP : Empêcher plusieurs enregistrements
+* https://redmine.atolcd.com/issues/284541[#284541]: Rapport personnalisé : Tri alphabétique sur Commune
+* https://redmine.atolcd.com/issues/284571[#284571]: Rapport personnalisés : Champ voies vide
+* https://redmine.atolcd.com/issues/284819[#284819]: Tournés - retour après modification
+* https://redmine.atolcd.com/issues/285139[#285139]: Import zone de compétence
+* https://redmine.atolcd.com/issues/285204[#285204]: Navigation entre les pages des tableaux
+* https://redmine.atolcd.com/issues/285340[#285340]: Révision des droits
+* https://redmine.atolcd.com/issues/285341[#285341]: Page d'erreur : utilisateurs sans droits
+* https://redmine.atolcd.com/issues/285377[#285377]: Import des utilisateurs
+* https://redmine.atolcd.com/issues/285764[#285764]: Mise à jour de la dispo des PEI suite à la réalisation des visites
+* https://redmine.atolcd.com/issues/285879[#285879]: Module permis - prise en compte des modifications
+* https://redmine.atolcd.com/issues/285921[#285921]: Signalements : Sélection impossible
+* https://redmine.atolcd.com/issues/286125[#286125]: Notifications "Changement d'état"
+* https://redmine.atolcd.com/issues/286404[#286404]: Crise- tous les éléments s'affichent
+* https://redmine.atolcd.com/issues/286411[#286411]: Carte des tournées - Echelle
+* https://redmine.atolcd.com/issues/286416[#286416]: Modifier une crise - ajouter des couches
+* https://redmine.atolcd.com/issues/286675[#286675]: Rapports personnalisés : Affichage de la tooltip
+
 == 3.0.5
 
 * https://redmine.atolcd.com/issues/279447[#279447]: Ajout de nouveaux droits
