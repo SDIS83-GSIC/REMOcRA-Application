@@ -116,8 +116,8 @@ class SynchroEndpoint : AbstractEndpoint() {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @POST
     @RequireDroits([Droit.TOURNEE_R, Droit.TOURNEE_A])
-    fun annuleReservationTournee(@FormParam("idTournee") idTournee: UUID): Response {
-        return tourneeUseCase.annuleReservation(idTournee, securityContext.userInfo.utilisateurId!!)
+    fun annuleReservationTournee(@FormParam("tourneeId") tourneeId: UUID): Response {
+        return tourneeUseCase.annuleReservation(tourneeId, securityContext.userInfo.utilisateurId!!)
     }
 
     @Path("/create-pei")
