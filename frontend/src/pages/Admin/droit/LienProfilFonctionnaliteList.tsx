@@ -12,6 +12,18 @@ import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 
+// Définition du type pour une ligne de la table
+type LienProfilFonctionnaliteRow = {
+  original: {
+    profilOrganismeId: string;
+    profilUtilisateurId: string;
+    groupeFonctionnalitesId: string;
+    profilOrganismeLibelle?: string;
+    profilUtilisateurLibelle?: string;
+    groupeFonctionnalitesLibelle?: string;
+  };
+};
+
 const LienProfilFonctionnaliteList = () => {
   return (
     <Container>
@@ -79,23 +91,40 @@ const LienProfilFonctionnaliteList = () => {
           },
           ActionColumn({
             Header: "Actions",
-            accessor: ({ profilOrganismeId, profilUtilisateurId }) => {
-              return {
-                profilOrganismeId: profilOrganismeId,
-                profilUtilisateurId: profilUtilisateurId,
-              };
-            },
+            accessor: (row: LienProfilFonctionnaliteRow) => row,
             buttons: [
               {
-                row: (row: any) => {
-                  return row;
-                },
+                row: (row: LienProfilFonctionnaliteRow) => row,
                 route: ({ profilOrganismeId, profilUtilisateurId }) =>
                   URLS.LIEN_PROFIL_FONCTIONNALITE_UPDATE({
                     profilOrganismeId,
                     profilUtilisateurId,
                   }),
                 type: TYPE_BUTTON.UPDATE,
+              },
+              {
+                row: (row: LienProfilFonctionnaliteRow) => row,
+                type: TYPE_BUTTON.DELETE,
+                pathname: (row: LienProfilFonctionnaliteRow) =>
+                  `/api/lien-profil-fonctionnalite/delete/${row.original.profilOrganismeId}/${row.original.profilUtilisateurId}/${row.original.groupeFonctionnalitesId}`,
+                textEnable:
+                  "Attention : supprimer ce lien retirera l’accès au groupe de fonctionnalités pour tous les utilisateurs associés à ce profil et cet organisme. Cela peut entraîner la perte de droits d’accès à l’application.",
+                content: (_: LienProfilFonctionnaliteRow) => (
+                  <div className="fs-6">
+                    <div className="fw-bold mb-3">
+                      Êtes-vous sûr de vouloir supprimer ce lien ?
+                    </div>
+                    <div className="mb-3">
+                      Cette action retirera l’accès au groupe de fonctionnalités
+                      pour tous les utilisateurs associés à ce profil et cet
+                      organisme. Cela peut entraîner la perte de droits d’accès
+                      à l’application.
+                    </div>
+                    <div className="fw-bold">
+                      Cette action est irréversible.
+                    </div>
+                  </div>
+                ),
               },
             ],
           }),

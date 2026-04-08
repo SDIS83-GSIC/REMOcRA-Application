@@ -195,7 +195,7 @@ type TableActionButtonType = {
   hide?: (param: any) => boolean;
   onClick?: (param?: any, row?: any) => any;
   isPost?: boolean;
-  pathname?: string;
+  pathname?: string | ((row: object) => string);
   isLink?: boolean;
   header?: (row: any) => string | null;
   content?: (row: any) => ReactNode | null;
@@ -383,6 +383,12 @@ const DeleteButtonPrivate = ({ row, _button }: DeleteButtonType) => {
     header: _button.header ? _button.header(row) : undefined,
     content: _button.content ? _button.content(row) : undefined,
   };
+  let computedPathname = "";
+  if (typeof _button.pathname === "function") {
+    computedPathname = _button.pathname(row);
+  } else if (typeof _button.pathname === "string") {
+    computedPathname = `${_button.pathname}${row.value ?? ""}`;
+  }
   return (
     <TableActionColumn
       row={row}
@@ -392,7 +398,7 @@ const DeleteButtonPrivate = ({ row, _button }: DeleteButtonType) => {
       classEnable={"danger"}
       deleteModal={deleteModal}
       icon={<IconDelete />}
-      pathname={`${_button.pathname}${row.value}`}
+      pathname={computedPathname}
     />
   );
 };

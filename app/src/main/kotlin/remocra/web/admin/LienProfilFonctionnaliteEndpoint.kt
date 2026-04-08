@@ -103,9 +103,20 @@ class LienProfilFonctionnaliteEndpoint : AbstractEndpoint() {
             ),
         ).wrap()
 
-    @Path("/delete")
+    @Path("/delete/{profilOrganismeId}/{profilUtilisateurId}/{groupeFonctionnalitesId}")
     @DELETE
     @RequireDroits([Droit.ADMIN_DROITS])
-    fun delete(element: LProfilUtilisateurOrganismeGroupeFonctionnalites): Response =
-        deleteLienProfilFonctionnaliteUseCase.execute(securityContext.userInfo, element).wrap()
+    fun delete(
+        @PathParam("profilOrganismeId") profilOrganismeId: UUID,
+        @PathParam("profilUtilisateurId") profilUtilisateurId: UUID,
+        @PathParam("groupeFonctionnalitesId") groupeFonctionnalitesId: UUID,
+    ): Response =
+        deleteLienProfilFonctionnaliteUseCase.execute(
+            securityContext.userInfo,
+            LProfilUtilisateurOrganismeGroupeFonctionnalites(
+                profilOrganismeId = profilOrganismeId,
+                profilUtilisateurId = profilUtilisateurId,
+                groupeFonctionnalitesId = groupeFonctionnalitesId,
+            ),
+        ).wrap()
 }
