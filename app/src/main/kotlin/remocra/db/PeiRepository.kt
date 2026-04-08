@@ -395,7 +395,7 @@ class PeiRepository
 
     data class Filter(
         val peiNumeroComplet: String?,
-        val peiNumeroInterne: Int?,
+        val peiNumeroInterne: String?,
         val communeId: UUID?,
         val typePei: TypePei?,
         val natureDeci: UUID?,
@@ -446,7 +446,7 @@ class PeiRepository
             DSL.and(
                 listOfNotNull<Condition>(
                     peiNumeroComplet?.let { DSL.and(PEI.NUMERO_COMPLET.containsIgnoreCaseUnaccent(it)) },
-                    peiNumeroInterne?.let { DSL.and(PEI.NUMERO_INTERNE.contains(it)) },
+                    peiNumeroInterne?.let { DSL.and(PEI.NUMERO_INTERNE.cast<String>().contains(it)) },
                     communeId?.let { DSL.and(PEI.COMMUNE_ID.eq(it)) },
                     typePei?.let { DSL.and(PEI.TYPE_PEI.eq(it)) },
                     natureDeci?.let { DSL.and(PEI.NATURE_DECI_ID.eq(it)) },
