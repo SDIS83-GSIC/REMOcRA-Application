@@ -187,6 +187,11 @@ open class Couche(
      */
     val TUILAGE: TableField<Record, Boolean?> = createField(DSL.name("couche_tuilage"), SQLDataType.BOOLEAN.nullable(false), this, "Indique si la couche utilise le tuilage pour l'affichage des couches cartographiques.")
 
+    /**
+     * The column <code>remocra.couche.couche_from_geoserver</code>.
+     */
+    val FROM_GEOSERVER: TableField<Record, Boolean?> = createField(DSL.name("couche_from_geoserver"), SQLDataType.BOOLEAN.nullable(false), this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
