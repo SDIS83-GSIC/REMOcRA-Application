@@ -128,7 +128,8 @@ const HistoriqueOperations = () => {
                   <td>{d.tracabiliteTypeOperation}</td>
                   <td>{formatDateHeure(d.tracabiliteDate)}</td>
                   <td>
-                    login : {d.tracabiliteAuteurData.nom}
+                    nom : {d.tracabiliteAuteurData.prenom}{" "}
+                    {d.tracabiliteAuteurData.nom}
                     <br />
                     email : {d.tracabiliteAuteurData.email}
                   </td>
@@ -293,7 +294,7 @@ type Tracabilite = {
   tracabiliteTypeObjet: string;
   tracabiliteTypeOperation: string;
   tracabiliteDate: string;
-  tracabiliteAuteurData: { nom: string; email: string };
+  tracabiliteAuteurData: { prenom: string; nom: string; email: string };
   tracabiliteObjetData: any;
 };
 
