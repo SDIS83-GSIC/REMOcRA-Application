@@ -25,6 +25,7 @@ data class CoucheFormData(
     val couchePublic: Boolean,
     val coucheActive: Boolean,
     val coucheProxy: Boolean,
+    val coucheFromGeoserver: Boolean,
     val coucheIconeUrl: String?,
     val coucheLegendeUrl: String?,
     val groupeFonctionnalitesZcList: Collection<UUID> = listOf(),

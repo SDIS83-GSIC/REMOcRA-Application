@@ -8,6 +8,7 @@ type FilterCoucheType = {
   couchePublic?: string;
   coucheProxy?: string;
   coucheActive?: string;
+  coucheFromGeoserver?: string;
   coucheProtected?: string;
   groupeFonctionnalitesZc?: string[];
   groupeFonctionnalitesHorsZc?: string[];
@@ -24,6 +25,7 @@ const filterValuesToVariable = ({
   couchePublic,
   coucheProxy,
   coucheActive,
+  coucheFromGeoserver,
   coucheProtected,
   groupeFonctionnalitesZc,
   groupeFonctionnalitesHorsZc,
@@ -41,6 +43,7 @@ const filterValuesToVariable = ({
   filterPropertyStyle(filter, coucheProxy, "coucheProxy");
   filterPropertyStyle(filter, coucheActive, "coucheActive");
   filterPropertyStyle(filter, coucheProtected, "coucheProtected");
+  filterPropertyStyle(filter, coucheFromGeoserver, "coucheFromGeoserver");
 
   if (groupeFonctionnalitesZc?.length > 0) {
     filter.groupeFonctionnalitesZc = groupeFonctionnalitesZc;

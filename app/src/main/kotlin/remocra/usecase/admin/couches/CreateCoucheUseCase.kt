@@ -66,7 +66,7 @@ constructor(
                 coucheCrossOrigin = element.coucheFormData.coucheCrossOrigin,
                 coucheProtected = element.coucheFormData.coucheProtected,
                 coucheTuilage = element.coucheFormData.coucheTuilage.takeIf { element.coucheFormData.coucheSource == SourceCarto.WMS } ?: false,
-                coucheFromGeoserver = true, // TODO
+                coucheFromGeoserver = element.coucheFormData.coucheFromGeoserver,
             ),
         )
 

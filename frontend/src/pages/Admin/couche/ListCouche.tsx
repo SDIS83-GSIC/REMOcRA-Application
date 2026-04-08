@@ -273,6 +273,17 @@ const ListCouche = () => {
               <SelectEnumOption options={VRAI_FAUX} name={"coucheActive"} />
             ),
           }),
+          BooleanColumn({
+            Header: "Vient de Geoserver",
+            accessor: "coucheFromGeoserver",
+            sortField: "coucheFromGeoserver",
+            Filter: (
+              <SelectEnumOption
+                options={VRAI_FAUX}
+                name={"coucheFromGeoserver"}
+              />
+            ),
+          }),
           ProtectedColumn({
             Header: "Protégé",
             accessor: "coucheProtected",

@@ -9,7 +9,6 @@ import remocra.db.CoucheRepository
 import remocra.db.DroitsRepository
 import remocra.db.jooq.remocra.enums.SourceCarto
 import remocra.db.jooq.remocra.enums.TypeModule
-import remocra.geoserver.GeoserverModule
 import java.util.UUID
 import kotlin.reflect.jvm.javaMethod
 
@@ -19,7 +18,6 @@ constructor(
     private val droitsRepository: DroitsRepository,
     private val coucheRepository: CoucheRepository,
     private val coucheMetadataRepository: CoucheMetadataRepository,
-    private val geoserverSettings: GeoserverModule.GeoserverSettings,
 ) {
     fun getData(module: TypeModule, userInfo: WrappedUserInfo): List<LayerGroupData> {
         val profil = userInfo.utilisateurId?.let {
@@ -43,7 +41,7 @@ constructor(
                         source = couche.coucheSource,
                         projection = couche.coucheProjection,
                         libelle = couche.coucheLibelle,
-                        url = if (couche.coucheUrl.startsWith(geoserverSettings.url.toString())) {
+                        url = if (couche.coucheFromGeoserver == true) {
                             UriBuilder.fromPath(AuthnConstants.API_PATH)
                                 .path(GeoserverEndpoint::class.java)
                                 .path(GeoserverEndpoint::proxy.javaMethod)

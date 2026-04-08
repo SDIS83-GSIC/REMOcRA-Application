@@ -1,6 +1,5 @@
 package remocra.usecase.admin.couches
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
 import remocra.data.CoucheFormDataWithImage
@@ -21,7 +20,6 @@ class UpdateCoucheUseCase
 @Inject
 constructor(
     private val coucheRepository: CoucheRepository,
-    private val objectMapper: ObjectMapper,
 ) :
     AbstractCUDUseCase<CoucheFormDataWithImage>(TypeOperation.UPDATE) {
 
@@ -69,7 +67,7 @@ constructor(
                 coucheCrossOrigin = element.coucheFormData.coucheCrossOrigin,
                 coucheProtected = element.coucheFormData.coucheProtected,
                 coucheTuilage = element.coucheFormData.coucheTuilage.takeIf { element.coucheFormData.coucheSource == SourceCarto.WMS } ?: false,
-                coucheFromGeoserver = true, // TODO
+                coucheFromGeoserver = element.coucheFormData.coucheFromGeoserver,
             ),
         )
 

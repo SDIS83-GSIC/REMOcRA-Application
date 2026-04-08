@@ -112,6 +112,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             COUCHE.TUILAGE,
             COUCHE.ICONE,
             COUCHE.LEGENDE,
+            COUCHE.FROM_GEOSERVER,
             // Multiset pour les groupes ZC
             DSL.multiset(
                 dsl.select(L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID)
@@ -177,6 +178,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .set(COUCHE.ACTIVE, couche.coucheActive)
             .set(COUCHE.PROXY, couche.coucheProxy)
             .set(COUCHE.TUILAGE, couche.coucheTuilage)
+            .set(COUCHE.FROM_GEOSERVER, couche.coucheFromGeoserver)
             .execute()
     }
 
@@ -252,6 +254,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             COUCHE.PROTECTED,
             COUCHE.TUILAGE,
             COUCHE.ORDRE,
+            COUCHE.FROM_GEOSERVER,
             DSL.multiset(
                 dsl.select(L_COUCHE_MODULE.MODULE_TYPE)
                     .from(L_COUCHE_MODULE)
@@ -299,6 +302,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
         val couchePublic: Boolean?,
         val coucheActive: Boolean?,
         val coucheProxy: Boolean?,
+        val coucheFromGeoserver: Boolean?,
         val coucheProtected: Boolean?,
         val groupeFonctionnalitesHorsZc: List<UUID>?,
         val groupeFonctionnalitesZc: List<UUID>?,
@@ -319,6 +323,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
                 groupeFonctionnalitesZc?.let { L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.`in`(it).and(L_COUCHE_GROUPE_FONCTIONNALITES.LIMITE_ZC.isTrue) },
                 groupeFonctionnalitesHorsZc?.let { L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.`in`(it).and(L_COUCHE_GROUPE_FONCTIONNALITES.LIMITE_ZC.isFalse) },
                 moduleList?.let { L_COUCHE_MODULE.MODULE_TYPE.`in`(it) },
+                coucheFromGeoserver?.let { DSL.and(COUCHE.FROM_GEOSERVER.eq(it)) },
             ),
         )
     }
@@ -336,6 +341,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
         val coucheProxy: Int?,
         val coucheCrossOrigin: Int?,
         val coucheProtected: Int?,
+        val coucheFromGeoserver: Int?,
     ) {
         fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
             coucheCode?.let { "coucheCode" to it },
@@ -349,6 +355,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             coucheActive?.let { "coucheActive" to it },
             coucheProxy?.let { "coucheProxy" to it },
             coucheProtected?.let { "coucheProtected" to it },
+            coucheFromGeoserver?.let { "coucheFromGeoserver" to it },
         )
         fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
             when (pair.first) {
@@ -364,6 +371,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
                 "coucheActive" -> COUCHE.ACTIVE.getSortField(pair.second)
                 "coucheProxy" -> COUCHE.PROXY.getSortField(pair.second)
                 "coucheProtected" -> COUCHE.PROTECTED.getSortField(pair.second)
+                "coucheFromGeoserver" -> COUCHE.FROM_GEOSERVER.getSortField(pair.second)
                 else -> null
             }
         }

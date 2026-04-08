@@ -38,6 +38,7 @@ type CoucheType = {
   coucheActive: boolean;
   coucheProxy: boolean;
   coucheTuilage: boolean;
+  coucheFromGeoserver: boolean;
   coucheIconeUrl?: string;
   coucheLegendeUrl?: string;
   icone?: File;
@@ -65,6 +66,7 @@ export const getInitialValues = (
   coucheActive: data?.coucheActive ?? true,
   coucheProxy: data?.coucheProxy ?? false,
   coucheTuilage: data?.coucheTuilage ?? false,
+  coucheFromGeoserver: data?.coucheFromGeoserver ?? false,
   groupeFonctionnalitesZcList: data?.groupeFonctionnalitesZcList || [],
   groupeFonctionnalitesHorsZcList: data?.groupeFonctionnalitesHorsZcList || [],
   moduleList: data?.moduleList || [],
@@ -92,6 +94,7 @@ export const prepareValues = (
       couchePublic: couche.couchePublic,
       coucheActive: couche.coucheActive,
       coucheProxy: couche.coucheProxy,
+      coucheFromGeoserver: couche.coucheFromGeoserver,
       coucheTuilage: couche.coucheTuilage,
       coucheIconeUrl: couche.coucheIconeUrl,
       coucheLegendeUrl: couche.coucheLegendeUrl,
@@ -153,7 +156,7 @@ const Couche = () => {
 
   return (
     <FormContainer>
-      <Row>
+      <Row className="align-items-end">
         {/* Section Général */}
         <Col xs={12} className="p-2 bg-secondary mb-3">
           <h4 className={"m-0 p-0 text-center h6"}>Général</h4>
@@ -269,6 +272,12 @@ const Couche = () => {
                   label={"Format"}
                   placeholder={"Format"}
                   required={true}
+                />
+              </Col>
+              <Col xs={12} lg={6}>
+                <CheckBoxInput
+                  name={`coucheFromGeoserver`}
+                  label={"Vient de Geoserver"}
                 />
               </Col>
             </>
