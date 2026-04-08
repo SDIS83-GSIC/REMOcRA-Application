@@ -4,9 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
 import org.slf4j.LoggerFactory
+import remocra.app.AppSettings
 import remocra.app.ParametresProvider
 import remocra.auth.WrappedUserInfo
 import remocra.couverturehydraulique.CalculData
+import remocra.couverturehydraulique.GeometrieUtils
+import remocra.couverturehydraulique.graphe.Chemin
+import remocra.couverturehydraulique.graphe.CreateTopologie
+import remocra.couverturehydraulique.graphe.GrapheManager
 import remocra.data.enums.ErrorType
 import remocra.data.enums.ParametreEnum
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -19,6 +24,11 @@ class CalculCouvertureUseCase @Inject constructor(
     private val reseauUseCase: ReseauUseCase,
     private val parametresProvider: ParametresProvider,
     private val objectMapper: ObjectMapper,
+    private val createTopologie: CreateTopologie,
+    private val grapheManager: GrapheManager,
+    private val appSettings: AppSettings,
+    private val geometrieUtils: GeometrieUtils,
+    private val parcoursUseCase: ParcoursUseCase,
 ) : AbstractCUDUseCase<CalculData>(TypeOperation.UPDATE) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -34,7 +44,6 @@ class CalculCouvertureUseCase @Inject constructor(
     }
 
     override fun execute(userInfo: WrappedUserInfo, element: CalculData): CalculData {
-        // On va chercher les paramètres que l'on doit utiliser
         val profondeurCouverture = parametresProvider.getParametreInt(ParametreEnum.PROFONDEUR_COUVERTURE.name)
             ?: throw RemocraResponseException(ErrorType.CALCUL_COUVERTURE_PARAMETRE_PROFONDEUR_MANQUANT)
         val distanceMaxParcours = parametresProvider.getParametreInt(ParametreEnum.DECI_DISTANCE_MAX_PARCOURS.name)
@@ -42,57 +51,75 @@ class CalculCouvertureUseCase @Inject constructor(
         val distances = parametresProvider.getParametreString(ParametreEnum.DECI_ISODISTANCES.name)
             ?.let { objectMapper.readValue<List<Int>>(it) } ?: throw RemocraResponseException(ErrorType.CALCUL_COUVERTURE_DECI_ISODISTANCES_MANQUANT)
 
-        // Si on utilise que le réseau importé dans l'étude en question, on utilise l'etudeId
         val etudeId = if (element.useReseauImporte || element.useReseauImporteWithReseauCourant) element.etudeId else null
+        val graphe = grapheManager.loadGraphe(etudeId, element.useReseauImporteWithReseauCourant)
+        createTopologie.createTopologie(graphe)
+
         val listePeiIdWithProjets = element.listPeiId.plus(element.listPeiProjetId)
 
-        // Nettoyage préventif des champs reseau_pei_troncon pour l'étude avant tout parcours
-        reseauUseCase.resetPeiTronconForEtude(element.etudeId)
-
-        // Insérer les jonctions PEI pour les PEI avant de commencer les parcours
+        // --- Nettoyage préventif des jonctions PEI ---
         listePeiIdWithProjets.forEach { peiId ->
-            val result = reseauUseCase.insertJonctionPei(peiId, distanceMaxParcours, element.etudeId, etudeId, element.useReseauImporteWithReseauCourant)
+            try {
+                reseauUseCase.removeJonctionPei(peiId, graphe)
+            } catch (e: Exception) {
+                logger.warn("WARN: Nettoyage préalable de la jonction PEI pour PEI: $peiId - ${e.message}")
+            }
+        }
+        // --- Insertion des jonctions PEI pour tous les PEI dans le graphe mémoire ---
+        listePeiIdWithProjets.forEach { peiId ->
+            val result = reseauUseCase.insertJonctionPei(
+                peiId,
+                distanceMaxParcours,
+                graphe,
+            )
             if (!result) {
-                // Si pas inséré, trop loin du réseau
-                logger.warn("WARN: Échec de création de la jonction PEI pour PEI: $peiId")
+                logger.warn("Échec de création de la jonction PEI pour PEI: $peiId")
             }
         }
 
         try {
-            // Parcours pour chaque PEI
-            listePeiIdWithProjets.forEach { peiId ->
-                couvertureHydrauliqueUseCase.parcoursCouvertureHydraulique(
-                    depart = peiId,
-                    idEtude = element.etudeId,
-                    idReseauImporte = etudeId,
-                    isodistances = distances,
-                    profondeurCouverture = profondeurCouverture,
-                    useReseauImporteWithCourant = element.useReseauImporteWithReseauCourant,
-                )
+            val tabDistances = distances.map { it - profondeurCouverture }.sortedDescending().toIntArray()
+            Chemin.Exploration.purgeOldTrees()
+            // Parcours pour chaque PEI sur la plus grande distance
+            couvertureHydrauliqueUseCase.parcoursCouvertureHydraulique(
+                listePeiIdWithProjets = listePeiIdWithProjets,
+                idEtude = element.etudeId,
+                distance = tabDistances[0],
+                profondeurCouverture = profondeurCouverture,
+                graphe = graphe,
+            )
+            // Pour les distances inférieures, tronquer et sauvegarder
+            tabDistances.drop(1).forEach { distance ->
+                listePeiIdWithProjets.forEachIndexed { idxPei, _ ->
+                    val tree = Chemin.Exploration.trees.getOrNull(idxPei)
+                    if (tree != null) {
+                        val sousTree = tree.truncate(
+                            distance = distance,
+                            geometrieUtils = geometrieUtils,
+                            profondeurCouverture = profondeurCouverture,
+                            appSettings = appSettings,
+                        )
+                        parcoursUseCase.saveCouverture(sousTree.start, element.etudeId, distance, sousTree)
+                    }
+                }
             }
-
             // Calcul du zonage après tous les parcours
             couvertureHydrauliqueUseCase.calculerCouvertureHydrauliqueZonage(
                 idEtude = element.etudeId,
                 isodistances = distances,
                 profondeurCouverture = profondeurCouverture,
+                graphe = graphe,
             )
         } finally {
-            // Retirer les jonctions PEI et les tronçons créés pour chaque PEI après tous les calculs
+            // --- Suppression des jonctions PEI après tous les calculs ---
             listePeiIdWithProjets.forEach { peiId ->
                 try {
-                    // Suppression des tronçons créés spécifiquement pour ce PEI
-                    reseauUseCase.getAndClearTronconsCrees(peiId).forEach { tronconId ->
-                        reseauUseCase.deleteTroncon(tronconId)
-                    }
-                    // Retrait logique de la jonction PEI (fusion éventuelle)
-                    reseauUseCase.removeJonctionPei(peiId)
+                    reseauUseCase.removeJonctionPei(peiId, graphe)
                 } catch (e: Exception) {
-                    logger.warn("WARN: Échec de suppression de la jonction PEI ou des tronçons créés pour PEI: $peiId - ${e.message}")
+                    logger.warn("Échec de suppression de la jonction PEI pour PEI: $peiId - ${e.message}")
                 }
             }
         }
-
         return element
     }
 
