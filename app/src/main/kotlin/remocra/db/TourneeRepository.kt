@@ -78,7 +78,19 @@ class TourneeRepository
                 .groupBy(L_TOURNEE_PEI.TOURNEE_ID),
         )
 
-        return dsl.with(peiCounterCte, nextRopCte)
+        val ropCounterCteName = name("ROP_COUNTER_CTE")
+        val ropCounterCte = ropCounterCteName.fields("TOURNEE_ID", "TOURNEE_NB_ROP_REALISEE").`as`(
+            select(
+                L_TOURNEE_PEI.TOURNEE_ID,
+                count().filterWhere(DSL.toChar(V_PEI_VISITE_DATE.LAST_ROP, DSL.`val`("YYYY")).eq(DSL.toChar(DSL.currentDate(), DSL.`val`("YYYY")))).`as`("TOURNEE_NB_ROP_REALISEE"),
+            )
+                .from(L_TOURNEE_PEI)
+                .join(V_PEI_VISITE_DATE)
+                .on(V_PEI_VISITE_DATE.PEI_ID.eq(L_TOURNEE_PEI.PEI_ID))
+                .groupBy(L_TOURNEE_PEI.TOURNEE_ID),
+        )
+
+        return dsl.with(peiCounterCte, nextRopCte, ropCounterCte)
             .selectDistinct(
                 TOURNEE.ID,
                 TOURNEE.LIBELLE,
@@ -99,6 +111,7 @@ class TourneeRepository
                 nextRopCte.field("TOURNEE_NEXT_ROP_DATE"),
                 TOURNEE.DATE_DERNIERE_REALISATION,
                 TOURNEE.NOTIFIEE,
+                ropCounterCte.field("TOURNEE_NB_ROP_REALISEE"), // Nombre de PEI ayant une visite de type ROP lors de l'année courante
             )
             .from(TOURNEE)
             .join(ORGANISME).on(TOURNEE.ORGANISME_ID.eq(ORGANISME.ID))
@@ -109,6 +122,8 @@ class TourneeRepository
             .on(TOURNEE.ID.eq(field(name("NEXT_ROP_CTE", "TOURNEE_ID"), SQLDataType.UUID)))
             .leftJoin(L_TOURNEE_PEI)
             .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
+            .join(table(ropCounterCteName))
+            .on(TOURNEE.ID.eq(field(name("ROP_COUNTER_CTE", "TOURNEE_ID"), SQLDataType.UUID)))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
                     ORGANISME.ID.`in`(affiliatedOrganismeIds),
@@ -297,6 +312,7 @@ class TourneeRepository
         var isModifiable: Boolean = true,
         var estDansIncoming: Boolean = false,
         var tourneeNotifiee: Boolean = false,
+        val tourneeNbRopRealisee: Int = 0,
     )
 
     data class Filter(

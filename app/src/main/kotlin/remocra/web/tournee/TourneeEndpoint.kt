@@ -345,6 +345,6 @@ class TourneeEndpoint : AbstractEndpoint() {
         return genererRapportPostRopUseCase.execute(
             tourneeId,
             userInfo = securityContext.userInfo,
-        ).wrap()
+        ).wrapNoContent()
     }
 }

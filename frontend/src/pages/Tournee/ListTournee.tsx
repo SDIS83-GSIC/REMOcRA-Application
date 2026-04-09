@@ -330,7 +330,7 @@ const ListTournee = ({
   });
 
   // Bouton génération de la carte de la tournée, activé sur paramétrage
-  const carteTourneeButton = {
+  const carteTourneeButton: ButtonType = {
     row: (row) => row,
     type: TYPE_BUTTON.BUTTON,
     icon: <IconeGenereCarteTournee />,
@@ -390,9 +390,9 @@ const ListTournee = ({
   };
 
   // Bouton génération du rapport post ROP, activé si le modèle de courrier correspondant existe
-  const rapportPostRopButton = {
+  const rapportPostRopButton: ButtonType = {
     row: (row) => row,
-    type: TYPE_BUTTON.BUTTON,
+    type: TYPE_BUTTON.CONFIRM,
     icon: <IconDocument />,
     textEnable:
       nbActionsGeneration > 1
@@ -404,31 +404,21 @@ const ListTournee = ({
       return v.original.tourneeNotifiee === true;
     },
     classEnable: "success",
-    onClick: async (tourneeId) => {
-      try {
-        const response = await fetch(
-          url`/api/tournee/generer-rapport-post-rop/${tourneeId}`,
-          getFetchOptions({
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-          }),
-        );
-        if (!response.ok) {
-          if (response.status === 500) {
-            const errorText = await response.text();
-            errorToast(`${errorText}`);
-          }
-          return;
-        } else {
-          successToast(
-            "Rapport post ROP été généré avec succès, notification effectuée.",
-          );
-          // Rafraîchit le tableau en re-montant le composant
-          setTableKey((k) => k + 1);
-        }
-      } catch (_error) {
-        errorToast("Une erreur est survenue");
-      }
+    pathname: url`/api/tournee/generer-rapport-post-rop/`,
+    confirmModal: {
+      header: "Générer le rapport post ROP ?",
+      content: (_, rowData) => (
+        <>
+          Etes-vous sûr de vouloir générer le rapport post ROP pour cette
+          tournée ?<br />
+          Au cours de cette année, {rowData?.original.tourneeNbRopRealisee} PEI
+          ont été visités sur les {rowData?.original.tourneeNbPei} qui composent
+          cette tournée.
+        </>
+      ),
+    },
+    reload: () => {
+      setTableKey((k) => k + 1);
     },
   };
 

@@ -405,6 +405,16 @@ const DeleteButtonPrivate = ({ row, _button }: DeleteButtonType) => {
 
 type ConfirmButtonType = { row: any; _button: ButtonType };
 const ConfirmButtonPrivate = ({ row, _button }: ConfirmButtonType) => {
+  const confirmModal: SimpleModalType = {
+    header:
+      typeof _button.confirmModal?.header === "function"
+        ? _button.confirmModal.header(row)
+        : (_button.confirmModal?.header ?? "Confirmer ?"),
+    content:
+      typeof _button.confirmModal?.content === "function"
+        ? _button.confirmModal.content(row.value, row)
+        : (_button.confirmModal?.content ?? "Confirmer ?"),
+  };
   return (
     <TableActionColumn
       isPost={_button.isPost}
@@ -416,7 +426,7 @@ const ConfirmButtonPrivate = ({ row, _button }: ConfirmButtonType) => {
       hide={_button.hide}
       textEnable={_button.textEnable}
       classEnable={_button.classEnable}
-      confirmModal={_button.confirmModal}
+      confirmModal={confirmModal}
       icon={_button.icon ?? <IconClose />}
       pathname={`${_button.pathname}${row.value}`}
     />
