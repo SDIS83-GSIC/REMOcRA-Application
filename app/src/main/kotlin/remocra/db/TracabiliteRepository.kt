@@ -51,7 +51,7 @@ class TracabiliteRepository @Inject constructor(private val dsl: DSLContext) : A
     fun getTracabilitePeiSince(moment: ZonedDateTime): List<Tracabilite> =
         dsl.selectFrom(TRACABILITE)
             .where(TRACABILITE.TYPE_OBJET.eq(TypeObjet.PEI))
-            .and(TRACABILITE.DATE.ge(moment))
+            .and(TRACABILITE.DATE.gt(moment)) // Pour éviter les doublons de notification si jamais un événement de traçabilité a exactement la même date que l'exécution précédente
             .orderBy(TRACABILITE.OBJET_ID, TRACABILITE.DATE.desc())
             .fetchInto()
 
