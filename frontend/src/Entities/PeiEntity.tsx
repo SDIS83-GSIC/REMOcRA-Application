@@ -110,6 +110,6 @@ export type PeiVisiteTourneeInformationEntity = {
   peiDisponibiliteTerrestre: DISPONIBILITE_PEI;
   gestionnaireLibelle?: string;
   listeAnomalies?: string;
-  peiNextRop?: Date;
-  peiNextCtp?: Date;
+  peiLastRop?: Date;
+  peiLastCtp?: Date;
 };

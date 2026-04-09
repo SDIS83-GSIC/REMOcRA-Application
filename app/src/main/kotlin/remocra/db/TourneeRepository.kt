@@ -617,17 +617,7 @@ class TourneeRepository
                 .orderBy(ANOMALIE_CATEGORIE.ORDRE, ANOMALIE.ORDRE),
         )
 
-        val nextVisiteCteName = name("NEXT_VISITE_CTE")
-        val nextVisiteCte = nextVisiteCteName.fields("PEI_ID", "PEI_NEXT_ROP", "PEI_NEXT_CTP").`as`(
-            select(
-                V_PEI_VISITE_DATE.PEI_ID,
-                V_PEI_VISITE_DATE.PEI_NEXT_ROP,
-                V_PEI_VISITE_DATE.PEI_NEXT_CTP,
-            )
-                .from(V_PEI_VISITE_DATE),
-        )
-
-        return dsl.with(concatAnomaliesCte, nextVisiteCte)
+        return dsl.with(concatAnomaliesCte)
             .select(
                 PEI.ID,
                 PEI.NUMERO_COMPLET,
@@ -642,10 +632,14 @@ class TourneeRepository
                 PEI.DISPONIBILITE_TERRESTRE,
                 GESTIONNAIRE.LIBELLE,
                 concatAnomaliesCte.field("LISTE_ANOMALIES"),
-                nextVisiteCte.field("PEI_NEXT_ROP"),
-                nextVisiteCte.field("PEI_NEXT_CTP"),
+                V_PEI_VISITE_DATE.LAST_ROP.`as`("peiLastRop"),
+                V_PEI_VISITE_DATE.LAST_CTP.`as`("peiLastCtp"),
                 // On projette tous les champs composant l'adresse
-                PEI.EN_FACE, PEI.NUMERO_VOIE, PEI.SUFFIXE_VOIE, PEI.VOIE_TEXTE, VOIE.LIBELLE,
+                PEI.EN_FACE,
+                PEI.NUMERO_VOIE,
+                PEI.SUFFIXE_VOIE,
+                PEI.VOIE_TEXTE,
+                VOIE.LIBELLE,
             )
             .from(PEI)
             .join(L_TOURNEE_PEI).on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
@@ -657,25 +651,10 @@ class TourneeRepository
             .join(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
             .join(DOMAINE).on(PEI.DOMAINE_ID.eq(DOMAINE.ID))
             .leftJoin(GESTIONNAIRE).on(PEI.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID))
-            .join(table(nextVisiteCteName))
-            .on(PEI.ID.eq(field(name("NEXT_VISITE_CTE", "PEI_ID"), SQLDataType.UUID)))
+            .join(V_PEI_VISITE_DATE)
+            .on(PEI.ID.eq(V_PEI_VISITE_DATE.PEI_ID))
             .where(L_TOURNEE_PEI.TOURNEE_ID.eq(tourneeId))
-            .fetch().map { record ->
-                PeiVisiteTourneeInformation(
-                    peiId = record.component1()!!, peiNumeroComplet = record.component2()!!, natureDeciCode = record.component3()!!, natureDeciLibelle = record.component4()!!, domaineLibelle = record.component5()!!, natureLibelle = record.component6()!!, peiTypePei = record.component7()!!, communeLibelle = record.component8()!!, communeCodeInsee = record.component9()!!, communeCodePostal = record.component10()!!, peiDisponibiliteTerrestre = record.component11()!!, gestionnaireLibelle = record.component12(), listeAnomalies = record.component13() as String?, peiNextRop = record.component14() as ZonedDateTime?, peiNextCtp = record.component15() as ZonedDateTime?,
-                    adresse = AdresseDecorator().decorateAdresse(
-                        AdresseForDecorator(
-                            enFace = record.component16(),
-                            numeroVoie = record.component17(),
-                            suffixeVoie = record.component18(),
-                            voie = null,
-                            //  "hack", pour afficher le libellé de la voie sans remonter l'objet Voie (qui contient une géométrie)
-                            voieTexte = if (record.component19() != null) record.component19() else record.component20(),
-                        ),
-                    ),
-
-                )
-            }
+            .fetchInto()
     }
 
     data class PeiVisiteTourneeInformation(
@@ -692,10 +671,25 @@ class TourneeRepository
         val peiDisponibiliteTerrestre: Disponibilite,
         val gestionnaireLibelle: String?,
         val listeAnomalies: String?,
-        val peiNextRop: ZonedDateTime?,
-        val peiNextCtp: ZonedDateTime?,
-        val adresse: String?,
-    )
+        val peiLastRop: ZonedDateTime?,
+        val peiLastCtp: ZonedDateTime?,
+        val peiEnFace: Boolean,
+        val peiNumeroVoie: String?,
+        val peiSuffixeVoie: String?,
+        val peiVoieTexte: String?,
+        val voieLibelle: String?,
+    ) {
+        val adresse: String = AdresseDecorator().decorateAdresse(
+            AdresseForDecorator(
+                enFace = peiEnFace,
+                numeroVoie = peiNumeroVoie,
+                suffixeVoie = peiSuffixeVoie,
+                voie = null,
+                //  "hack", pour afficher le libellé de la voie sans remonter l'objet Voie (qui contient une géométrie)
+                voieTexte = peiVoieTexte ?: voieLibelle,
+            ),
+        )
+    }
 
     fun getListLastPeiCDPByTournee(tourneeId: UUID): List<CDPByPeiId> {
         val lastCDPCteName = name("LAST_CDP_CTE")
