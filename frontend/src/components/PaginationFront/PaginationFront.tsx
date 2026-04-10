@@ -1,7 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { Col, Form, InputGroup, Pagination, Row } from "react-bootstrap";
-
-export const LIMIT = 10;
+import { DEFAULT_PAGINATION } from "../../utils/constantsUtils";
 
 const PaginationFront = ({
   values,
@@ -20,7 +19,7 @@ const PaginationFront = ({
     (page: number) => {
       if (page >= 1 && page <= (totalPage || 1)) {
         setCurrentPage(page);
-        setOffset((page - 1) * LIMIT);
+        setOffset((page - 1) * DEFAULT_PAGINATION);
         setPageInput(page.toString());
       }
     },
@@ -30,7 +29,7 @@ const PaginationFront = ({
   const paginationItems = useMemo(() => {
     const pages = [];
 
-    const nbPage = Math.ceil((values?.length || 0) / LIMIT);
+    const nbPage = Math.ceil((values?.length || 0) / DEFAULT_PAGINATION);
     setTotalPage(nbPage);
 
     if (nbPage <= 5) {

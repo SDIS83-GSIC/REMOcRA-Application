@@ -7,9 +7,7 @@ import { useGet } from "../../components/Fetch/useFetch.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import { IconExport, IconList } from "../../components/Icon/Icon.tsx";
 import MapRapportPersonnalise from "../../components/Map/MapRapportPersonnalise/MapRapportPersonnalise.tsx";
-import PaginationFront, {
-  LIMIT,
-} from "../../components/PaginationFront/PaginationFront.tsx";
+import PaginationFront from "../../components/PaginationFront/PaginationFront.tsx";
 import url from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { requiredString } from "../../module/validators.tsx";
@@ -19,6 +17,7 @@ import {
 } from "../../utils/buildDynamicForm.tsx";
 import { downloadOutputFile } from "../../utils/fonctionsUtils.tsx";
 import "./ExecuteRapportPersonnalise.css";
+import { DEFAULT_PAGINATION } from "../../utils/constantsUtils.tsx";
 
 const ExecuteRapportPersonnalise = () => {
   const { success: successToast, error: errorToast } = useToastContext();
@@ -317,7 +316,7 @@ const ExecuteRapportPersonnalise = () => {
                     </thead>
                     <tbody>
                       {tableau?.values
-                        ?.slice(offset, offset + LIMIT)
+                        ?.slice(offset, offset + DEFAULT_PAGINATION)
                         ?.map((ligne, index) => {
                           return (
                             <tr key={index} className={"fw-normal"}>

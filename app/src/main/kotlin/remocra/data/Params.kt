@@ -4,7 +4,7 @@ import jakarta.ws.rs.QueryParam
 
 data class Params<T, U>(
     @param:QueryParam("limit")
-    val limit: Int? = 10,
+    val limit: Int? = 15,
     @param:QueryParam("offset")
     val offset: Int? = 0,
     @param:QueryParam("filterBy")
