@@ -3,11 +3,14 @@ package remocra.tasks
 import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
+import jakarta.inject.Provider
 import remocra.GlobalConstants
+import remocra.app.ParametresProvider
 import remocra.auth.WrappedUserInfo
 import remocra.data.AuteurTracabiliteData
 import remocra.data.NotificationMailData
 import remocra.data.PeiData
+import remocra.data.enums.ParametreEnum
 import remocra.db.JobRepository
 import remocra.db.TracabiliteRepository
 import remocra.db.jooq.remocra.enums.Disponibilite
@@ -28,6 +31,7 @@ class ChangementEtatPeiTask
 constructor(
     private val tracabiliteRepository: TracabiliteRepository,
     private val jobRepository: JobRepository,
+    private val parametreProvider: Provider<ParametresProvider>,
 ) :
     SchedulableTask<ChangementEtatPeiTaskParameter, ChangementEtatPeiJobResult>() {
 
@@ -93,10 +97,11 @@ constructor(
                 listeTracaEvent.filter { it.pojo.peiDisponibiliteTerrestre == Disponibilite.NON_CONFORME }
                     .joinToString(", ") { it.pojo.peiNumeroComplet.toString() }
 
+            val libelleNonConforme = parametreProvider.get().getParametreString(ParametreEnum.PEI_LIBELLE_NON_CONFORME.name) ?: "Non-Conforme"
             var corps = genericCorps
             corps = remplaceIfNotEmpty(corps, "#resultsDispo#", "Les PEIs suivants sont passés à l'état Disponible #liste#.\n", listePeiDispo)
             corps = remplaceIfNotEmpty(corps, "#resultsIndispo#", "Les PEI suivants sont passés à l'état Indisponible #liste#.\n", listePeiIndispo)
-            corps = remplaceIfNotEmpty(corps, "#resultsNonConforme#", "Les PEI suivants sont passés à l'état Non-Conforme #liste#.\n", listePeiNonConforme)
+            corps = remplaceIfNotEmpty(corps, "#resultsNonConforme#", "Les PEI suivants sont passés à l'état $libelleNonConforme #liste#.\n", listePeiNonConforme)
 
             objetsANotifier.add(
                 NotificationMailData(
