@@ -3,15 +3,17 @@ import { GeoJSON } from "ol/format";
 import VectorLayer from "ol/layer/Vector";
 import { bbox } from "ol/loadingstrategy";
 import "ol/ol.css";
+import { add } from "date-fns";
 import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useGet } from "../../Fetch/useFetch.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
+import { refreshLayerGeoserver } from "../MapUtils.tsx";
 import MapToolbarCrise, { useToolbarCriseContext } from "./MapToolbarCrise.tsx";
 
 const MapCrise = ({
@@ -47,19 +49,21 @@ const MapCrise = ({
     mapElement: mapElement,
     typeModule: TypeModuleRemocra.CRISE,
     criseId: criseId,
+    criseStatutMode: state,
   });
 
   const dataEvenementLayer = useMemo(() => {
     if (!map) {
       return;
     }
+    // on met en place un style transparent pour que les SDIS le définissent directement dans geoserver (invisible à l'oeil nu mais pas totalement transparent pour que les interactions fonctionnent)
     const style = new Style({
-      fill: new Fill({ color: "rgba(255, 255, 255, 0.2)" }),
-      stroke: new Stroke({ color: "rgba(0, 0, 0, 0.5)", width: 1 }),
+      fill: new Fill({ color: "rgba(0, 0, 0, 0.01)" }),
+      stroke: new Stroke({ color: "rgba(0, 0, 0, 0.01)", width: 1 }),
       image: new CircleStyle({
         radius: 5,
-        stroke: new Stroke({ color: "rgb(0, 160, 27)" }),
-        fill: new Fill({ color: "rgb(0, 160, 27)" }),
+        stroke: new Stroke({ color: "rgba(0, 0, 0, 0.01)" }),
+        fill: new Fill({ color: "rgba(0, 0, 0, 0.01)" }),
       }),
     });
 
@@ -152,34 +156,49 @@ const MapCrise = ({
   /**
    * Met à jour la liste des couches actives sur la carte en fonction des couches WMS sélectionnées.
    */
-  const listeDesCouches = listeCouches
-    ? availableLayers.map((group: any) => ({
-        ...group,
-        layers: group.layers.filter((layer: any) => {
-          const isActive = listeCouches.some(
-            (c: any) => c.code === layer.code && c[state.toLowerCase()],
-          );
+  const listeDesCouches = useMemo(() => {
+    if (!listeCouches) {
+      return [];
+    }
+    return availableLayers.map((group: any) => ({
+      ...group,
+      layers: group.layers.filter((layer: any) => {
+        const isActive = listeCouches.some(
+          (c: any) => c.code === layer.code && c[state.toLowerCase()],
+        );
+        return isActive;
+      }),
+    }));
+  }, [availableLayers, listeCouches, state]);
 
-          const layerExists = map
-            ?.getLayers()
-            .getArray()
-            .includes(layer.openlayer);
+  useEffect(() => {
+    if (!map || !listeCouches) {
+      return;
+    }
 
-          if (!isActive && layerExists) {
-            map?.removeLayer(layer.openlayer);
-            layerListRef.current?.removeActiveLayer(getUid(layer.openlayer));
-          } else if (isActive && layer.active && !layerExists) {
-            map?.addLayer(layer.openlayer);
-            layerListRef.current?.addActiveLayer(getUid(layer.openlayer));
-          }
+    const activeCoucheCodes = new Set(
+      listeCouches
+        .filter((c: any) => c[state.toLowerCase()])
+        .map((c: any) => c.code),
+    );
 
-          return isActive;
-        }),
-      }))
-    : [];
+    availableLayers
+      .flatMap((group: any) => group.layers)
+      .forEach((layer: any) => {
+        const currentLayer = map
+          .getLayers()
+          .getArray()
+          .find((l: any) => l === layer.openlayer);
+
+        if (currentLayer) {
+          currentLayer.setVisible(activeCoucheCodes.has(layer.code));
+        }
+      });
+  }, [availableLayers, listeCouches, map, state]);
 
   return (
     <MapComponent
+      key={state}
       map={map}
       showZoomPlace={false}
       mapElement={mapElement}

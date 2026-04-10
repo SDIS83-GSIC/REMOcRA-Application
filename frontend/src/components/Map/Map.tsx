@@ -82,6 +82,7 @@ export function toOpenLayer(
   layer: any,
   etudeId?: string,
   criseId?: string,
+  criseStatutMode?: string,
 ): TileSource | WMTS | VectorSource | ImageWMS | TileWMS | undefined {
   switch (layer.source) {
     case SOURCE_CARTO.WMS: {
@@ -95,13 +96,19 @@ export function toOpenLayer(
         style: "normal",
       };
 
-      // Ajout du paramètre viewParams seulement si etudeId est renseigné
-      if (etudeId) {
-        wmsParams.viewParams = `idEtude:${encodeURIComponent(etudeId)}`;
-      }
+      const viewParamsArray: string[] = [];
       if (criseId) {
-        wmsParams.viewParams = `idCrise:${encodeURIComponent(criseId)}`;
+        viewParamsArray.push(`idCrise:${encodeURIComponent(criseId)}`);
       }
+      if (etudeId) {
+        viewParamsArray.push(`idEtude:${encodeURIComponent(etudeId)}`);
+      }
+      if (criseStatutMode) {
+        viewParamsArray.push(
+          `statutMode:${encodeURIComponent(criseStatutMode)}`,
+        );
+      }
+      wmsParams.viewParams = viewParamsArray.join(";");
 
       return !layer.tuilage
         ? new ImageWMS({
@@ -288,12 +295,14 @@ export const useMapComponent = ({
   displayPei = true,
   etudeId,
   criseId,
+  criseStatutMode,
 }: {
   mapElement: MutableRefObject<HTMLDivElement | undefined>;
   typeModule: TypeModuleRemocra;
   displayPei?: boolean;
   etudeId?: string;
   criseId?: string;
+  criseStatutMode?: string;
 }) => {
   const { state, search } = useLocation();
   const navigate = useNavigate();
@@ -479,12 +488,22 @@ export const useMapComponent = ({
             layer.tuilage !== true
           ) {
             openlayer = new ImageLayer({
-              source: toOpenLayer(layer, etudeId, criseId) as ImageWMS,
+              source: toOpenLayer(
+                layer,
+                etudeId,
+                criseId,
+                criseStatutMode,
+              ) as ImageWMS,
               zIndex,
             });
           } else {
             openlayer = new TileLayer({
-              source: toOpenLayer(layer, etudeId, criseId) as TileSource,
+              source: toOpenLayer(
+                layer,
+                etudeId,
+                criseId,
+                criseStatutMode,
+              ) as TileSource,
               zIndex,
               preload: 1,
               useInterimTilesOnError: false,
@@ -503,11 +522,12 @@ export const useMapComponent = ({
         }),
       };
     });
-  }, [layersState.data, map, projection, etudeId, criseId]);
+  }, [layersState.data, map, projection, etudeId, criseId, criseStatutMode]);
 
   // Ajout / retrait d'une couche sur la carte
   const addOrRemoveLayer = (layer: any) => {
     const index = map?.getLayers().getArray().indexOf(layer.openlayer);
+
     if (index !== undefined && index > -1) {
       map?.removeLayer(layer.openlayer);
       layerListRef.current?.removeActiveLayer(getUid(layer.openlayer));
