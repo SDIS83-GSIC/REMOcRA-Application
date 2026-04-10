@@ -39,7 +39,14 @@ constructor(
             val startSynchroTable = timeSource.markNow()
             // [SIG] Récupération de la structure de la table
             logManager.info("[SIG] Récupération des informations coté SIG : ${tableASynchroniser.schemaSource}.${tableASynchroniser.tableSource}")
-            val structureTable = sigRepository.getMetaStructureTable(tableASynchroniser.schemaSource, tableASynchroniser.tableSource)
+            val structureTable =
+                try {
+                    sigRepository.getMetaStructureTable(tableASynchroniser.schemaSource, tableASynchroniser.tableSource)
+                } catch (e: Exception) {
+                    logManager.error("[SIG] Erreur lors de la récupération de la structure de la table ${tableASynchroniser.schemaSource}.${tableASynchroniser.tableSource} : ${e.message}")
+                    return@forEach
+                }
+
             // [REMOCRA] Creation de la table
             // Construction de la requête CREATE TABLE
             logManager.info("[REMOcRA] Récupération des champs pour la création de la table")
