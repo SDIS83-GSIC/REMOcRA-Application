@@ -291,11 +291,12 @@ const HistoriqueDebitPression = ({ pibiId }: { pibiId: string }) => {
         <h4>Historique des mesures</h4>
         <Row>
           <Col xs={7} className="mx-auto">
-            <ResponsiveContainer aspect={1.5}>
+            <ResponsiveContainer width="100%" aspect={1.5}>
               <BarChart
                 width={500}
                 height={300}
                 data={chartData}
+                responsive={true}
                 margin={{
                   top: 5,
                   right: 30,

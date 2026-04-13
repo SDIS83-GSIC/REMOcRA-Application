@@ -1,8 +1,8 @@
 import {
   Bar,
   BarChart,
+  BarShapeProps,
   CartesianGrid,
-  Cell,
   Legend,
   ReferenceArea,
   ReferenceLine,
@@ -39,7 +39,11 @@ const BaseBarChart = ({
   const thresholdLines = buildThresholdLines(sections);
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer
+      width="100%"
+      height="100%"
+      initialDimension={{ width: 400, height: 300 }}
+    >
       <BarChart data={convertedData} layout={layout} margin={margin}>
         <CartesianGrid strokeDasharray="3 3" />
 
@@ -70,7 +74,33 @@ const BaseBarChart = ({
             verticalAlign={Alignement.TOP}
             align="left"
             wrapperStyle={{ paddingBottom: 8 }}
-            payload={legendPayload(sections)}
+            content={() => {
+              const items = legendPayload(sections);
+              return (
+                <div style={{ display: "flex", gap: "16px" }}>
+                  {items.map((item) => (
+                    <div
+                      key={item.id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "12px",
+                          height: "12px",
+                          backgroundColor: item.color,
+                          borderRadius: "2px",
+                        }}
+                      />
+                      <span>{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+              );
+            }}
           />
         )}
 
@@ -80,16 +110,18 @@ const BaseBarChart = ({
         <Tooltip formatter={(value: number) => `${value.toFixed(2)}%`} />
 
         {useThresholdColors ? (
-          <Bar dataKey="percentage" barSize={20}>
-            {convertedData.map(
-              (entry: { percentage: number }, index: number) => (
-                <Cell
-                  key={`cell-${index}`} //key={index}
-                  fill={resolveColor(entry.percentage, sections, barColor)}
-                />
-              ),
-            )}
-          </Bar>
+          <Bar
+            dataKey="percentage"
+            barSize={20}
+            legendType="square"
+            shape={(props: BarShapeProps) => {
+              const { x, y, width, height, payload } = props;
+              const fill = resolveColor(payload.percentage, sections, barColor);
+              return (
+                <rect x={x} y={y} width={width} height={height} fill={fill} />
+              );
+            }}
+          />
         ) : (
           <Bar dataKey="percentage" barSize={20} fill={barColor} />
         )}
@@ -99,7 +131,33 @@ const BaseBarChart = ({
             verticalAlign={Alignement.BOTTOM}
             align="left"
             wrapperStyle={{ paddingBottom: 8 }}
-            payload={legendPayload(sections)}
+            content={() => {
+              const items = legendPayload(sections);
+              return (
+                <div style={{ display: "flex", gap: "16px" }}>
+                  {items.map((item) => (
+                    <div
+                      key={item.id}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "12px",
+                          height: "12px",
+                          backgroundColor: item.color,
+                          borderRadius: "2px",
+                        }}
+                      />
+                      <span>{item.value}</span>
+                    </div>
+                  ))}
+                </div>
+              );
+            }}
           />
         )}
       </BarChart>

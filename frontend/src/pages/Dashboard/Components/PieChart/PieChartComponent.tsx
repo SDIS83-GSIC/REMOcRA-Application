@@ -1,4 +1,15 @@
-import { Cell, Legend, Pie, PieChart, ResponsiveContainer } from "recharts";
+import {
+  LabelList,
+  LabelProps,
+  Legend,
+  Pie,
+  PieChart,
+  PieLabel,
+  PieLabelRenderProps,
+  PieSectorShapeProps,
+  ResponsiveContainer,
+  Sector,
+} from "recharts";
 import { setSimpleValueMapped } from "../../MappedValueComponent.tsx";
 
 const COLORS = [
@@ -25,11 +36,6 @@ const PieChartComponent = (data: { data: any[] | undefined; config: any }) => {
   }
   const dataMapped = setSimpleValueMapped(data.data, data.config);
 
-  const convertedData = dataMapped.map((item: { value: string }) => ({
-    ...item, // Conserver les autres propriétés de l'objet
-    value: parseInt(item.value), // Convertir `value` en entier
-  }));
-
   // Fonction pour obtenir la couleur d'un élément
   const getColorForItem = (item: any, index: number): string => {
     // Si les intervalles personnalisés sont activés
@@ -50,21 +56,33 @@ const PieChartComponent = (data: { data: any[] | undefined; config: any }) => {
     return COLORS[index % COLORS.length];
   };
 
-  const renderCustomizedLabel = ({
-    percent,
-    value,
-  }: {
-    percent: number;
-    value: number;
-  }) => {
+  const convertedData = dataMapped.map(
+    (item: { value: string }, index: number) => ({
+      ...item, // Conserver les autres propriétés de l'objet
+      value: parseInt(item.value), // Convertir `value` en entier
+      fill: getColorForItem(item, index), // Ajouter la couleur
+    }),
+  );
+
+  const renderCustomizedLabel = ({ percent, value }: PieLabelRenderProps) => {
     if (!percent) {
       return null;
     }
     return `${value} (${(percent * 100).toFixed(2)}%)`;
   };
 
+  const PieCell = (
+    props: PieSectorShapeProps & { payload?: { fill?: string } },
+  ) => (
+    <Sector {...props} fill={props.payload?.fill || COLORS[props.index || 0]} />
+  );
+
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    <ResponsiveContainer
+      width="100%"
+      height="100%"
+      initialDimension={{ width: 400, height: 300 }}
+    >
       <PieChart>
         <Pie
           data={convertedData}
@@ -74,12 +92,8 @@ const PieChartComponent = (data: { data: any[] | undefined; config: any }) => {
           innerRadius="30%" // Rayon interne (pour un graphique en donut, par exemple)
           fill="#8884d8"
           label={renderCustomizedLabel}
-        >
-          {/* Ajout des couleurs des sections */}
-          {convertedData.map((entry: any, index: number) => (
-            <Cell key={`cell-${index}`} fill={getColorForItem(entry, index)} />
-          ))}
-        </Pie>
+          shape={PieCell}
+        />
         <Legend />
       </PieChart>
     </ResponsiveContainer>

@@ -1,5 +1,4 @@
 import { Table } from "react-bootstrap";
-import { ResponsiveContainer } from "recharts";
 import { setTableValueMapped } from "../../MappedValueComponent.tsx";
 
 const TableComponent = (data: { data: string | any[]; config: any }) => {
@@ -18,7 +17,7 @@ const TableComponent = (data: { data: string | any[]; config: any }) => {
   );
 
   return (
-    <ResponsiveContainer width="100%" height="100%" className="overflow-auto">
+    <div style={{ width: "100%", height: "100%" }} className="overflow-auto">
       <Table striped bordered hover responsive>
         <thead>
           <tr>
@@ -37,7 +36,7 @@ const TableComponent = (data: { data: string | any[]; config: any }) => {
           ))}
         </tbody>
       </Table>
-    </ResponsiveContainer>
+    </div>
   );
 };
 
