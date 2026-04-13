@@ -103,27 +103,24 @@ const ListInfos = ({ data }: { data: any[] }) => {
       const features = featureCollection?.features || [];
       const id = featureCollection?.id;
 
-      if (!features.length) {
-        return [
-          {
-            header: "Aucune donnée",
-            content: "",
-          },
-        ];
-      }
-
       // Cherche le metadata correspondant à la couche
       const metadata =
         coucheMetadata && id ? findMetadataById(coucheMetadata, id) : null;
       const style = metadata?.coucheMetadataStyle;
       const libelle = metadata?.coucheLibelle || null;
 
+      // Si pas de métadonnée, on ignore complètement cette couche, sauf pour le superadmin
+      if ((!metadata && !user?.isSuperAdmin) || !features.length) {
+        return [];
+      }
+
       return features.map((feature: any) => {
         const properties = feature?.properties ?? {};
         // Utilise le libellé comme header
-        const header = libelle || feature?.id?.split(".")?.[0] || "Inconnu";
+        const header =
+          libelle || feature?.id?.split(".")?.[0] || id || "Inconnu";
 
-        if (style) {
+        if (style && !user?.isSuperAdmin) {
           return {
             header,
             content: <div>{parseStyledContent(style, properties)}</div>,
@@ -165,11 +162,15 @@ const ListInfos = ({ data }: { data: any[] }) => {
 
   return (
     <Container>
-      <AccordionCustom
-        list={tableau}
-        activesKeys={activesKeys}
-        handleShowClose={handleShowClose}
-      />
+      {tableau.length === 0 ? (
+        <div>Aucune donnée</div>
+      ) : (
+        <AccordionCustom
+          list={tableau}
+          activesKeys={activesKeys}
+          handleShowClose={handleShowClose}
+        />
+      )}
     </Container>
   );
 };
