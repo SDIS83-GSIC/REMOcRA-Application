@@ -10,5 +10,5 @@ constructor(
     private val natureRepository: NatureRepository,
 ) :
     AbstractUseCase() {
-    fun getNatureForSelect(): List<NatureRepository.IdLibelleNature> = natureRepository.getNatureForSelect()
+    fun getNatureForSelect(): List<NatureRepository.NatureSelectData> = natureRepository.getNatureForSelect()
 }

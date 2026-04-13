@@ -28,12 +28,13 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
     fun getAllForAdmin(): Collection<Nature> =
         dsl.selectFrom(NATURE).where(NATURE.ACTIF).orderBy(NATURE.TYPE_PEI).fetchInto()
 
-    fun getNatureForSelect(): List<IdLibelleNature> =
-        dsl.select(NATURE.ID, NATURE.LIBELLE).from(NATURE).orderBy(NATURE.LIBELLE).fetchInto()
+    fun getNatureForSelect(): List<NatureSelectData> =
+        dsl.select(NATURE.ID, NATURE.LIBELLE, NATURE.PARTICIPE_DFCI).from(NATURE).orderBy(NATURE.LIBELLE).fetchInto()
 
-    data class IdLibelleNature(
+    data class NatureSelectData(
         val natureId: UUID,
         val natureLibelle: String,
+        val natureParticipeDfci: Boolean,
     )
 
     data class Filter(
@@ -63,6 +64,7 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
         val natureLibelle: Int?,
         val natureTypePei: Int?,
         val natureProtected: Int?,
+        val natureParticipeDfci: Int?,
     ) {
 
         fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
@@ -71,6 +73,7 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
             natureLibelle?.let { "natureLibelle" to it },
             natureTypePei?.let { "natureTypePei" to it },
             natureProtected?.let { "natureProtected" to it },
+            natureParticipeDfci?.let { "natureParticipeDfci" to it },
         )
 
         fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
@@ -80,6 +83,7 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
                 "natureLibelle" -> NATURE.LIBELLE.getSortField(pair.second)
                 "natureTypePei" -> NATURE.TYPE_PEI.getSortField(pair.second)
                 "natureProtected" -> NATURE.PROTECTED.getSortField(pair.second)
+                "natureParticipeDfci" -> NATURE.PARTICIPE_DFCI.getSortField(pair.second)
                 else -> null
             }
         }
@@ -135,7 +139,7 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
             .from(NATURE).where(NATURE.ID.eq(id)).fetchOneInto()
 
     fun add(natureData: NatureWithDiametres): Int =
-        dsl.insertInto(NATURE, NATURE.ID, NATURE.ACTIF, NATURE.CODE, NATURE.LIBELLE, NATURE.TYPE_PEI, NATURE.PROTECTED, NATURE.TYPE_PEI_NEXSIS)
+        dsl.insertInto(NATURE, NATURE.ID, NATURE.ACTIF, NATURE.CODE, NATURE.LIBELLE, NATURE.TYPE_PEI, NATURE.PROTECTED, NATURE.PARTICIPE_DFCI, NATURE.TYPE_PEI_NEXSIS)
             .values(
                 natureData.natureId,
                 natureData.natureActif,
@@ -143,6 +147,7 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
                 natureData.natureLibelle,
                 natureData.natureTypePei,
                 false,
+                natureData.natureParticipeDfci,
                 natureData.natureTypePeiNexsis,
             ).execute()
 
@@ -150,6 +155,7 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
         dsl.update(NATURE)
             .set(NATURE.ACTIF, natureData.natureActif)
             .set(NATURE.LIBELLE, natureData.natureLibelle).set(NATURE.TYPE_PEI, natureData.natureTypePei)
+            .set(NATURE.PARTICIPE_DFCI, natureData.natureParticipeDfci)
             .set(NATURE.TYPE_PEI_NEXSIS, natureData.natureTypePeiNexsis)
             .where(NATURE.ID.eq(natureData.natureId)).execute()
 
@@ -158,6 +164,7 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
             .set(NATURE.ACTIF, natureData.natureActif)
             .set(NATURE.CODE, natureData.natureCode)
             .set(NATURE.LIBELLE, natureData.natureLibelle).set(NATURE.TYPE_PEI, natureData.natureTypePei)
+            .set(NATURE.PARTICIPE_DFCI, natureData.natureParticipeDfci)
             .set(NATURE.TYPE_PEI_NEXSIS, natureData.natureTypePeiNexsis)
             .where(NATURE.ID.eq(natureData.natureId)).and(NATURE.PROTECTED.isFalse).execute()
 

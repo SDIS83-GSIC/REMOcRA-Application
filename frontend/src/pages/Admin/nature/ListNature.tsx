@@ -131,6 +131,7 @@ const ListNature = () => {
             diametreIds: undefined,
             natureTypePei: undefined,
             natureProtected: undefined,
+            natureParticipeDfci: undefined,
           })}
           idName={"ListNature"}
           columns={colonne}

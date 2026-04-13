@@ -33,6 +33,8 @@ export type PeiEntity = {
   peiNiveauId: string;
   peiZoneSpecialeId: string;
   peiDateChangementDispo: Date;
+  peiPerenne: boolean;
+  peiRotation_6Ccf: boolean;
 
   coordonneeX: number;
   coordonneeY: number;

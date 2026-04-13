@@ -97,6 +97,8 @@ class PeiRepository
             PEI.NIVEAU_ID,
             PEI.OBSERVATION,
             PEI.DATE_CHANGEMENT_DISPO,
+            PEI.PERENNE,
+            PEI.ROTATION_6_CCF,
         )
     }
 
@@ -632,8 +634,8 @@ class PeiRepository
                 peiDisponibiliteTerrestre = pei.peiDisponibiliteTerrestre,
                 peiServicePublicDeciId = pei.peiServicePublicDeciId,
                 peiDateChangementDispo = pei.peiDateChangementDispo,
-                peiPerenne = false, // TODO prochain commit
-                peiRotation_6Ccf = false, // TODO prochain commit
+                peiPerenne = pei.peiPerenne,
+                peiRotation_6Ccf = pei.peiRotation_6Ccf,
             ),
         )
 
@@ -1171,6 +1173,15 @@ class PeiRepository
             .set(PEI.NUMERO_COMPLET, numeroComplet)
             .where(PEI.ID.eq(peiId))
             .execute()
+
+    fun existsPeiPerenneOrRotation6CcfForNature(natureId: UUID): Boolean =
+        dsl.fetchExists(
+            dsl.select(PEI.ID).from(PEI)
+                .join(NATURE).on(NATURE.ID.eq(PEI.NATURE_ID))
+                .where(NATURE.PARTICIPE_DFCI.isTrue)
+                .and(PEI.PERENNE.isTrue.or(PEI.ROTATION_6_CCF.isTrue))
+                .and(NATURE.ID.eq(natureId)),
+        )
 }
 
 data class IdNumeroComplet(

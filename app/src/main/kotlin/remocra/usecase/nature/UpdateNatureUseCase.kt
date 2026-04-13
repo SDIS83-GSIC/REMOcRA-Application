@@ -6,6 +6,7 @@ import remocra.data.NatureWithDiametres
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeDataCache
 import remocra.db.NatureRepository
+import remocra.db.PeiRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
@@ -14,7 +15,10 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class UpdateNatureUseCase @Inject constructor(private val natureRepository: NatureRepository) :
+class UpdateNatureUseCase @Inject constructor(
+    private val natureRepository: NatureRepository,
+    private val peiRepository: PeiRepository,
+) :
     AbstractCUDUseCase<NatureWithDiametres>(TypeOperation.UPDATE) {
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_NOMENCLATURE)) {
@@ -53,8 +57,14 @@ class UpdateNatureUseCase @Inject constructor(private val natureRepository: Natu
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: NatureWithDiametres) {
         val existingNature = natureRepository.getById(element.natureId)
+
         if (existingNature!!.natureCode != element.natureCode && element.natureProtected!!) {
-            throw RemocraResponseException(ErrorType.ADMIN_DIAMETRE_IS_PROTECTED)
+            throw RemocraResponseException(ErrorType.ADMIN_NATURE_IS_PROTECTED)
+        }
+
+        if (peiRepository.existsPeiPerenneOrRotation6CcfForNature(element.natureId)
+        ) {
+            throw RemocraResponseException(ErrorType.ADMIN_NATURE_DFCI)
         }
     }
 }

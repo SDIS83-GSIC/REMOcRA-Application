@@ -64,6 +64,9 @@ class NatureEndpoint : AbstractEndpoint() {
         @FormParam("protected")
         val protected: Boolean = false
 
+        @FormParam("participeDfci")
+        val participeDfci: Boolean = false
+
         @FormParam("diametreIds")
         lateinit var diametreIds: Collection<UUID>
     }
@@ -95,6 +98,7 @@ class NatureEndpoint : AbstractEndpoint() {
                 natureLibelle = natureInput.libelle,
                 natureTypePei = natureInput.typePei,
                 natureProtected = natureInput.protected,
+                natureParticipeDfci = natureInput.participeDfci,
                 diametreIds = natureInput.diametreIds,
                 natureTypePeiNexsis = natureInput.typePeiNexsis,
             ),
@@ -114,6 +118,7 @@ class NatureEndpoint : AbstractEndpoint() {
                 natureLibelle = natureInput.libelle,
                 natureTypePei = natureInput.typePei,
                 natureProtected = natureInput.protected,
+                natureParticipeDfci = natureInput.participeDfci,
                 diametreIds = natureInput.diametreIds,
                 natureTypePeiNexsis = natureInput.typePeiNexsis,
             ),

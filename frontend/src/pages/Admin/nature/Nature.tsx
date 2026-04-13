@@ -25,6 +25,7 @@ export const prepareNatureValues = (values: NatureType) => ({
   libelle: values.natureLibelle,
   typePei: values.natureTypePei,
   protected: values.natureProtected,
+  participeDfci: values.natureParticipeDfci,
   diametreIds: values.diametreIds,
   typePeiNexsis: values.natureTypePeiNexsis,
 });
@@ -35,6 +36,7 @@ export const natureValidationSchema = object({
   natureLibelle: requiredString,
   natureTypePei: string().nullable(),
   natureProtected: requiredBoolean,
+  natureParticipeDfci: requiredBoolean,
   diametreIds: array(),
 });
 
@@ -44,6 +46,7 @@ export const getInitialNatureValue = (data: NatureType) => ({
   natureLibelle: data?.natureLibelle ?? null,
   natureTypePei: data?.natureTypePei ?? null,
   natureProtected: data?.natureProtected ?? null,
+  natureParticipeDfci: data?.natureParticipeDfci ?? false,
   diametreIds: data?.diametreIds ?? [],
   natureTypePeiNexsis: data?.natureTypePeiNexsis ?? null,
 });
@@ -82,6 +85,7 @@ export const NatureForm = () => {
       />
       <CheckBoxInput name="natureActif" label="Actif" />
       <CheckBoxInput name="natureProtected" label="Protégé" disabled={true} />
+      <CheckBoxInput name="natureParticipeDfci" label="Participe à la DFCI" />
 
       <Multiselect
         name={"diametreIds"}

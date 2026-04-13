@@ -82,6 +82,8 @@ export const getInitialValues = (data?: PeiEntity) => ({
   peiNiveauId: data?.peiNiveauId ?? null,
   peiZoneSpecialeId: data?.peiZoneSpecialeId ?? null,
   peiDateChangementDispo: data?.peiDateChangementDispo ?? null,
+  peiPerenne: data?.peiPerenne ?? false,
+  peiRotation_6Ccf: data?.peiRotation_6Ccf ?? false,
 
   // DONNEES PIBI
   pibiDiametreId: data?.pibiDiametreId ?? null,
@@ -180,6 +182,8 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
     peiGestionnaireId: values.peiGestionnaireId ?? null,
     peiNiveauId: values.peiNiveauId ?? null,
     peiDateChangementDispo: values?.peiDateChangementDispo ?? null,
+    peiPerenne: values.peiPerenne,
+    peiRotation_6Ccf: values.peiRotation_6Ccf,
 
     coordonneeX: values?.coordonneeX ?? null,
     coordonneeY: values?.coordonneeY ?? null,
@@ -711,6 +715,16 @@ const FormEntetePei = ({
     url`/api/nomenclatures/list/` + NOMENCLATURE.NATURE_DECI,
   );
 
+  const {
+    data: listNaturesWithDfci,
+  }: {
+    data: {
+      natureId: string;
+      natureLibelle: string;
+      natureParticipeDfci: boolean;
+    }[];
+  } = useGet(url`/api/nature/get-libelle-nature`);
+
   const codeNatureDeci =
     listNatureDeci &&
     listNatureDeci.find((e) => e.id === values.peiNatureDeciId)?.code;
@@ -725,6 +739,11 @@ const FormEntetePei = ({
 
   // Condition générale d'update du PEI : l'utilisateur doit posséder le droit PEI_U
   const disablePeiUpdate = !isNew && !hasDroit(user, TYPE_DROIT.PEI_U);
+
+  // Vérifier si la nature sélectionnée participe au DFCI
+  const natureParticipeDfci =
+    listNaturesWithDfci?.find((e) => e.natureId === values.peiNatureId)
+      ?.natureParticipeDfci ?? false;
 
   return (
     listNatureDeci && (
@@ -893,6 +912,24 @@ const FormEntetePei = ({
               </Col>
             </Row>
           )}
+        {natureParticipeDfci && (
+          <Row className="mt-3">
+            <Col>
+              <CheckBoxInput
+                name="peiPerenne"
+                label="Pérenne"
+                disabled={disablePeiUpdate}
+              />
+            </Col>
+            <Col>
+              <CheckBoxInput
+                name="peiRotation_6Ccf"
+                label="Rotation 6 CCF"
+                disabled={disablePeiUpdate}
+              />
+            </Col>
+          </Row>
+        )}
         <Row className="mt-3">
           <Col>
             <TextAreaInput

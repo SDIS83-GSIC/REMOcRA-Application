@@ -341,6 +341,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_NATURE_FORBIDDEN_PEI_TYPE(8104, "Le type de PEI doit être PENA ou PENA"),
     ADMIN_FICHE_RESUME_FORBIDDEN(8105, "Vous n'avez pas les droits de modification de la fiche résumé.", Status.FORBIDDEN),
     ADMIN_MODULE_RESUME_FORBIDDEN(8106, "Vous n'avez pas les droits de modification de la page d'accueil.", Status.FORBIDDEN),
+    ADMIN_NATURE_DFCI(8107, "Cette nature est utilisée par au moins un PEI dont l'attribut \"perenne\" ou \"Rotation 6CCF\" est à vrai"),
 
     //
     // ********************************************************************************

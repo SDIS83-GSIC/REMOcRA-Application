@@ -5,6 +5,7 @@ type FilterNatureT = {
   diametreId?: string | undefined;
   natureTypePei?: string | undefined;
   natureProtected?: string | undefined;
+  natureParticipeDfci?: string | undefined;
 };
 
 const filterValuesNature = ({
@@ -14,6 +15,7 @@ const filterValuesNature = ({
   diametreId,
   natureTypePei,
   natureProtected,
+  natureParticipeDfci,
 }: FilterNatureT) => {
   const filter: FilterNatureT = {};
   filterPropertyNature(filter, natureActif, "natureActif");
@@ -22,6 +24,7 @@ const filterValuesNature = ({
   filterPropertyNature(filter, diametreId, "diametreId");
   filterPropertyNature(filter, natureTypePei, "natureTypePei");
   filterPropertyNature(filter, natureProtected, "natureProtected");
+  filterPropertyNature(filter, natureParticipeDfci, "natureParticipeDfci");
   return filter;
 };
 

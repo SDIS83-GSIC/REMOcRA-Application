@@ -11,6 +11,7 @@ data class NatureWithDiametres(
     val natureLibelle: String,
     val natureTypePei: TypePei,
     val natureProtected: Boolean?,
+    val natureParticipeDfci: Boolean,
     val diametreIds: Collection<UUID>,
     val natureTypePeiNexsis: TypePeiNexsis?,
 )
