@@ -1,11 +1,3 @@
-.fixedWidth {
-  width: 1em !important;
-}
-
-.rotate90 {
-  transform: rotateZ(90deg);
-}
-
-.flip {
-  transform: scaleX(-1);
+.icon {
+  display: inline-flex;
 }

@@ -141,13 +141,13 @@ export const FORM_CONFIG = {
 
 // Liste des icones des composants
 export const ICONS = {
-  PIECHART: IconPieChartComponent(),
-  GAUGE: IconGaugeComponent(),
-  HORIZONTALCHAR: IconHorizontalChartComponent(),
-  VERTICAL_BAR_CHART: IconHorizontalChartComponent(),
-  TABLE: IconTableComponent(),
-  COUNTER: IconCounterComponent(),
-  MAP: IconMapComponent(),
+  PIECHART: IconPieChartComponent,
+  GAUGE: IconGaugeComponent,
+  HORIZONTALCHAR: IconHorizontalChartComponent,
+  VERTICAL_BAR_CHART: IconHorizontalChartComponent,
+  TABLE: IconTableComponent,
+  COUNTER: IconCounterComponent,
+  MAP: IconMapComponent,
 };
 
 // Liste des types d'objets utilisés dans le module

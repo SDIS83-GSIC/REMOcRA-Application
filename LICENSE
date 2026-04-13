@@ -7,3 +7,14 @@ You should have received a copy of the GNU Affero General Public License along w
 Additional permission under GNU AGPL version 3 section 7
 
 If you modify this Program, or any covered work, by linking or combining it with Eclipse EMF (or a modified version of that library), containing parts covered by the terms of the Eclipse Public License 1.0, the licensors of this Program grant you additional permission to convey the resulting work.
+
+== FLATICON / UICONS ICONS ==
+
+Icons used in this application are provided by Flaticon (https://www.flaticon.com):
+- Collection: Uicons by Freepik
+- Author: Freepik (https://flaticon.com/authors/freepik)
+- License: Flaticon License (Free for personal and commercial use with attribution)
+- Attribution required: Icons by Flaticon (https://www.flaticon.com)
+
+These icons are located in: frontend/src/components/Icon/flaticon-uicons
+Please maintain the attribution when using these icons.

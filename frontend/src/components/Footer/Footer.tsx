@@ -33,6 +33,11 @@ const Footer = ({ mentionCnil }: { mentionCnil: string }) => {
               <br />
             </>
           )}
+          Uicons by{" "}
+          <a className="text-light" href="https://www.flaticon.com/uicons">
+            Flaticon
+          </a>
+          <br />
           Copyright © 2015 SDIS 83
         </p>
       </Col>
