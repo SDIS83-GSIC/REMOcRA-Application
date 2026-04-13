@@ -51,6 +51,8 @@ data class Pei(
     val peiEnFace: Boolean?,
     val peiVoieTexte: String?,
     val peiDateChangementDispo: ZonedDateTime?,
+    val peiPerenne: Boolean?,
+    val peiRotation_6Ccf: Boolean?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -220,6 +222,20 @@ data class Pei(
         } else if (this.peiDateChangementDispo != o.peiDateChangementDispo) {
             return false
         }
+        if (this.peiPerenne == null) {
+            if (o.peiPerenne != null) {
+                return false
+            }
+        } else if (this.peiPerenne != o.peiPerenne) {
+            return false
+        }
+        if (this.peiRotation_6Ccf == null) {
+            if (o.peiRotation_6Ccf != null) {
+                return false
+            }
+        } else if (this.peiRotation_6Ccf != o.peiRotation_6Ccf) {
+            return false
+        }
         return true
     }
 
@@ -254,6 +270,8 @@ data class Pei(
         result = prime * result + (if (this.peiEnFace == null) 0 else this.peiEnFace.hashCode())
         result = prime * result + (if (this.peiVoieTexte == null) 0 else this.peiVoieTexte.hashCode())
         result = prime * result + (if (this.peiDateChangementDispo == null) 0 else this.peiDateChangementDispo.hashCode())
+        result = prime * result + (if (this.peiPerenne == null) 0 else this.peiPerenne.hashCode())
+        result = prime * result + (if (this.peiRotation_6Ccf == null) 0 else this.peiRotation_6Ccf.hashCode())
         return result
     }
 
@@ -288,6 +306,8 @@ data class Pei(
         sb.append(", ").append(peiEnFace)
         sb.append(", ").append(peiVoieTexte)
         sb.append(", ").append(peiDateChangementDispo)
+        sb.append(", ").append(peiPerenne)
+        sb.append(", ").append(peiRotation_6Ccf)
 
         sb.append(")")
         return sb.toString()

@@ -279,6 +279,16 @@ open class Pei(
      */
     val DATE_CHANGEMENT_DISPO: TableField<Record, ZonedDateTime?> = createField(DSL.name("pei_date_changement_dispo"), SQLDataType.TIMESTAMPWITHTIMEZONE(6), this, "", ZonedDateTimeBinding())
 
+    /**
+     * The column <code>remocra.pei.pei_perenne</code>.
+     */
+    val PERENNE: TableField<Record, Boolean?> = createField(DSL.name("pei_perenne"), SQLDataType.BOOLEAN, this, "")
+
+    /**
+     * The column <code>remocra.pei.pei_rotation_6_ccf</code>.
+     */
+    val ROTATION_6_CCF: TableField<Record, Boolean?> = createField(DSL.name("pei_rotation_6_ccf"), SQLDataType.BOOLEAN, this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)

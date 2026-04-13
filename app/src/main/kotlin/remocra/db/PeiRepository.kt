@@ -632,6 +632,8 @@ class PeiRepository
                 peiDisponibiliteTerrestre = pei.peiDisponibiliteTerrestre,
                 peiServicePublicDeciId = pei.peiServicePublicDeciId,
                 peiDateChangementDispo = pei.peiDateChangementDispo,
+                peiPerenne = false, // TODO prochain commit
+                peiRotation_6Ccf = false, // TODO prochain commit
             ),
         )
 

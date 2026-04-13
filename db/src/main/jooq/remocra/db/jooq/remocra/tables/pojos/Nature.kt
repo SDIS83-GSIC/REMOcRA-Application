@@ -28,6 +28,7 @@ data class Nature(
     val natureTypePei: TypePei,
     val natureProtected: Boolean?,
     val natureTypePeiNexsis: TypePeiNexsis?,
+    val natureParticipeDfci: Boolean,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -70,6 +71,9 @@ data class Nature(
         } else if (this.natureTypePeiNexsis != o.natureTypePeiNexsis) {
             return false
         }
+        if (this.natureParticipeDfci != o.natureParticipeDfci) {
+            return false
+        }
         return true
     }
 
@@ -83,6 +87,7 @@ data class Nature(
         result = prime * result + this.natureTypePei.hashCode()
         result = prime * result + (if (this.natureProtected == null) 0 else this.natureProtected.hashCode())
         result = prime * result + (if (this.natureTypePeiNexsis == null) 0 else this.natureTypePeiNexsis.hashCode())
+        result = prime * result + this.natureParticipeDfci.hashCode()
         return result
     }
 
@@ -96,6 +101,7 @@ data class Nature(
         sb.append(", ").append(natureTypePei)
         sb.append(", ").append(natureProtected)
         sb.append(", ").append(natureTypePeiNexsis)
+        sb.append(", ").append(natureParticipeDfci)
 
         sb.append(")")
         return sb.toString()

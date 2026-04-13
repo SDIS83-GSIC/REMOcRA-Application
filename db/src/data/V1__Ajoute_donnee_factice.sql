@@ -52,29 +52,29 @@ VALUES (gen_random_uuid(),
 
 
 INSERT INTO remocra.nature
-    (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei)
-VALUES (gen_random_uuid(), true, 'CE', 'Cours d''eau', 'PENA');
+    (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei, nature_participe_dfci)
+VALUES (gen_random_uuid(), true, 'CE', 'Cours d''eau', 'PENA', false);
 INSERT INTO remocra.nature
-    (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei)
-VALUES (gen_random_uuid(), true, 'PE', 'Plan d''eau', 'PENA');
+    (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei, nature_participe_dfci)
+VALUES (gen_random_uuid(), true, 'PE', 'Plan d''eau', 'PENA', false);
 INSERT INTO remocra.nature
-    (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei)
-VALUES (gen_random_uuid(), true, 'CI_AE', 'Citerne aérienne', 'PENA');
+    (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei, nature_participe_dfci)
+VALUES (gen_random_uuid(), true, 'CI_AE', 'Citerne aérienne', 'PENA', false);
 INSERT INTO remocra.nature
-    (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei)
-VALUES (gen_random_uuid(), true, 'CI_EN', 'Citerne enterrée', 'PENA');
+    (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei, nature_participe_dfci)
+VALUES (gen_random_uuid(), true, 'CI_EN', 'Citerne enterrée', 'PENA', false);
 INSERT INTO remocra.nature
-    (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei)
-VALUES (gen_random_uuid(), true, 'PUI', 'Puits Puisard', 'PENA');
+    (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei, nature_participe_dfci)
+VALUES (gen_random_uuid(), true, 'PUI', 'Puits Puisard', 'PENA', false);
 INSERT INTO remocra.nature
-    (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei)
-VALUES (gen_random_uuid(), true, 'PA_I', 'Point d''aspiration', 'PENA');
+    (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei, nature_participe_dfci)
+VALUES (gen_random_uuid(), true, 'PA_I', 'Point d''aspiration', 'PENA', false);
 INSERT INTO remocra.nature
-    (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei)
-VALUES (gen_random_uuid(), true, 'ASP_I', 'Aspiration', 'PENA');
+    (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei, nature_participe_dfci)
+VALUES (gen_random_uuid(), true, 'ASP_I', 'Aspiration', 'PENA', false);
 INSERT INTO remocra.nature
-    (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei)
-VALUES (gen_random_uuid(), true, 'LAV', 'Lavoir', 'PENA');
+    (nature_id, nature_actif, nature_code, nature_libelle, nature_type_pei, nature_participe_dfci)
+VALUES (gen_random_uuid(), true, 'LAV', 'Lavoir', 'PENA', false);
 
 
 --zone de competence

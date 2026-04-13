@@ -123,6 +123,11 @@ open class Nature(
      */
     val TYPE_PEI_NEXSIS: TableField<Record, TypePeiNexsis?> = createField(DSL.name("nature_type_pei_nexsis"), SQLDataType.VARCHAR.asEnumDataType(TypePeiNexsis::class.java), this, "")
 
+    /**
+     * The column <code>remocra.nature.nature_participe_dfci</code>.
+     */
+    val PARTICIPE_DFCI: TableField<Record, Boolean?> = createField(DSL.name("nature_participe_dfci"), SQLDataType.BOOLEAN.nullable(false), this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
