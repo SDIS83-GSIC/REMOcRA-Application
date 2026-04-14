@@ -1,13 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Container } from "react-bootstrap";
 import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
-import url from "../../../module/fetch.tsx";
 import { useAppContext } from "../../App/AppProvider.tsx";
-import { useGet } from "../../Fetch/useFetch.tsx";
+import { CoucheMetadata } from "./ShowInfoVolet.tsx";
 
-function findMetadataById(coucheMetadata: any[], typeId: string) {
+function findMetadataById(coucheMetadata: CoucheMetadata[], typeId: string) {
   for (const metadata of coucheMetadata) {
     if (metadata.coucheId === typeId) {
       return metadata;
@@ -16,11 +15,15 @@ function findMetadataById(coucheMetadata: any[], typeId: string) {
   return null;
 }
 
-const ListInfos = ({ data }: { data: any[] }) => {
+const ListInfos = ({
+  data,
+  coucheMetadata,
+}: {
+  data: any[];
+  coucheMetadata: CoucheMetadata[];
+}) => {
   const { user } = useAppContext();
-  const coucheMetadata = useGet(
-    url`/api/admin/couche-metadata/get-all-metadata`,
-  )?.data;
+
   const [tableau, setTableau] = useState<
     { header: string; content: JSX.Element }[]
   >([]);

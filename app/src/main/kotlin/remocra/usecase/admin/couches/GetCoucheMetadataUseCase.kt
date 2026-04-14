@@ -7,6 +7,7 @@ import remocra.data.Params
 import remocra.data.ResponseCouche
 import remocra.db.CoucheMetadataRepository
 import remocra.usecase.AbstractUseCase
+import java.util.UUID
 
 class GetCoucheMetadataUseCase
 @Inject
@@ -19,15 +20,17 @@ constructor(
         return coucheMetadataRepository.getCouchesMetadataForTableau(params)
     }
 
-    fun getAllCoucheMetadata(userInfo: WrappedUserInfo): List<CoucheMetadataWithLibelle> {
-        if (userInfo.userInfo == null) {
-            // non connecté
-            return coucheMetadataRepository.getPublicCoucheMetadata()
+    fun getAvailableCoucheMetadata(couchesIds: Set<UUID>, userInfo: WrappedUserInfo): List<CoucheMetadataWithLibelle> {
+        val publiques = coucheMetadataRepository.getPublicCoucheMetadata(couchesIds)
+        return if (userInfo.userInfo == null) {
+            publiques
+        } else {
+            val groupe = userInfo.userInfo
+                ?.groupeFonctionnalites
+                ?.groupeFonctionnalitesId
+                ?.let { coucheMetadataRepository.getAvailableCoucheMetadataByUserId(it, couchesIds) }
+                ?: emptyList()
+            return (publiques + groupe).distinctBy { it.coucheId }
         }
-        return userInfo.userInfo
-            ?.groupeFonctionnalites
-            ?.groupeFonctionnalitesId
-            ?.let { coucheMetadataRepository.getAllCoucheMetadataByUserId(it) }
-            ?: emptyList()
     }
 }

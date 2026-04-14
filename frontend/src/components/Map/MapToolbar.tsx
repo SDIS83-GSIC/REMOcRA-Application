@@ -18,13 +18,11 @@ import {
 } from "react";
 import { Button, ButtonGroup, ButtonToolbar } from "react-bootstrap";
 import Row from "react-bootstrap/Row";
-import { hasDroit } from "../../droits.tsx";
-import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import url from "../../module/fetch.tsx";
 import AccesRapideTypeahead from "../../pages/AccesRapide/AccesRapideTypeahead.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
-import { useGet } from "../Fetch/useFetch.tsx";
+import { useGet, usePost } from "../Fetch/useFetch.tsx";
 import {
   IconDistance,
   IconInfo,
@@ -41,6 +39,16 @@ import OutilIVolet from "./MapOutilI/ShowInfoVolet.tsx";
 import AdresseTypeahead from "./RechercheLieu/AdresseTypeahead.tsx";
 import ToponymieTypeBarre from "./RechercheLieu/ToponymieTypeBarre.tsx";
 import ToolbarButton from "./ToolbarButton.tsx";
+
+// Types stricts pour les couches disponibles
+export type LayerItem = {
+  id: string;
+  layer: string;
+};
+
+export type LayerGroup = {
+  layers: LayerItem[];
+};
 
 const measureStyle = new Style({
   fill: new Fill({
@@ -92,9 +100,9 @@ export const useToolbarContext = ({
   extraTools = {},
 }: {
   map?: OLMap;
-  availableLayers: any;
   workingLayer: any;
   extraTools?: any;
+  availableLayers: LayerGroup[];
 }) => {
   const [activeTool, setActiveTool] = useState<string | null>("");
   const [infoOutilI, setInfoOutilI] = useState<{
@@ -417,6 +425,7 @@ const MapToolbar = forwardRef(
       handleCloseInfoI,
       showOutilI,
       showZoomPlace,
+      availableLayers,
     }: {
       map: OLMap;
       toggleTool: (toolId: string) => void;
@@ -426,11 +435,22 @@ const MapToolbar = forwardRef(
       handleCloseInfoI: () => void;
       showOutilI: boolean;
       showZoomPlace: boolean;
+      availableLayers: LayerGroup[];
     },
     ref,
   ) => {
     const [zoom, setZoom] = useState<number>(map.getView().getZoom() ?? 0);
     const { user } = useAppContext();
+
+    const availableLayerIds = Array.isArray(availableLayers)
+      ? availableLayers.flatMap((group: LayerGroup) =>
+          Array.isArray(group.layers) ? group.layers.map((l) => l.id) : [],
+        )
+      : [];
+
+    const { data: metadata } = useGet(
+      url`/api/admin/couche-metadata/get-available-metadata?${{ couchesIds: JSON.stringify(availableLayerIds) }}`,
+    );
 
     const isBANSearch = useGet(
       url`/api/parametres?${{ listeParametreCode: JSON.stringify(PARAMETRE.RECHERCHE_BAN) }}`,
@@ -544,7 +564,7 @@ const MapToolbar = forwardRef(
               variant={variant}
             />
             {showOutilI &&
-              (hasDroit(user, TYPE_DROIT.CARTO_METADATA_A) || user == null) && (
+              ((metadata && metadata.length > 0) || user?.isSuperAdmin) && (
                 <ToolbarButton
                   toolName={"info-outil-i"}
                   toolIcon={<IconInfo />}
@@ -565,7 +585,10 @@ const MapToolbar = forwardRef(
             show={generalInfo.show}
             className="w-auto"
           >
-            <OutilIVolet generalsInfos={generalInfo.data} />
+            <OutilIVolet
+              generalsInfos={generalInfo.data}
+              coucheMetadata={metadata}
+            />
           </Volet>
         )}
       </Row>

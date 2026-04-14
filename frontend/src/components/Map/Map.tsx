@@ -264,6 +264,7 @@ const MapComponent = ({
               handleCloseInfoI={handleCloseInfoI}
               showOutilI={showOutilI}
               showZoomPlace={showZoomPlace}
+              availableLayers={availableLayers}
             />
           </Col>
           <Col xs={"auto"}>{toolbarElement && toolbarElement}</Col>

@@ -51,11 +51,11 @@ class CoucheMetadataEndpoint : AbstractEndpoint() {
 
     @Inject lateinit var coucheMetadataRepository: CoucheMetadataRepository
 
-    @Path("/get-all-metadata")
     @GET
+    @Path("/get-available-metadata")
     @Public("Les metadata sont publiques")
     @Produces(MediaType.APPLICATION_JSON)
-    fun getAllCoucheMetadata(): Response = Response.ok(getCoucheMetadataUseCase.getAllCoucheMetadata(securityContext.userInfo)).build()
+    fun getAvailableCoucheMetadata(@QueryParam("couchesIds") couchesIds: Set<UUID>): Response = Response.ok(getCoucheMetadataUseCase.getAvailableCoucheMetadata(couchesIds, securityContext.userInfo)).build()
 
     @POST
     @Path("/add-couche-metadata")

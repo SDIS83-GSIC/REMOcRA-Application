@@ -210,20 +210,22 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
     /**
      * Retourne les metadata des couches publiques (pour les utilisateurs non connectés)
      */
-    fun getPublicCoucheMetadata(): List<CoucheMetadataWithLibelle> =
+    fun getPublicCoucheMetadata(couchesIds: Set<UUID>): List<CoucheMetadataWithLibelle> =
         dsl.select(
             COUCHE_METADATA.ACTIF,
             COUCHE_METADATA.STYLE,
-            COUCHE_METADATA.COUCHE_ID,
-            COUCHE.GROUPE_COUCHE_ID,
+            COUCHE_METADATA.COUCHE_ID.`as`("coucheId"),
+            COUCHE.GROUPE_COUCHE_ID.`as`("groupeCoucheId"),
             COUCHE.LIBELLE.`as`("coucheLibelle"),
         )
             .from(COUCHE_METADATA)
             .join(COUCHE).on(COUCHE.ID.eq(COUCHE_METADATA.COUCHE_ID))
             .where(COUCHE_METADATA.PUBLIC.isTrue)
+            .and(COUCHE_METADATA.ACTIF.isTrue)
+            .and(COUCHE_METADATA.COUCHE_ID.`in`(couchesIds))
             .fetchInto<CoucheMetadataWithLibelle>()
 
-    fun getAllCoucheMetadataByUserId(groupeFonctionnaliteId: UUID): List<CoucheMetadataWithLibelle> =
+    fun getAvailableCoucheMetadataByUserId(groupeFonctionnaliteId: UUID, couchesIds: Set<UUID>): List<CoucheMetadataWithLibelle> =
         dsl.select(
             COUCHE_METADATA.ACTIF,
             COUCHE_METADATA.STYLE,
@@ -245,6 +247,8 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
         )
             .from(COUCHE_METADATA)
             .join(COUCHE).on(COUCHE.ID.eq(COUCHE_METADATA.COUCHE_ID))
+            .where(COUCHE_METADATA.ACTIF.isTrue)
+            .and(COUCHE_METADATA.COUCHE_ID.`in`(couchesIds))
             .fetchInto<CoucheMetadataWithLibelle>()
 
     data class SortCouche(
