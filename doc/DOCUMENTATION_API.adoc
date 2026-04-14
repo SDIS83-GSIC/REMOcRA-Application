@@ -22,7 +22,7 @@ La plupart des endpoints supportent la pagination via les paramètres :
 
 == Authentification
 
-L'API utilise l'authentification Bearer JWT. Tous les endpoints (sauf OpenAPI) nécessitent une authentification.
+L'API utilise l'authentification Bearer JWT via OpenID Connect (OIDC). Tous les endpoints (sauf OpenAPI) nécessitent une authentification.
 
 *Format d'en-tête :*
 [source]
@@ -30,10 +30,74 @@ L'API utilise l'authentification Bearer JWT. Tous les endpoints (sauf OpenAPI) n
 Authorization: Bearer <token>
 ----
 
-*Droits requis :*
+=== Obtention des Identifiants d'API - Administrateur SDIS
 
-* `RECEVOIR` : Pour les opérations de lecture
-* `TRANSMETTRE` : Pour les opérations d'écriture (création, modification, suppression)
+Pour accéder à l'API REMOcRA, il conviendra d'abord de créer aux organismes concernés des accès API via l'interface de REMOcRA dans la table des organismes.
+
+*Procédure :*
+
+Avec un profil d'administration de l'application REMOcRA :
+
+1. Allez dans la section "Administration" → "Organismes"
+2. Sélectionnez l'organisme pour lequel vous souhaitez créer un accès API
+3. Cliquez sur "Créer accès API"
+4. L'identifiant est l'adresse email de l'organisme que vous autorisez. Préférez une adresse générique (exemple deci@service-eaux.fr) plutôt qu'individuelle (exemple jean.dupont@service-eaux.fr) car l'adresse générique est pérenne contrairement à l'individuelle, et si la personne quitte l'organisme et que plus personne n'a accès à la boîte mail concernée, l'organisme perd l'accès à l'API
+5. Le secret est envoyé à l'adresse mail saisie et pourra être regénéré au besoin depuis l'interface
+
+image:creer_acces_api.png[Créer un accès API dans REMOcRA]
+
+=== Obtenir un Token - Consommateur de l'API
+
+==== Flux OAuth2 Client Credentials
+
+Pour accéder à l'API REMOcRA, vous devez d'abord obtenir un token JWT auprès du serveur Keycloak en utilisant le flux OAuth2 "Client Credentials".
+
+*Endpoint :*
+[source]
+----
+POST https://<KEYCLOAK_URL>/realms/remocra/protocol/openid-connect/token
+----
+
+*Exemple de requête avec curl :*
+[source,bash]
+----
+curl -X POST \
+  "https://keycloak.example.com/realms/remocra/protocol/openid-connect/token" \ # <1>
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "grant_type=client_credentials" \
+  -d "client_id=utilisateur@example.com" \ # <2>
+  -d "client_secret=YOUR_SECRET_FROM_REMOCRA" \ # <3>
+  -d "scope=openid"
+----
+avec
+
+<1> L'URL de Keycloak géré par le SDIS (à demander au SDIS si vous ne la connaissez pas)
+<2> L'adresse mail de votre organisme, telle que définie par le SDIS lors de l'habilitation de votre compte à l'API
+<3> Secret généré par REMOcRA (fourni par mail lors de l'initialisation de votre compte par le SDIS)
+
+
+*Réponse (HTTP 200) :*
+[source,json]
+----
+{
+  "access_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "expires_in": 300,
+  "token_type": "Bearer",
+  "scope": "openid"
+}
+----
+
+==== Utiliser le Token pour appeler l'API
+
+Une fois le token obtenu, incluez-le dans l'en-tête `Authorization` de toutes vos requêtes à l'API REMOcRA :
+
+*Exemple simple :*
+[source,bash]
+----
+curl -X GET \
+  "https://remocra.example.com/api/referentiel/communes?limit=5" \
+  -H "Authorization: Bearer <ACCESS_TOKEN>"
+----
 
 == Référentiels Communs
 
