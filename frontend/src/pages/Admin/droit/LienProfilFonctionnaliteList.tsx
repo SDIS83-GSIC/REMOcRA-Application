@@ -60,7 +60,6 @@ const LienProfilFonctionnaliteList = () => {
       />
       <QueryTable
         query={url`/api/lien-profil-fonctionnalite`}
-        filterContext={useFilterContext({})}
         columns={[
           {
             accessor: () => <span className={"fst-italic"}>Quand</span>,
@@ -69,7 +68,7 @@ const LienProfilFonctionnaliteList = () => {
             Header: "Profil organisme",
             accessor: "profilOrganismeLibelle",
             sortField: "organisme",
-            Filter: <FilterInput name="organisme" type="text" />,
+            Filter: <FilterInput name="profilOrganismeLibelle" type="text" />,
           },
           {
             accessor: () => <span className={"fst-italic"}>et</span>,
@@ -78,7 +77,7 @@ const LienProfilFonctionnaliteList = () => {
             Header: "Profil utilisateur",
             accessor: "profilUtilisateurLibelle",
             sortField: "utilisateur",
-            Filter: <FilterInput name="utilisateur" type="text" />,
+            Filter: <FilterInput name="profilUtilisateurLibelle" type="text" />,
           },
           {
             accessor: () => <span className={"fst-bold"}>→</span>,
@@ -87,7 +86,9 @@ const LienProfilFonctionnaliteList = () => {
             Header: "Groupe de fonctionnalités",
             accessor: "groupeFonctionnalitesLibelle",
             sortField: "fonctionnalite",
-            Filter: <FilterInput name="fonctionnalite" type="text" />,
+            Filter: (
+              <FilterInput name="groupeFonctionnalitesLibelle" type="text" />
+            ),
           },
           ActionColumn({
             Header: "Actions",
@@ -130,9 +131,49 @@ const LienProfilFonctionnaliteList = () => {
           }),
         ]}
         idName={"lien-groupe-fonctionnalites"}
+        filterValuesToVariable={filterValuesToVariable}
+        filterContext={useFilterContext({
+          profilOrganismeLibelle: undefined,
+          profilUtilisateurLibelle: undefined,
+          groupeFonctionnalitesLibelle: undefined,
+        })}
       />
     </Container>
   );
 };
 
 export default LienProfilFonctionnaliteList;
+
+type FilterType = {
+  groupeFonctionnalitesLibelle?: string;
+  profilOrganismeLibelle?: string;
+  profilUtilisateurLibelle?: string;
+};
+
+const filterValuesToVariable = ({
+  groupeFonctionnalitesLibelle,
+  profilOrganismeLibelle,
+  profilUtilisateurLibelle,
+}: FilterType) => {
+  const filter: FilterType = {};
+
+  filterProperty(
+    filter,
+    groupeFonctionnalitesLibelle,
+    "groupeFonctionnalitesLibelle",
+  );
+  filterProperty(filter, profilOrganismeLibelle, "profilOrganismeLibelle");
+  filterProperty(filter, profilUtilisateurLibelle, "profilUtilisateurLibelle");
+
+  return filter;
+};
+
+function filterProperty(
+  filter: FilterType,
+  value: string | undefined,
+  name: string,
+) {
+  if (value?.trim().length > 0) {
+    filter[name] = value;
+  }
+}
