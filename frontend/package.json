@@ -19,6 +19,9 @@
     "copy:cmaps": "rm -rf public/cmaps && mkdir -p public/cmaps && cp -r node_modules/pdfjs-dist/cmaps/* public/cmaps/",
     "copy:standard_fonts": "rm -rf public/standard_fonts && mkdir -p public/standard_fonts && cp -r node_modules/pdfjs-dist/standard_fonts/* public/standard_fonts/"
   },
+  "@parcel/resolver-default": {
+    "packageExports": true
+  },
   "dependencies": {
     "@dnd-kit/accessibility": "^3.1.1",
     "@dnd-kit/core": "^6.3.1",
@@ -61,7 +64,8 @@
     "@babel/runtime": "^7.28.6",
     "@biomejs/biome": "2.3.13",
     "@cyclonedx/cyclonedx-npm": "^3.1.0",
-    "@parcel/transformer-sass": "^2.16.3",
+    "@parcel/transformer-sass": "^2.16.4",
+    "@parcel/transformer-svg-jsx": "^2.16.4",
     "@types/proj4": "^2.19.0",
     "@types/react": "^18.3.27",
     "@types/react-dom": "^18.3.7",
@@ -71,7 +75,7 @@
     "buffer": "^6.0.3",
     "mini-css-extract-plugin": "^2.9.4",
     "npm-run-all2": "^8.0.4",
-    "parcel": "^2.16.3",
+    "parcel": "^2.16.4",
     "postcss": "^8.5.6",
     "postcss-import": "16.1.1",
     "postcss-modules": "6.0.1",
