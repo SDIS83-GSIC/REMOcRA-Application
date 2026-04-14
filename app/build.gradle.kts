@@ -56,11 +56,17 @@ licensee {
     allowDependency("aopalliance", "aopalliance", "1.0") {
         because("Public Domain")
     }
+    allowDependency("com.lowagie", "itext", "2.1.7") {
+        because("iText was originally published under the LGPLicense. LGPL can be used as an alternative license for the MPL.")
+    }
     allowDependency("it.geosolutions.jgridshift", "jgridshift-core", "1.3") {
         because("LGPL-2.1")
     }
     allowDependency("javax.media", "jai_core", "1.1.3") {
         because("Java Distribution License")
+    }
+    allowDependency("org.json", "json", "20250517") {
+        because("Public Domain")
     }
     allowDependency("org.locationtech.jts", "jts-core", "1.20.0") {
         because("Dual-licensed EPL-2.0 ou EDL-1.0 (BSD-3-Clause)")
@@ -89,13 +95,6 @@ licensee {
     // On gère au niveau des dépendances directement plutôt que de la licence pour mieux contrôler le besoin
     ignoreDependencies("org.eclipse.emf") {
         because("EPL-1.0 n'est pas compatible avec AGPL-3.0, on ajoute une exception à la licence")
-    }
-    ignoreDependencies("com.lowagie") {
-        because("MPL-1.1 n'est pas compatible avec AGPL-3.0, on ajoute une exception à la licence")
-    }
-
-    allowDependency("org.json", "json", "20250517") {
-        because("Public Domain")
     }
 }
 
