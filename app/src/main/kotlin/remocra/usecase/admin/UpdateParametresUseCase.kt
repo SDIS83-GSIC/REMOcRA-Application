@@ -154,6 +154,10 @@ class UpdateParametresUseCase
                 parametresAdminData.pei.peiRenouvellementCtrlIcpeConventionne?.toString(),
             )
             updateParametre(
+                ParametreEnum.PEI_RENOUVELLEMENT_CTRL_CONVENTIONNE,
+                parametresAdminData.pei.peiRenouvellementCtrlConventionne?.toString(),
+            )
+            updateParametre(
                 ParametreEnum.PEI_RENOUVELLEMENT_RECO_PRIVE,
                 parametresAdminData.pei.peiRenouvellementRecoPrive?.toString(),
             )
@@ -168,6 +172,10 @@ class UpdateParametresUseCase
             updateParametre(
                 ParametreEnum.PEI_RENOUVELLEMENT_RECO_ICPE_CONVENTIONNE,
                 parametresAdminData.pei.peiRenouvellementRecoIcpeConventionne?.toString(),
+            )
+            updateParametre(
+                ParametreEnum.PEI_RENOUVELLEMENT_RECO_CONVENTIONNE,
+                parametresAdminData.pei.peiRenouvellementRecoConventionne?.toString(),
             )
             updateParametre(
                 ParametreEnum.PEI_TOLERANCE_COMMUNE_METRES,

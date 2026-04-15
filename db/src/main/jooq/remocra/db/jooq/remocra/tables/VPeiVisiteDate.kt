@@ -87,39 +87,18 @@ open class VPeiVisiteDate(
                    END) AS last_np
               FROM visite
              GROUP BY visite.visite_pei_id
+           ), param_mapping AS (
+            SELECT t.nature_code,
+               t.reco_param_code,
+               t.ctrl_param_code
+              FROM ( VALUES ('PRIVE'::text,'PEI_RENOUVELLEMENT_RECO_PRIVE'::text,'PEI_RENOUVELLEMENT_CTRL_PRIVE'::text), ('PUBLIC'::text,'PEI_RENOUVELLEMENT_RECO_PUBLIC'::text,'PEI_RENOUVELLEMENT_CTRL_PUBLIC'::text), ('CONVENTIONNE'::text,'PEI_RENOUVELLEMENT_RECO_CONVENTIONNE'::text,'PEI_RENOUVELLEMENT_CTRL_CONVENTIONNE'::text), ('ICPE'::text,'PEI_RENOUVELLEMENT_RECO_ICPE'::text,'PEI_RENOUVELLEMENT_CTRL_ICPE'::text), ('ICPE_CONVENTIONNE'::text,'PEI_RENOUVELLEMENT_RECO_ICPE_CONVENTIONNE'::text,'PEI_RENOUVELLEMENT_CTRL_ICPE_CONVENTIONNE'::text)) t(nature_code, reco_param_code, ctrl_param_code)
            ), param_values AS (
-            SELECT nd_1.nature_deci_code,
-                   CASE
-                       WHEN ((nd_1.nature_deci_code)::text = 'PRIVE'::text) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
-                          FROM parametre
-                         WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_RECO_PRIVE'::text))
-                       WHEN (((nd_1.nature_deci_code)::text = 'PUBLIC'::text) OR ((nd_1.nature_deci_code)::text = 'CONVENTIONNE'::text)) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
-                          FROM parametre
-                         WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_RECO_PUBLIC'::text))
-                       WHEN ((nd_1.nature_deci_code)::text = 'ICPE'::text) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
-                          FROM parametre
-                         WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_RECO_ICPE'::text))
-                       WHEN ((nd_1.nature_deci_code)::text = 'ICPE_CONVENTIONNE'::text) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
-                          FROM parametre
-                         WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_RECO_ICPE_CONVENTIONNE'::text))
-                       ELSE NULL::integer
-                   END AS delta_days_reco,
-                   CASE
-                       WHEN ((nd_1.nature_deci_code)::text = 'PRIVE'::text) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
-                          FROM parametre
-                         WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_CTRL_PRIVE'::text))
-                       WHEN (((nd_1.nature_deci_code)::text = 'PUBLIC'::text) OR ((nd_1.nature_deci_code)::text = 'CONVENTIONNE'::text)) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
-                          FROM parametre
-                         WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_CTRL_PUBLIC'::text))
-                       WHEN ((nd_1.nature_deci_code)::text = 'ICPE'::text) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
-                          FROM parametre
-                         WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_CTRL_ICPE'::text))
-                       WHEN ((nd_1.nature_deci_code)::text = 'ICPE_CONVENTIONNE'::text) THEN ( SELECT (parametre.parametre_valeur)::integer AS parametre_valeur
-                          FROM parametre
-                         WHERE (parametre.parametre_code = 'PEI_RENOUVELLEMENT_CTRL_ICPE_CONVENTIONNE'::text))
-                       ELSE NULL::integer
-                   END AS delta_days_ctp
-              FROM nature_deci nd_1
+            SELECT param_mapping.nature_code AS nature_deci_code,
+               (p_reco.parametre_valeur)::integer AS delta_days_reco,
+               (p_ctrl.parametre_valeur)::integer AS delta_days_ctp
+              FROM ((param_mapping
+                LEFT JOIN parametre p_reco ON ((param_mapping.reco_param_code = p_reco.parametre_code)))
+                LEFT JOIN parametre p_ctrl ON ((param_mapping.ctrl_param_code = p_ctrl.parametre_code)))
            )
     SELECT pei.pei_id,
        last_visites.last_reception,
@@ -132,7 +111,7 @@ open class VPeiVisiteDate(
       FROM (((pei
         LEFT JOIN last_visites ON ((pei.pei_id = last_visites.pei_id)))
         JOIN nature_deci nd ON ((pei.pei_nature_deci_id = nd.nature_deci_id)))
-        JOIN param_values p ON (((nd.nature_deci_code)::text = (p.nature_deci_code)::text)));
+        JOIN param_values p ON (((nd.nature_deci_code)::text = p.nature_deci_code)));
     """,
     ),
     where,
