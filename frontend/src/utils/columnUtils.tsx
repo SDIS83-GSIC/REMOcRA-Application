@@ -176,6 +176,7 @@ function getColumnPeiByStringArray(
           accessor: "peiNumeroInterne",
           sortField: "peiNumeroInterne",
           Filter: <FilterInput type="number" name="peiNumeroInterne" />,
+          width: 125,
         });
         break;
       case COLUMN_PEI.TYPE_PEI:
