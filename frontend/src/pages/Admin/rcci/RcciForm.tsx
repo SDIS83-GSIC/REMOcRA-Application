@@ -2,7 +2,7 @@ import { useFormikContext } from "formik";
 import { WKT } from "ol/format";
 import { useEffect, useState } from "react";
 import { Badge, Col, Row, Tab, Tabs } from "react-bootstrap";
-import { array, number, object, string } from "yup";
+import { array, boolean, number, object, string } from "yup";
 import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
@@ -292,8 +292,21 @@ export const validationSchema = object({
     rcciSuperficieSecours: numberPositif,
     rcciTemperature: number(),
     rcciVentLocal: string(),
-    rcciVoieTexte: string().nullable(),
-    rcciVoieId: string().nullable(),
+    voieSaisieLibre: boolean(),
+    rcciVoieTexte: string()
+      .nullable()
+      .when("voieSaisieLibre", ([voieSaisieLibre], schema) =>
+        voieSaisieLibre
+          ? schema.required("La voie en saisie libre est obligatoire")
+          : schema.nullable(),
+      ),
+    rcciVoieId: string()
+      .nullable()
+      .when("voieSaisieLibre", ([voieSaisieLibre], schema) =>
+        !voieSaisieLibre
+          ? schema.required("La voie est obligatoire")
+          : schema.nullable(),
+      ),
     rcciCommuneId: string(),
     rcciRcciTypePrometheeCategorieId: string(),
     rcciRcciTypeDegreCertitudeId: string(),
@@ -306,6 +319,9 @@ export const validationSchema = object({
     rcciRisqueMeteo: string(),
     documentList: array(),
   }),
+  coordonneeXToDisplay: requiredString,
+  coordonneeYToDisplay: requiredString,
+  typeSystemeSrid: requiredString,
 });
 
 const RcciForm = () => {
@@ -487,15 +503,34 @@ const RcciForm = () => {
   ]);
 
   useEffect(() => {
-    if (isSubmitting && errors.rcci) {
+    if (isSubmitting && errors) {
+      const hasRenseignementsErrors = !!(
+        errors.rcci?.rcciDateIncendie ||
+        errors.rcci?.rcciRcciTypeOrigineAlerteId ||
+        errors.rcci?.rcciCommuneId ||
+        errors.rcci?.rcciVoieId ||
+        errors.rcci?.rcciVoieTexte
+      );
+
+      const hasConstatatationsErrors = !!(
+        errors.coordonneeXToDisplay ||
+        errors.coordonneeYToDisplay ||
+        errors.typeSystemeSrid
+      );
+
       setSectionWarning({
-        renseignements:
-          errors.rcci.rcciDateIncendie ||
-          errors.rcci.rcciRcciTypeOrigineAlerteId,
-        constatations:
-          errors.rcci.rcciSrid || errors.rcci.rcciX || errors.rcci.rcciY,
+        renseignements: hasRenseignementsErrors,
+        constatations: hasConstatatationsErrors,
       });
-      errorToast("Champs obligatoires non renseignés");
+
+      // Switcher automatiquement vers le premier onglet avec erreur
+      if (hasRenseignementsErrors) {
+        setCurrentTab("renseignements");
+      } else if (hasConstatatationsErrors) {
+        setCurrentTab("constatations");
+      }
+
+      errorToast("Veuillez remplir tous les champs obligatoires");
     }
   }, [isSubmitting, errors, errorToast]);
 
@@ -521,7 +556,7 @@ const RcciForm = () => {
   ]);
 
   return (
-    <FormContainer>
+    <FormContainer noValidate>
       <Row>
         <Col>Nouveau départ en cours de saisie par {user.username}</Col>
       </Row>
