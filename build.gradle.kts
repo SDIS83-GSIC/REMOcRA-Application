@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.forbiddenapis)
 }
 val deps by configurations.creating {
-    isVisible = false
     isCanBeResolved = true
     isCanBeConsumed = false
 }
