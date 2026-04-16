@@ -6,9 +6,8 @@
   "scripts": {
     "biome:migrate": "biome migrate --write",
     "cleanParcelBuild": "rm -rf build/parceljs",
-    "prebuild": "npm run cleanParcelBuild",
-    "build": "parcel build --no-autoinstall --dist-dir build/parceljs --cache-dir build/cache/parcel src/index.html src/style.scss && npm run copy:cmaps && npm run copy:standard_fonts",
-    "watch": "parcel watch --no-autoinstall --dist-dir build/parceljs --cache-dir build/cache/parcel src/index.html && npm run copy:cmaps && npm run copy:standard_fonts",
+    "build": "npm run cleanParcelBuild && parcel build --no-autoinstall --dist-dir build/parceljs --cache-dir build/cache/parcel src/index.html src/style.scss && npm run copy:cmaps && npm run copy:standard_fonts",
+    "watch": "npm run cleanParcelBuild && parcel watch --no-autoinstall --dist-dir build/parceljs --cache-dir build/cache/parcel src/index.html && npm run copy:cmaps && npm run copy:standard_fonts",
     "format:biome": "biome format --write",
     "format:assist": "biome check --formatter-enabled=false --linter-enabled=false --write",
     "format": "run-p format:*",
