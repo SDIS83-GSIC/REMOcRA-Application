@@ -131,7 +131,8 @@ constructor(
                         }
                     } else {
                         """
-                           Capacité : ${peiData.penaCapacite.toString().takeIfNotNullElseNonRenseigne()}
+                           Capacité : ${
+                            peiData.penaCapacite.toString().takeIfNotNullElseNonRenseigne()}${peiData.penaCapacite?.let { " m³" } ?: ""}
                         """.trimIndent()
                     }
 
