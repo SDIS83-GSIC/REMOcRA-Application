@@ -14,6 +14,7 @@ import {
   TextAreaInput,
   TextInput,
 } from "../../components/Form/Form.tsx";
+import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { IconIndisponibiliteTemporaire } from "../../components/Icon/Icon.tsx";
 import SectionTitle from "../../components/SectionTitle/SectionTitle.tsx";
 import url from "../../module/fetch.tsx";
@@ -198,21 +199,7 @@ const IndisponibiliteTemporaireForm = ({
               />
             </Col>
           </Row>
-          <Row className={"text-center mt-3"}>
-            <Col>
-              <Button
-                type={"button"}
-                className="mx-2"
-                variant={"secondary"}
-                href={URLS.LIST_INDISPONIBILITE_TEMPORAIRE}
-              >
-                Retour
-              </Button>
-              <Button type={"submit"} className="mx-2">
-                Valider
-              </Button>
-            </Col>
-          </Row>
+          <SubmitFormButtons returnLink={!((listePeiId?.length ?? 0) > 0)} />
         </FormContainer>
       </Container>
     </>
