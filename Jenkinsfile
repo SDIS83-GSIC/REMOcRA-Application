@@ -58,6 +58,11 @@ pipeline {
             }
           }
         }
+        stage('Sonar') {
+          steps {
+            sonarscanner()
+          }
+        }
 
         stage('Main') {
           stages {
