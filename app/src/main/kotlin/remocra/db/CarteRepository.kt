@@ -479,10 +479,10 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
 
         override var propertiesToDisplay: String? =
             "<b>Numéro de dossier :</b> ${peiPrescritNumDossier.orEmpty()}<br/>" +
-                "<b>Débit :</b> ${peiPrescritDebit?.toString().orEmpty()}<br/>" +
+                "<b>Débit (m³/h) / Capacité :</b> ${peiPrescritDebit?.toString().orEmpty()}<br/>" +
                 "<b>Date dépot :</b> ${peiPrescritDate?.format(DateTimeFormatter.ofPattern(DateUtils.PATTERN_NATUREL_DATE_ONLY, Locale.getDefault())).orEmpty()}<br/>" +
                 "<b>Agent :</b> ${peiPrescritAgent.orEmpty()}<br/>" +
-                "<b>Nombre de poteaux :</b> ${peiPrescritNbPoteaux?.toString().orEmpty()}<br/>" +
+                "<b>Nombre de PEI :</b> ${peiPrescritNbPoteaux?.toString().orEmpty()}<br/>" +
                 "<b>Commentaire :</b> ${peiPrescritCommentaire.orEmpty()}<br/>"
     }
 

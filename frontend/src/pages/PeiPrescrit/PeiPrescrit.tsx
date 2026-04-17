@@ -59,7 +59,7 @@ const PeiPrescrit = () => {
       <Row>
         <PositiveNumberInput
           name="peiPrescritDebit"
-          label="Débit (m³/h) : "
+          label="Débit (m³/h) / Capacité : "
           min={0}
           required={false}
         />
