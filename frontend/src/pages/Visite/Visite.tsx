@@ -14,6 +14,7 @@ import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import {
+  IconCreate,
   IconDelete,
   IconOverview,
   IconVisite,
@@ -54,6 +55,11 @@ const Visite = ({
   const { peiId: paramPeiId } = useParams();
   const peiId = peiIdCarte ?? paramPeiId;
   const { user } = useAppContext();
+
+  function handleNewVisite() {
+    setNewVisite(true);
+    setCurrentVisite(null);
+  }
 
   const { visible, show, close, ref } = useModal();
 
@@ -181,13 +187,7 @@ const Visite = ({
             ) : (
               hasRightToCreate() && (
                 <div className="d-flex justify-content-end my-3">
-                  <CreateButton
-                    title={"Ajouter une visite"}
-                    onClick={() => {
-                      setNewVisite(true);
-                      setCurrentVisite(null);
-                    }}
-                  />
+                  <CreateVisiteButton onClick={handleNewVisite} />
                 </div>
               )
             )}
@@ -196,13 +196,7 @@ const Visite = ({
       />
       {peiIdCarte && hasRightToCreate() && (
         <div className="d-flex justify-content-end my-3">
-          <CreateButton
-            title={"Ajouter une visite"}
-            onClick={() => {
-              setNewVisite(true);
-              setCurrentVisite(null);
-            }}
-          />
+          <CreateVisiteButton onClick={handleNewVisite} />
         </div>
       )}
 
@@ -437,6 +431,14 @@ const PointsAttentionAccordion = ({
       handleShowClose={handleShowClose}
       activesKeys={activesKeys}
     />
+  );
+};
+
+const CreateVisiteButton = ({ onClick }: { onClick: () => void }) => {
+  return (
+    <Button onClick={onClick}>
+      <IconCreate /> Ajouter une visite
+    </Button>
   );
 };
 
