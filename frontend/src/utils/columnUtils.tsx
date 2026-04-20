@@ -1,5 +1,6 @@
 import classnames from "classnames";
 import ReactSelect from "react-select";
+import Loading from "../components/Elements/Loading/Loading.tsx";
 import { useGet } from "../components/Fetch/useFetch.tsx";
 import FilterInput from "../components/Filter/FilterInput.tsx";
 import MultiSelectFilterFromList from "../components/Filter/MultiSelectFilterFromList.tsx";
@@ -46,6 +47,7 @@ import DocumentPei from "../pages/Pei/DocumentPei.tsx";
 import FicheResume from "../pages/Pei/FicheResume/FicheResume.tsx";
 import { URLS } from "../routes.tsx";
 import getStringListeAnomalie from "./anomaliesUtils.tsx";
+import { AUCUNE_TOURNEE } from "./constantsUtils.tsx";
 import formatDateTime, { formatDateWithFallback } from "./formatDateUtils.tsx";
 import { IdCodeLibelleType } from "./typeUtils.tsx";
 
@@ -132,6 +134,76 @@ const DisponibiliteTerrrestreFilter = ({
       }}
     />
   );
+};
+
+/**
+ * Composant filtre pour les tournées des PEI
+ */
+const TourneeFilter = ({ onChange, value, ...otherProps }: any) => {
+  const defaultValue: IdCodeLibelleType = {
+    id: undefined,
+    code: undefined,
+    libelle: "Tous",
+  };
+
+  const nativeOptions = [defaultValue].concat({
+    id: AUCUNE_TOURNEE,
+    code: AUCUNE_TOURNEE,
+    libelle: "Aucune tournée",
+  });
+
+  const { isResolved: isResolvedListData, data: listData } = useGet(
+    url`/api/tournee/get-libelle-tournee`,
+  );
+
+  const options = nativeOptions.concat(
+    (listData || []).map((item: { id: string; libelle: string }) => ({
+      id: item.id,
+      code: item.id,
+      libelle: item.libelle,
+    })),
+  );
+
+  const selectedOption =
+    options.find((option) => option.id === value) ?? defaultValue;
+
+  if (!isResolvedListData) {
+    return <Loading />;
+  } else {
+    return (
+      <ReactSelect
+        {...otherProps}
+        placeholder={"Sélectionnez"}
+        noOptionsMessage={() => "Aucune donnée trouvée"}
+        name={"tourneeId"}
+        options={options}
+        value={selectedOption}
+        getOptionValue={(t: IdCodeLibelleType) => t.id ?? ""}
+        getOptionLabel={(t: IdCodeLibelleType) => t.libelle}
+        onChange={(selected: IdCodeLibelleType) => {
+          if (selected?.id === AUCUNE_TOURNEE) {
+            onChange({
+              name: "tourneeId",
+              value: AUCUNE_TOURNEE,
+            });
+            onChange({
+              name: "hasNoTournee",
+              value: true,
+            });
+          } else {
+            onChange({
+              name: "tourneeId",
+              value: selected?.id,
+            });
+            onChange({
+              name: "hasNoTournee",
+              value: false,
+            });
+          }
+        }}
+      />
+    );
+  }
 };
 
 type PeiRowType = {
@@ -404,12 +476,7 @@ function getColumnPeiByStringArray(
         column.push({
           Header: "Tournée",
           accessor: "tourneeLibelle",
-          Filter: (
-            <SelectFilterFromUrl
-              url={url`/api/tournee/get-libelle-tournee`}
-              name="tourneeId"
-            />
-          ),
+          Filter: <TourneeFilter name={"tourneeId"} />,
           width: 250,
           Cell: (value) => {
             return (

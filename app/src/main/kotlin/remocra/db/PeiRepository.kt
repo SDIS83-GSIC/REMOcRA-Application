@@ -108,6 +108,7 @@ class PeiRepository
         zoneCompetenceId: UUID?,
         isSuperAdmin: Boolean,
         peiColonnes: Set<PeiColonnes>,
+        affiliatedOrganismeIds: Set<UUID>?,
     ): List<PeiForTableau> {
         return dsl.selectDistinct(
             PEI.ID,
@@ -272,7 +273,7 @@ class PeiRepository
                     it
                 }
             }
-            .where(params.filterBy?.toCondition(dateUtils) ?: DSL.noCondition())
+            .where(params.filterBy?.toCondition(dateUtils, isSuperAdmin, affiliatedOrganismeIds) ?: DSL.noCondition())
             .and(
                 zoneCompetenceId?.let {
                     repositoryUtils.checkIsSuperAdminOrCondition(
@@ -294,7 +295,7 @@ class PeiRepository
             .fetchInto()
     }
 
-    fun countListePei(filter: Filter?, zoneCompetenceId: UUID?, isSuperAdmin: Boolean, peiColonnes: Set<PeiColonnes>): Int {
+    fun countListePei(filter: Filter?, zoneCompetenceId: UUID?, isSuperAdmin: Boolean, peiColonnes: Set<PeiColonnes>, affiliatedOrganismeIds: Set<UUID>?): Int {
         return dsl.select(DSL.countDistinct(PEI.ID))
             .from(PEI)
             .join(NATURE)
@@ -355,7 +356,7 @@ class PeiRepository
                     it
                 }
             }
-            .where(filter?.toCondition(dateUtils) ?: DSL.noCondition())
+            .where(filter?.toCondition(dateUtils, isSuperAdmin, affiliatedOrganismeIds) ?: DSL.noCondition())
             .and(
                 zoneCompetenceId?.let {
                     repositoryUtils.checkIsSuperAdminOrCondition(
@@ -415,6 +416,7 @@ class PeiRepository
         val prochaineDateRop: ProchaineDate?,
         val prochaineDateCtp: ProchaineDate?,
         var tourneeId: UUID?,
+        val hasNoTournee: Boolean? = null,
         val gestionnaireId: UUID?,
     ) {
         private fun indispoTempCondition(exists: Boolean, dateUtils: DateUtils): Condition {
@@ -445,7 +447,7 @@ class PeiRepository
             INFERIEUR_36_MOIS,
         }
 
-        fun toCondition(dateUtils: DateUtils): Condition =
+        fun toCondition(dateUtils: DateUtils, isSuperAdmin: Boolean, affiliatedOrganismeIds: Set<UUID>?): Condition =
             DSL.and(
                 listOfNotNull<Condition>(
                     peiNumeroComplet?.let { DSL.and(PEI.NUMERO_COMPLET.containsIgnoreCaseUnaccent(it)) },
@@ -479,6 +481,19 @@ class PeiRepository
                                 DSL.select(L_TOURNEE_PEI.PEI_ID)
                                     .from(L_TOURNEE_PEI)
                                     .where(L_TOURNEE_PEI.TOURNEE_ID.eq(it)),
+                            ),
+                        )
+                    },
+                    hasNoTournee?.let {
+                        DSL.and(
+                            DSL.notExists(
+                                DSL.select(L_TOURNEE_PEI.PEI_ID)
+                                    .from(L_TOURNEE_PEI)
+                                    .join(TOURNEE).on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
+                                    .where(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
+                                    .and(
+                                        if (isSuperAdmin) DSL.noCondition() else TOURNEE.ORGANISME_ID.`in`(affiliatedOrganismeIds),
+                                    ),
                             ),
                         )
                     },

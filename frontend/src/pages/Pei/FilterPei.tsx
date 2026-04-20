@@ -1,6 +1,7 @@
 import { Form } from "react-bootstrap";
 import DISPONIBILITE_PEI from "../../enums/DisponibiliteEnum.tsx";
 import PROCHAINE_DATE_ENUM from "../../enums/ProchaineDateEnum.tsx";
+import { AUCUNE_TOURNEE } from "../../utils/constantsUtils.tsx";
 
 type filterPei = {
   peiNumeroComplet?: string;
@@ -14,13 +15,13 @@ type filterPei = {
   autoriteDeci?: string;
   servicePublicDeci?: string;
   anomalieId?: string;
-  tourneeLibelle?: string;
   adresse?: string;
   prochaineDateRop?: PROCHAINE_DATE_ENUM;
   prochaineDateCtp?: PROCHAINE_DATE_ENUM;
   tourneeId?: string;
   gestionnaireId?: string;
   hasIndispoTemp?: boolean;
+  hasNoTournee?: boolean;
 };
 
 // Transformation inverse : de l'URL vers le formulaire
@@ -35,6 +36,11 @@ export const filterVariableToValues = (filter: filterPei): filterPei => {
     (values.hasIndispoTemp === true || values.hasIndispoTemp === "true")
   ) {
     values.peiDisponibiliteTerrestre = "INDISPONIBLE_TEMPORAIRE";
+  }
+
+  // Permet de remettre correctement le filtre "AUCUNE_TOURNEE" dans le filter input
+  if (values.hasNoTournee === true) {
+    values.tourneeId = AUCUNE_TOURNEE;
   }
 
   return values;
@@ -52,7 +58,6 @@ export const filterValuesToVariable = ({
   autoriteDeci,
   servicePublicDeci,
   anomalieId,
-  tourneeLibelle,
   adresse,
   prochaineDateRop,
   prochaineDateCtp,
@@ -113,9 +118,6 @@ export const filterValuesToVariable = ({
   if (anomalieId != null && anomalieId !== "") {
     filter.anomalieId = anomalieId;
   }
-  if (tourneeLibelle != null && tourneeLibelle !== "") {
-    filter.tourneeLibelle = tourneeLibelle;
-  }
   if (adresse != null && adresse !== "") {
     filter.adresse = adresse;
   }
@@ -127,8 +129,16 @@ export const filterValuesToVariable = ({
   if (prochaineDateCtp != null && prochaineDateCtp.trim() !== "") {
     filter.prochaineDateCtp = prochaineDateCtp;
   }
-  if (tourneeId != null && tourneeId.trim() !== "") {
+  if (
+    tourneeId != null &&
+    tourneeId.trim() !== "" &&
+    tourneeId !== AUCUNE_TOURNEE
+  ) {
     filter.tourneeId = tourneeId;
+  }
+  if (tourneeId === AUCUNE_TOURNEE) {
+    filter.tourneeId = undefined;
+    filter.hasNoTournee = true;
   }
   if (gestionnaireId != null && gestionnaireId.trim() !== "") {
     filter.gestionnaireId = gestionnaireId;

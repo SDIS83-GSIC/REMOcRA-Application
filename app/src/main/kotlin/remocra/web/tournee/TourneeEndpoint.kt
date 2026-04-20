@@ -302,7 +302,7 @@ class TourneeEndpoint : AbstractEndpoint() {
     @Produces(MediaType.APPLICATION_JSON)
     fun getTourneeForSelect(): Response {
         return Response.ok(
-            tourneeRepository.getTourneeForSelect(),
+            tourneeRepository.getTourneeForSelect(securityContext.userInfo.isSuperAdmin, securityContext.userInfo.affiliatedOrganismeIds),
         )
             .build()
     }

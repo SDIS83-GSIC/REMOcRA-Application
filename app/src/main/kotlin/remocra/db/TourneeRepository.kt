@@ -166,7 +166,13 @@ class TourneeRepository
             .where(TOURNEE.ID.eq(tourneeId))
             .fetchSingleInto()
 
-    fun getListTourneeLibelleByListPei(listPeiId: List<UUID>): Map<UUID, String> =
+    /**
+     * Retourne la concaténation des libelles de tournées des PEIs fournis en paramètre
+     * En fonction des organismes enfants de l'utilisateur
+     * @param listPeiId liste des PEIs
+     * @param userInfo UserInfo
+     */
+    fun getListTourneeLibelleByListPeiAndAffiliatedOrganisme(listPeiId: List<UUID>, userInfo: WrappedUserInfo): Map<UUID, String> =
         dsl.select(
             L_TOURNEE_PEI.PEI_ID.`as`("PEI_ID"),
             listAgg(TOURNEE.LIBELLE, ", ").withinGroupOrderBy(TOURNEE.LIBELLE).`as`("LIBELLES"),
@@ -175,6 +181,12 @@ class TourneeRepository
             .join(TOURNEE)
             .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
             .where(L_TOURNEE_PEI.PEI_ID.`in`(listPeiId))
+            .and(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    TOURNEE.ORGANISME_ID.`in`(userInfo.affiliatedOrganismeIds),
+                    userInfo.isSuperAdmin,
+                ),
+            )
             .groupBy(L_TOURNEE_PEI.PEI_ID)
             .fetchMap(field("PEI_ID", UUID::class.java), field("LIBELLES", String::class.java))
 
@@ -824,9 +836,18 @@ class TourneeRepository
             }
             .fetchInto()
 
-    fun getTourneeForSelect(): Collection<GlobalData.IdLibelleData> =
+    /**
+     * Retourne une liste d'option pour selectInput basé sur les organismes enfants de l'utilisateur
+     */
+    fun getTourneeForSelect(isSuperAdmin: Boolean, affiliatedOrganismeIds: Set<UUID>?): Collection<GlobalData.IdLibelleData> =
         dsl.select(TOURNEE.ID.`as`("id"), TOURNEE.LIBELLE.`as`("libelle"))
             .from(TOURNEE)
+            .where(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    isSuperAdmin = isSuperAdmin,
+                    condition = TOURNEE.ORGANISME_ID.`in`(affiliatedOrganismeIds),
+                ),
+            )
             .orderBy(TOURNEE.LIBELLE)
             .fetchInto()
 

@@ -43,17 +43,18 @@ class ListPeiUseCase @Inject constructor(
         }
 
         // On va chercher les informations des PEI avec uniquement les colonnes demandées
-        val pei = peiRepository.getListePei(params, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin, colonnesPei)
-
+        var pei = peiRepository.getListePei(params, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin, colonnesPei, userInfo.affiliatedOrganismeIds)
         // On va chercher les tournées que des PEI renvoyer pour éviter que la requête soit trop longue, et on les associe aux PEI
-        val idPei = pei.map { it.peiId }
-        val tournees = tourneeRepository.getListTourneeLibelleByListPei(idPei)
-
-        return DataTableau(
-            list = pei.map {
+        if (colonnesPei.contains(PeiColonnes.TOURNEE_LIBELLE)) {
+            val idPei = pei.map { it.peiId }
+            val tournees = tourneeRepository.getListTourneeLibelleByListPeiAndAffiliatedOrganisme(idPei, userInfo)
+            pei = pei.map {
                 it.copy(tourneeLibelle = tournees[it.peiId])
-            },
-            count = peiRepository.countListePei(params.filterBy, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin, colonnesPei),
+            }
+        }
+        return DataTableau(
+            list = pei,
+            count = peiRepository.countListePei(params.filterBy, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin, colonnesPei, userInfo.affiliatedOrganismeIds),
         )
     }
 }
