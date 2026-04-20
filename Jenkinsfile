@@ -32,86 +32,106 @@ pipeline {
         }
       }
     }
-    stage('Validate scripts & Dockerfiles') {
-      steps {
-        shellcheck(files: findFiles(glob: '**/*.sh', excludes: 'node_modules/**'))
-        hadolint(files: findFiles(glob: '**/Dockerfile', excludes: 'node_modules/**'))
-      }
-    }
-    stage('Build AsciiDoc documentation') {
-        steps {
+    stage('Parallèle') {
+      parallel {
+        stage('Validate scripts') {
+          steps {
+            shellcheck(files: findFiles(glob: '**/*.sh', excludes: 'node_modules/**'))
+          }
+        }
+        stage('Validate Dockerfiles') {
+          steps {
+            hadolint(files: findFiles(glob: '**/Dockerfile', excludes: 'node_modules/**'))
+          }
+        }
+        stage('Build AsciiDoc documentation') {
+          steps {
             insideDocker(imageName: 'docker-registry.priv.atolcd.com/asciidoctor') {
-                sh '/entrypoint.sh pdf atolcd --destination-dir doc/build/ doc/*.adoc'
-                sh '/entrypoint.sh html --destination-dir doc/build/ --attribute data-uri doc/*.adoc'
+              sh '/entrypoint.sh pdf atolcd --destination-dir doc/build/ doc/*.adoc'
+              sh '/entrypoint.sh html --destination-dir doc/build/ --attribute data-uri doc/*.adoc'
             }
             publishDoc dirs: 'doc/build', remoteDir: 'docs'
-        }
-        post {
+          }
+          post {
             cleanup {
-                sh 'rm doc/build/*'
+              sh 'rm doc/build/*'
             }
-        }
-    }
-    stage('Build Gradle') {
-      steps {
-        withSidecarContainers(
-          pg: [ imageName: 'postgis/postgis', imageVersion: '16-3.4', args: '-e "POSTGRES_DB=remocra" -e "POSTGRES_USER=remocra" -e "POSTGRES_PASSWORD=remocra"' ]
-        ) {
-          gradleInsideDocker(imageVersion: gradleImageVersion) {
-            sh '''
-                gradle --stacktrace build
-                gradle --stacktrace cyclonedxDirectBom
-                # Exécute jooq *après* build pour ne pas reformater les src/main/kotlin et avoir spotlessCheck qui passe sans erreur alors qu'il ne devrait pas
-                gradle --stacktrace jooq -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
-                gradle --stacktrace flywayMigrateData -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
-                gradle --stacktrace pgTest -Premocra.database.dataSource.serverName=pg -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
-                # On s'assure que flywayClean fonctionne les migrations sont utilisables après coup
-                gradle --stacktrace flywayClean -Pflyway.cleanDisabled=false -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
-                gradle --stacktrace flywayMigrateData -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
-              '''
-          }
-          verifyUnmodified('db/src/main/jooq/') {
-            setGerritReview unsuccessfulMessage: "La génération jOOQ n'est pas à jour par rapport aux migrations FlywayDB"
           }
         }
-      }
-      post {
-        unsuccessful {
-          sh 'git restore -- db/src/main/jooq/'
-        }
-      }
-    }
-    stage('Build npm') {
-      steps {
-        nodejsInsideDocker() {
-          dir(path: 'frontend/') {
-            sh '''
-              npm ci
-              npm run lint
-              npm run build -- --no-cache
-              npm run bom
-              '''
-          }
-        }
-      }
-      post {
-        always {
-          dir(path: 'frontend/') {
-            sh '''
-              rm -rf node_modules/
-              '''
-          }
-        }
-      }
-    }
 
-    stage('Build docker') {
-      parallel {
-        stage('Build and Remove docker remocra') {
-          steps {
-            dockerBuildAndRemove(dockerfile: 'docker/Dockerfile') { imageId ->
-                dockerSbom image: imageId, file: 'docker-sbom.json', exclude: '/opt/remocra/'
-                dockerDive image: imageId, highestUserWastedPercent: 0.15
+        stage('Main') {
+          stages {
+            stage('Build Gradle') {
+              steps {
+                withSidecarContainers(
+                    pg: [imageName: 'postgis/postgis', imageVersion: '16-3.4', args: '-e "POSTGRES_DB=remocra" -e "POSTGRES_USER=remocra" -e "POSTGRES_PASSWORD=remocra"']
+                ) {
+                  gradleInsideDocker(imageVersion: gradleImageVersion) {
+                    sh '''
+                    gradle --stacktrace build
+                    gradle --stacktrace cyclonedxDirectBom
+                    # Exécute jooq *après* build pour ne pas reformater les src/main/kotlin et avoir spotlessCheck qui passe sans erreur alors qu'il ne devrait pas
+                    gradle --stacktrace jooq -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
+                    gradle --stacktrace flywayMigrateData -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
+                    gradle --stacktrace pgTest -Premocra.database.dataSource.serverName=pg -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
+                    # On s'assure que flywayClean fonctionne les migrations sont utilisables après coup
+                    gradle --stacktrace flywayClean -Pflyway.cleanDisabled=false -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
+                    gradle --stacktrace flywayMigrateData -Pdb.url=jdbc:postgresql://pg/remocra -Pdb.user=remocra -Pdb.password=remocra
+                  '''
+                  }
+                  verifyUnmodified('db/src/main/jooq/') {
+                    setGerritReview unsuccessfulMessage: "La génération jOOQ n'est pas à jour par rapport aux migrations FlywayDB"
+                  }
+                }
+              }
+              post {
+                unsuccessful {
+                  sh 'git restore -- db/src/main/jooq/'
+                }
+              }
+            }
+            stage('Build npm') {
+              steps {
+                nodejsInsideDocker() {
+                  dir(path: 'frontend/') {
+                    sh '''
+                    npm ci
+                    npm run lint
+                    npm run build -- --no-cache
+                    npm run bom
+                    '''
+                  }
+                }
+              }
+              post {
+                always {
+                  dir(path: 'frontend/') {
+                    sh '''
+                  rm -rf node_modules/
+                  '''
+                  }
+                }
+              }
+            }
+            stage('Build and Remove docker remocra') {
+              steps {
+                dockerBuildAndRemove(dockerfile: 'docker/Dockerfile') { imageId ->
+                  dockerSbom image: imageId, file: 'docker-sbom.json', exclude: '/opt/remocra/'
+                  dockerDive image: imageId, highestUserWastedPercent: 0.15
+                }
+              }
+            }
+            stage('Publish SBOM') {
+              when {
+                expression { !isGerritReview() }
+              }
+              steps {
+                smartDependencyTrackPublisher name: 'remocra-v3',
+                    version: env.BRANCH_NAME,
+                    bomFiles: ['docker-sbom.json', 'frontend/npm-sbom.json', 'app/build/reports/cyclonedx-direct/bom.json'],
+                    classifier: 'APPLICATION',
+                    hierarchical: true
+              }
             }
           }
         }
@@ -123,7 +143,7 @@ pipeline {
           steps {
             dockerBuildAndRemove(buildDir: 'keycloak/') { imageId ->
               withSidecarContainers([
-                keycloak: [ imageId: imageId, args: ' -e KC_DB=dev-file -e KC_BOOTSTRAP_ADMIN_USERNAME=kcadmin -e KC_BOOTSTRAP_ADMIN_PASSWORD=kcadmin', command: 'start-dev' ],
+                  keycloak: [imageId: imageId, args: ' -e KC_DB=dev-file -e KC_BOOTSTRAP_ADMIN_USERNAME=kcadmin -e KC_BOOTSTRAP_ADMIN_PASSWORD=kcadmin', command: 'start-dev'],
               ]) {
                 insideDocker(imageId: imageId, runExtraParams: '-e KEYCLOAK_URL=http://keycloak:8080 -e KEYCLOAK_USER=kcadmin -e KEYCLOAK_PASSWORD=kcadmin '
                     // configuration du realm "remocra"
@@ -135,7 +155,7 @@ pipeline {
           }
         }
 
-        stage ('Build and Remove docker geoserver') {
+        stage('Build and Remove docker geoserver') {
           when {
             expression { !isGerritReview() || headChangeset('geoserver/**') || headChangeset('Jenkinsfile') }
           }
@@ -143,7 +163,7 @@ pipeline {
             dockerBuildAndRemove(buildDir: 'geoserver') { imageId ->
               dockerDive image: imageId, highestUserWastedPercent: 0.15
               withSidecarContainers([
-                geoserver: [ imageId: imageId ],
+                  geoserver: [imageId: imageId],
               ]) {
                 insideDocker(imageId: imageId, runExtraParams: '-e GEOSERVER_URL=http://geoserver:8090/geoserver -e GEOSERVER_USER=admin -e GEOSERVER_PASSWORD=geoserver '
                     + '-e POSTGIS_HOSTNAME=db -e POSTGIS_USER=remocra -e POSTGIS_PASSWORD=remocra') {
@@ -154,7 +174,7 @@ pipeline {
           }
         }
 
-        stage ('Build and Remove docker apache hop') {
+        stage('Build and Remove docker apache hop') {
           when {
             expression { !isGerritReview() || headChangeset('apachehop/**') || headChangeset('Jenkinsfile') }
           }
@@ -164,19 +184,6 @@ pipeline {
             }
           }
         }
-      }
-    }
-
-    stage ('Publish SBOM') {
-      when {
-        expression { ! isGerritReview() }
-      }
-      steps {
-        smartDependencyTrackPublisher name: 'remocra-v3',
-          version: env.BRANCH_NAME,
-          bomFiles: ['docker-sbom.json', 'frontend/npm-sbom.json', 'app/build/reports/cyclonedx-direct/bom.json'],
-          classifier: 'APPLICATION',
-          hierarchical: true
       }
     }
   }
