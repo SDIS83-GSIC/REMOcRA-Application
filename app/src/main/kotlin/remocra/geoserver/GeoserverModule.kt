@@ -2,6 +2,7 @@ package remocra.geoserver
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.inject.BindingAnnotation
 import com.google.inject.Provides
 import com.typesafe.config.Config
 import jakarta.inject.Singleton
@@ -40,6 +41,7 @@ class GeoserverModule(
 
     @Provides
     @Singleton
+    @GeoserverOkHttpClient
     fun provideOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .addInterceptor { chain ->
@@ -58,7 +60,7 @@ class GeoserverModule(
     fun provideGeoserverApi(
         retrofitBuilder: Retrofit.Builder,
         mapper: ObjectMapper,
-        okHttpClient: OkHttpClient,
+        @GeoserverOkHttpClient okHttpClient: OkHttpClient,
     ): GeoserverApi {
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
@@ -72,3 +74,9 @@ class GeoserverModule(
 
     data class GeoserverSettings(val url: HttpUrl, val username: String, val password: String)
 }
+
+/**
+ * Annotation permettant de différencer le OkHttpClient de geoserver et celui de Keycloak
+ */
+@BindingAnnotation
+annotation class GeoserverOkHttpClient
