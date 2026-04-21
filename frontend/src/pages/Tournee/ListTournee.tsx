@@ -131,7 +131,11 @@ const ListTournee = ({
         <SelectEnumOption options={DELTA_DATE} name={"tourneeDeltaDate"} />
       ),
     },
-    {
+  ];
+
+  // On affiche la colonne "Notifiée" uniquement si le rapport post ROP est configuré
+  if (canGenererRapportPostRop) {
+    column.push({
       Header: "Notifiée",
       accessor: "tourneeNotifiee",
       Cell: (value) => {
@@ -146,8 +150,8 @@ const ListTournee = ({
         );
       },
       Filter: <SelectEnumOption options={VRAI_FAUX} name={"tourneeNotifiee"} />,
-    },
-  ];
+    });
+  }
 
   /***Constante permetant de gérer les états des composants "QueryTable" et "ListePei" *****/
   const [showTable, setShowTable] = useState(true); // Contrôle de l'affichage du tableau
