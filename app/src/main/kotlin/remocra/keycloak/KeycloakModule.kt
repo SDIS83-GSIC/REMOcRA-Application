@@ -2,6 +2,7 @@ package remocra.keycloak
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.inject.BindingAnnotation
 import com.google.inject.Provides
 import com.typesafe.config.Config
 import jakarta.inject.Singleton
@@ -25,7 +26,7 @@ class KeycloakModule(
 
     @Provides
     @Singleton
-    fun provideRetrofitBuilder(client: OkHttpClient, mapper: ObjectMapper): Retrofit.Builder {
+    fun provideRetrofitBuilder(@KeycloakOkHttpClient client: OkHttpClient, mapper: ObjectMapper): Retrofit.Builder {
         // On n'utilise pas toutes les propriétés des objets (UserRepresentation, RoleRepresentation
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         return Retrofit.Builder()
@@ -47,6 +48,21 @@ class KeycloakModule(
     fun provideKeycloakToken(retrofit: Retrofit.Builder): KeycloakToken {
         return retrofit.baseUrl(tokenBaseUrl).build()
             .create(KeycloakToken::class.java)
+    }
+
+    @Provides
+    @Singleton
+    @KeycloakOkHttpClient
+    fun provideOkHttpClient(): OkHttpClient {
+        return OkHttpClient.Builder()
+            .addInterceptor { chain ->
+                chain.proceed(
+                    chain.request().newBuilder()
+                        .addHeader("Accept", "application/json")
+                        .build(),
+                )
+            }
+            .build()
     }
 
     companion object {
@@ -83,3 +99,9 @@ class KeycloakModule(
 data class KeycloakUri(
     val baseUri: String,
 )
+
+/**
+ * Annotation permettant de différencer le OkHttpClient de geoserver et celui de Keycloak
+ */
+@BindingAnnotation
+annotation class KeycloakOkHttpClient
