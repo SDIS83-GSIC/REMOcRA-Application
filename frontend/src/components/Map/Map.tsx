@@ -46,6 +46,7 @@ import {
   optimizeMap,
   optimizeTileLayer,
   optimizeVectorLayer,
+  patchCanvasContextForReadback,
   throttle,
 } from "./MapPerformanceUtils.tsx";
 import MapToolbar from "./MapToolbar.tsx";
@@ -215,14 +216,19 @@ const MapComponent = ({
   showZoomPlace?: boolean;
 }) => {
   useEffect(() => {
+    // Patch canvas context pour optimiser les opérations de readback (utilisées par OpenLayers)
+    patchCanvasContextForReadback();
+
     const mapContainer = document.getElementById("map-container");
 
     const handleFullscreenChange = () => {
-      if (document.fullscreenElement === mapContainer) {
-        mapContainer?.classList.add("is-fullscreen");
-      } else {
-        mapContainer?.classList.remove("is-fullscreen");
-      }
+      requestAnimationFrame(() => {
+        if (document.fullscreenElement === mapContainer) {
+          mapContainer?.classList.add("is-fullscreen");
+        } else {
+          mapContainer?.classList.remove("is-fullscreen");
+        }
+      });
     };
 
     document.addEventListener("fullscreenchange", handleFullscreenChange);

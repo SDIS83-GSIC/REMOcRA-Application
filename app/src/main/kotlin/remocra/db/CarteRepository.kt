@@ -24,7 +24,6 @@ import remocra.db.jooq.remocra.tables.references.L_DEBIT_SIMULTANE_MESURE_PEI
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
 import remocra.db.jooq.remocra.tables.references.L_SIGNALEMENT_ELEMENT_SIGNALEMENT_TYPE_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
-import remocra.db.jooq.remocra.tables.references.NATURE
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
 import remocra.db.jooq.remocra.tables.references.OLDEB
 import remocra.db.jooq.remocra.tables.references.PEI_PRESCRIT
@@ -81,8 +80,10 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
      * Récupère les PEI dans une BBOX selon la zone de compétence
      */
     fun getPeiWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<PeiCarte> {
+        val transformedGeometry = ST_Transform(PEI.GEOMETRIE, srid)
+
         return dsl.select(
-            ST_Transform(PEI.GEOMETRIE, srid).`as`("elementGeometrie"),
+            transformedGeometry.`as`("elementGeometrie"),
             PEI.ID.`as`("elementId"),
             hasIndispoTemp(dateUtils),
             hasTournee,
@@ -94,9 +95,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             PEI.TYPE_PEI,
         )
             .from(PEI)
-            .innerJoin(COMMUNE).on(PEI.COMMUNE_ID.eq(COMMUNE.ID))
             .innerJoin(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
-            .innerJoin(NATURE).on(PEI.NATURE_ID.eq(NATURE.ID))
             .leftJoin(PIBI)
             .on(PIBI.ID.eq(PEI.ID))
             .where(
@@ -112,7 +111,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
                     } ?: DSL.noCondition(),
                     isSuperAdmin,
                 )
-                    .and(bbox?.let { ST_Within(ST_Transform(PEI.GEOMETRIE, srid), bbox) }),
+                    .and(bbox?.let { ST_Within(transformedGeometry, bbox) }),
             )
             .fetchInto()
     }

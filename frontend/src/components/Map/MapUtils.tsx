@@ -174,7 +174,7 @@ export function createVectorLayer(
     zIndex: 9999,
     updateWhileAnimating: false,
     updateWhileInteracting: false,
-    renderBuffer: 100,
+    renderBuffer: 150,
   });
   optimizeVectorLayer(dl);
   return dl;

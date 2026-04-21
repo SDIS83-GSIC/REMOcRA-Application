@@ -1,3 +1,5 @@
+import Feature from "ol/Feature";
+import { Geometry } from "ol/geom";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import OLMap from "ol/Map";
@@ -5,7 +7,7 @@ import { OSM, TileWMS, WMTS } from "ol/source";
 
 // Configuration des optimisations de performance pour les sources de tuiles
 export const TILE_PERFORMANCE_CONFIG = {
-  cacheSize: 512, // Cache plus important pour les tuiles
+  cacheSize: 1024,
   transition: 0, // Désactive les transitions pour un affichage plus rapide
   interpolate: false, // Désactive l'interpolation pour un rendu plus rapide
 };
@@ -14,11 +16,13 @@ export const TILE_PERFORMANCE_CONFIG = {
 export const VECTOR_PERFORMANCE_CONFIG = {
   updateWhileAnimating: false, // Évite la mise à jour pendant l'animation
   updateWhileInteracting: false, // Évite la mise à jour pendant l'interaction
-  renderBuffer: 100, // Buffer de rendu réduit
+  renderBuffer: 150,
 };
 
 // Fonction pour optimiser une source de tuiles
-export function optimizeTileSource(source: any): any {
+export function optimizeTileSource(
+  source: TileWMS | WMTS | OSM,
+): TileWMS | WMTS | OSM {
   // Applique les optimisations communes aux sources de tuiles
   if (
     source instanceof TileWMS ||
@@ -34,7 +38,9 @@ export function optimizeTileSource(source: any): any {
 }
 
 // Fonction pour optimiser une couche de tuiles
-export function optimizeTileLayer(layer: TileLayer<any>): TileLayer<any> {
+export function optimizeTileLayer(
+  layer: TileLayer<TileWMS | WMTS | OSM>,
+): TileLayer<TileWMS | WMTS | OSM> {
   // Configuration du préchargement et du rendu
   layer.setPreload(1); // Précharge 1 niveau de zoom
   layer.setUseInterimTilesOnError(false); // Désactive les tuiles intermédiaires en cas d'erreur
@@ -43,7 +49,9 @@ export function optimizeTileLayer(layer: TileLayer<any>): TileLayer<any> {
 }
 
 // Fonction pour optimiser une couche vectorielle
-export function optimizeVectorLayer(layer: VectorLayer<any>): VectorLayer<any> {
+export function optimizeVectorLayer(
+  layer: VectorLayer<Feature<Geometry>>,
+): VectorLayer<Feature<Geometry>> {
   // Configuration des optimisations vectorielles via les options
   layer.set(
     "updateWhileAnimating",
@@ -73,6 +81,29 @@ export function optimizeMap(map: OLMap): OLMap {
   });
 
   return map;
+}
+
+// Patch canvas context pour optimiser les opérations de readback (getImageData)
+// Résout le warning: "Canvas2D: Multiple readback operations using getImageData are faster with the willReadFrequently attribute set to true"
+export function patchCanvasContextForReadback(): void {
+  const originalGetContext = HTMLCanvasElement.prototype.getContext;
+
+  HTMLCanvasElement.prototype.getContext = function (
+    contextType: string,
+    contextAttributes?:
+      | CanvasRenderingContext2DSettings
+      | WebGLContextAttributes
+      | ImageBitmapRenderingContextSettings,
+  ) {
+    // Pour les contextes 2D (utilisés par OpenLayers pour le rendu), ajouter l'option willReadFrequently
+    if (contextType === "2d") {
+      const settings = (contextAttributes ||
+        {}) as CanvasRenderingContext2DSettings;
+      settings.willReadFrequently = true;
+      contextAttributes = settings;
+    }
+    return originalGetContext.call(this, contextType, contextAttributes);
+  } as typeof HTMLCanvasElement.prototype.getContext;
 }
 
 // Débounce pour les événements de déplacement de carte
