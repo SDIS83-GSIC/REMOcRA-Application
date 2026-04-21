@@ -81,8 +81,8 @@ const InnerQueryForm = () => {
             header: "Informations générales",
             content: (
               <span>
-                {IconInfo()} Certaines requêtes ont besoin de s&apos;appuyer sur
-                des paramètres qui dépendent de l&apos;utilisateur connecté :{" "}
+                <IconInfo /> Certaines requêtes ont besoin de s&apos;appuyer sur
+                des paramètres qui dépendent de l&apos;utilisateur connecté :
                 <ul>
                   <li>l&apos;organisme</li>
                   <li>la zone de compétence</li>

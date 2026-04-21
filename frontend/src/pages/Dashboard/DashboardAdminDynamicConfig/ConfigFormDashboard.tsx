@@ -94,10 +94,9 @@ const ConfigFormDashboard = (props: ConfigFormDashboardProps) => {
         <>
           <Alert variant="info" className="mb-3 d-flex align-items-center">
             <span>
-              {" "}
-              {IconInfo()} Sélectionner un composant dans la liste de droite
+              {<IconInfo />} Sélectionner un composant dans la liste de droite
               pour l&apos;ajouter dans la grille, puis déplacer le composant
-              voulu à l&apos;endroit voulu.{" "}
+              voulu à l&apos;endroit voulu.
             </span>
           </Alert>
           <Row className="align-items-start">
