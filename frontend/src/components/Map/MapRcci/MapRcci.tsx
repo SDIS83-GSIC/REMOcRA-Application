@@ -67,11 +67,17 @@ const MapRcci = () => {
 
   dataRcciLayerRef.current = useMemo(() => {
     if (!map || availableLayers.length === 0) {
-      return;
+      return undefined;
     }
-    const layer = availableLayers
-      .find((e) => e.code === CODE_COUCHE_RCCI)
-      .layers.find((e) => e.code === CODE_COUCHE_RCCI).openlayer;
+    const group = availableLayers.find((e) => e.code === CODE_COUCHE_RCCI);
+    if (!group || !group.layers) {
+      return undefined;
+    }
+    const layerObj = group.layers.find((e) => e.code === CODE_COUCHE_RCCI);
+    if (!layerObj || !layerObj.openlayer) {
+      return undefined;
+    }
+    const layer = layerObj.openlayer;
     layer.setStyle(rcciStyle);
     return layer;
   }, [map, availableLayers, rcciStyle]);
