@@ -114,6 +114,9 @@ constructor(
             peiHighlightCouleur = mapParametres.getStringOrNull(ParametreEnum.PEI_HIGHLIGHT_COULEUR.name),
             peiHighlightRayon = mapParametres.getIntOrNull(ParametreEnum.PEI_HIGHLIGHT_RAYON.name),
             peiHighlightLargeur = mapParametres.getIntOrNull(ParametreEnum.PEI_HIGHLIGHT_LARGEUR.name),
+            peiSelectionCouleur = mapParametres.getStringOrNull(ParametreEnum.PEI_SELECTION_COULEUR.name),
+            peiSelectionRayon = mapParametres.getIntOrNull(ParametreEnum.PEI_SELECTION_RAYON.name),
+            peiSelectionLargeur = mapParametres.getIntOrNull(ParametreEnum.PEI_SELECTION_LARGEUR.name),
             peiRenumerotationInterneAuto = mapParametres.getBooleanOrNull(ParametreEnum.PEI_RENUMEROTATION_INTERNE_AUTO.name),
             voieSaisieLibre = mapParametres.getBooleanOrNull(ParametreEnum.VOIE_SAISIE_LIBRE.name),
             caracteristiquesPenaTooltipWeb = mapParametres.getListOfPeiCaracteristique(

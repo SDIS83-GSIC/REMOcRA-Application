@@ -185,6 +185,9 @@ class UpdateParametresUseCase
             updateParametre(ParametreEnum.PEI_HIGHLIGHT_COULEUR, parametresAdminData.pei.peiHighlightCouleur)
             updateParametre(ParametreEnum.PEI_HIGHLIGHT_RAYON, parametresAdminData.pei.peiHighlightRayon?.toString())
             updateParametre(ParametreEnum.PEI_HIGHLIGHT_LARGEUR, parametresAdminData.pei.peiHighlightLargeur?.toString())
+            updateParametre(ParametreEnum.PEI_SELECTION_COULEUR, parametresAdminData.pei.peiSelectionCouleur)
+            updateParametre(ParametreEnum.PEI_SELECTION_RAYON, parametresAdminData.pei.peiSelectionRayon?.toString())
+            updateParametre(ParametreEnum.PEI_SELECTION_LARGEUR, parametresAdminData.pei.peiSelectionLargeur?.toString())
             updateParametre(
                 ParametreEnum.PEI_RENUMEROTATION_INTERNE_AUTO,
                 parametresAdminData.pei.peiRenumerotationInterneAuto?.toString(),

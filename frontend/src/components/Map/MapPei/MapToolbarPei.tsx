@@ -68,6 +68,18 @@ export const useToolbarPeiContext = ({
   const { visible: visibleMove, show: showMove, close: closeMove } = useModal();
 
   const { error: errorToast } = useToastContext();
+
+  // Chargement des paramètres de style de sélection
+  const parametres = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify([
+        PARAMETRE.PEI_SELECTION_COULEUR,
+        PARAMETRE.PEI_SELECTION_RAYON,
+        PARAMETRE.PEI_SELECTION_LARGEUR,
+      ]),
+    }}`,
+  );
+
   const [listePeiId, setListePeiId] = useState<string[]>([]);
   const [listePeiTourneePublic, setListePeiTourneePublic] = useState<
     PeiSelect[]
@@ -231,13 +243,28 @@ export const useToolbarPeiContext = ({
         });
     });
 
+    // Style de sélection paramétrable
+    const selectionColor =
+      parametres.data?.[PARAMETRE.PEI_SELECTION_COULEUR]?.parametreValeur ||
+      "#ff00f2b3";
+
+    const selectionRadius =
+      parseInt(
+        parametres.data?.[PARAMETRE.PEI_SELECTION_RAYON]?.parametreValeur,
+      ) ?? 16;
+
+    const selectionWidth =
+      parseInt(
+        parametres.data?.[PARAMETRE.PEI_SELECTION_LARGEUR]?.parametreValeur,
+      ) ?? 4;
+
     const selectCtrl = new Select({
       style: new Style({
         image: new CircleStyle({
-          radius: 16,
+          radius: selectionRadius,
           stroke: new Stroke({
-            color: "rgba(255, 0, 0, 0.7)",
-            width: 4,
+            color: selectionColor,
+            width: selectionWidth,
           }),
         }),
       }),
@@ -460,6 +487,7 @@ export const useToolbarPeiContext = ({
     showMove,
     setCoordonneesPeiCreate,
     workingLayer?.getSource,
+    parametres.data,
   ]);
 
   function createUpdateTournee() {

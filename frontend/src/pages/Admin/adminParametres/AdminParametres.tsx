@@ -1318,6 +1318,34 @@ const AdminPei = ({
             }
           />
         </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <ColorInput
+            name="pei.peiSelectionCouleur"
+            label="Couleur de sélection des PEI"
+            tooltipText={
+              "Couleur du cercle de sélection des PEI lors de la sélection sur la carte (Ctrl+clic ou sélection par zone)"
+            }
+            required={false}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiSelectionRayon"
+            label="Rayon du cercle de sélection des PEI (en pixels)"
+            tooltipText={
+              "Rayon du cercle de sélection des PEI lors de la sélection sur la carte (Ctrl+clic ou sélection par zone)"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiSelectionLargeur"
+            label="Largeur du trait de sélection des PEI (en pixels)"
+            tooltipText={
+              "Largeur du trait du cercle de sélection des PEI lors de la sélection sur la carte (Ctrl+clic ou sélection par zone)"
+            }
+          />
+        </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
           <CheckBoxInput
             name="pei.peiRenumerotationInterneAuto"
