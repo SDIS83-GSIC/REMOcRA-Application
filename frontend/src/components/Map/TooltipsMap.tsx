@@ -422,6 +422,7 @@ const TooltipMapPei = ({
             displayButtonDelete={displayButtonEditDebitSimultane}
             onClickDelete={() => {
               dataDebitSimultaneLayer.getSource().refresh();
+              dataPeiLayer.getSource().refresh();
               refreshLayerGeoserver(map);
               overlay?.setPosition(undefined);
             }}
