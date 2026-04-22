@@ -5,7 +5,7 @@ import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.Record
-import org.jooq.Result
+import kotlin.streams.asSequence
 
 /**
  * Le contexte est nullable car, si la connexion à une base de données externe n'est pas configurée,
@@ -44,18 +44,14 @@ class SigRepository @Inject constructor(@param:Sig @param:Nullable private val d
      * Détecte le type de base de données utilisée pour la source SIG
      */
     private fun detectDatabaseType(): DatabaseType {
-        return try {
-            val conn = dsl!!.configuration().connectionProvider().acquire()
-            val databaseProductName = conn?.metaData?.databaseProductName?.lowercase() ?: "unknown"
-            conn?.close()
+        val conn = dsl!!.configuration().connectionProvider().acquire()
+        val databaseProductName = conn?.metaData?.databaseProductName?.lowercase() ?: "unknown"
+        conn?.close()
 
-            // Pour l'instant, on ne gère que Oracle et Postgresl (à voir si d'autres clients ont d'autres types de base de données)
-            when {
-                databaseProductName.contains("postgresql") || databaseProductName.contains("postgres") -> DatabaseType.POSTGRESQL
-                else -> throw IllegalArgumentException("Le type de la base de données n'est pas supporté par REMOcRA.")
-            }
-        } catch (_: Exception) {
-            throw IllegalArgumentException("Le type de la base de données n'est pas supporté par REMOcRA.")
+        // Pour l'instant, on ne gère que Oracle et Postgresl (à voir si d'autres clients ont d'autres types de base de données)
+        when {
+            databaseProductName.contains("postgres") -> return DatabaseType.POSTGRESQL
+            else -> throw IllegalArgumentException("Le type de la base de données n'est pas supporté par REMOcRA.")
         }
     }
 
@@ -124,6 +120,28 @@ class SigRepository @Inject constructor(@param:Sig @param:Nullable private val d
         POSTGRESQL,
     }
 
-    fun selectAll(listFields: List<Field<out Any>>, schemaSource: String, tableSource: String): Result<Record> =
-        dsl!!.select(listFields).from("$schemaSource.$tableSource").fetch()
+    /**
+     * Traitement par BATCH (streaming) pour les très grandes tables
+     * Évite de charger toutes les données en RAM
+     *
+     * @param listFields : champs à sélectionner
+     * @param schemaSource : schéma source
+     * @param tableSource : table source
+     * @param batchSize : nombre de lignes par batch (défaut 50 000)
+     * @param processBatch : fonction appelée pour chaque batch
+     */
+    fun selectAllByBatch(
+        listFields: List<Field<out Any>>,
+        schemaSource: String,
+        tableSource: String,
+        batchSize: Int,
+        processBatch: (List<Record>) -> Unit,
+    ) {
+        dsl!!.select(listFields)
+            .from("$schemaSource.$tableSource")
+            .fetchStream()
+            .asSequence()
+            .chunked(batchSize)
+            .forEach(processBatch)
+    }
 }

@@ -26,6 +26,8 @@ constructor(
 ) :
     SchedulableTask<SynchronisationSIGTaskParameter, SchedulableTaskResults>() {
 
+    val BATCH_SIZE = 50_000
+
     override fun execute(parameters: SynchronisationSIGTaskParameter?, userInfo: WrappedUserInfo): SchedulableTaskResults? {
         // La vérification des paramètres a déja été faite par checkParameters, pour éviter de spécifier !! a chaque appel, on duplique le dit paramètre
         val timeSource = TimeSource.Monotonic
@@ -74,12 +76,27 @@ constructor(
                 }
             }
             logManager.info("[SIG] Liste des fields à SELECT : $fieldsToSelect")
-            // Émission de la requête SELECT
-            val dataToInsert = sigRepository.selectAll(fieldsToSelect, tableASynchroniser.schemaSource, tableASynchroniser.tableSource)
-            logManager.info("[SIG] ${dataToInsert.size} éléments récupérés")
-            // [REMOCRA] Insertion des données
-            logManager.info("[REMOcRA] Insertion de ces éléments dans ${GlobalConstants.SCHEMA_ENTREPOT_SIG}.$nomTableDestination")
-            entrepotSigRepository.insertAllInto(dataToInsert, nomTableDestination)
+            // Émission de la requête SELECT avec traitement par BATCH
+            // Pour les très grandes tables (millions de lignes), on traite par chunk de 50 000 lignes
+            // pour éviter les problèmes de mémoire et les timeouts de connexion
+            logManager.info("[SIG] Début du traitement par BATCH (50 000 lignes/lot)")
+            var totalRows = 0
+            var batchNumber = 0
+
+            sigRepository.selectAllByBatch(
+                fieldsToSelect,
+                tableASynchroniser.schemaSource,
+                tableASynchroniser.tableSource,
+                batchSize = BATCH_SIZE,
+            ) { batch ->
+                batchNumber++
+                logManager.info("[REMOcRA] Insertion du batch #$batchNumber contenant ${batch.size} éléments dans ${GlobalConstants.SCHEMA_ENTREPOT_SIG}.$nomTableDestination")
+                entrepotSigRepository.insertBatch(batch, nomTableDestination)
+                totalRows += batch.size
+                logManager.info("[SIG] Total inséré jusqu'à présent: $totalRows éléments")
+            }
+
+            logManager.info("[SIG] $totalRows éléments au total récupérés et insérés")
             logManager.info("Fin de la récupération des données de ${tableASynchroniser.schemaSource}.${tableASynchroniser.tableSource} (${getStringifiedExecutionDuration(startSynchroTable)})")
         }
         logManager.info("Fin de la phase de récupération des données (${getStringifiedExecutionDuration(startRecuperation)})")
