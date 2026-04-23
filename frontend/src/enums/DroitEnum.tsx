@@ -256,7 +256,10 @@ export const TypeDroitLabel = new Map<string, string>([
     TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_A,
     "Administrer les utilisateurs de son organisme",
   ],
-  [TYPE_DROIT.ORGANISME_CONTACT_A, "Administrer les contacts des organismes"],
+  [
+    TYPE_DROIT.ORGANISME_CONTACT_A,
+    "Administrer les organismes et leurs contacts",
+  ],
   [
     TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_R,
     "Consulter les utilisateurs de son organisme",

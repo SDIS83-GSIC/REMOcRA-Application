@@ -36,7 +36,8 @@ const ListOrganisme = () => {
 
   if (
     hasDroit(user, TYPE_DROIT.ORGANISME_CONTACT_A) ||
-    hasDroit(user, TYPE_DROIT.ADMIN_ORGANISME_R)
+    hasDroit(user, TYPE_DROIT.ADMIN_ORGANISME_R) ||
+    hasDroit(user, TYPE_DROIT.ADMIN_ORGANISME_A)
   ) {
     listeButton.push({
       row: (row) => {

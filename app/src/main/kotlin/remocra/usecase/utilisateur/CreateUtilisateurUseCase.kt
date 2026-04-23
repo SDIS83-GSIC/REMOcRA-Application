@@ -37,7 +37,7 @@ constructor(
         if ((
                 !userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_A) &&
                     !userInfo.hasDroit(droitWeb = Droit.ADMIN_UTILISATEURS_ORGA_A)
-                ) || (!userInfo.hasDroit(droitWeb = Droit.IMPORT_UTILISATEUR_A))
+                ) && (!userInfo.hasDroit(droitWeb = Droit.IMPORT_UTILISATEUR_A))
         ) {
             throw RemocraResponseException(ErrorType.UTILISATEUR_FORBIDDEN)
         }

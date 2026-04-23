@@ -198,6 +198,7 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                                   ) {
                                                     arrayVal.push(
                                                       "ADMIN_ORGANISME_A",
+                                                      "ADMIN_ORGANISME_R",
                                                     );
                                                   }
                                                   if (
@@ -213,6 +214,8 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                                   ) {
                                                     arrayVal.push(
                                                       "ADMIN_UTILISATEURS_R",
+                                                      "ADMIN_UTILISATEURS_ORGA_A",
+                                                      "ADMIN_UTILISATEURS_ORGA_R",
                                                     );
                                                   }
                                                   if (
@@ -221,6 +224,15 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                                   ) {
                                                     arrayVal.push(
                                                       "ADMIN_UTILISATEURS_ORGA_R",
+                                                    );
+                                                  }
+                                                  if (
+                                                    value ===
+                                                    "IMPORT_UTILISATEUR_A"
+                                                  ) {
+                                                    arrayVal.push(
+                                                      "ADMIN_UTILISATEURS_ORGA_R",
+                                                      "ADMIN_UTILISATEURS_ORGA_A",
                                                     );
                                                   }
                                                   setFieldValue(
@@ -238,7 +250,7 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                                   ) {
                                                     arrayVal.push(
                                                       "ADMIN_UTILISATEURS_A",
-                                                      "ORGANISME_CONTACT_A",
+                                                      "IMPORT_UTILISATEUR_A",
                                                     );
                                                   }
                                                   if (
@@ -247,6 +259,24 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                                   ) {
                                                     arrayVal.push(
                                                       "ADMIN_UTILISATEURS_R",
+                                                      "ADMIN_UTILISATEURS_A",
+                                                      "IMPORT_UTILISATEUR_A",
+                                                    );
+                                                  }
+                                                  if (
+                                                    value ===
+                                                    "ADMIN_ORGANISME_R"
+                                                  ) {
+                                                    arrayVal.push(
+                                                      "ORGANISME_CONTACT_A",
+                                                    );
+                                                  }
+                                                  if (
+                                                    value ===
+                                                    "ADMIN_ORGANISME_A"
+                                                  ) {
+                                                    arrayVal.push(
+                                                      "ORGANISME_CONTACT_A",
                                                     );
                                                   }
                                                   // si un droit _CRUD est décoché, on tente de retirer le droit _A s'il existe
