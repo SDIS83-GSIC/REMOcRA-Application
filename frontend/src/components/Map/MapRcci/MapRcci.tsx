@@ -78,6 +78,7 @@ const MapRcci = () => {
       return undefined;
     }
     const layer = layerObj.openlayer;
+    layer.setMinZoom((layer.getMinZoom?.() ?? 0) - 2);
     layer.setStyle(rcciStyle);
     return layer;
   }, [map, availableLayers, rcciStyle]);
