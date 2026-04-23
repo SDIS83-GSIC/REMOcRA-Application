@@ -994,6 +994,7 @@ constructor(
     fun needComputeNumeroInterneNatureDeci(natureDeciId: UUID, natureDeciIdInitial: UUID?): Boolean {
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_53,
+            CodeSdis.SDIS_59,
             CodeSdis.SDIS_66,
             CodeSdis.SDIS_95,
             ->
