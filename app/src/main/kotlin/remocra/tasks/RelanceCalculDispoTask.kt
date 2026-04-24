@@ -2,6 +2,7 @@ package remocra.tasks
 
 import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
+import remocra.data.PenaData
 import remocra.db.PeiRepository
 import remocra.db.PenaRepository
 import remocra.db.PibiRepository
@@ -25,16 +26,40 @@ class RelanceCalculDispoTask @Inject constructor(
 
         // On update les PEI en relançant le calcul de dispo
         listePibiData.plus(listePenaData).forEach {
-            val newDisponibilite = getDisponibilitePeiUseCase.execute(it)
-            // On update la disponibiltié
-            if (newDisponibilite != it.peiDisponibiliteTerrestre) {
-                logManager.info("Le PEI d'id '${it.peiId}' [${it.peiNumeroComplet}] a été mis à jour avec une nouvelle disponibilité : ${newDisponibilite.name}")
-                peiRepository.updateDisponibilite(it.peiId, newDisponibilite)
+            val result = getDisponibilitePeiUseCase.execute(it)
+
+            // On update la disponibilité terrestre
+            if (result.terrestre != it.peiDisponibiliteTerrestre) {
+                logManager.info("Le PEI d'id '${it.peiId}' [${it.peiNumeroComplet}] a été mis à jour avec une nouvelle disponibilité : ${result.terrestre.name}")
+                peiRepository.updateDisponibilite(it.peiId, result.terrestre)
 
                 if (parameters?.eventTracabilite == true) {
                     eventBus.post(
                         TracabiliteEvent(
-                            pojo = it.apply { peiDisponibiliteTerrestre = newDisponibilite },
+                            pojo = it.apply { peiDisponibiliteTerrestre = result.terrestre },
+                            pojoId = it.peiId,
+                            typeOperation = TypeOperation.UPDATE,
+                            typeObjet = TypeObjet.PEI,
+                            auteurTracabilite = userInfo.getInfosTracabilite(),
+                            date = dateUtils.now(),
+                        ),
+                    )
+                }
+
+                if (parameters?.eventNexSis == true) {
+                    eventBus.post(PeiModifiedEvent(it.peiId, TypeOperation.UPDATE))
+                }
+            }
+
+            // Si c'est un PENA, vérifier aussi la dispo HBE
+            if (it is PenaData && result.hbe != null && result.hbe != it.penaDisponibiliteHbe) {
+                logManager.info("Le PENA d'id '${it.peiId}' [${it.peiNumeroComplet}] a été mis à jour avec une nouvelle disponibilité HBE : ${result.hbe.name}")
+                penaRepository.updateDisponibiliteHbe(it.peiId, result.hbe)
+
+                if (parameters?.eventTracabilite == true) {
+                    eventBus.post(
+                        TracabiliteEvent(
+                            pojo = it.apply { penaDisponibiliteHbe = result.hbe },
                             pojoId = it.peiId,
                             typeOperation = TypeOperation.UPDATE,
                             typeObjet = TypeObjet.PEI,

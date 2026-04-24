@@ -134,7 +134,11 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
             if (typeOperation == TypeOperation.INSERT && parametresProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name) == true) {
                 element.peiDisponibiliteTerrestre = Disponibilite.INDISPONIBLE
             } else if (typeOperation != TypeOperation.INSERT) {
-                element.peiDisponibiliteTerrestre = getDisponibilitePeiUseCase.execute(element)
+                val result = getDisponibilitePeiUseCase.execute(element)
+                element.peiDisponibiliteTerrestre = result.terrestre
+                if (element is PenaData && result.hbe != null) {
+                    element.penaDisponibiliteHbe = result.hbe
+                }
             }
         }
 
@@ -146,7 +150,11 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
         executeSpecific(userInfo, element)
 
         if (typeOperation == TypeOperation.INSERT && parametresProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name) == false) {
-            element.peiDisponibiliteTerrestre = getDisponibilitePeiUseCase.execute(element)
+            val result = getDisponibilitePeiUseCase.execute(element)
+            element.peiDisponibiliteTerrestre = result.terrestre
+            if (element is PenaData && result.hbe != null) {
+                element.penaDisponibiliteHbe = result.hbe
+            }
             peiRepository.upsert(element)
         }
         // On rend la main au parent pour la logique d'événements

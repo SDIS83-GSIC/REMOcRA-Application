@@ -7,6 +7,7 @@ import org.jooq.Record
 import org.jooq.impl.DSL
 import remocra.data.PenaData
 import remocra.db.PeiRepository.Companion.peiData
+import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.pojos.LPenaTypeEngin
 import remocra.db.jooq.remocra.tables.pojos.Pena
@@ -112,4 +113,10 @@ class PenaRepository @Inject constructor(
             .join(PENA)
             .on(PENA.ID.eq(PEI.ID))
             .fetchInto()
+
+    fun updateDisponibiliteHbe(penaId: UUID, disponibiliteHbe: Disponibilite): Int =
+        dsl.update(PENA)
+            .set(PENA.DISPONIBILITE_HBE, disponibiliteHbe)
+            .where(PENA.ID.eq(penaId))
+            .execute()
 }

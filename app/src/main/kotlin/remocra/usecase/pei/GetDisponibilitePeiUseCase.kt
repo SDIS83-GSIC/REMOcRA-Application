@@ -5,7 +5,6 @@ import remocra.data.PeiData
 import remocra.data.PeiForCalculDispoData
 import remocra.data.PenaData
 import remocra.data.PibiData
-import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.usecase.AbstractUseCase
 
@@ -14,11 +13,9 @@ class GetDisponibilitePeiUseCase @Inject constructor(
     private val calculDispoUseCase: CalculDispoUseCase,
 ) : AbstractUseCase() {
 
-    fun execute(element: PeiData): Disponibilite {
-        // à partir de là, on a besoin de travailler sur le type concret
+    fun execute(element: PeiData): DisponibiliteResult {
         if (TypePei.PIBI == element.peiTypePei) {
             val elementConcret = element as PibiData
-
             val lastVisite = visiteRepository.getLastVisiteDebitPression(element.peiId)
 
             // Calcul de la dispo du PEI

@@ -204,7 +204,7 @@ data class PenaData(
     override val peiDomaineIdInitial: UUID? = peiDomaineId,
     override var peiDateChangementDispo: ZonedDateTime?,
 
-    val penaDisponibiliteHbe: Disponibilite,
+    var penaDisponibiliteHbe: Disponibilite,
     var penaCapacite: Int? = null,
     var penaCapaciteIllimitee: Boolean = false,
     var penaCapaciteIncertaine: Boolean = false,

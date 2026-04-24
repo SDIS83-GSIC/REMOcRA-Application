@@ -23,6 +23,11 @@ import remocra.db.jooq.remocra.tables.pojos.Reservoir
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
+data class DisponibiliteResult(
+    val terrestre: Disponibilite,
+    val hbe: Disponibilite? = null,
+)
+
 /**
  * But du usecase (pour l'instant) : tabula rasa sur les anomalies système, recalcul des ano système, mise à jour du statut de disponibilité du PEI.
  * Doit être morcelé (morcelable) afin de s'intégrer dans l'enregistrement transactionnel d'un PEI.
@@ -103,21 +108,27 @@ class CalculDispoUseCase @Inject constructor(
         return pei.nature!!
     }
 
-    fun execute(pei: PeiForCalculDispoData): Disponibilite {
+    fun execute(pei: PeiForCalculDispoData): DisponibiliteResult {
         deleteAnomaliesDebitPression(pei)
         val anomaliesDebitPression = computeAnomaliesDebitPression(pei)
         insertAnomaliesDebitPression(pei, anomaliesDebitPression)
 
         // Si le PEI a une IT en cours, il est indispo de toute façon
         if (hasIndispoTemporaires(pei)) {
-            return Disponibilite.INDISPONIBLE
+            return DisponibiliteResult(
+                terrestre = Disponibilite.INDISPONIBLE,
+                hbe = Disponibilite.INDISPONIBLE,
+            )
         }
 
         // Si on n'a pas une visite de réception + ROI, le PEI est indispo si le paramètre l'exige
         if (parametreProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name) == true &&
             !visiteRepository.hasRecepAndROI(pei.peiId)
         ) {
-            return Disponibilite.INDISPONIBLE
+            return DisponibiliteResult(
+                terrestre = Disponibilite.INDISPONIBLE,
+                hbe = Disponibilite.INDISPONIBLE,
+            )
         }
 
         // on a besoin de la dernière visite :
@@ -139,22 +150,40 @@ class CalculDispoUseCase @Inject constructor(
             // On va chercher les poids des anomalies concernées
             val poidsAnomalies = poidsAnomalieRepository.getPoidsAnomalies(setGlobalAnomalies.map { it.anomalieId }, pei.peiNatureId, lastVisite?.visiteTypeVisite)
 
-            // On calcule le poids total, comme étant la somme des poids de chaque anomalie présente sur le PEI, quelle que soit sa provenance
-            val note = setGlobalAnomalies.mapNotNull { ano ->
+            // Calcul pour terrestre
+            val noteTerrestre = setGlobalAnomalies.mapNotNull { ano ->
+                val poidsAno = poidsAnomalies.find { poidsAno -> poidsAno.poidsAnomalieAnomalieId == ano.anomalieId }
                 ano.anomaliePoidsAnomalieSystemeValIndispoTerrestre
-                    ?: poidsAnomalies.find { poidsAno -> poidsAno.poidsAnomalieAnomalieId == ano.anomalieId }?.poidsAnomalieValIndispoTerrestre
+                    ?: poidsAno?.poidsAnomalieValIndispoTerrestre
             }.reduceOrNull { acc, next -> acc.plus(next) } ?: 0
 
-            if (note >= 5) {
-                return Disponibilite.INDISPONIBLE
+            // Calcul pour HBE
+            val noteHbe = setGlobalAnomalies.mapNotNull { ano ->
+                val poidsAno = poidsAnomalies.find { poidsAno -> poidsAno.poidsAnomalieAnomalieId == ano.anomalieId }
+                ano.anomaliePoidsAnomalieSystemeValIndispoHbe
+                    ?: poidsAno?.poidsAnomalieValIndispoHbe
+            }.reduceOrNull { acc, next -> acc.plus(next) } ?: 0
+
+            val disponibiliteTerrestre = when {
+                noteTerrestre >= 5 -> Disponibilite.INDISPONIBLE
+                setGlobalAnomalies.any { it.anomalieRendNonConforme } -> Disponibilite.NON_CONFORME
+                else -> Disponibilite.DISPONIBLE
             }
-            // Sinon, il est peut-être non conforme
-            if (setGlobalAnomalies.any { it.anomalieRendNonConforme }) {
-                return Disponibilite.NON_CONFORME
+
+            // Pour HBE
+            val disponibiliteHbe = when {
+                noteHbe >= 5 -> Disponibilite.INDISPONIBLE
+                setGlobalAnomalies.any { it.anomalieRendNonConforme } -> Disponibilite.NON_CONFORME
+                else -> Disponibilite.DISPONIBLE
             }
+
+            return DisponibiliteResult(terrestre = disponibiliteTerrestre, hbe = disponibiliteHbe)
         }
         // Le PEI est disponible, on n'a rien à faire de particulier
-        return Disponibilite.DISPONIBLE
+        return DisponibiliteResult(
+            terrestre = Disponibilite.DISPONIBLE,
+            hbe = Disponibilite.DISPONIBLE,
+        )
     }
 
     /**
