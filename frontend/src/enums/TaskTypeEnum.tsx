@@ -188,6 +188,15 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
     notification: false,
     isConfigurable: false,
   },
+  IMPORT_CADASTRE: {
+    id: "IMPORT_CADASTRE",
+    code: "IMPORT_CADASTRE",
+    label: "Import des données cadastrales",
+    commentaire: "",
+    parametre: {},
+    notification: false,
+    isConfigurable: false,
+  },
 };
 
 export default TaskType;
