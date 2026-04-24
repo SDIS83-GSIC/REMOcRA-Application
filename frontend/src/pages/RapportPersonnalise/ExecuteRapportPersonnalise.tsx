@@ -267,6 +267,7 @@ const ExecuteRapportPersonnalise = () => {
               setActiveTab("data");
               // Réinitialiser les largeurs de colonnes pour le nouveau tableau
               setColumnWidths({});
+              setOffset(0);
             }}
           >
             <GenererForm
@@ -336,6 +337,7 @@ const ExecuteRapportPersonnalise = () => {
                   </Table>
                   {tableau?.values && (
                     <PaginationFront
+                      key={tableau?.values?.length}
                       values={tableau?.values}
                       setOffset={setOffset}
                     />
