@@ -1099,39 +1099,39 @@ const AdminPei = ({
   return (
     values && (
       <>
-        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
-          <CheckBoxInput
-            name="pei.peiFicheResumeStandalone"
-            label="Activer la fiche Résumé en affichage autonome"
-            tooltipText={
-              "La fiche Résumé permet d'afficher de l'information condensée sur le PEI ; outre son accessibilité en 1er accordéon de la fiche PEI, vous pouvez, en activant cette option, la voir apparaître comme action spécifique dans la liste des PEI et l'infobulle du PEI dans la carto. Attention, elle est forcément utilisée pour le module de risque en mode grand public"
-            }
+        <h2 className="mt-2 ms-5">Liste PEI</h2>
+        <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
+          <TransferList
+            availableOptions={availableOptions}
+            selectedOptions={selectedOptions}
+            setAvailableOptions={setAvailableOptions}
+            setSelectedOptions={setSelectedOptions}
+            required={true}
+            label={"Colonnes affichées dans la liste des PEI"}
+            name={"pei.peiColonnes"}
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
           <CheckBoxInput
-            name="pei.peiDisplayIdentifiantGestionnaire"
-            label="Permettre la saisie du numéro utilisé par le gestionnaire pour identifier le PIBI."
+            name="pei.peiMethodeTriAlphanumerique"
+            label="Activer le tri alphanumérique pour les PEI"
+            checked={values?.peiMethodeTriAlphanumerique}
             tooltipText={
-              "Permet d'afficher le composant de saisie de l'identifiant gestionnaire dans la fiche PEI, sinon il sera masqué"
-            }
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
-          <CheckBoxInput
-            name="pei.peiDisplayTypeEngin"
-            label="Permettre la saisie des types d'engins dans la fiche PEI"
-            tooltipText={
-              "Permet d'afficher le composant de saisie des types d'engins dans la fiche PEI, sinon il sera masqué"
+              "Un tri alphanumérique compare un à un les caractères de chaque chaîne, alors qu'un tri 'naturel' va d'abord comparer la longueur de chaque chaîne"
             }
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
           <PositiveNumberInput
-            name="pei.bufferCarte"
-            label="Espace tampon pour la génération de carte (carte des tournées)"
+            name="pei.peiToleranceCommuneMetres"
+            label="Tolérance en mètres pour les communes"
+            tooltipText={
+              "Permet de charger dans la liste déroulante des communes certaines dont le polygone n'est pas parfaitement en phase avec l'attendu"
+            }
           />
         </AdminParametre>
+
+        <h2 className="mt-4 ms-5">Infobulle PEI</h2>
         <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
           <TransferList
             availableOptions={availablePibiOptions}
@@ -1164,6 +1164,142 @@ const AdminPei = ({
             name={"pei.caracteristiquesPenaTooltipWebIds"}
           />
         </AdminParametre>
+
+        <h2 className="mt-4 ms-5">Fiche Résumé</h2>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="pei.peiFicheResumeStandalone"
+            label="Activer la fiche Résumé en affichage autonome"
+            tooltipText={
+              "La fiche Résumé permet d'afficher de l'information condensée sur le PEI ; outre son accessibilité en 1er accordéon de la fiche PEI, vous pouvez, en activant cette option, la voir apparaître comme action spécifique dans la liste des PEI et l'infobulle du PEI dans la carto. Attention, elle est forcément utilisée pour le module de risque en mode grand public"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <TextInput
+            name="pei.peiLibelleNonConforme"
+            label='Libellé du statut "non conforme" d&apos;un PEI'
+            tooltipText={
+              'Libellé qui sera affiché pour le statut "Non conforme" d\'un PEI ; par défaut, la valeur est "Non conforme". Attention, une valeur trop longue pourrait dégrader certains affichages.'
+            }
+            required={false}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiNombreHistorique"
+            label="Nombre de données à afficher sur le graphique de la fiche résumé"
+            required={false}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.valeurMinimaleHistogramme"
+            label="Graduation minimale de l'histogramme de la Fiche Résumé"
+            required={false}
+            tooltipText="Saisir une valeur dans ce champ permet de garantir que l'ordonnée de l'histogramme ira au moins jusqu'à la valeur en question, mais pourra s'étendre au besoin."
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.SELECT}>
+          <SelectInput
+            name="pei.peiRouteHistorique"
+            label="Type de route pour l'historique des PEI"
+            options={typeRouteHistoriquePei}
+            getOptionValue={(v) => v.id}
+            getOptionLabel={(v) => v.libelle}
+            onChange={(e) =>
+              setFieldValue(
+                `pei.peiRouteHistorique`,
+                typeRouteHistoriquePei.find((type) => type.id === e.id)?.id,
+              )
+            }
+            defaultValue={typeRouteHistoriquePei.find(
+              (e) => e.id === values.peiRouteHistorique,
+            )}
+            tooltipText={
+              "Le bouton pourra rediriger soit vers l'écran d'historique des opérations, en s'appuyant sur l'identifiant technique du PEI, soit vers le rapport personnalisé d'historique d'un PEI avec son numéro complet"
+            }
+          />
+        </AdminParametre>
+
+        <h2 className="mt-4 ms-5">Fiche PEI</h2>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="pei.peiRenumerotationInterneAuto"
+            label="Activer la renumérotation interne automatique des PEI"
+            checked={values?.peiRenumerotationInterneAuto}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="pei.peiDisplayIdentifiantGestionnaire"
+            label="Permettre la saisie du numéro utilisé par le gestionnaire pour identifier le PIBI."
+            tooltipText={
+              "Permet d'afficher le composant de saisie de l'identifiant gestionnaire dans la fiche PEI, sinon il sera masqué"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="pei.voieSaisieLibre"
+            label="Autoriser la saisie libre pour les voies"
+            checked={values?.voieSaisieLibre}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="pei.peiDisplayTypeEngin"
+            label="Permettre la saisie des types d'engins dans la fiche PEI"
+            tooltipText={
+              "Permet d'afficher le composant de saisie des types d'engins dans la fiche PEI, sinon il sera masqué"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.vitesseEau"
+            label="Vitesse de l'eau en m/s"
+            tooltipText={"Utile pour avoir un calcul fin des débits simultanés"}
+          />
+        </AdminParametre>
+
+        <h2 className="mt-4 ms-5">Visites PEI</h2>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="pei.receptionRecoInitObligatoire"
+            label="Obliger la visite de réception et la visite de reconnaissance initiale"
+            checked={values?.receptionRecoInitObligatoire}
+            tooltipText={
+              <>
+                Si le paramètre est coché, l&apos;absence de visite de réception
+                et de visite de reconnaissance initiale entraîne obligatoirement
+                une indisponibilité du PEI.
+                <br />
+                <br />
+                Si ce paramètre change, une tâche de recalcul des disponibilités
+                sera lancée.
+                <br />
+                Notez que cette tâche peut être longue en fonction du nombre de
+                PEI à traiter Vous pouvez consulter la page{" "}
+                <b>Résultats d&apos;exécution</b> pour suivre son avancement.
+              </>
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="pei.conserverObservationVisite"
+            label="Conserver la dernière observation lors de la saisie d'une nouvelle visite "
+            checked={values?.conserverObservationVisite}
+            tooltipText={
+              <>
+                Choisissez si vous souhaitez conserver l'observation précédente
+                lors de la saisie d'une nouvelle visite, afin d'éviter de la
+                saisir à nouveau.
+              </>
+            }
+          />
+        </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
           <PositiveNumberInput
             name="pei.peiDelaiCtrlUrgent"
@@ -1188,59 +1324,6 @@ const AdminPei = ({
             label="Nombre de jours avant échéance où une reconnaisance est considérée comme à faire bientôt"
           />
         </AdminParametre>
-
-        <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
-          <TransferList
-            availableOptions={availableOptions}
-            selectedOptions={selectedOptions}
-            setAvailableOptions={setAvailableOptions}
-            setSelectedOptions={setSelectedOptions}
-            required={true}
-            label={"Colonnes affichées dans la liste des PEI"}
-            name={"pei.peiColonnes"}
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
-          <PositiveNumberInput
-            name="pei.peiDeplacementDistWarn"
-            label="Seuil de déplacement d'un PEI import CTP"
-            tooltipText={
-              "Distance de déplacement du PEI au-delà de laquelle afficher un avertissement lors de " +
-              "l'import de Contrôles Techniques Périodiques"
-            }
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
-          <CheckBoxInput
-            name="pei.peiGenerationCarteTournee"
-            label="Active le module de génération de carte des tournées dans le module Point d’eau"
-            checked={values?.peiGenerationCarteTournee}
-            tooltipText={
-              <>
-                Le module de génération nécessite qu’une aggrégation de couche
-                nommée <b>TOURNEE</b> soit configurée sur Geoserver. Il est
-                recommandé que l’aggrégation de couche contienne <i>a minima</i>{" "}
-                :
-                <ul>
-                  <li>Un fond de plan</li>
-                  <li>La couche des PEI</li>
-                </ul>
-                Le module enverra l’identifiant de la tournée via le VIEWPARAM
-                tournee_id permettant de discriminer les PEI à retourner
-              </>
-            }
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
-          <CheckBoxInput
-            name="pei.peiMethodeTriAlphanumerique"
-            label="Activer le tri alphanumérique pour les PEI"
-            checked={values?.peiMethodeTriAlphanumerique}
-            tooltipText={
-              "Un tri alphanumérique compare un à un les caractères de chaque chaîne, alors qu'un tri 'naturel' va d'abord comparer la longueur de chaque chaîne"
-            }
-          />
-        </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
           <PositiveNumberInput
             name="pei.peiRenouvellementCtrlPrive"
@@ -1261,6 +1344,15 @@ const AdminPei = ({
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
           <PositiveNumberInput
+            name="pei.peiRenouvellementCtrlConventionne"
+            label="Nombre de jours pour le renouvellement des contrôles Privés sous convention"
+            tooltipText={
+              "Permet de calculer la prochaine date du CTP par rapport à la dernière saisie"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
             name="pei.peiRenouvellementCtrlIcpe"
             label="Nombre de jours pour le renouvellement des contrôles ICPE"
             tooltipText={
@@ -1272,15 +1364,6 @@ const AdminPei = ({
           <PositiveNumberInput
             name="pei.peiRenouvellementCtrlIcpeConventionne"
             label="Nombre de jours pour le renouvellement des contrôles ICPE conventionnés"
-            tooltipText={
-              "Permet de calculer la prochaine date du CTP par rapport à la dernière saisie"
-            }
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
-          <PositiveNumberInput
-            name="pei.peiRenouvellementCtrlConventionne"
-            label="Nombre de jours pour le renouvellement des contrôles Privés sous convention"
             tooltipText={
               "Permet de calculer la prochaine date du CTP par rapport à la dernière saisie"
             }
@@ -1333,49 +1416,45 @@ const AdminPei = ({
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
           <PositiveNumberInput
-            name="pei.vitesseEau"
-            label="Vitesse de l'eau en m/s"
-            tooltipText={"Utile pour avoir un calcul fin des débits simultanés"}
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
-          <PositiveNumberInput
-            name="pei.peiToleranceCommuneMetres"
-            label="Tolérance en mètres pour les communes"
+            name="pei.peiDeplacementDistWarn"
+            label="Seuil de déplacement d'un PEI import CTP"
             tooltipText={
-              "Permet de charger dans la liste déroulante des communes certaines dont le polygone n'est pas parfaitement en phase avec l'attendu"
+              "Distance de déplacement du PEI au-delà de laquelle afficher un avertissement lors de " +
+              "l'import de Contrôles Techniques Périodiques"
             }
           />
         </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
-          <CheckBoxInput
-            name="pei.peiRenumerotationInterneAuto"
-            label="Activer la renumérotation interne automatique des PEI"
-            checked={values?.peiRenumerotationInterneAuto}
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
-          <CheckBoxInput
-            name="pei.voieSaisieLibre"
-            label="Autoriser la saisie libre pour les voies"
-            checked={values?.voieSaisieLibre}
-          />
-        </AdminParametre>
+
+        <h2 className="mt-4 ms-5">Carte des tournées</h2>
         <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
           <PositiveNumberInput
-            name="pei.peiNombreHistorique"
-            label="Nombre de données à afficher sur le graphique de la fiche résumée"
-            required={false}
+            name="pei.bufferCarte"
+            label="Espace tampon pour la génération de carte (carte des tournées)"
           />
         </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
-          <PositiveNumberInput
-            name="pei.valeurMinimaleHistogramme"
-            label="Graduation minimale de l'histogramme de la Fiche Résumé"
-            required={false}
-            tooltipText="Saisir une valeur dans ce champ permet de garantir que l'ordonnée de l'histogramme ira au moins jusqu'à la valeur en question, mais pourra s'étendre au besoin."
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="pei.peiGenerationCarteTournee"
+            label="Active le module de génération de carte des tournées dans le module Point d’eau"
+            checked={values?.peiGenerationCarteTournee}
+            tooltipText={
+              <>
+                Le module de génération nécessite qu’une aggrégation de couche
+                nommée <b>TOURNEE</b> soit configurée sur Geoserver. Il est
+                recommandé que l’aggrégation de couche contienne <i>a minima</i>{" "}
+                :
+                <ul>
+                  <li>Un fond de plan</li>
+                  <li>La couche des PEI</li>
+                </ul>
+                Le module enverra l’identifiant de la tournée via le VIEWPARAM
+                tournee_id permettant de discriminer les PEI à retourner
+              </>
+            }
           />
         </AdminParametre>
+
+        <h2 className="mt-4 ms-5">Déclaration d'un PEI</h2>
         <AdminParametre type={TYPE_PARAMETRE.STRING}>
           <TextAreaInput
             name="pei.declarationPeiDestinataireEmail"
@@ -1393,74 +1472,6 @@ const AdminPei = ({
             name="pei.declarationPeiCorpsEmail"
             label="Contenu du mail de notification lors de la déclaration d'un PEI"
             tooltipText="Vous pouvez utiliser #[ORGANISME_UTILISATEUR]# et #[LIEN_TELECHARGEMENT]# dans votre message. Ces deux valeurs seront remplacées automatiquement."
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.STRING}>
-          <TextInput
-            name="pei.peiLibelleNonConforme"
-            label='Libellé du statut "non conforme" d&apos;un PEI'
-            tooltipText={
-              'Libellé qui sera affiché pour le statut "Non conforme" d\'un PEI ; par défaut, la valeur est "Non conforme". Attention, une valeur trop longue pourrait dégrader certains affichages.'
-            }
-            required={false}
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
-          <CheckBoxInput
-            name="pei.receptionRecoInitObligatoire"
-            label="Obliger la visite de réception et la visite de reconnaissance initiale"
-            checked={values?.receptionRecoInitObligatoire}
-            tooltipText={
-              <>
-                Si le paramètre est coché, l&apos;absence de visite de réception
-                et de visite de reconnaissance initiale entraîne obligatoirement
-                une indisponibilité du PEI.
-                <br />
-                <br />
-                Si ce paramètre change, une tâche de recalcul des disponibilités
-                sera lancée.
-                <br />
-                Notez que cette tâche peut être longue en fonction du nombre de
-                PEI à traiter Vous pouvez consulter la page{" "}
-                <b>Résultats d&apos;exécution</b> pour suivre son avancement.
-              </>
-            }
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.SELECT}>
-          <SelectInput
-            name="pei.peiRouteHistorique"
-            label="Type de route pour l'historique des PEI"
-            options={typeRouteHistoriquePei}
-            getOptionValue={(v) => v.id}
-            getOptionLabel={(v) => v.libelle}
-            onChange={(e) =>
-              setFieldValue(
-                `pei.peiRouteHistorique`,
-                typeRouteHistoriquePei.find((type) => type.id === e.id)?.id,
-              )
-            }
-            defaultValue={typeRouteHistoriquePei.find(
-              (e) => e.id === values.peiRouteHistorique,
-            )}
-            tooltipText={
-              "Le bouton pourra rediriger soit vers l'écran d'historique des opérations, en s'appuyant sur l'identifiant technique du PEI, soit vers le rapport personnalisé d'historique d'un PEI avec son numéro complet"
-            }
-          />
-        </AdminParametre>
-
-        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
-          <CheckBoxInput
-            name="pei.conserverObservationVisite"
-            label="Conserver la dernière observation lors de la saisie d'une nouvelle visite "
-            checked={values?.conserverObservationVisite}
-            tooltipText={
-              <>
-                Choisissez si vous souhaitez conserver l'observation précédente
-                lors de la saisie d'une nouvelle visite, afin d'éviter de la
-                saisir à nouveau.
-              </>
-            }
           />
         </AdminParametre>
       </>
