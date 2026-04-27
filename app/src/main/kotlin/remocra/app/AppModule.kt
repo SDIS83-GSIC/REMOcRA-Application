@@ -56,8 +56,8 @@ class AppModule(private val settings: AppSettings) : RemocraModule() {
                         enabled = config.getBoolean("nexsis.enabled"),
                         url = URI(config.getString("nexsis.url")),
                         tokenEndpoint = URI(config.getString("nexsis.tokenEndpoint")),
-                        tokenBody = "grant_type=client_credentials&client_id=${URLEncoder.encode(config.getStringOrNull("nexsis.user"), StandardCharsets.UTF_8)}" +
-                            "&client_secret=${URLEncoder.encode(config.getStringOrNull("nexsis.password"), StandardCharsets.UTF_8)}",
+                        tokenBody = "grant_type=client_credentials&client_id=${URLEncoder.encode(config.getStringOrNull("nexsis.user").orEmpty(), StandardCharsets.UTF_8)}" +
+                            "&client_secret=${URLEncoder.encode(config.getStringOrNull("nexsis.password").orEmpty(), StandardCharsets.UTF_8)}",
                     ),
                 ),
             )

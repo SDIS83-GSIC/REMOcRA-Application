@@ -161,7 +161,7 @@ GEOSERVER_PASSWORD=xxxxxxxxxxxxxxxxx
 | NEXSIS_URL | Url de nexsis | http://nexsis.gouv.fr
 | NEXSIS_USER | Utilisateur de connexion à nexsis |
 | NEXSIS_PASSWORD | Mot de passe de l'utilisateur |
-| NEXIS_TOKEN_ENDPOINT | Url de l'endpoint pour récupérer le token d'authentification auprès de nexsis |
+| NEXSIS_TOKEN_ENDPOINT | Url de l'endpoint pour récupérer le token d'authentification auprès de nexsis |
 
 .3+| *Geoserver*
 | GEOSERVER_URL | Url de Geoserver | http://localhost:8090/geoserver
