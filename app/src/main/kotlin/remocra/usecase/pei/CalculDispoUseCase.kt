@@ -261,7 +261,7 @@ class CalculDispoUseCase @Inject constructor(
 
             CodeSdis.SDIS_42 -> pei.penaCapacite == null || pei.penaCapacite < 2
             CodeSdis.SDIS_49 -> false
-            CodeSdis.SDIS_53 -> false
+            CodeSdis.SDIS_53 -> pei.penaCapacite != null && pei.penaCapacite < 60
             CodeSdis.SDIS_58 -> pei.penaCapacite != null && pei.penaCapacite < 15
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
@@ -305,7 +305,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_39 -> pei.penaCapacite != null && pei.penaCapacite in 60..119
             CodeSdis.SDIS_42 -> pei.penaCapaciteIncertaine == true || pei.penaCapacite != null && pei.penaCapacite < 30
             CodeSdis.SDIS_49 -> false
-            CodeSdis.SDIS_53 -> false
+            CodeSdis.SDIS_53 -> pei.penaCapacite == null || pei.penaCapacite in 60..<100
             CodeSdis.SDIS_58 -> pei.penaCapacite != null && pei.penaCapacite in 16..29
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> false
@@ -335,7 +335,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_39 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_42 -> false
             CodeSdis.SDIS_49 -> false
-            CodeSdis.SDIS_53 -> isPressionInsuffisanteDefault(pei)
+            CodeSdis.SDIS_53 -> pei.pression != null && pei.pression < 0.95
             CodeSdis.SDIS_58 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
@@ -379,7 +379,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> false
             CodeSdis.SDIS_49 -> false
-            CodeSdis.SDIS_53 -> false
+            CodeSdis.SDIS_53 -> pei.pression == null || pei.pression in 0.95..<1.0
             CodeSdis.SDIS_58 -> pei.pression != null && pei.pression > 8
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
@@ -414,7 +414,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> isPressionTropEleveeDefault(pei)
             CodeSdis.SDIS_49 -> false
-            CodeSdis.SDIS_53 -> pei.pression != null && pei.pression > 14
+            CodeSdis.SDIS_53 -> pei.pression != null && pei.pression > 6
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> pei.pression != null && pei.pression > 8
@@ -599,7 +599,21 @@ class CalculDispoUseCase @Inject constructor(
 
                 false
             }
-            CodeSdis.SDIS_53 -> (pei.debit == null || pei.debit <= 15)
+            CodeSdis.SDIS_53 -> {
+                return if (pei.diametreId == null) {
+                    // Si le diamètre est null, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
+                    pei.debit != null && pei.debit < 27
+                } else if (isDiametre80(pei)) {
+                    pei.debit != null && pei.debit < 27
+                } else if (isDiametre100(pei)) {
+                    pei.debit != null && pei.debit < 54
+                } else if (isDiametre150(pei)) {
+                    pei.debit != null && pei.debit < 62
+                } else {
+                    // Si le diamètre est autre que null/80/100/150, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
+                    pei.debit != null && pei.debit < 27
+                }
+            }
             CodeSdis.SDIS_58 -> pei.debit == null || pei.debit < 15
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
@@ -734,7 +748,21 @@ class CalculDispoUseCase @Inject constructor(
 
                 false
             }
-            CodeSdis.SDIS_53 -> pei.debit != null && (pei.debit in 16..59)
+            CodeSdis.SDIS_53 -> {
+                return if (pei.diametreId == null) {
+                    // Si le diamètre est null, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
+                    pei.debit == null || pei.debit in 27..<30
+                } else if (isDiametre80(pei)) {
+                    pei.debit == null || pei.debit in 27..<30
+                } else if (isDiametre100(pei)) {
+                    pei.debit == null || pei.debit in 54..<60
+                } else if (isDiametre150(pei)) {
+                    pei.debit == null || pei.debit in 62..<105
+                } else {
+                    // Si le diamètre est autre que null/80/100/150, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
+                    pei.debit == null || pei.debit in 27..<30
+                }
+            }
             CodeSdis.SDIS_58 -> pei.debit != null && (pei.debit in 15..29)
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
@@ -859,7 +887,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> pei.debit != null && pei.debit > 500
             CodeSdis.SDIS_49 -> false
-            CodeSdis.SDIS_53 -> pei.debit != null && pei.debit > 1000
+            CodeSdis.SDIS_53 -> false
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> {
