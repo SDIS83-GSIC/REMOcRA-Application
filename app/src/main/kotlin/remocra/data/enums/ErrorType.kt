@@ -542,6 +542,10 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     API_ANOMALIE_CONSTATEE_NOT_CONTROLEE(20026, "Une ou plusieurs anomalies ont été marquées constatées sans avoir été contrôlées."),
     API_SYNCHRO_DEPLACER_PEI_FORBIDDEN(20027, "Vous n'avez pas les droits pour déplacer un PEI depuis l'application mobile"),
 
+    API_MOBILE_COMMUNE_NON_TROUVEE(20028, "Impossible de trouver une commune pour ces nouvelles coordonnées."),
+    API_MOBILE_VOIE_NON_TROUVEE(20029, "Aucune voie trouvée pour ce PEI dans cette commune"),
+    API_MOBILE_TOLERANCE_VOIE_METRES_NULL(20030, "Le paramètre TOLERANCE_VOIES_METRES est nul, veuillez renseigner une valeur"),
+
     ADMIN_PARAMETRE_FORBIDDEN(21000, "Vous n'avez pas les droits d'administration", Status.FORBIDDEN),
     ADMIN_PARAMETRE_ISODISTANCE_FORMAT(21001, "Les isodistances n'ont pas le format attendu "),
     ADMIN_PARAMETRE_BAN_CODE_DEPARTEMENT(21002, "Les codes des départements saisis doivent être séparés par des vigurles"),

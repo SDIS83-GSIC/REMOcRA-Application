@@ -617,7 +617,7 @@ class PeiRepository
             .where(PEI.ID.eq(idPei))
             .fetchSingleInto()
 
-    fun getCommune(idPei: UUID): UUID =
+    fun getCommuneId(idPei: UUID): UUID =
         dsl.select(PEI.COMMUNE_ID)
             .from(PEI)
             .where(PEI.ID.eq(idPei))
@@ -634,11 +634,6 @@ class PeiRepository
             .from(PEI)
             .where(PEI.ID.eq(peiId))
             .fetchOneInto()
-
-    fun getInfoPei(): List<PeiData> =
-        dsl.select(peiData)
-            .from(PEI)
-            .fetchInto()
 
     fun upsert(pei: PeiData) =
         dsl.insertInto(PEI).setPeiField(pei)

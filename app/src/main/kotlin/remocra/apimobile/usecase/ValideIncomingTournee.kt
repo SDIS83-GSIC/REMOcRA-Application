@@ -1,7 +1,9 @@
 package remocra.apimobile.usecase
 
 import jakarta.inject.Inject
+import remocra.GlobalConstants
 import remocra.apimobile.repository.IncomingRepository
+import remocra.app.ParametresProvider
 import remocra.auth.WrappedUserInfo
 import remocra.data.CreationVisiteCtrl
 import remocra.data.PeiData
@@ -35,14 +37,15 @@ class ValideIncomingTournee @Inject constructor(
     private val documentRepository: DocumentRepository,
     private val domaineRepository: DomaineRepository,
     private val tourneeRepository: TourneeRepository,
-    private val transactionManager: TransactionManager,
     private val createPeiUseCase: CreatePeiUseCase,
     private val createVisiteUseCase: CreateVisiteUseCase,
     private val movePeiUseCase: MovePeiUseCase,
     private val updatePeiUseCase: UpdatePeiUseCase,
+    private val getCommuneVoieByGeomUseCase: GetCommuneVoieByGeomUseCase,
+    private val parametresProvider: ParametresProvider,
 ) : AbstractUseCase() {
 
-    fun execute(tourneeId: UUID, userInfo: WrappedUserInfo, logManager: LogManager) {
+    fun execute(tourneeId: UUID, userInfo: WrappedUserInfo, logManager: LogManager, transactionManager: TransactionManager) {
         transactionManager.transactionResult {
             val gestionnaires = incomingRepository.getGestionnaires()
 
@@ -56,16 +59,16 @@ class ValideIncomingTournee @Inject constructor(
             incomingRepository.deleteGestionnaire(gestionnaires.map { it.gestionnaireId })
 
             logManager.info("Gestion des nouveaux PEI")
-            gestionNewPei(userInfo, logManager)
+            gestionNewPei(userInfo, logManager, transactionManager)
 
             logManager.info("Déplacement des PEI")
-            gestionPeiDeplacement(userInfo, tourneeId, logManager)
+            gestionPeiDeplacement(userInfo, tourneeId, logManager, transactionManager)
 
             logManager.info("Gestion des photos")
             gestionPhoto(tourneeId, logManager)
 
             logManager.info("Gestion des visites")
-            gestionVisites(tourneeId, userInfo, logManager)
+            gestionVisites(tourneeId, userInfo, logManager, transactionManager)
 
             logManager.info("Mise à jour de la tournée $tourneeId")
             tourneeRepository.setAvancementTournee(tourneeId, 100)
@@ -162,7 +165,7 @@ class ValideIncomingTournee @Inject constructor(
         incomingRepository.deleteContact(listeContactId)
     }
 
-    private fun gestionNewPei(userInfo: WrappedUserInfo, logManager: LogManager) {
+    private fun gestionNewPei(userInfo: WrappedUserInfo, logManager: LogManager, transactionManager: TransactionManager) {
         val listeNewPei = incomingRepository.getNewPei()
 
         val peiIdInseres = mutableListOf<UUID>()
@@ -293,24 +296,41 @@ class ValideIncomingTournee @Inject constructor(
         incomingRepository.deleteNewPei(listeNewPei.map { it.newPeiId })
     }
 
-    private fun gestionPeiDeplacement(userInfo: WrappedUserInfo, tourneeId: UUID, logManager: LogManager) {
+    private fun gestionPeiDeplacement(userInfo: WrappedUserInfo, tourneeId: UUID, logManager: LogManager, transactionManager: TransactionManager) {
         val listePeiDeplacement = incomingRepository.getPeiDeplacement(tourneeId)
+        logManager.info("Liste des PEI à déplacer : $listePeiDeplacement")
+
+        val toleranceVoie = parametresProvider.getParametreInt(GlobalConstants.TOLERANCE_VOIES_METRES)
+
+        // Si on n'a pas défini la tolérance, on ne déplace pas les PEI et on met un log de warning sans pour autant faire échouer la synchro
+        if (toleranceVoie == null) {
+            logManager.warn("Le paramètre ${GlobalConstants.TOLERANCE_VOIES_METRES} n'est pas défini, les PEI ne seront pas déplacés")
+            incomingRepository.deletePeiDeplacement(tourneeId)
+            return
+        }
 
         listePeiDeplacement.forEach {
             logManager.info("Déplacement d'un PEI ${it.peiDeplacementPeiId} (peiId : ${it.peiDeplacementPeiId})")
+
+            val communeVoie = getCommuneVoieByGeomUseCase.execute(
+                geometriePei = it.peiDeplacementGeometrie,
+                toleranceVoie = toleranceVoie,
+            )
+
             val peiData = movePeiUseCase.execute(
                 it.peiDeplacementGeometrie,
                 it.peiDeplacementPeiId,
+                voieId = communeVoie.voieId,
             )
 
-            val result = updatePeiUseCase.execute(userInfo, peiData)
+            val result = updatePeiUseCase.execute(userInfo, peiData, transactionManager)
 
             if (result !is Result.Success) {
                 if (result is Result.Error) {
                     // On ne fait pas planter la synchronisation mais on ne déplace pas le PEI
-                    logManager.error("Erreur lors du déplacement du PEI ${it.peiDeplacementPeiId} : ${result.message}")
+                    logManager.warn("Erreur lors du déplacement du PEI ${it.peiDeplacementPeiId} : ${result.message}")
                 }
-                logManager.error("Erreur lors du déplacement du PEI ${it.peiDeplacementPeiId}")
+                logManager.warn("Erreur lors du déplacement du PEI ${it.peiDeplacementPeiId}")
             }
         }
 
@@ -319,7 +339,7 @@ class ValideIncomingTournee @Inject constructor(
         incomingRepository.deletePeiDeplacement(tourneeId)
     }
 
-    private fun gestionVisites(tourneeId: UUID, userInfo: WrappedUserInfo, logManager: LogManager) {
+    private fun gestionVisites(tourneeId: UUID, userInfo: WrappedUserInfo, logManager: LogManager, transactionManager: TransactionManager) {
         val visites = incomingRepository.getVisites(tourneeId)
         val visitesCtrlDebitPression = incomingRepository.getVisitesCtrlDebitPression(tourneeId)
         val visiteAnomalie = incomingRepository.getVisitesAnomalie(tourneeId)

@@ -12,7 +12,7 @@ class RelanceIntegrationTourneeTask @Inject constructor(
 
     override fun execute(parameters: RelanceIntegrationTourneeParameters?, userInfo: WrappedUserInfo): JobResults? {
         logManager.info("Traitement de la tournée ${parameters!!.tourneeId}")
-        valideIncomingTournee.execute(parameters.tourneeId, userInfo, logManager)
+        valideIncomingTournee.execute(parameters.tourneeId, userInfo, logManager, transactionManager)
         logManager.info("Fin de traitement de la tournée ${parameters.tourneeId}")
 
         // On ne retourne pas de résultats spécifiques pour cette tâche

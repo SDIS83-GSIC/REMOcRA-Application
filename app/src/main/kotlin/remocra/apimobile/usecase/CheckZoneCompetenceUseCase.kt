@@ -5,7 +5,9 @@ import jakarta.ws.rs.core.Response
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.io.WKTReader
 import remocra.GlobalConstants
+import remocra.app.ParametresProvider
 import remocra.auth.WrappedUserInfo
+import remocra.data.enums.ErrorType
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.zoneintegration.CheckZoneCompetenceContainsUseCase
@@ -13,6 +15,8 @@ import remocra.usecase.zoneintegration.CheckZoneCompetenceContainsUseCase
 class CheckZoneCompetenceUseCase
 @Inject constructor(
     private val checkZoneCompetenceContainsUseCase: CheckZoneCompetenceContainsUseCase,
+    private val getCommuneVoieByGeomUseCase: GetCommuneVoieByGeomUseCase,
+    private val parametresProvider: ParametresProvider,
 ) :
     AbstractUseCase() {
 
@@ -30,6 +34,24 @@ class CheckZoneCompetenceUseCase
                 userInfo = userInfo,
                 geometries = listOf(geometriePei),
             )
+
+            // Puis on vérifie si le PEI change de commune
+            val toleranceVoie = parametresProvider.getParametreInt(GlobalConstants.TOLERANCE_VOIES_METRES)
+                ?: throw RemocraResponseException(ErrorType.API_MOBILE_TOLERANCE_VOIE_METRES_NULL)
+
+            val communeVoie = getCommuneVoieByGeomUseCase.execute(
+                geometriePei = geometriePei,
+                toleranceVoie = toleranceVoie,
+            )
+
+            if (communeVoie.communeIdApresDeplacement == null) {
+                throw RemocraResponseException(ErrorType.API_MOBILE_COMMUNE_NON_TROUVEE)
+            }
+
+            // Si on n'a pas de voie
+            if (communeVoie.voieId == null) {
+                throw RemocraResponseException(ErrorType.API_MOBILE_VOIE_NON_TROUVEE)
+            }
 
             return Result.Success()
         } catch (rre: RemocraResponseException) {

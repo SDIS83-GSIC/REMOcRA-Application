@@ -76,7 +76,7 @@ constructor(
     }
 
     private fun resolveCommuneId(geometry: Geometry): UUID =
-        communeRepository.getCommunePei(
+        communeRepository.getCommuneIdByGeometrie(
             geometry.toGeomFromText(),
         ) ?: throw RemocraResponseException(ErrorType.COMMUNE_NOT_FOUND)
 }

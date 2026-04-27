@@ -83,7 +83,7 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             )
             .fetchInto()
 
-    fun getCommunePei(geometry: Field<Geometry?>): UUID? =
+    fun getCommuneIdByGeometrie(geometry: Field<Geometry?>): UUID? =
         dsl.select(COMMUNE.ID)
             .from(COMMUNE)
             .where(
