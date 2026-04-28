@@ -21,6 +21,7 @@ type LienProfilFonctionnaliteRow = {
     profilOrganismeLibelle?: string;
     profilUtilisateurLibelle?: string;
     groupeFonctionnalitesLibelle?: string;
+    canDelete: boolean;
   };
 };
 
@@ -106,26 +107,14 @@ const LienProfilFonctionnaliteList = () => {
               {
                 row: (row: LienProfilFonctionnaliteRow) => row,
                 type: TYPE_BUTTON.DELETE,
-                pathname: (row: LienProfilFonctionnaliteRow) =>
-                  `/api/lien-profil-fonctionnalite/delete/${row.original.profilOrganismeId}/${row.original.profilUtilisateurId}/${row.original.groupeFonctionnalitesId}`,
-                textEnable:
-                  "Attention : supprimer ce lien retirera l’accès au groupe de fonctionnalités pour tous les utilisateurs associés à ce profil et cet organisme. Cela peut entraîner la perte de droits d’accès à l’application.",
-                content: (_: LienProfilFonctionnaliteRow) => (
-                  <div className="fs-6">
-                    <div className="fw-bold mb-3">
-                      Êtes-vous sûr de vouloir supprimer ce lien ?
-                    </div>
-                    <div className="mb-3">
-                      Cette action retirera l’accès au groupe de fonctionnalités
-                      pour tous les utilisateurs associés à ce profil et cet
-                      organisme. Cela peut entraîner la perte de droits d’accès
-                      à l’application.
-                    </div>
-                    <div className="fw-bold">
-                      Cette action est irréversible.
-                    </div>
-                  </div>
-                ),
+                pathname: (row: object) => {
+                  const typedRow = row as LienProfilFonctionnaliteRow;
+                  return `/api/lien-profil-fonctionnalite/delete/${typedRow.original.profilOrganismeId}/${typedRow.original.profilUtilisateurId}/${typedRow.original.groupeFonctionnalitesId}`;
+                },
+                disable: (row: LienProfilFonctionnaliteRow) =>
+                  !row.original.canDelete,
+                textDisable:
+                  "Impossible de supprimer ce lien car il est utilisé par au moins un utilisateur",
               },
             ],
           }),

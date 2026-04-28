@@ -10,8 +10,10 @@ import remocra.data.Params
 import remocra.db.jooq.remocra.tables.pojos.LProfilUtilisateurOrganismeGroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.references.GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES
+import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PROFIL_ORGANISME
 import remocra.db.jooq.remocra.tables.references.PROFIL_UTILISATEUR
+import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.util.UUID
 import kotlin.math.absoluteValue
 
@@ -22,6 +24,13 @@ class LienProfilFonctionnaliteRepository @Inject constructor(private val dsl: DS
             PROFIL_ORGANISME.LIBELLE,
             PROFIL_UTILISATEUR.LIBELLE,
             GROUPE_FONCTIONNALITES.LIBELLE,
+            DSL.notExists(
+                DSL.selectOne()
+                    .from(UTILISATEUR)
+                    .join(ORGANISME).on(ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID))
+                    .where(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_UTILISATEUR_ID))
+                    .and(ORGANISME.PROFIL_ORGANISME_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_ORGANISME_ID)),
+            ).`as`("canDelete"),
         )
             .from(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES)
             .join(PROFIL_ORGANISME).on(PROFIL_ORGANISME.ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_ORGANISME_ID))

@@ -9,4 +9,5 @@ data class LienProfilFonctionnaliteData(
     val profilOrganismeLibelle: String,
     val profilUtilisateurLibelle: String,
     val groupeFonctionnalitesLibelle: String,
+    val canDelete: Boolean,
 )
