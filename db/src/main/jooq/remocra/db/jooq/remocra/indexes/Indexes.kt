@@ -23,6 +23,8 @@ import remocra.db.jooq.remocra.tables.Rcci
 import remocra.db.jooq.remocra.tables.Signalement
 import remocra.db.jooq.remocra.tables.SignalementElement
 import remocra.db.jooq.remocra.tables.Site
+import remocra.db.jooq.remocra.tables.VPeiLastMesures
+import remocra.db.jooq.remocra.tables.VPeiVisiteDate
 import remocra.db.jooq.remocra.tables.Voie
 import remocra.db.jooq.remocra.tables.ZoneIntegration
 
@@ -35,6 +37,8 @@ val CADASTRE_SECTION_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("cadas
 val CARROYAGE_DFCI_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("carroyage_dfci_geometrie_idx"), CarroyageDfci.CARROYAGE_DFCI, arrayOf(CarroyageDfci.CARROYAGE_DFCI.GEOMETRIE), false)
 val COMMUNE_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("commune_geometrie_idx"), Commune.COMMUNE, arrayOf(Commune.COMMUNE.GEOMETRIE), false)
 val DEBIT_SIMULTANE_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("debit_simultane_geometrie_idx"), DebitSimultane.DEBIT_SIMULTANE, arrayOf(DebitSimultane.DEBIT_SIMULTANE.GEOMETRIE), false)
+val IDX_V_DATE_PEI_ID: Index = Internal.createIndex(DSL.name("idx_v_date_pei_id"), VPeiVisiteDate.V_PEI_VISITE_DATE, arrayOf(VPeiVisiteDate.V_PEI_VISITE_DATE.PEI_ID), true)
+val IDX_V_MESURE_PEI_ID: Index = Internal.createIndex(DSL.name("idx_v_mesure_pei_id"), VPeiLastMesures.V_PEI_LAST_MESURES, arrayOf(VPeiLastMesures.V_PEI_LAST_MESURES.PEI_ID), true)
 val LIEU_DIT_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("lieu_dit_geometrie_idx"), LieuDit.LIEU_DIT, arrayOf(LieuDit.LIEU_DIT.GEOMETRIE), false)
 val OLDEB_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("oldeb_geometrie_idx"), Oldeb.OLDEB, arrayOf(Oldeb.OLDEB.GEOMETRIE), false)
 val PEI_GEOMETRIE_IDX: Index = Internal.createIndex(DSL.name("pei_geometrie_idx"), Pei.PEI, arrayOf(Pei.PEI.GEOMETRIE), false)
