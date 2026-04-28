@@ -12,6 +12,7 @@ import { object } from "yup";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { FormContainer } from "../../components/Form/Form.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
+import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { IconValidation } from "../../components/Icon/Icon.tsx";
 import { URLS } from "../../routes.tsx";
 import { calculerBilan } from "../../utils/fonctionsUtils.tsx";
@@ -81,7 +82,6 @@ export default VerificationImportPei;
 
 const ResultatsVerificationImportPei = () => {
   const { values } = useFormikContext();
-  const navigate = useNavigate();
   const data = calculerBilan(values);
   return (
     <FormContainer>
@@ -150,12 +150,10 @@ const ResultatsVerificationImportPei = () => {
       </Row>
       <Row>
         <Col>
-          <Button onClick={() => navigate(URLS.ADMIN_ACCUEIL)}>Annuler</Button>
-        </Col>
-        <Col>
-          <Button type="submit" variant="primary">
-            Importer les positions
-          </Button>
+          <SubmitFormButtons
+            returnLink={false}
+            submitTitle="Importer les positions"
+          />
         </Col>
       </Row>
     </FormContainer>
