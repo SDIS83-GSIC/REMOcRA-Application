@@ -21,6 +21,8 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.admin.ImportRessourcesUseCase
 import remocra.usecase.admin.ParametresUseCase
 import remocra.usecase.admin.UpdateParametresUseCase
+import remocra.usecase.admin.refreshviews.RefreshViewMesuresUseCase
+import remocra.usecase.admin.refreshviews.RefreshViewVisitesUseCase
 import remocra.usecase.admin.relancercalcul.RelancerCalculDispoUseCase
 import remocra.usecase.admin.relancercalcul.RelancerCalculNumerotationUseCase
 import remocra.usecase.importcadastre.ImportCadastreUseCase
@@ -51,6 +53,12 @@ class AdminEndpoint : AbstractEndpoint() {
 
     @Inject
     private lateinit var importCadastreUseCase: ImportCadastreUseCase
+
+    @Inject
+    private lateinit var refreshViewVisitesUseCase: RefreshViewVisitesUseCase
+
+    @Inject
+    private lateinit var refreshViewMesuresUseCase: RefreshViewMesuresUseCase
 
     @GET
     @Path("/parametres")
@@ -194,6 +202,28 @@ class AdminEndpoint : AbstractEndpoint() {
             return forbidden().build()
         }
         importCadastreUseCase.execute(securityContext.userInfo)
+        return Response.ok().build()
+    }
+
+    @POST
+    @Path("/refresh-view-visites")
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    fun refreshViewVisites(): Response {
+        if (!securityContext.userInfo.isSuperAdmin) {
+            return forbidden().build()
+        }
+        refreshViewVisitesUseCase.execute()
+        return Response.ok().build()
+    }
+
+    @POST
+    @Path("/refresh-view-mesures")
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    fun refreshViewMesures(): Response {
+        if (!securityContext.userInfo.isSuperAdmin) {
+            return forbidden().build()
+        }
+        refreshViewMesuresUseCase.execute()
         return Response.ok().build()
     }
 }

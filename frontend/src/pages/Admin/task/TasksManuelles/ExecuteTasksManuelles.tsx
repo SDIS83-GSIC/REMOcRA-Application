@@ -6,6 +6,8 @@ import MyFormik from "../../../../components/Form/MyFormik.tsx";
 import { IconInfo } from "../../../../components/Icon/Icon.tsx";
 import url from "../../../../module/fetch.tsx";
 import ImporterCadastre from "./ImporterCadastre.tsx";
+import RefreshViewMesures from "./RefreshViewMesures.tsx";
+import RefreshViewVisites from "./RefreshViewVisites.tsx";
 import RelancerCalculDispo from "./RelancerCalculDispo.tsx";
 import RelancerCalculNumerotation from "./RelancerCalculNumerotation.tsx";
 
@@ -50,6 +52,30 @@ const ExecuteTasksManuelles = () => {
             validationSchema={object({})}
           >
             <ImporterCadastre />
+          </CardTask>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <CardTask
+            title="Rafraîchir la vue des visites"
+            apiUrl={url`/api/admin/refresh-view-visites`}
+            prepareVariables={() => ({})}
+            initialValues={{}}
+            validationSchema={object({})}
+          >
+            <RefreshViewVisites />
+          </CardTask>
+        </Col>
+        <Col>
+          <CardTask
+            title="Rafraîchir la vue des mesures"
+            apiUrl={url`/api/admin/refresh-view-mesures`}
+            prepareVariables={() => ({})}
+            initialValues={{}}
+            validationSchema={object({})}
+          >
+            <RefreshViewMesures />
           </CardTask>
         </Col>
       </Row>
