@@ -1,12 +1,6 @@
 import { default as classNames } from "classnames";
 import { useFormik } from "formik";
-import React, {
-  ReactNode,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import { Button, Table } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -66,7 +60,6 @@ function QueryTable({
   trClassName,
   filterContext = {},
   filterValuesToVariable = (values: object[]) => values,
-  watchedValues = [],
 }: QueryTableType) {
   const { formik, setValues } = filterContext;
   const [tableState, setTableState] = useState([]);
@@ -102,7 +95,8 @@ function QueryTable({
     filterValuesToVariable(initialFilterBy ?? {}),
   );
 
-  const historyPush = useCallback(() => {
+  // Fonction de mise à jour de l'URL
+  const historyPushSync = () => {
     const f = filterValuesToVariable(formik?.values);
     const filter = Object.values(f).filter(Boolean).length
       ? JSON.stringify(f)
@@ -154,64 +148,22 @@ function QueryTable({
         },
       );
     }
-  }, [
-    formik?.values,
-    sortBy,
-    location,
-    pagination.limit,
-    pagination.offset,
-    navigate,
-    setPagination,
-    filterValuesToVariable,
-  ]);
+  };
 
-  const debounceSearch = useDebouncedCallback(historyPush, 500);
+  const debounceSearch = useDebouncedCallback(() => {
+    historyPushSync();
+  }, 500);
 
-  // Synchronise l'URL avec les valeurs des filtres
+  // Quand les filtres changent, on debounce la mise à jour de l'URL
+  // Quand le tri change, on met à jour immédiatement
+  // biome-ignore lint/correctness/useExhaustiveDependencies: historyPushSync est une fonction recréée à chaque render, on ne veut pas l'ajouter comme dépendance
   useEffect(() => {
-    const searchParams = new URLSearchParams(location?.search);
-    const filterByParams = searchParams.get("filterBy");
-    if (!filterByParams && Object.keys(formik?.values || {}).length > 0) {
-      historyPush();
-    }
-  }, [formik?.values, historyPush, location?.search]);
-
+    historyPushSync();
+  }, [sortBy]);
+  // biome-ignore lint/correctness/useExhaustiveDependencies: debounceSearch est stable et appelle toujours la dernière version de historyPushSync
   useEffect(() => {
-    const searchParams = new URLSearchParams(location?.search);
-    const filterByParams = searchParams.get("filterBy");
-    const sortByParams = searchParams.get("sortBy");
-    const offsetParams = searchParams.get("offset");
-    const limitParams = searchParams.get("limit");
-
-    if (filterByParams) {
-      setFilterBy(JSON.parse(filterByParams));
-    }
-
-    if (sortByParams || (!sortByParams && sortBy)) {
-      const sort = Object.values(sortBy).filter(Boolean).length
-        ? JSON.stringify(sortBy)
-        : null;
-      if (sort != null && sort !== sortByParams) {
-        setSortBy(JSON.parse(sortByParams) ?? {});
-      }
-    }
-
-    if (
-      offsetParams &&
-      limitParams &&
-      (offsetParams !== pagination.offset.toString() ||
-        limitParams !== pagination.limit.toString())
-    ) {
-      navigate({ offset: offsetParams, limit: limitParams }, { replace: true });
-    }
-  }, [
-    location,
-    setSortBy,
-    pagination.limit,
-    pagination.offset,
-    navigate,
-    sortBy,
-  ]);
+    debounceSearch();
+  }, [formik?.values]);
 
   const { isRejected, isLoading, data, run } = usePost(
     queryParams ? query + "?" + url`${queryParams}` : query,
@@ -362,11 +314,8 @@ function QueryTable({
             <Row>
               <Col xs={12}>
                 {React.cloneElement(Filter, {
-                  onChange: ({ name, value }) => {
-                    formik.setFieldValue(name, value);
-                    debounceSearch();
-                  },
-
+                  onChange: ({ name, value }) =>
+                    formik.setFieldValue(name, value),
                   onBlur: formik.handleBlur,
                   defaultValue: formik?.values[Filter?.props?.name] || "",
                   value: formik?.values[Filter?.props?.name] || "",
@@ -463,7 +412,6 @@ type QueryTableType = {
   trClassName?: string;
   filterValuesToVariable?: any;
   filterContext?: any;
-  watchedValues?: any;
 };
 
 export type columnType = {
