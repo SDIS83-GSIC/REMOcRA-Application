@@ -67,12 +67,11 @@ AS WITH last_ctrl_debit_pression AS (
          JOIN visite_ctrl_debit_pression vcdp ON vcdp.visite_ctrl_debit_pression_visite_id = visite_1.visite_id
       GROUP BY visite_1.visite_pei_id
     )
-    SELECT last_ctrl_debit_pression.pei_id,
-           visite_ctrl_debit_pression.visite_ctrl_debit_pression_debit AS debit,
-           visite_ctrl_debit_pression.visite_ctrl_debit_pression_pression AS pression,
-           visite_ctrl_debit_pression.visite_ctrl_debit_pression_pression_dyn AS pression_dyn
+    SELECT DISTINCT ON (last_ctrl_debit_pression.pei_id)
+        last_ctrl_debit_pression.pei_id,
+        visite_ctrl_debit_pression.visite_ctrl_debit_pression_debit AS debit,
+        visite_ctrl_debit_pression.visite_ctrl_debit_pression_pression AS pression,
+        visite_ctrl_debit_pression.visite_ctrl_debit_pression_pression_dyn AS pression_dyn
     FROM last_ctrl_debit_pression
-             JOIN visite ON visite.visite_pei_id = last_ctrl_debit_pression.pei_id AND visite.visite_date = last_ctrl_debit_pression.date
-             JOIN visite_ctrl_debit_pression ON visite_ctrl_debit_pression.visite_ctrl_debit_pression_visite_id = visite.visite_id;
-
-
+        JOIN visite ON visite.visite_pei_id = last_ctrl_debit_pression.pei_id AND visite.visite_date = last_ctrl_debit_pression.date
+        JOIN visite_ctrl_debit_pression ON visite_ctrl_debit_pression.visite_ctrl_debit_pression_visite_id = visite.visite_id;
