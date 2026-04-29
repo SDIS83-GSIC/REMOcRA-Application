@@ -233,18 +233,6 @@ class PeiEndpoint : AbstractEndpoint() {
     )
 
     @GET
-    @Path("/doit-changer-commune/{peiId}")
-    @RequireDroits([Droit.PEI_DEPLACEMENT_U])
-    fun needTobeMoved(
-        @PathParam("peiId") peiId: UUID,
-        @QueryParam("geometry") geometry: Geometry,
-    ): Response {
-        return Response
-            .ok(movePeiUseCase.needTobeMoved(geometry, peiId))
-            .build()
-    }
-
-    @GET
     @Path("/voie")
     @RequireDroits([Droit.PEI_DEPLACEMENT_U])
     fun getVoiesForPEI(

@@ -109,12 +109,6 @@ export const useToolbarPeiContext = ({
 
   const [geometrieMove, setGeometrieMove] = useState<string | null>(null);
 
-  const { data: deplacePei } = useGet(
-    peiInfoMove?.elementId && geometrieMove
-      ? url`/api/pei/doit-changer-commune/${peiInfoMove.elementId}?${{ geometry: geometrieMove }}`
-      : "",
-  );
-
   const tools = useMemo(() => {
     function associeNatureDeciPeiTournee(
       features: Collection<Feature<Geometry>>,
@@ -562,7 +556,6 @@ export const useToolbarPeiContext = ({
     geometrieMove,
     closeMove,
     visibleMove,
-    deplacePei,
   };
 };
 
@@ -608,7 +601,6 @@ const MapToolbarPei = ({
   setShowFormVisite,
   showFormVisite,
   coordonneesPeiCreate,
-  deplacePei,
 }: {
   toggleTool: (toolId: string) => void;
   activeTool: string;
@@ -931,15 +923,11 @@ const MapToolbarPei = ({
           submitLabel={"Valider"}
           visible={visibleMove}
           validationSchema={
-            // Si commune change
-            deplacePei
-              ? // si pas saisie libre: voieId obligatoire
-                // si saisie libre : voieId ou voieLibelle
-                isSaisieVoieEnabled
-                ? ValidationSchemaVoieSaisieLibre
-                : ValidationSchemaVoieStandard
-              : // Commune ne change pas
-                object({})
+            // si pas saisie libre: voieId obligatoire
+            // si saisie libre : voieId ou voieLibelle
+            isSaisieVoieEnabled
+              ? ValidationSchemaVoieSaisieLibre
+              : ValidationSchemaVoieStandard
           }
           header={`Déplacer le PEI ${peiInfoMove.peiNumeroComplet ?? ""}`}
           onSubmit={() => {
@@ -964,7 +952,7 @@ const MapToolbarPei = ({
             Attention, le déplacement du PEI peut entraîner une modification sur
             son adresse, veuillez la mettre à jour en cas de besoin.
           </p>
-          {deplacePei && voiesList && (
+          {voiesList && (
             <MessageVoieForm
               voiesList={voiesList}
               canEdit={canEdit}

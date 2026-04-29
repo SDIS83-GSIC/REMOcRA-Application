@@ -39,43 +39,25 @@ constructor(
         val finalVoie = voieLibelle.takeIf { !it.isNullOrEmpty() }
 
         val type = peiRepository.getTypePei(peiId)
-        val communeActuelle = peiRepository.getCommune(peiId)
         val communeId = resolveCommuneId(input)
 
         return when (type) {
             TypePei.PIBI -> pibiRepository.getInfoPibi(peiId).copy(
                 peiGeometrie = input,
                 peiCommuneId = communeId,
-            ).let {
-                if (communeActuelle != communeId) {
-                    return it.copy(
-                        peiVoieId = voieId,
-                        peiVoieTexte = finalVoie,
-                    )
-                }
-                it
-            }
+            ).copy(
+                peiVoieId = voieId,
+                peiVoieTexte = finalVoie,
+            )
 
             TypePei.PENA -> penaRepository.getInfoPena(peiId).copy(
                 peiGeometrie = input,
                 peiCommuneId = communeId,
-            ).let {
-                if (communeActuelle != communeId) {
-                    return it.copy(
-                        peiVoieId = voieId,
-                        peiVoieTexte = finalVoie,
-                    )
-                }
-                it
-            }
+            ).copy(
+                peiVoieId = voieId,
+                peiVoieTexte = finalVoie,
+            )
         }
-    }
-
-    fun needTobeMoved(
-        geometry: Geometry,
-        peiId: UUID,
-    ): Boolean {
-        return peiRepository.getCommune(peiId) != resolveCommuneId(normalizeGeometry(geometry))
     }
 
     private fun normalizeGeometry(geometry: Geometry): Geometry {
