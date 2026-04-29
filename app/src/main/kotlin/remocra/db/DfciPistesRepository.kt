@@ -6,12 +6,14 @@ import org.jooq.Field
 import org.locationtech.jts.geom.Geometry
 import remocra.app.AppSettings
 import remocra.data.GlobalData
+import remocra.db.jooq.remocra.tables.pojos.DfciPiste
 import remocra.db.jooq.remocra.tables.references.DFCI_PISTE
 import remocra.utils.ST_DWithin
 import remocra.utils.ST_Transform
+import java.util.UUID
 
 /**
- * Repository permettant de réaliser les différentes requêtes liées aux pistes à la bd
+ * Repository permettant de réaliser les différentes requêtes liées aux pistes
  */
 class DfciPistesRepository @Inject constructor(
     private val dsl: DSLContext,
@@ -44,4 +46,14 @@ class DfciPistesRepository @Inject constructor(
             .orderBy(DFCI_PISTE.LIBELLE)
             .fetchInto()
     }
+
+    /**
+     * Récupère les données de la piste dont l'id est passé en paramètre
+     * @param pisteId id de la piste a récupérer
+     */
+    fun getDfciPistebyId(pisteId: UUID): DfciPiste =
+        dsl
+            .selectFrom(DFCI_PISTE)
+            .where(DFCI_PISTE.ID.eq(pisteId))
+            .fetchSingleInto()
 }

@@ -7,6 +7,7 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.geom.LineString
 import org.locationtech.jts.geom.Point
 import remocra.app.AppSettings
 import remocra.data.enums.TypeDfciElement
@@ -437,6 +438,35 @@ class CarteRepository @Inject constructor(
             .and(bbox?.let { ST_Within(ST_Transform(DFCI_AIRE.GEOMETRIE, srid), bbox) })
             .fetchInto()
 
+    /**
+     * Récupère les pistes se trouvant sur la carte
+     */
+    fun getDfciPistesWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<DfciPisteCarte> =
+        dsl.select(
+            ST_Transform(DFCI_PISTE.GEOMETRIE, srid).`as`("elementGeometrie"),
+            DFCI_PISTE.ID.`as`("elementId"),
+            DFCI_PISTE.LIBELLE,
+            DFCI_PISTE.NUMERO,
+            DFCI_PISTE.ADRESSE,
+        )
+            .from(DFCI_PISTE)
+            .where(
+                zoneId?.let {
+                    repositoryUtils.checkIsSuperAdminOrCondition(
+                        ST_Within(
+                            DFCI_PISTE.GEOMETRIE,
+                            DSL.field(
+                                DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
+                                    .where(ZONE_INTEGRATION.ID.eq(zoneId)),
+                            ),
+                        ).isTrue,
+                        isSuperAdmin,
+                    )
+                },
+            )
+            .and(bbox?.let { ST_Within(ST_Transform(DFCI_PISTE.GEOMETRIE, srid), bbox) })
+            .fetchInto()
+
     abstract class ElementCarte {
         abstract val elementGeometrie: Geometry
         abstract val elementId: UUID
@@ -623,5 +653,20 @@ class CarteRepository @Inject constructor(
                 TypeAire.RETOURNEMENT -> "Retournement"
                 TypeAire.CROISEMENT -> "Croisement"
             }
+    }
+
+    data class DfciPisteCarte(
+        override val elementGeometrie: LineString,
+        override val elementId: UUID,
+        val dfciPisteLibelle: String,
+        val dfciPisteNumero: String,
+        var dfciPisteAdresse: String?,
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.DFCI_PISTE
+        override var propertiesToDisplay: String? = "<b>Libellé :</b> $dfciPisteLibelle </br>" +
+            "<b>Numéro :</b> $dfciPisteNumero</br>" +
+            "<b>Adresse :</b> ${dfciPisteAdresse.takeIf { !it.isNullOrBlank() } ?: "Aucune adresse renseignée" }"
+        val dfciTypeElement: TypeDfciElement get() = TypeDfciElement.PISTE
     }
 }
