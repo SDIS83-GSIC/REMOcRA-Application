@@ -69,7 +69,7 @@ class ToponymieRepository @Inject constructor(private val dsl: DSLContext) : Abs
                 } else {
                     baseQuery
                 }
-                finalQuery.fetchInto()
+                finalQuery.orderBy(libelle.asc()).fetchInto()
             }
     }
 
