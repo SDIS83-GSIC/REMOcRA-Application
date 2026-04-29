@@ -22,6 +22,7 @@ type filterPei = {
   gestionnaireId?: string;
   hasIndispoTemp?: boolean;
   hasNoTournee?: boolean;
+  diametreNominalId?: string;
 };
 
 // Transformation inverse : de l'URL vers le formulaire
@@ -64,6 +65,7 @@ export const filterValuesToVariable = ({
   tourneeId,
   gestionnaireId,
   hasIndispoTemp,
+  diametreNominalId,
 }: filterPei) => {
   const filter: filterPei = {};
 
@@ -143,7 +145,9 @@ export const filterValuesToVariable = ({
   if (gestionnaireId != null && gestionnaireId.trim() !== "") {
     filter.gestionnaireId = gestionnaireId;
   }
-
+  if (diametreNominalId != null && diametreNominalId.trim() !== "") {
+    filter.diametreNominalId = diametreNominalId;
+  }
   return filter;
 };
 

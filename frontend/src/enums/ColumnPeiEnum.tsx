@@ -18,6 +18,7 @@ enum COLUMN_PEI {
   TOURNEE_LIBELLE = "TOURNEE_LIBELLE",
   PEI_ADRESSE = "ADRESSE",
   GESTIONNAIRE = "GESTIONNAIRE",
+  DIAMETRE_NOMINAL = "DIAMETRE_NOMINAL",
 }
 export default COLUMN_PEI;
 
@@ -41,6 +42,7 @@ export const referenceColumnPei: ColumnPeiType[] = [
   { id: COLUMN_PEI.TOURNEE_LIBELLE, libelle: "Libellé de la tournée" },
   { id: COLUMN_PEI.PEI_ADRESSE, libelle: "Adresse" },
   { id: COLUMN_PEI.GESTIONNAIRE, libelle: "Gestionnaire" },
+  { id: COLUMN_PEI.DIAMETRE_NOMINAL, libelle: "Diamètre nominal" },
 ] as const;
 export type ColumnPeiType = {
   id: COLUMN_PEI;

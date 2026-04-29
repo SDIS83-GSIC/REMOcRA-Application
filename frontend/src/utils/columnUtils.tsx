@@ -537,6 +537,19 @@ function getColumnPeiByStringArray(
           },
         });
         break;
+      case COLUMN_PEI.DIAMETRE_NOMINAL:
+        column.push({
+          Header: "Diamètre nominal",
+          accessor: "diametreNominalLibelle",
+          sortField: "diametreNominalLibelle",
+          Filter: (
+            <SelectNomenclaturesFilter
+              name={"diametreNominalId"}
+              nomenclature={NOMENCLATURES.DIAMETRE}
+            />
+          ),
+        });
+        break;
 
       default:
         column.push({

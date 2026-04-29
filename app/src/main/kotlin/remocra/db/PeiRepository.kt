@@ -224,6 +224,13 @@ class PeiRepository
                     it
                 }
             }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.DIAMETRE_NOMINAL)) {
+                    it.select(DIAMETRE.LIBELLE.`as`("diametreNominalLibelle"))
+                } else {
+                    it
+                }
+            }
             .from(PEI)
             .join(NATURE).on(NATURE.ID.eq(PEI.NATURE_ID))
             .join(NATURE_DECI).on(NATURE_DECI.ID.eq(PEI.NATURE_DECI_ID))
@@ -269,6 +276,14 @@ class PeiRepository
             .let {
                 if (peiColonnes.contains(PeiColonnes.ANOMALIES)) {
                     it.leftJoin(L_PEI_ANOMALIE).on(L_PEI_ANOMALIE.PEI_ID.eq(PEI.ID))
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.DIAMETRE_NOMINAL)) {
+                    it.leftJoin(PIBI).on(PIBI.ID.eq(PEI.ID))
+                        .leftJoin(DIAMETRE).on(DIAMETRE.ID.eq(PIBI.DIAMETRE_ID))
                 } else {
                     it
                 }
@@ -356,6 +371,14 @@ class PeiRepository
                     it
                 }
             }
+            .let {
+                if (peiColonnes.contains(PeiColonnes.DIAMETRE_NOMINAL)) {
+                    it.leftJoin(PIBI).on(PIBI.ID.eq(PEI.ID))
+                        .leftJoin(DIAMETRE).on(DIAMETRE.ID.eq(PIBI.DIAMETRE_ID))
+                } else {
+                    it
+                }
+            }
             .where(filter?.toCondition(dateUtils, isSuperAdmin, affiliatedOrganismeIds) ?: DSL.noCondition())
             .and(
                 zoneCompetenceId?.let {
@@ -395,6 +418,7 @@ class PeiRepository
         val hasIndispoTemp: Boolean = false,
         val hasDocuments: Boolean,
         val gestionnaireLibelle: String?,
+        val diametreNominalLibelle: String?,
     )
 
     data class Filter(
@@ -418,6 +442,7 @@ class PeiRepository
         var tourneeId: UUID?,
         val hasNoTournee: Boolean? = null,
         val gestionnaireId: UUID?,
+        val diametreNominalId: UUID?,
     ) {
         private fun indispoTempCondition(exists: Boolean, dateUtils: DateUtils): Condition {
             val subquery = DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID)
@@ -536,6 +561,9 @@ class PeiRepository
                         DSL.and(AdresseUtils.getDslConcatForAdresse().containsIgnoreCaseUnaccent(it))
                     },
                     gestionnaireId?.let { DSL.and(PEI.GESTIONNAIRE_ID.eq(it)) },
+                    diametreNominalId?.let {
+                        DSL.and(PIBI.DIAMETRE_ID.eq(it))
+                    },
                 ),
             )
     }
@@ -554,6 +582,7 @@ class PeiRepository
         val peiNextRop: Int?,
         val peiNextCtp: Int?,
         var ordreTournee: Int?,
+        val diametreNominalLibelle: Int?,
     ) {
         fun toCondition(): List<SortField<*>> = listOfNotNull(
             PEI.NUMERO_INTERNE.getSortField(peiNumeroInterne),
@@ -572,6 +601,7 @@ class PeiRepository
             PEI.NUMERO_COMPLET.getSortField(peiNumeroComplet),
             V_PEI_VISITE_DATE.PEI_NEXT_ROP.getSortField(peiNextRop),
             V_PEI_VISITE_DATE.PEI_NEXT_CTP.getSortField(peiNextCtp),
+            DIAMETRE.LIBELLE.getSortField(diametreNominalLibelle),
         )
     }
 

@@ -17,4 +17,5 @@ enum class PeiColonnes {
     TOURNEE_LIBELLE,
     ADRESSE,
     GESTIONNAIRE,
+    DIAMETRE_NOMINAL,
 }
