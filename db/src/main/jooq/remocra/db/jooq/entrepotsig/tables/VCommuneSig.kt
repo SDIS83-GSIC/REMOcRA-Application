@@ -63,7 +63,8 @@ open class VCommuneSig(
      commune_code_insee AS v_commune_sig_code_insee,
      commune_code_postal AS v_commune_sig_code_postal,
      commune_geometrie AS v_commune_sig_geometrie,
-     commune_pprif AS v_commune_sig_pprif
+     commune_pprif AS v_commune_sig_pprif,
+     commune_code AS v_commune_sig_code
     FROM commune;
     """,
     ),
@@ -114,6 +115,11 @@ open class VCommuneSig(
      * The column <code>entrepotsig.v_commune_sig.v_commune_sig_pprif</code>.
      */
     val PPRIF: TableField<Record, Boolean?> = createField(DSL.name("v_commune_sig_pprif"), SQLDataType.BOOLEAN, this, "")
+
+    /**
+     * The column <code>entrepotsig.v_commune_sig.v_commune_sig_code</code>.
+     */
+    val CODE: TableField<Record, String?> = createField(DSL.name("v_commune_sig_code"), SQLDataType.CLOB, this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

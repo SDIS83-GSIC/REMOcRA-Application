@@ -26,6 +26,7 @@ data class VCommuneSig(
     val vCommuneSigCodePostal: String?,
     val vCommuneSigGeometrie: Geometry?,
     val vCommuneSigPprif: Boolean?,
+    val vCommuneSigCode: String?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -81,6 +82,13 @@ data class VCommuneSig(
         } else if (this.vCommuneSigPprif != o.vCommuneSigPprif) {
             return false
         }
+        if (this.vCommuneSigCode == null) {
+            if (o.vCommuneSigCode != null) {
+                return false
+            }
+        } else if (this.vCommuneSigCode != o.vCommuneSigCode) {
+            return false
+        }
         return true
     }
 
@@ -93,6 +101,7 @@ data class VCommuneSig(
         result = prime * result + (if (this.vCommuneSigCodePostal == null) 0 else this.vCommuneSigCodePostal.hashCode())
         result = prime * result + (if (this.vCommuneSigGeometrie == null) 0 else this.vCommuneSigGeometrie.hashCode())
         result = prime * result + (if (this.vCommuneSigPprif == null) 0 else this.vCommuneSigPprif.hashCode())
+        result = prime * result + (if (this.vCommuneSigCode == null) 0 else this.vCommuneSigCode.hashCode())
         return result
     }
 
@@ -105,6 +114,7 @@ data class VCommuneSig(
         sb.append(", ").append(vCommuneSigCodePostal)
         sb.append(", ").append(vCommuneSigGeometrie)
         sb.append(", ").append(vCommuneSigPprif)
+        sb.append(", ").append(vCommuneSigCode)
 
         sb.append(")")
         return sb.toString()

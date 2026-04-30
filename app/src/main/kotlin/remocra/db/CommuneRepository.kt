@@ -116,10 +116,11 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
 
     fun updateFromEntrepotSig(listeChampsAUpdate: List<String>) =
         dsl.update(COMMUNE)
-            .set(COMMUNE.LIBELLE, if (listeChampsAUpdate.contains("libelle")) { V_COMMUNE_SIG.LIBELLE } else { COMMUNE.LIBELLE })
-            .set(COMMUNE.CODE_POSTAL, if (listeChampsAUpdate.contains("code_postal")) { V_COMMUNE_SIG.CODE_POSTAL } else { COMMUNE.CODE_POSTAL })
-            .set(COMMUNE.GEOMETRIE, if (listeChampsAUpdate.contains("geometrie")) { V_COMMUNE_SIG.GEOMETRIE } else { COMMUNE.GEOMETRIE })
-            .set(COMMUNE.PPRIF, if (listeChampsAUpdate.contains("pprif")) { V_COMMUNE_SIG.PPRIF } else { COMMUNE.PPRIF })
+            .set(COMMUNE.LIBELLE, if (listeChampsAUpdate.contains("LIBELLE")) { V_COMMUNE_SIG.LIBELLE } else { COMMUNE.LIBELLE })
+            .set(COMMUNE.CODE_POSTAL, if (listeChampsAUpdate.contains("CODE_POSTAL")) { V_COMMUNE_SIG.CODE_POSTAL } else { COMMUNE.CODE_POSTAL })
+            .set(COMMUNE.GEOMETRIE, if (listeChampsAUpdate.contains("GEOMETRIE")) { V_COMMUNE_SIG.GEOMETRIE } else { COMMUNE.GEOMETRIE })
+            .set(COMMUNE.PPRIF, if (listeChampsAUpdate.contains("PPRIF")) { V_COMMUNE_SIG.PPRIF } else { COMMUNE.PPRIF })
+            .set(COMMUNE.CODE, if (listeChampsAUpdate.contains("CODE")) { V_COMMUNE_SIG.CODE } else { COMMUNE.CODE })
             .from(V_COMMUNE_SIG)
             .where(COMMUNE.CODE_INSEE.eq(V_COMMUNE_SIG.CODE_INSEE))
             .execute()
@@ -136,6 +137,7 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
                     V_COMMUNE_SIG.CODE_POSTAL,
                     V_COMMUNE_SIG.GEOMETRIE,
                     V_COMMUNE_SIG.PPRIF,
+                    V_COMMUNE_SIG.CODE,
                 )
                     .from(V_COMMUNE_SIG)
                     .where(V_COMMUNE_SIG.CODE_INSEE.notIn(listCodeInseeDejaPresent)),

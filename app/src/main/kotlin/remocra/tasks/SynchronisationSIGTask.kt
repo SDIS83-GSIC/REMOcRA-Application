@@ -124,7 +124,7 @@ constructor(
                 TypeSynchronisation.MISE_A_JOUR_REMOCRA_COMMUNE -> {
                     /** Mise a jour des éléments déja présent coté remocra */
                     logManager.info("[${tableASynchroniser.typeSynchronisation}] Mise à jour de la table remocra.commune")
-                    val champsAUpdate = tableASynchroniser.listeChampsAUpdate ?: listOf("libelle", "code_postal", "geometrie", "pprif")
+                    val champsAUpdate = tableASynchroniser.listeChampsAUpdate ?: listOf("LIBELLE", "CODE_POSTAL", "GEOMETRIE", "PPRIF", "CODE")
                     logManager.info("[${tableASynchroniser.typeSynchronisation}] Champs à mettre à jour : $champsAUpdate")
                     communeRepository.updateFromEntrepotSig(champsAUpdate)
                     /** Insertion des nouveaux éléments */

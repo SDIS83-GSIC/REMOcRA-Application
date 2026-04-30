@@ -58,6 +58,7 @@ export enum TYPE_CHAMPS_UPDATE_SYNCHRO_COMMUNE {
   CODE_POSTAL = "Code postal",
   GEOMETRIE = "Géométrie",
   PPRIF = "PPRIF",
+  CODE = "Code",
 }
 
 export enum TYPE_SYNCHRONISATION_TABLE_SIG {
