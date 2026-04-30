@@ -2,6 +2,7 @@ package remocra.tasks
 
 import jakarta.inject.Inject
 import org.jooq.exception.IOException
+import org.slf4j.LoggerFactory
 import remocra.auth.AuthModule
 import remocra.auth.WrappedUserInfo
 import remocra.data.NotificationMailData
@@ -25,12 +26,15 @@ class SynchroUtilisateurTask @Inject constructor(
     private val keycloakClient: AuthModule.KeycloakClient,
 ) : SchedulableTask<SynchroUtilisateurTaskParameters, SchedulableTaskResults>() {
 
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     companion object {
         const val MAX_RESULTS = 100
     }
 
     override fun execute(parameters: SynchroUtilisateurTaskParameters?, userInfo: WrappedUserInfo): SchedulableTaskResults? {
-        var i = 0
+        var offset = 0
+        var nbGroupe = 1
         var fini = false
 
         val response = keycloakToken.getToken(
@@ -43,21 +47,26 @@ class SynchroUtilisateurTask @Inject constructor(
         val utilisateursRemocra = utilisateurRepository.getAll()
 
         // On désactive les utilisateurs avant la synchro
+        logManager.info("[TASK_SYNCHRO_UTILISATEUR] Désactivation de tous les utilisateurs")
         utilisateurRepository.desactiveAllUsers()
 
         var nbUtilisateurUpdate = 0
         var nbUtilisateurAdd = 0
         var nbUtilisateurSuppress = 0
 
+        logManager.info("[TASK_SYNCHRO_UTILISATEUR] Récupération et traitement des utilisateurs par groupes de $MAX_RESULTS")
+
         while (!fini) {
             try {
-                val usersKeycloak = keycloakApi.getUsers(authorization = token, first = i, max = i + MAX_RESULTS).execute()
+                logManager.info("[TASK_SYNCHRO_UTILISATEUR] Groupe d'utilisateurs #$nbGroupe")
+                val usersKeycloak = keycloakApi.getUsers(authorization = token, first = offset, max = offset + MAX_RESULTS).execute()
                 if (!usersKeycloak.isSuccessful) {
                     logManager.error("[TASK_SYNCHRO_UTILISATEUR] Erreur lors de la récupération des utilisateurs de keycloak : ${usersKeycloak.errorBody()}")
                     return null
                 }
 
                 if (usersKeycloak.body().isNullOrEmpty()) {
+                    logManager.info("[TASK_SYNCHRO_UTILISATEUR] Groupe d'utilisateurs vide, fin du traitement des utilisateurs")
                     fini = true
                 }
 
@@ -110,7 +119,8 @@ class SynchroUtilisateurTask @Inject constructor(
                             logManager.info(
                                 "[TASK_SYNCHRO_UTILISATEUR] L'utilisateur ${utilisateur.utilisateurUsername} a été inséré",
                             )
-                        } catch (_: Exception) {
+                        } catch (e: Exception) {
+                            logger.error("[TASK_SYNCHRO_UTILISATEUR] Erreur : ", e)
                             logManager.error("[TASK_SYNCHRO_UTILISATEUR] Erreur : impossible d'insérer l'utilisateur '${userRepresentation.username}' (présent an base avec des données incohérentes).")
                         }
                     }
@@ -119,10 +129,12 @@ class SynchroUtilisateurTask @Inject constructor(
                 logManager.error("[TASK_SYNCHRO_UTILISATEUR] Erreur lors de la synchronisation des utilisateurs : ${e.message}")
                 return null
             }
-            i += MAX_RESULTS
+            offset += MAX_RESULTS
+            nbGroupe++
         }
 
         if (parameters?.canSuppressUser == true) {
+            logManager.info("[TASK_SYNCHRO_UTILISATEUR] Suppression des utilisateurs restés inactifs")
             nbUtilisateurSuppress = utilisateurRepository.deleteUtilisateurInactif()
         }
 
