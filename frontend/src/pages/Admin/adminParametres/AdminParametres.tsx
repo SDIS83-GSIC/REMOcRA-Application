@@ -797,6 +797,72 @@ const AdminCartographie = ({
           />
         </AdminParametre>
 
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiHighlightDuree"
+            label="Durée (en secondes) de mise en surbrillance des PEI"
+            tooltipText={
+              "Lors d'une localisation de PEI depuis une source extérieure (PEI, IT, ...), on met en évidence brièvement les PEI concernés"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <ColorInput
+            name="pei.peiHighlightCouleur"
+            label="Couleur de mise en surbrillance des PEI"
+            tooltipText={
+              "Couleur du cercle de surbrillance des PEI lors d'une localisation de PEI depuis une source extérieure (PEI, IT, ...)"
+            }
+            required={false}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiHighlightRayon"
+            label="Rayon du cercle de surbrillance des PEI (en pixels)"
+            tooltipText={
+              "Rayon du cercle de surbrillance des PEI lors d'une localisation de PEI depuis une source extérieure (PEI, IT, ...)"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiHighlightLargeur"
+            label="Largeur du trait de surbrillance des PEI (en pixels)"
+            tooltipText={
+              "Largeur du trait du cercle de surbrillance des PEI lors d'une localisation de PEI depuis une source extérieure (PEI, IT, ...)"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.STRING}>
+          <ColorInput
+            name="pei.peiSelectionCouleur"
+            label="Couleur de sélection des PEI"
+            tooltipText={
+              "Couleur du cercle de sélection des PEI lors de la sélection sur la carte (Ctrl+clic ou sélection par zone)"
+            }
+            required={false}
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiSelectionRayon"
+            label="Rayon du cercle de sélection des PEI (en pixels)"
+            tooltipText={
+              "Rayon du cercle de sélection des PEI lors de la sélection sur la carte (Ctrl+clic ou sélection par zone)"
+            }
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="pei.peiSelectionLargeur"
+            label="Largeur du trait de sélection des PEI (en pixels)"
+            tooltipText={
+              "Largeur du trait du cercle de sélection des PEI lors de la sélection sur la carte (Ctrl+clic ou sélection par zone)"
+            }
+          />
+        </AdminParametre>
+
         <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
           <CheckBoxInput
             name="cartographie.rechercheBan"
@@ -1278,71 +1344,6 @@ const AdminPei = ({
             label="Tolérance en mètres pour les communes"
             tooltipText={
               "Permet de charger dans la liste déroulante des communes certaines dont le polygone n'est pas parfaitement en phase avec l'attendu"
-            }
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
-          <PositiveNumberInput
-            name="pei.peiHighlightDuree"
-            label="Durée (en secondes) de mise en surbrillance des PEI"
-            tooltipText={
-              "Lors d'une localisation de PEI depuis une source extérieure (PEI, IT, ...), on met en évidence brièvement les PEI concernés"
-            }
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.STRING}>
-          <ColorInput
-            name="pei.peiHighlightCouleur"
-            label="Couleur de mise en surbrillance des PEI"
-            tooltipText={
-              "Couleur du cercle de surbrillance des PEI lors d'une localisation de PEI depuis une source extérieure (PEI, IT, ...)"
-            }
-            required={false}
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
-          <PositiveNumberInput
-            name="pei.peiHighlightRayon"
-            label="Rayon du cercle de surbrillance des PEI (en pixels)"
-            tooltipText={
-              "Rayon du cercle de surbrillance des PEI lors d'une localisation de PEI depuis une source extérieure (PEI, IT, ...)"
-            }
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
-          <PositiveNumberInput
-            name="pei.peiHighlightLargeur"
-            label="Largeur du trait de surbrillance des PEI (en pixels)"
-            tooltipText={
-              "Largeur du trait du cercle de surbrillance des PEI lors d'une localisation de PEI depuis une source extérieure (PEI, IT, ...)"
-            }
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.STRING}>
-          <ColorInput
-            name="pei.peiSelectionCouleur"
-            label="Couleur de sélection des PEI"
-            tooltipText={
-              "Couleur du cercle de sélection des PEI lors de la sélection sur la carte (Ctrl+clic ou sélection par zone)"
-            }
-            required={false}
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
-          <PositiveNumberInput
-            name="pei.peiSelectionRayon"
-            label="Rayon du cercle de sélection des PEI (en pixels)"
-            tooltipText={
-              "Rayon du cercle de sélection des PEI lors de la sélection sur la carte (Ctrl+clic ou sélection par zone)"
-            }
-          />
-        </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
-          <PositiveNumberInput
-            name="pei.peiSelectionLargeur"
-            label="Largeur du trait de sélection des PEI (en pixels)"
-            tooltipText={
-              "Largeur du trait du cercle de sélection des PEI lors de la sélection sur la carte (Ctrl+clic ou sélection par zone)"
             }
           />
         </AdminParametre>
