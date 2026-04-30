@@ -68,7 +68,7 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
     /** Environnements autorisés à exécuter la tâche : par défaut, tous. A overrider au besoin */
     open fun getAuthorizedEnvironments(): Collection<Environment> = Environment.entries
 
-    var jobDb: remocra.db.jooq.remocra.tables.pojos.Job? = null
+    val jobDb: remocra.db.jooq.remocra.tables.pojos.Job?
         get() {
             return jobRepository.getLatestExecution(getType())
         }
@@ -185,50 +185,12 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
             }
         }
     }
-
-    fun stop(): Boolean {
-        if (!job.isActive) {
-            return false
-        }
-        val latestJob = jobDb
-        if (latestJob != null) {
-            transactionManager.transactionResult {
-                jobRepository.endJobError(latestJob.jobId)
-            }
-        }
-        this.job.cancel()
-        return job.isCancelled
-    }
-
-    fun getStatus(): Status {
-        if (!this::job.isInitialized) {
-            return Status(
-                job = jobDb,
-                isActive = false,
-                isCompleted = false,
-                isCancelled = false,
-            )
-        }
-        return Status(
-            job = jobDb,
-            isActive = job.isActive,
-            isCompleted = job.isCompleted,
-            isCancelled = job.isCancelled,
-        )
-    }
-
-    data class Status(
-        val job: remocra.db.jooq.remocra.tables.pojos.Job?,
-        val isActive: Boolean,
-        val isCompleted: Boolean,
-        val isCancelled: Boolean,
-    )
 }
 
 /**
  * Résultats d'une tâche.
  */
-open class JobResults()
+open class JobResults
 
 /**
  * Paramètres d'une tâche.
