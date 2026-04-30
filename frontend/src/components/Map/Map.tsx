@@ -469,6 +469,7 @@ export const useMapComponent = ({
               updateWhileAnimating: false,
               updateWhileInteracting: false,
               renderBuffer: 100,
+              opacity: layer.opacite,
             });
             optimizeVectorLayer(openlayer);
           } else if (layer.source === SOURCE_CARTO.GEOJSON) {
@@ -495,6 +496,7 @@ export const useMapComponent = ({
                 criseStatutMode,
               ) as ImageWMS,
               zIndex,
+              opacity: layer.opacite,
             });
           } else {
             openlayer = new TileLayer({
@@ -507,6 +509,7 @@ export const useMapComponent = ({
               zIndex,
               preload: 1,
               useInterimTilesOnError: false,
+              opacity: layer.opacite,
             });
             optimizeTileLayer(openlayer);
           }

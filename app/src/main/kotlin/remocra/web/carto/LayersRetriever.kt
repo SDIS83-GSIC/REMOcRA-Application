@@ -78,6 +78,7 @@ constructor(
                         },
                         hasStyle = coucheMetadataRepository.checkCoucheMetadata(couche.coucheId),
                         tuilage = couche.coucheTuilage,
+                        opacite = couche.coucheOpacite?.toDouble() ?: 1.0,
                     )
                 },
             )
@@ -108,5 +109,6 @@ constructor(
         val legende: String?,
         val hasStyle: Boolean,
         val tuilage: Boolean,
+        val opacite: Double,
     )
 }
