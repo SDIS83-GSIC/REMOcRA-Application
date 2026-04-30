@@ -33,10 +33,6 @@ class SynchroUtilisateurTask @Inject constructor(
     }
 
     override fun execute(parameters: SynchroUtilisateurTaskParameters?, userInfo: WrappedUserInfo): SchedulableTaskResults? {
-        var offset = 0
-        var nbGroupe = 1
-        var fini = false
-
         val response = keycloakToken.getToken(
             keycloakClient.clientId,
             keycloakClient.clientSecret,
@@ -44,113 +40,114 @@ class SynchroUtilisateurTask @Inject constructor(
 
         val token = "${response.tokenType} ${response.accessToken}"
 
-        val utilisateursRemocra = utilisateurRepository.getAll()
+        try {
+            transactionManager.transactionResult {
+                var offset = 0
+                var nbGroupe = 1
+                var fini = false
 
-        // On désactive les utilisateurs avant la synchro
-        logManager.info("[TASK_SYNCHRO_UTILISATEUR] Désactivation de tous les utilisateurs")
-        utilisateurRepository.desactiveAllUsers()
+                // On désactive les utilisateurs avant la synchro
+                logManager.info("[TASK_SYNCHRO_UTILISATEUR] Désactivation de tous les utilisateurs")
+                utilisateurRepository.desactiveAllUsers()
 
-        var nbUtilisateurUpdate = 0
-        var nbUtilisateurAdd = 0
-        var nbUtilisateurSuppress = 0
+                var nbUtilisateurUpdate = 0
+                var nbUtilisateurAdd = 0
+                var nbUtilisateurSuppress = 0
 
-        logManager.info("[TASK_SYNCHRO_UTILISATEUR] Récupération et traitement des utilisateurs par groupes de $MAX_RESULTS")
-
-        while (!fini) {
-            try {
-                logManager.info("[TASK_SYNCHRO_UTILISATEUR] Groupe d'utilisateurs #$nbGroupe")
-                val usersKeycloak = keycloakApi.getUsers(authorization = token, first = offset, max = offset + MAX_RESULTS).execute()
-                if (!usersKeycloak.isSuccessful) {
-                    logManager.error("[TASK_SYNCHRO_UTILISATEUR] Erreur lors de la récupération des utilisateurs de keycloak : ${usersKeycloak.errorBody()}")
-                    return null
-                }
-
-                if (usersKeycloak.body().isNullOrEmpty()) {
-                    logManager.info("[TASK_SYNCHRO_UTILISATEUR] Groupe d'utilisateurs vide, fin du traitement des utilisateurs")
-                    fini = true
-                }
-
-                for (userRepresentation: UserRepresentation in usersKeycloak.body()!!) {
-                    // Si l'utilisateur est déjà en base
-                    val utilisateurExistant = utilisateursRemocra.firstOrNull { it.utilisateurKeycloakId == userRepresentation.id }
-                    if (utilisateurExistant != null) {
-                        // On met à jour les propriétés si besoin
-                        if (utilisateurExistant.utilisateurEmail != userRepresentation.email ||
-                            utilisateurExistant.utilisateurNom != userRepresentation.lastName ||
-                            utilisateurExistant.utilisateurPrenom != userRepresentation.firstName ||
-                            (utilisateurExistant.utilisateurActif != userRepresentation.enabled)
-                        ) {
-                            utilisateurRepository.updateUtilisateur(
-                                idUtilisateur = utilisateurExistant.utilisateurId,
-                                nom = userRepresentation.lastName,
-                                prenom = userRepresentation.firstName,
-                                email = userRepresentation.email,
-                                actif = userRepresentation.enabled,
-                            )
-                            nbUtilisateurUpdate++
-                            logManager.info(
-                                "[TASK_SYNCHRO_UTILISATEUR] L'utilisateur" +
-                                    " ${utilisateurExistant.utilisateurUsername} a été mis à jour",
-                            )
+                logManager.info("[TASK_SYNCHRO_UTILISATEUR] Récupération et traitement des utilisateurs par groupes de $MAX_RESULTS")
+                while (!fini) {
+                    try {
+                        logManager.info("[TASK_SYNCHRO_UTILISATEUR] Groupe d'utilisateurs #$nbGroupe")
+                        val usersKeycloak = keycloakApi.getUsers(authorization = token, first = offset, max = MAX_RESULTS).execute()
+                        if (!usersKeycloak.isSuccessful) {
+                            logManager.error("[TASK_SYNCHRO_UTILISATEUR] Erreur lors de la récupération des utilisateurs de keycloak : ${usersKeycloak.errorBody()}")
+                            return@transactionResult
                         }
 
-                        // Si aucune valeur n'a été modifié et que l'utilisateur était actif, on le remet
-                        if (userRepresentation.enabled) {
-                            utilisateurRepository.setActif(true, utilisateurExistant.utilisateurId)
+                        if (usersKeycloak.body().isNullOrEmpty()) {
+                            logManager.info("[TASK_SYNCHRO_UTILISATEUR] Groupe d'utilisateurs vide, fin du traitement des utilisateurs")
+                            fini = true
                         }
-                    } else {
-                        try {
-                            val utilisateur = utilisateurRepository.insertUtilisateur(
-                                id = UUID.randomUUID(),
-                                email = userRepresentation.email,
-                                prenom = userRepresentation.firstName,
-                                nom = userRepresentation.lastName,
-                                username = userRepresentation.username,
-                                actif = userRepresentation.enabled,
-                                keycloakId = userRepresentation.id,
-                                organismeId = parametresProvider.get().mapParametres.getStringOrNull(ParametreEnum.ORGANISME_DEFAUT.name)?.let {
-                                    organismeRepository.getByCode(it)?.organismeId
-                                },
-                                profilUtilisateurId = parametresProvider.get().mapParametres.getStringOrNull(ParametreEnum.PROFIL_UTILISATEUR_DEFAUT.name)?.let {
-                                    profilUtilisateurRepository.getByCode(it)?.profilUtilisateurId
-                                },
-                            )
-                            nbUtilisateurAdd++
-                            logManager.info(
-                                "[TASK_SYNCHRO_UTILISATEUR] L'utilisateur ${utilisateur.utilisateurUsername} a été inséré",
-                            )
-                        } catch (e: Exception) {
-                            logger.error("[TASK_SYNCHRO_UTILISATEUR] Erreur : ", e)
-                            logManager.error("[TASK_SYNCHRO_UTILISATEUR] Erreur : impossible d'insérer l'utilisateur '${userRepresentation.username}' (présent en base avec des données incohérentes).")
+
+                        val listeUtilisateursRemocra = utilisateurRepository.getUtilisateurByKeycloakIds(usersKeycloak.body()?.map { it.id } ?: emptyList())
+                        for (userRepresentation: UserRepresentation in usersKeycloak.body()!!) {
+                            // Si l'utilisateur est déjà en base
+                            val utilisateurExistant = listeUtilisateursRemocra?.firstOrNull { it.utilisateurKeycloakId == userRepresentation.id }
+                            if (utilisateurExistant != null) {
+                                // On met à jour les propriétés si besoin
+                                if (utilisateurExistant.utilisateurEmail != userRepresentation.email ||
+                                    utilisateurExistant.utilisateurNom != userRepresentation.lastName ||
+                                    utilisateurExistant.utilisateurPrenom != userRepresentation.firstName
+                                ) {
+                                    utilisateurRepository.updateUtilisateur(
+                                        idUtilisateur = utilisateurExistant.utilisateurId,
+                                        nom = userRepresentation.lastName,
+                                        prenom = userRepresentation.firstName,
+                                        email = userRepresentation.email,
+                                        actif = userRepresentation.enabled,
+                                    )
+                                    nbUtilisateurUpdate++
+                                    logManager.info("[TASK_SYNCHRO_UTILISATEUR] L'utilisateur ${utilisateurExistant.utilisateurUsername} a été mis à jour")
+                                }
+                                // Si aucune valeur n'a été modifié et que l'utilisateur est actif dans Keycloak, on le remet
+                                if (userRepresentation.enabled) {
+                                    utilisateurRepository.setActif(true, utilisateurExistant.utilisateurId)
+                                }
+                            } else {
+                                try {
+                                    val utilisateur = utilisateurRepository.insertUtilisateur(
+                                        id = UUID.randomUUID(),
+                                        email = userRepresentation.email,
+                                        prenom = userRepresentation.firstName,
+                                        nom = userRepresentation.lastName,
+                                        username = userRepresentation.username,
+                                        actif = userRepresentation.enabled,
+                                        keycloakId = userRepresentation.id,
+                                        organismeId = parametresProvider.get().mapParametres.getStringOrNull(ParametreEnum.ORGANISME_DEFAUT.name)?.let {
+                                            organismeRepository.getByCode(it)?.organismeId
+                                        },
+                                        profilUtilisateurId = parametresProvider.get().mapParametres.getStringOrNull(ParametreEnum.PROFIL_UTILISATEUR_DEFAUT.name)?.let {
+                                            profilUtilisateurRepository.getByCode(it)?.profilUtilisateurId
+                                        },
+                                    )
+                                    nbUtilisateurAdd++
+                                    logManager.info("[TASK_SYNCHRO_UTILISATEUR] L'utilisateur ${utilisateur.utilisateurUsername} a été inséré")
+                                } catch (e: Exception) {
+                                    logger.error("[TASK_SYNCHRO_UTILISATEUR] Erreur : ", e)
+                                    logManager.error("[TASK_SYNCHRO_UTILISATEUR] Erreur : impossible d'insérer l'utilisateur '${userRepresentation.username}' (présent en base avec des données incohérentes).")
+                                }
+                            }
                         }
+                    } catch (e: IOException) {
+                        logger.error("[TASK_SYNCHRO_UTILISATEUR] Erreur lors de la synchronisation des utilisateurs : ", e)
+                        logManager.error("[TASK_SYNCHRO_UTILISATEUR] Erreur lors de la synchronisation des utilisateurs : ${e.message}")
+                        return@transactionResult
                     }
+                    offset += MAX_RESULTS
+                    nbGroupe++
                 }
-            } catch (e: IOException) {
-                logManager.error("[TASK_SYNCHRO_UTILISATEUR] Erreur lors de la synchronisation des utilisateurs : ${e.message}")
-                return null
+
+                if (parameters?.canSuppressUser == true) {
+                    logManager.info("[TASK_SYNCHRO_UTILISATEUR] Suppression des utilisateurs restés inactifs")
+                    nbUtilisateurSuppress = utilisateurRepository.deleteUtilisateurInactif()
+                }
+
+                logManager.info(
+                    "[TASK_SYNCHRO_UTILISATEUR] Synchronisation terminée : " +
+                        "$nbUtilisateurAdd utilisateur(s) ajouté(s), " +
+                        "$nbUtilisateurUpdate utilisateur(s) mis à jour et " +
+                        "$nbUtilisateurSuppress utilisateurs supprimés",
+                )
             }
-            offset += MAX_RESULTS
-            nbGroupe++
+            return null
+        } finally {
+            logManager.info("[TASK_SYNCHRO_UTILISATEUR] Révocation du token Keycloak")
+            keycloakToken.revokeToken(
+                response.accessToken,
+                keycloakClient.clientId,
+                keycloakClient.clientSecret,
+            ).execute()
         }
-
-        if (parameters?.canSuppressUser == true) {
-            logManager.info("[TASK_SYNCHRO_UTILISATEUR] Suppression des utilisateurs restés inactifs")
-            nbUtilisateurSuppress = utilisateurRepository.deleteUtilisateurInactif()
-        }
-
-        logManager.info(
-            "[TASK_SYNCHRO_UTILISATEUR] Synchronisation terminée : " +
-                "$nbUtilisateurAdd utilisateur(s) ajouté(s), " +
-                "$nbUtilisateurUpdate utilisateur(s) mis à jour et " +
-                "$nbUtilisateurSuppress utilisateurs supprimés",
-        )
-
-        keycloakToken.revokeToken(
-            response.accessToken,
-            keycloakClient.clientId,
-            keycloakClient.clientSecret,
-        ).execute()
-        return null
     }
 
     override fun checkParameters(parameters: SynchroUtilisateurTaskParameters?) {

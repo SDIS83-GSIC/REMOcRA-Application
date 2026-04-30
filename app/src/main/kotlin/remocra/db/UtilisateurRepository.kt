@@ -38,6 +38,11 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .where(UTILISATEUR.KEYCLOAK_ID.eq(keycloakId))
             .fetchOneInto()
 
+    fun getUtilisateurByKeycloakIds(keycloakId: List<String>): List<Utilisateur>? =
+        dsl.selectFrom(UTILISATEUR)
+            .where(UTILISATEUR.KEYCLOAK_ID.`in`(keycloakId))
+            .fetchInto()
+
     fun setActif(actif: Boolean, idUtilisateur: UUID) {
         dsl.update(UTILISATEUR)
             .set(UTILISATEUR.ACTIF, actif)
@@ -134,9 +139,6 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .set(UTILISATEUR.DERNIERE_CONNEXION, dateUtils.now())
             .returning()
             .fetchSingleInto()
-
-    fun getAll(): Collection<Utilisateur> =
-        dsl.selectFrom(UTILISATEUR).fetchInto()
 
     fun getZoneByOrganismeId(organismeId: UUID): ZoneIntegration? {
         return dsl.select(*ZONE_INTEGRATION.fields())
