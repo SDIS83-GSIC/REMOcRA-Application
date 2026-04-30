@@ -10,6 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.jooq.JSONB
+import org.slf4j.LoggerFactory
 import remocra.app.AppSettings
 import remocra.auth.WrappedUserInfo
 import remocra.data.NotificationMailData
@@ -46,6 +47,7 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
     lateinit var objectMapper: ObjectMapper
 
     protected lateinit var logManager: LogManager
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     @Inject
     lateinit var parametresProvider: Provider<ParametresData>
@@ -144,6 +146,7 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
                             jobRepository.endJobError(latestJob.jobId)
                         }
                     }
+                    logger.error("Tâche ${getType()} terminée en erreur", e)
                     logManager.error("Tâche terminée en erreur : ${e.message}")
                 }
             }
