@@ -5,6 +5,7 @@ package remocra.db.jooq.remocra.tables.pojos
 
 import remocra.db.jooq.remocra.enums.SourceCarto
 import java.io.Serializable
+import java.math.BigDecimal
 import java.util.Arrays
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -40,6 +41,7 @@ data class Couche(
     val coucheProtected: Boolean,
     val coucheTuilage: Boolean,
     val coucheFromGeoserver: Boolean,
+    val coucheOpacite: BigDecimal?,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -138,6 +140,13 @@ data class Couche(
         if (this.coucheFromGeoserver != o.coucheFromGeoserver) {
             return false
         }
+        if (this.coucheOpacite == null) {
+            if (o.coucheOpacite != null) {
+                return false
+            }
+        } else if (this.coucheOpacite != o.coucheOpacite) {
+            return false
+        }
         return true
     }
 
@@ -163,6 +172,7 @@ data class Couche(
         result = prime * result + this.coucheProtected.hashCode()
         result = prime * result + this.coucheTuilage.hashCode()
         result = prime * result + this.coucheFromGeoserver.hashCode()
+        result = prime * result + (if (this.coucheOpacite == null) 0 else this.coucheOpacite.hashCode())
         return result
     }
 
@@ -188,6 +198,7 @@ data class Couche(
         sb.append(", ").append(coucheProtected)
         sb.append(", ").append(coucheTuilage)
         sb.append(", ").append(coucheFromGeoserver)
+        sb.append(", ").append(coucheOpacite)
 
         sb.append(")")
         return sb.toString()

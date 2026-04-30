@@ -3,6 +3,7 @@
  */
 package remocra.db.jooq.remocra.tables
 
+import org.jooq.Check
 import org.jooq.Condition
 import org.jooq.Field
 import org.jooq.ForeignKey
@@ -40,6 +41,7 @@ import remocra.db.jooq.remocra.tables.GroupeFonctionnalites.GroupeFonctionnalite
 import remocra.db.jooq.remocra.tables.LCoucheCrise.LCoucheCrisePath
 import remocra.db.jooq.remocra.tables.LCoucheGroupeFonctionnalites.LCoucheGroupeFonctionnalitesPath
 import remocra.db.jooq.remocra.tables.LCoucheModule.LCoucheModulePath
+import java.math.BigDecimal
 import java.util.UUID
 import javax.annotation.processing.Generated
 import kotlin.collections.Collection
@@ -192,6 +194,11 @@ open class Couche(
      */
     val FROM_GEOSERVER: TableField<Record, Boolean?> = createField(DSL.name("couche_from_geoserver"), SQLDataType.BOOLEAN.nullable(false), this, "")
 
+    /**
+     * The column <code>remocra.couche.couche_opacite</code>.
+     */
+    val OPACITE: TableField<Record, BigDecimal?> = createField(DSL.name("couche_opacite"), SQLDataType.NUMERIC.defaultValue(DSL.field(DSL.raw("1.0"), SQLDataType.NUMERIC)), this, "")
+
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)
     private constructor(alias: Name, aliased: Table<Record>?, where: Condition?) : this(alias, null, null, null, aliased, null, where)
@@ -323,6 +330,9 @@ open class Couche(
      */
     val groupeFonctionnalites: GroupeFonctionnalitesPath
         get(): GroupeFonctionnalitesPath = lCoucheGroupeFonctionnalites().groupeFonctionnalites()
+    override fun getChecks(): List<Check<Record>> = listOf(
+        Internal.createCheck(this, DSL.name("couche_couche_opacite_check"), "(((couche_opacite >= (0)::numeric) AND (couche_opacite <= (1)::numeric)))", true),
+    )
     override fun `as`(alias: String): Couche = Couche(DSL.name(alias), this)
     override fun `as`(alias: Name): Couche = Couche(alias, this)
     override fun `as`(alias: Table<*>): Couche = Couche(alias.qualifiedName, this)

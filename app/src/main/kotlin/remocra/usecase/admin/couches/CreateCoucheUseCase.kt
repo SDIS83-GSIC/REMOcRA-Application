@@ -67,6 +67,7 @@ constructor(
                 coucheProtected = element.coucheFormData.coucheProtected,
                 coucheTuilage = element.coucheFormData.coucheTuilage.takeIf { element.coucheFormData.coucheSource == SourceCarto.WMS } ?: false,
                 coucheFromGeoserver = element.coucheFormData.coucheFromGeoserver,
+                coucheOpacite = 1.0.toBigDecimal(), // TODO
             ),
         )
 
