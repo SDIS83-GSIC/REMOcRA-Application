@@ -8,6 +8,7 @@ import {
   FileInput,
   FormContainer,
   Multiselect,
+  RangeInput,
   SelectInput,
   TextInput,
 } from "../../../components/Form/Form.tsx";
@@ -46,6 +47,7 @@ type CoucheType = {
   groupeFonctionnalitesZcList?: string[];
   groupeFonctionnalitesHorsZcList?: string[];
   moduleList?: string[];
+  coucheOpacite?: number;
 };
 
 export const getInitialValues = (
@@ -73,6 +75,7 @@ export const getInitialValues = (
   groupeCoucheId: groupeCoucheId,
   coucheIconeUrl: data?.coucheIconeUrl,
   coucheLegendeUrl: data?.coucheLegendeUrl,
+  coucheOpacite: data?.coucheOpacite,
 });
 
 export const prepareValues = (
@@ -102,6 +105,7 @@ export const prepareValues = (
       groupeFonctionnalitesZcList: couche.groupeFonctionnalitesZcList,
       moduleList: couche.moduleList,
       groupeCoucheId: couche.groupeCoucheId,
+      coucheOpacite: couche.coucheOpacite,
     }),
   );
 
@@ -402,6 +406,24 @@ const Couche = () => {
             required={false}
           />
         </Col>
+
+        {/* Section Style */}
+        <Col xs={12} className="p-2 bg-secondary mb-3 mt-3">
+          <h4 className={"m-0 p-0 text-center h6"}>Style</h4>
+        </Col>
+        <Row>
+          <Col xs={12} lg={3}>
+            <RangeInput
+              name="coucheOpacite"
+              label="Opacité"
+              min={0}
+              max={1}
+              step={0.01}
+              tooltipText="Opacité de la couche (0 = transparent, 1 = opaque)"
+              required={true}
+            />
+          </Col>
+        </Row>
 
         {/* Section Images */}
         <Col xs={12} className="p-2 bg-secondary mb-3 mt-3">

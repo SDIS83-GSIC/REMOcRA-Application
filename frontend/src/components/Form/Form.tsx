@@ -489,6 +489,11 @@ export const RangeInput = ({
 }: RangeInputType) => {
   const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
+  const currentValue =
+    field.value !== undefined && field.value !== null
+      ? Number(field.value)
+      : min;
+  const percentage = ((currentValue - min) / (max - min)) * 100;
 
   return (
     <DivWithError name={name} error={error}>
@@ -500,16 +505,33 @@ export const RangeInput = ({
         tooltipText={tooltipText}
         name={name}
       />
-      <FormRange
-        {...field}
-        id={name}
-        name={name}
-        required={required}
-        min={min}
-        max={max}
-        step={step}
-        disabled={disabled}
-      />
+      <div style={{ position: "relative" }}>
+        <FormRange
+          {...field}
+          id={name}
+          name={name}
+          required={required}
+          min={min}
+          max={max}
+          step={step}
+          disabled={disabled}
+        />
+        <div
+          className="position-absolute bg-primary text-white px-2 py-1 rounded fw-bold text-nowrap"
+          style={{
+            left: `${percentage}%`,
+            top: "-30px",
+            transform: "translateX(-50%)",
+            fontSize: "0.85rem",
+          }}
+        >
+          {currentValue.toFixed(2)}
+        </div>
+        <div className="d-flex justify-content-between mb-2">
+          <span className="text-muted">{min}</span>
+          <span className="text-muted">{max}</span>
+        </div>
+      </div>
     </DivWithError>
   );
 };

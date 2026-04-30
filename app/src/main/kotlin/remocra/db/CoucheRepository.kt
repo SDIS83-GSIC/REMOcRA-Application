@@ -113,6 +113,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             COUCHE.ICONE,
             COUCHE.LEGENDE,
             COUCHE.FROM_GEOSERVER,
+            COUCHE.OPACITE,
             // Multiset pour les groupes ZC
             DSL.multiset(
                 dsl.select(L_COUCHE_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID)
@@ -179,6 +180,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             .set(COUCHE.PROXY, couche.coucheProxy)
             .set(COUCHE.TUILAGE, couche.coucheTuilage)
             .set(COUCHE.FROM_GEOSERVER, couche.coucheFromGeoserver)
+            .set(COUCHE.OPACITE, couche.coucheOpacite)
             .execute()
     }
 
@@ -255,6 +257,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
             COUCHE.TUILAGE,
             COUCHE.ORDRE,
             COUCHE.FROM_GEOSERVER,
+            COUCHE.OPACITE,
             DSL.multiset(
                 dsl.select(L_COUCHE_MODULE.MODULE_TYPE)
                     .from(L_COUCHE_MODULE)

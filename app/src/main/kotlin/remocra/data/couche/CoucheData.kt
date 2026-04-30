@@ -17,6 +17,7 @@ data class CoucheData(
     val coucheActive: Boolean,
     val coucheProxy: Boolean,
     val coucheFromGeoserver: Boolean,
+    val coucheOpacite: Double,
     val groupeFonctionnalitesWithFlagLimiteZc: List<GroupeFonctionnalitesWithFlagLimiteZc>,
     val moduleList: String?,
     val coucheProtected: Boolean,
