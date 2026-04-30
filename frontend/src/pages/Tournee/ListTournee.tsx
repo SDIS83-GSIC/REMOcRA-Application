@@ -497,7 +497,7 @@ const ListTournee = ({
                   <Col>
                     <TooltipCustom
                       tooltipText={
-                        "Remettre à zéro l’avancement des mes tournées de ROP"
+                        "Remettre à zéro l’avancement de mes tournées de ROP"
                       }
                       tooltipId={"resetTourneeProgress"}
                     >
