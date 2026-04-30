@@ -254,12 +254,15 @@ const MapComponent = ({
 
   return (
     <div
-      className={classNames("map-wrapper", printable ? "isPrintable" : "")}
+      className={classNames(
+        "map-component-wrapper",
+        printable ? "isPrintable" : "",
+      )}
       id={"map-container"}
     >
       {map && mapElement && (
         <Row className={"map-toolbar noprint"}>
-          <Col xs={"auto"}>
+          <Col xs={"auto"} className={"map-toolbar-main-col"}>
             {/* Commun à toutes les cartes */}
             <MapToolbar
               ref={mapToolbarRef}
@@ -274,7 +277,11 @@ const MapComponent = ({
               availableLayers={availableLayers}
             />
           </Col>
-          <Col xs={"auto"}>{toolbarElement && toolbarElement}</Col>
+          <Col xs={"auto"} className={"map-toolbar-extra-col"}>
+            {toolbarElement && (
+              <div className={"map-toolbar-extra"}>{toolbarElement}</div>
+            )}
+          </Col>
         </Row>
       )}
       <div ref={mapElement} className={"map-map border border-" + variant} />

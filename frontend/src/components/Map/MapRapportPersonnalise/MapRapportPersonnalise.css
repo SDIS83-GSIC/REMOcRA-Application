@@ -4,7 +4,7 @@
   overflow: auto;
 }
 
-.map-wrapper-rapport .map-wrapper {
+.map-wrapper-rapport .map-component-wrapper {
   height: 100%;
   max-height: 100%;
   min-height: 0;

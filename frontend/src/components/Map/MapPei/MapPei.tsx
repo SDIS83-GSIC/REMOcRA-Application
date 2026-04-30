@@ -207,8 +207,8 @@ const MapPei = () => {
   return (
     <>
       <PageTitle title="Carte" icon={<IconPei />} />
-      <Row className={"map-wrapper"}>
-        <Col>
+      <Row className="map-page-wrapper">
+        <Col className="map-page-map-col">
           <MapComponent
             map={map}
             availableLayers={availableLayers}
