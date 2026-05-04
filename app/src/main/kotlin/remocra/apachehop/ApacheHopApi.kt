@@ -15,5 +15,5 @@ interface ApacheHopApi {
     ): Call<ApacheHopWorflow?>
 
     @GET("/")
-    fun ping(): Call<Void>?
+    fun ping(): Call<Unit>?
 }

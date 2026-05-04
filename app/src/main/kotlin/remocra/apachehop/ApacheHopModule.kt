@@ -38,7 +38,7 @@ class ApacheHopModule private constructor(
                     throw RuntimeException("Impossible d'utiliser Apache Hop: il n'est pas activé.")
                 }
 
-                override fun ping(): Call<Void>? {
+                override fun ping(): Call<Unit>? {
                     return null
                 }
             }
@@ -46,7 +46,7 @@ class ApacheHopModule private constructor(
 
         mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         val client = OkHttpClient.Builder()
-            .authenticator { route, response ->
+            .authenticator { _, response ->
                 val credential: String = Credentials.basic(apacheHopSettings.username, apacheHopSettings.password)
                 response.request().newBuilder()
                     .header("Authorization", credential)
