@@ -39,8 +39,8 @@ constructor(
         val nbDocument = params?.limit ?: moduleRepository.getById(moduleId).moduleNbDocument ?: defaultNbDocument
 
         // Puis on retourne la liste des documents / courrier
-        if (moduleType.uppercase() == TypeModule.DOCUMENT.literal) {
-            return thematiqueRepository.getDocumentHabilitableWithThematique(listeThematiqueId, nbDocument, groupeFonctionnalitesId, userInfo.isSuperAdmin, params)
+        return if (moduleType.uppercase() == TypeModule.DOCUMENT.literal) {
+            thematiqueRepository.getDocumentHabilitableWithThematique(listeThematiqueId, nbDocument, groupeFonctionnalitesId, userInfo.isSuperAdmin, params)
                 .map {
                     DocumentCourrierData(
                         id = it.documentHabilitableId,
@@ -50,7 +50,7 @@ constructor(
                 }
             // COURRIER
         } else {
-            return thematiqueRepository.getCourrierWithThematiqueForAccueil(listeThematiqueId, nbDocument, userInfo)
+            thematiqueRepository.getCourrierWithThematiqueForAccueil(listeThematiqueId, nbDocument, userInfo)
                 .map {
                     DocumentCourrierData(
                         id = it.id,

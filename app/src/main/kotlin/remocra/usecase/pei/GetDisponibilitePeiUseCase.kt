@@ -14,7 +14,7 @@ class GetDisponibilitePeiUseCase @Inject constructor(
 ) : AbstractUseCase() {
 
     fun execute(element: PeiData): DisponibiliteResult {
-        if (TypePei.PIBI == element.peiTypePei) {
+        return if (TypePei.PIBI == element.peiTypePei) {
             val elementConcret = element as PibiData
             val lastVisite = visiteRepository.getLastVisiteDebitPression(element.peiId)
 
@@ -32,7 +32,7 @@ class GetDisponibilitePeiUseCase @Inject constructor(
                 penaCapaciteIncertaine = null,
             )
 
-            return calculDispoUseCase.execute(peiForCalculDispoData)
+            calculDispoUseCase.execute(peiForCalculDispoData)
         } else {
             val elementConcret = element as PenaData
 
@@ -50,7 +50,7 @@ class GetDisponibilitePeiUseCase @Inject constructor(
                 penaCapaciteIncertaine = elementConcret.penaCapaciteIncertaine,
             )
 
-            return calculDispoUseCase.execute(peiForCalculDispoData)
+            calculDispoUseCase.execute(peiForCalculDispoData)
         }
     }
 }

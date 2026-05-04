@@ -39,10 +39,10 @@ class GeoserverHealthChecker @Inject constructor(
         }
 
         response.use {
-            if (response.isSuccessful || response.isRedirect) {
-                return Health.Success(null)
+            return if (response.isSuccessful || response.isRedirect) {
+                Health.Success(null)
             } else {
-                return Health.Failure(response.body()?.string())
+                Health.Failure(response.body()?.string())
             }
         }
     }
