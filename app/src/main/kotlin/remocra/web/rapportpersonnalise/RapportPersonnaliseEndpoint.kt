@@ -39,6 +39,8 @@ import remocra.web.AbstractEndpoint
 import java.nio.charset.StandardCharsets
 import java.util.UUID
 
+private const val CONTENT_DISPOSITION = "Content-Disposition"
+
 @Path("/rapport-personnalise")
 class RapportPersonnaliseEndpoint : AbstractEndpoint() {
 
@@ -206,7 +208,7 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
         element: GenererRapportPersonnaliseData,
     ): Response =
         Response.ok(exportDataRapportPersonnaliseUseCase.execute(securityContext.userInfo, element).toString(StandardCharsets.ISO_8859_1))
-            .header("Content-Disposition", "attachment; filename=\"rapport-personnalise-${dateUtils.now()}.csv\"")
+            .header(CONTENT_DISPOSITION, "attachment; filename=\"rapport-personnalise-${dateUtils.now()}.csv\"")
             .build()
 
     @POST
@@ -217,7 +219,7 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
         element: GenererRapportPersonnaliseData,
     ): Response =
         Response.ok(exportDataCarteRapportPersonnaliseUseCase.execute(element))
-            .header("Content-Disposition", "attachment; filename=\"rapport-personnalise-${dateUtils.now()}.zip")
+            .header(CONTENT_DISPOSITION, "attachment; filename=\"rapport-personnalise-${dateUtils.now()}.zip")
             .build()
 
     @GET
@@ -230,7 +232,7 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
         rapportPersonnaliseId: UUID,
     ): Response {
         return Response.ok(exportConfRapportPersonnaliseUseCase.execute(rapportPersonnaliseId))
-            .header("Content-Disposition", "attachment; filename=\"rapport-personnalise.zip\"")
+            .header(CONTENT_DISPOSITION, "attachment; filename=\"rapport-personnalise.zip\"")
             .build()
     }
 

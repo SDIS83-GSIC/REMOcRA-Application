@@ -18,6 +18,8 @@ import java.util.UUID
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
+private const val indexName = "index.html"
+
 class ExportCriseUseCase
 @Inject
 constructor(
@@ -59,11 +61,11 @@ constructor(
             hasMessage = hasMessage,
         )
 
-        documentUtils.createFile(generateHTML(elementHtml), "index.html", GlobalConstants.DOSSIER_DOCUMENT_CRISE)
+        documentUtils.createFile(generateHTML(elementHtml), indexName, GlobalConstants.DOSSIER_DOCUMENT_CRISE)
 
         val docs = criseRepository.getAllDocumentsFromCrise(criseId = criseId, params = null)
         val files = mutableListOf(
-            GlobalConstants.DOSSIER_DOCUMENT_CRISE.resolve("index.html").toFile() to "index.html",
+            GlobalConstants.DOSSIER_DOCUMENT_CRISE.resolve(indexName).toFile() to indexName,
         )
 
         if (hasDoc) {

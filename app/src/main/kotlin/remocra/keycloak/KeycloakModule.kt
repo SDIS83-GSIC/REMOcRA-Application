@@ -13,6 +13,8 @@ import remocra.healthcheck.HealthModule
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
 
+private const val BASE_URI = "base-uri"
+
 class KeycloakModule(
     private val apiBaseUrl: HttpUrl,
     private val tokenBaseUrl: HttpUrl,
@@ -68,14 +70,14 @@ class KeycloakModule(
     companion object {
         fun create(config: Config): KeycloakModule {
             return KeycloakModule(
-                HttpUrl.get(config.getString("base-uri"))
+                HttpUrl.get(config.getString(BASE_URI))
                     .newBuilder()
                     .addPathSegment("admin")
                     .addPathSegment("realms")
                     .addPathSegment(config.getString("realm"))
                     .addPathSegment("") // trailing slash
                     .build(),
-                HttpUrl.get(config.getString("base-uri"))
+                HttpUrl.get(config.getString(BASE_URI))
                     .newBuilder()
                     .addPathSegment("realms")
                     .addPathSegment(config.getString("realm"))
@@ -83,7 +85,7 @@ class KeycloakModule(
                     .addPathSegment("openid-connect")
                     .addPathSegment("") // trailing slash
                     .build(),
-                HttpUrl.get(config.getString("base-uri"))
+                HttpUrl.get(config.getString(BASE_URI))
                     .newBuilder()
                     .addPathSegment("realms")
                     .addPathSegment(config.getString("realm"))
