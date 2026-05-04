@@ -20,11 +20,12 @@ constructor(
 ) : HealthChecker(critical = true) {
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    private val revokeTokenCallback = object : Callback<Void> {
-        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+    private val revokeTokenCallback = object : Callback<Unit> {
+        override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+            // Rien à faire
         }
 
-        override fun onFailure(call: Call<Void>, t: Throwable) {
+        override fun onFailure(call: Call<Unit>, t: Throwable) {
             logger.error("Erreur à la révocation du token obtenu lors du healthcheck", t)
         }
     }
@@ -49,8 +50,7 @@ constructor(
                     .enqueue(revokeTokenCallback)
             }
             return Health.Success(null)
-        } else {
-            return Health.Failure(response.errorBody()!!.string())
         }
+        return Health.Failure(response.errorBody()!!.string())
     }
 }
