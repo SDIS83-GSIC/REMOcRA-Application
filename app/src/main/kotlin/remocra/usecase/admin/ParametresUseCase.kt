@@ -160,6 +160,7 @@ constructor(
         val utilisateur = ParametresSectionUtilisateur(
             organismeDefaut = mapParametres.getStringOrNull(ParametreEnum.ORGANISME_DEFAUT.name),
             profilUtilisateurDefaut = mapParametres.getStringOrNull(ParametreEnum.PROFIL_UTILISATEUR_DEFAUT.name),
+            organismeProfilMajSynchro = mapParametres.getBoolean(ParametreEnum.ORGANISME_PROFIL_MAJ_SYNCHRO.name),
         )
 
         val courrier = ParametresSectionCourrier(

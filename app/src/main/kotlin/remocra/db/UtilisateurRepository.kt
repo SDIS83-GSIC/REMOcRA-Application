@@ -60,12 +60,34 @@ class UtilisateurRepository @Inject constructor(
             .execute()
     }
 
-    fun updateUtilisateur(idUtilisateur: UUID, nom: String?, prenom: String?, email: String, actif: Boolean) {
+    fun updateUtilisateur(
+        idUtilisateur: UUID,
+        nom: String?,
+        prenom: String?,
+        email: String,
+        actif: Boolean,
+        organismeId: UUID? = null,
+        profilUtilisateurId: UUID? = null,
+    ) {
         dsl.update(UTILISATEUR)
             .set(UTILISATEUR.ACTIF, actif)
             .set(UTILISATEUR.NOM, nom)
             .set(UTILISATEUR.PRENOM, prenom)
             .set(UTILISATEUR.EMAIL, email)
+            .let {
+                if (organismeId != null) {
+                    it.set(UTILISATEUR.ORGANISME_ID, organismeId)
+                } else {
+                    it
+                }
+            }
+            .let {
+                if (profilUtilisateurId != null) {
+                    it.set(UTILISATEUR.PROFIL_UTILISATEUR_ID, profilUtilisateurId)
+                } else {
+                    it
+                }
+            }
             .where(UTILISATEUR.ID.eq(idUtilisateur))
             .and(UTILISATEUR.USERNAME.ne(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
             .execute()
@@ -223,6 +245,7 @@ class UtilisateurRepository @Inject constructor(
         val conditionAdmin = when {
             user.isSuperAdmin || user.droits?.contains(Droit.ADMIN_UTILISATEURS_A) == true -> DSL.trueCondition()
             user.affiliatedOrganismeIds?.isNotEmpty() == true && user.droits?.contains(Droit.ADMIN_UTILISATEURS_ORGA_A) == true -> ORGANISME.ID.`in`(user.affiliatedOrganismeIds)
+
             else -> DSL.falseCondition()
         }
 
@@ -488,4 +511,13 @@ class UtilisateurRepository @Inject constructor(
         .where(UTILISATEUR.ACTIF.isTrue)
         .orderBy(UTILISATEUR.USERNAME)
         .fetchInto()
+
+    fun updateOrganismeAndProfil(idUtilisateur: UUID, profilUtilisateurId: UUID?, organismeId: UUID?) {
+        dsl.update(UTILISATEUR)
+            .set(UTILISATEUR.PROFIL_UTILISATEUR_ID, profilUtilisateurId)
+            .set(UTILISATEUR.ORGANISME_ID, organismeId)
+            .where(UTILISATEUR.ID.eq(idUtilisateur))
+            .and(UTILISATEUR.USERNAME.ne(GlobalConstants.UTILISATEUR_SYSTEME_USERNAME))
+            .execute()
+    }
 }

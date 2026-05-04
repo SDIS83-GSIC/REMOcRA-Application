@@ -476,4 +476,10 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
                 ),
             )
             .fetchInto()
+
+    fun getProfilOrganismeId(organismeId: UUID): UUID? =
+        dsl.select(ORGANISME.PROFIL_ORGANISME_ID)
+            .from(ORGANISME)
+            .where(ORGANISME.ID.eq(organismeId))
+            .fetchOneInto()
 }

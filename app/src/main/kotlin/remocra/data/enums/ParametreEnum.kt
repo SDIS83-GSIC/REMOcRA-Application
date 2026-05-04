@@ -108,6 +108,7 @@ enum class ParametreEnum(val section: ParametreSection) {
     // Utilisateur
     ORGANISME_DEFAUT(ParametreSection.UTILISATEUR),
     PROFIL_UTILISATEUR_DEFAUT(ParametreSection.UTILISATEUR),
+    ORGANISME_PROFIL_MAJ_SYNCHRO(ParametreSection.UTILISATEUR),
 
     // Courrier
     COURRIER_RESTRICTION_ZC(ParametreSection.COURRIER),

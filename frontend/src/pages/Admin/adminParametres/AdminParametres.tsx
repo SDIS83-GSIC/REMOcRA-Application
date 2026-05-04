@@ -133,6 +133,7 @@ type ParametresSectionRcci = {
 type ParametresSectionUtilisateur = {
   organismeDefaut: string;
   profilUtilisateurDefaut: string;
+  organismeProfilMajSynchro: boolean;
 };
 
 type ParametresSectionCourrier = {
@@ -1948,6 +1949,14 @@ const AdminUtilisateur = ({
             "Aucun groupe de fonctionnalités trouvé."
           )}
         </div>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="utilisateur.organismeProfilMajSynchro"
+            label="Mettre à jour l'organisme et le profil de l'utilisateur lors de la synchronisation utilisateur"
+            checked={values?.organismeProfilMajSynchro}
+            tooltipText="Si activé, l'organisme et le profil de l'utilisateur seront mis à jour lors de chaque synchronisation à partir du LDAP. Les attributs Keycloak 'organismeCode' et 'profilUtilisateurCode' doivent être présents (configurez un mapper LDAP dans Keycloak pour mapper vos attributs LDAP vers 'organismeCode' et 'profilUtilisateurCode'). Si l'un de ces attributs est absent, l'utilisateur sera désactivé. Si le paramètre est désactivé, seules les données personnelles (nom, prénom, email) seront mises à jour, tout en conservant l'organisme et le profil affectés dans REMOcRA."
+          ></CheckBoxInput>
+        </AdminParametre>
       </>
     )
   );
