@@ -314,6 +314,7 @@ docker compose run --rm \
     -e KEYCLOAK_URL=http://localhost:8080 \
     -e KEYCLOAK_USER=<super_username> \
     -e KEYCLOAK_PASSWORD=<super_password> \
+    -e CLIENT_SECRET_APACHE_HOP=<client_secret_apache_hop> \
     keycloak keycloak-config-cli
 ----
 
