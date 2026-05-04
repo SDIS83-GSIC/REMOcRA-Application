@@ -55,5 +55,7 @@ constructor(
         return element
     }
 
-    override fun checkContraintes(userInfo: WrappedUserInfo, element: CoucheMetadata) {}
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: CoucheMetadata) {
+        // no op
+    }
 }

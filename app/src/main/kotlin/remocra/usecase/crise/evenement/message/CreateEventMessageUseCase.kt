@@ -26,6 +26,7 @@ constructor(
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: MessageData) {
+        // no op
     }
 
     override fun execute(userInfo: WrappedUserInfo, element: MessageData): MessageData {

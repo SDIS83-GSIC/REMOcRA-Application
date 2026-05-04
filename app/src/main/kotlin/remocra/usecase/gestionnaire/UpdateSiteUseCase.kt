@@ -51,5 +51,6 @@ constructor(
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: SiteData) {
+        // no op
     }
 }

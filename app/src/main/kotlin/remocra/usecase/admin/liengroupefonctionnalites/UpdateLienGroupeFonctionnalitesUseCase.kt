@@ -21,7 +21,9 @@ class UpdateLienGroupeFonctionnalitesUseCase @Inject constructor(private val gro
         }
     }
 
-    override fun postEvent(element: Collection<GroupeFonctionnalitesData>, userInfo: WrappedUserInfo) { }
+    override fun postEvent(element: Collection<GroupeFonctionnalitesData>, userInfo: WrappedUserInfo) {
+        // no op
+    }
 
     override fun execute(userInfo: WrappedUserInfo, element: Collection<GroupeFonctionnalitesData>): Collection<GroupeFonctionnalitesData> {
         element.forEach { groupeFonctionnalites ->
@@ -38,5 +40,7 @@ class UpdateLienGroupeFonctionnalitesUseCase @Inject constructor(private val gro
         return element
     }
 
-    override fun checkContraintes(userInfo: WrappedUserInfo, element: Collection<GroupeFonctionnalitesData>) { }
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: Collection<GroupeFonctionnalitesData>) {
+        // no op
+    }
 }

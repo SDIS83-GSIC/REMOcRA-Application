@@ -54,5 +54,7 @@ class UpdateOldebGeometryUseCase @Inject constructor(
         return element
     }
 
-    override fun checkContraintes(userInfo: WrappedUserInfo, element: OldebGeometryFormData) {}
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: OldebGeometryFormData) {
+        // no op
+    }
 }

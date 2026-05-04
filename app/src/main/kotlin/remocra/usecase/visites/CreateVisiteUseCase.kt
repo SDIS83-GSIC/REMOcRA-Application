@@ -32,6 +32,7 @@ class CreateVisiteUseCase @Inject constructor(
 ) : AbstractCUDUseCase<VisiteData>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
+        // no op
     }
 
     override fun postEvent(element: VisiteData, userInfo: WrappedUserInfo) {

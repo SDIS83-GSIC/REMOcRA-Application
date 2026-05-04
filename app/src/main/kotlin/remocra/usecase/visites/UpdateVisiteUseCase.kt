@@ -30,6 +30,7 @@ class UpdateVisiteUseCase @Inject constructor(
 ) : AbstractCUDUseCase<VisiteData>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
+        // no op
     }
 
     override fun postEvent(element: VisiteData, userInfo: WrappedUserInfo) {

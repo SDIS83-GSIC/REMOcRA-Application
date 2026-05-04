@@ -103,5 +103,6 @@ constructor(
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: DocumentHabilitableData) {
+        // no op
     }
 }

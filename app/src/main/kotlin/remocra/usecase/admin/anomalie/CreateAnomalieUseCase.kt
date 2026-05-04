@@ -78,5 +78,7 @@ constructor(
         return element
     }
 
-    override fun checkContraintes(userInfo: WrappedUserInfo, element: AnomalieData) {}
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: AnomalieData) {
+        // no op
+    }
 }

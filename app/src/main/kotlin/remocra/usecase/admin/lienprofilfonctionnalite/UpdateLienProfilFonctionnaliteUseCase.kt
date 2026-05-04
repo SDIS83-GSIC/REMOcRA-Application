@@ -26,7 +26,9 @@ class UpdateLienProfilFonctionnaliteUseCase @Inject constructor(
         }
     }
 
-    override fun postEvent(element: LienProfilFonctionnaliteUpdateData, userInfo: WrappedUserInfo) { }
+    override fun postEvent(element: LienProfilFonctionnaliteUpdateData, userInfo: WrappedUserInfo) {
+        // no op
+    }
 
     override fun execute(userInfo: WrappedUserInfo, element: LienProfilFonctionnaliteUpdateData): LienProfilFonctionnaliteUpdateData {
         lienProfilFonctionnaliteRepository.update(element.newValue, element.profilOrganismeId, element.profilUtilisateurId)

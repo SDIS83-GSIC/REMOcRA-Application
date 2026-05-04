@@ -111,5 +111,6 @@ constructor(
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: CriseDataMerge) {
+        // no op
     }
 }

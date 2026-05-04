@@ -25,7 +25,9 @@ constructor(
         }
     }
 
-    override fun checkContraintes(userInfo: WrappedUserInfo, element: DashboardConfigData) {}
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: DashboardConfigData) {
+        // no op
+    }
 
     override fun execute(userInfo: WrappedUserInfo, element: DashboardConfigData): DashboardConfigData {
         dashboardRepository.deleteProfil(element.dashboardId)

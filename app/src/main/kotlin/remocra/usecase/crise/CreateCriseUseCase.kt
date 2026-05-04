@@ -28,6 +28,7 @@ constructor(
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: CriseData) {
+        // no op
     }
 
     override fun execute(userInfo: WrappedUserInfo, element: CriseData): CriseData {

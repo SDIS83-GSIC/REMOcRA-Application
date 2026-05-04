@@ -20,12 +20,16 @@ class DeleteLienProfilFonctionnaliteUseCase @Inject constructor(private val lien
         }
     }
 
-    override fun postEvent(element: LProfilUtilisateurOrganismeGroupeFonctionnalites, userInfo: WrappedUserInfo) { }
+    override fun postEvent(element: LProfilUtilisateurOrganismeGroupeFonctionnalites, userInfo: WrappedUserInfo) {
+        // no op
+    }
 
     override fun execute(userInfo: WrappedUserInfo, element: LProfilUtilisateurOrganismeGroupeFonctionnalites): LProfilUtilisateurOrganismeGroupeFonctionnalites {
         lienProfilFonctionnaliteRepository.delete(element)
         return element
     }
 
-    override fun checkContraintes(userInfo: WrappedUserInfo, element: LProfilUtilisateurOrganismeGroupeFonctionnalites) { }
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: LProfilUtilisateurOrganismeGroupeFonctionnalites) {
+        // no op
+    }
 }

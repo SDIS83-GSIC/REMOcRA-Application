@@ -72,5 +72,7 @@ class DeleteOldebUseCase @Inject constructor(
         return element
     }
 
-    override fun checkContraintes(userInfo: WrappedUserInfo, element: Oldeb) {}
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: Oldeb) {
+        // no op
+    }
 }

@@ -47,5 +47,7 @@ class CreateGroupeFonctionnalitesUseCase @Inject constructor(private val groupeF
         return element
     }
 
-    override fun checkContraintes(userInfo: WrappedUserInfo, element: GroupeFonctionnalitesData) {}
+    override fun checkContraintes(userInfo: WrappedUserInfo, element: GroupeFonctionnalitesData) {
+        // no op
+    }
 }

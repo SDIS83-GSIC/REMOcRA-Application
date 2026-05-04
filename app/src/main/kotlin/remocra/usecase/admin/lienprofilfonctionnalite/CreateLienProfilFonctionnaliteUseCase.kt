@@ -26,7 +26,9 @@ class CreateLienProfilFonctionnaliteUseCase @Inject constructor(
         }
     }
 
-    override fun postEvent(element: LProfilUtilisateurOrganismeGroupeFonctionnalites, userInfo: WrappedUserInfo) { }
+    override fun postEvent(element: LProfilUtilisateurOrganismeGroupeFonctionnalites, userInfo: WrappedUserInfo) {
+        // no op
+    }
 
     override fun execute(userInfo: WrappedUserInfo, element: LProfilUtilisateurOrganismeGroupeFonctionnalites): LProfilUtilisateurOrganismeGroupeFonctionnalites {
         lienProfilFonctionnaliteRepository.insert(element)

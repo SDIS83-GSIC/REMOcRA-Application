@@ -20,7 +20,11 @@ class PeiComputeVerificationStrategy : VerificationStrategy, AbstractCUDPeiUseCa
         }
     }
 
-    override fun executeSpecific(userInfo: WrappedUserInfo, element: PeiData) { }
+    override fun executeSpecific(userInfo: WrappedUserInfo, element: PeiData) {
+        // no op
+    }
 
-    override fun checkDroits(userInfo: WrappedUserInfo) { }
+    override fun checkDroits(userInfo: WrappedUserInfo) {
+        // no op
+    }
 }

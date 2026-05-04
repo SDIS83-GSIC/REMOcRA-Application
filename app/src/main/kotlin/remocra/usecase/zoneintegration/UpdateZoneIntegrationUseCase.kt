@@ -50,5 +50,6 @@ constructor(
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: ZoneIntegrationData) {
+        // no op
     }
 }
