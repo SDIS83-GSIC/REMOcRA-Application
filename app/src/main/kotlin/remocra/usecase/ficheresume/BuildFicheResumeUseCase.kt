@@ -30,7 +30,7 @@ constructor(
         val listeResumeElement: MutableList<ResumeElement> = mutableListOf()
 
         // Puis on va chercher toutes les informations en fonction du type élément
-        listeElement.forEach { it ->
+        listeElement.forEach {
             when (it.ficheResumeBlocTypeResumeData) {
                 TypeResumeElement.TOURNEE -> {
                     listeResumeElement.add(

@@ -71,7 +71,7 @@ constructor(
             ),
         )
 
-        anomalieRepository.deletePoidsAnomalieByAnomalieId(element.anomalieId, element.poidsAnomalieList?.map { it -> it.poidsAnomalieId })
+        anomalieRepository.deletePoidsAnomalieByAnomalieId(element.anomalieId, element.poidsAnomalieList?.map { it.poidsAnomalieId })
 
         element.poidsAnomalieList?.filter { p -> !p.isEmpty }?.forEach {
                 poidsAnomalie ->

@@ -53,7 +53,7 @@ class ReseauRepository @Inject constructor(
         return dsl.selectFrom(RESEAU)
             .where(RESEAU.ID.eq(id))
             .and(
-                useReseauImporteWithCourant.let { it ->
+                useReseauImporteWithCourant.let {
                     if (it) {
                         RESEAU.ETUDE_ID.eq(idReseau).or(RESEAU.ETUDE_ID.isNull)
                     } else {
