@@ -49,11 +49,11 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
     }
 
     fun getPeiList(): List<PeiForApiMobileData> {
-        val X = DSL.field("round(st_x({0})::numeric, 2)", PEI.GEOMETRIE).`as`("x")
-        val Y = DSL.field("round(st_y({0})::numeric, 2)", PEI.GEOMETRIE).`as`("y")
-        val LON =
+        val xField = DSL.field("round(st_x({0})::numeric, 2)", PEI.GEOMETRIE).`as`("x")
+        val yField = DSL.field("round(st_y({0})::numeric, 2)", PEI.GEOMETRIE).`as`("y")
+        val lonField =
             DSL.field("round(st_x(st_transform({0}, 4326))::numeric, 8)", PEI.GEOMETRIE).`as`("lon")
-        val LAT =
+        val latField =
             DSL.field("round(st_y(st_transform({0}, 4326))::numeric, 8)", PEI.GEOMETRIE).`as`("lat")
 
         return dsl
@@ -64,10 +64,10 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                 PEI.DOMAINE_ID.`as`("domaineId"),
                 PENA.DISPONIBILITE_HBE.`as`("dispoHbe"),
                 PEI.DISPONIBILITE_TERRESTRE.`as`("dispoTerrestre"),
-                X,
-                Y,
-                LON,
-                LAT,
+                xField,
+                yField,
+                lonField,
+                latField,
                 PEI.NUMERO_COMPLET,
                 PEI.TYPE_PEI,
                 PEI.EN_FACE,
@@ -290,20 +290,24 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
     private fun buildJoinClauses(
         selectedFields: List<PeiCaracteristique>,
         onClause: SelectOnConditionStep<Record?>,
-        mapAlias: MutableMap<PeiCaracteristique?, TableImpl<*>?>,
+        mapAlias: Map<PeiCaracteristique?, TableImpl<*>?>,
     ): SelectOnConditionStep<Record?> {
         var onClause = onClause
         var jointureNature = false
         var jointureDiametre = false
+        fun buildJoinNature() {
+            if (!jointureNature) {
+                onClause =
+                    onClause
+                        .innerJoin(NATURE)
+                        .on(PEI.NATURE_ID.eq(NATURE.ID))
+                jointureNature = true
+            }
+        }
+
         for (caracteristique in selectedFields) {
             when (caracteristique) {
-                PeiCaracteristique.NATURE_PEI -> if (!jointureNature) {
-                    onClause =
-                        onClause
-                            .innerJoin(NATURE)
-                            .on(PEI.NATURE_ID.eq(NATURE.ID))
-                    jointureNature = true
-                }
+                PeiCaracteristique.NATURE_PEI -> buildJoinNature()
 
                 PeiCaracteristique.TYPE_DECI ->
                     onClause =
@@ -312,17 +316,17 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                             .on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
 
                 PeiCaracteristique.AUTORITE_POLICE -> {
-                    val autoriteDeci: Organisme = mapAlias.get(PeiCaracteristique.AUTORITE_POLICE) as Organisme
+                    val autoriteDeci: Organisme = mapAlias[PeiCaracteristique.AUTORITE_POLICE] as Organisme
                     onClause = onClause.leftJoin(autoriteDeci).on(PEI.AUTORITE_DECI_ID.eq(autoriteDeci.ID))
                 }
 
                 PeiCaracteristique.SERVICE_PUBLIC -> {
-                    val servicePublic: Organisme = mapAlias.get(PeiCaracteristique.SERVICE_PUBLIC) as Organisme
+                    val servicePublic: Organisme = mapAlias[PeiCaracteristique.SERVICE_PUBLIC] as Organisme
                     onClause = onClause.leftJoin(servicePublic).on(PEI.SERVICE_PUBLIC_DECI_ID.eq(servicePublic.ID))
                 }
 
                 PeiCaracteristique.MAINTENANCE_CTP -> {
-                    val maintenanceCtp: Organisme = mapAlias.get(PeiCaracteristique.MAINTENANCE_CTP) as Organisme
+                    val maintenanceCtp: Organisme = mapAlias[PeiCaracteristique.MAINTENANCE_CTP] as Organisme
                     onClause =
                         onClause.leftJoin(maintenanceCtp).on(PEI.MAINTENANCE_DECI_ID.eq(maintenanceCtp.ID))
                 }
@@ -335,13 +339,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                     jointureDiametre = true
                 }
 
-                PeiCaracteristique.TYPE_PEI -> if (!jointureNature) {
-                    onClause =
-                        onClause
-                            .innerJoin(NATURE)
-                            .on(PEI.NATURE_ID.eq(NATURE.ID))
-                    jointureNature = true
-                }
+                PeiCaracteristique.TYPE_PEI -> Unit
 
                 PeiCaracteristique.COMPLEMENT -> Unit
                 PeiCaracteristique.DATE_RECEPTION -> {
@@ -367,13 +365,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                             .on(pibiJumeleTable.ID.eq(PIBI.JUMELE_ID))
                 }
                 PeiCaracteristique.GROS_DEBIT -> {
-                    if (!jointureNature) {
-                        onClause =
-                            onClause
-                                .innerJoin(NATURE)
-                                .on(PEI.NATURE_ID.eq(NATURE.ID))
-                        jointureNature = true
-                    }
+                    buildJoinNature()
 
                     if (!jointureDiametre) {
                         onClause =
@@ -397,24 +389,24 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
      */
     private fun getFieldFromCaracteristique(
         caracteristique: PeiCaracteristique,
-        mapAlias: MutableMap<PeiCaracteristique?, TableImpl<*>?>,
+        mapAlias: Map<PeiCaracteristique?, TableImpl<*>?>,
     ): Field<*> {
-        when (caracteristique) {
-            PeiCaracteristique.TYPE_PEI -> return NATURE.TYPE_PEI
-            PeiCaracteristique.NATURE_PEI -> return NATURE.LIBELLE
-            PeiCaracteristique.AUTORITE_POLICE -> return (mapAlias.get(PeiCaracteristique.AUTORITE_POLICE) as Organisme).LIBELLE
-            PeiCaracteristique.TYPE_DECI -> return NATURE_DECI.LIBELLE
-            PeiCaracteristique.SERVICE_PUBLIC -> return (mapAlias.get(PeiCaracteristique.SERVICE_PUBLIC) as Organisme).LIBELLE
-            PeiCaracteristique.MAINTENANCE_CTP -> return (mapAlias.get(PeiCaracteristique.MAINTENANCE_CTP) as Organisme).LIBELLE
-            PeiCaracteristique.COMPLEMENT -> return PEI.COMPLEMENT_ADRESSE
-            PeiCaracteristique.DIAMETRE_NOMINAL -> return DIAMETRE.LIBELLE
-            PeiCaracteristique.CAPACITE -> return PENA.CAPACITE
-            PeiCaracteristique.DATE_RECEPTION -> return V_PEI_VISITE_DATE.LAST_RECEPTION
-            PeiCaracteristique.DEBIT -> return V_PEI_LAST_MESURES.DEBIT
-            PeiCaracteristique.NUMERO_COMPLET -> return PEI.NUMERO_COMPLET
-            PeiCaracteristique.JUMELE -> return pibiJumeleTable.NUMERO_COMPLET
+        return when (caracteristique) {
+            PeiCaracteristique.TYPE_PEI -> PEI.TYPE_PEI
+            PeiCaracteristique.NATURE_PEI -> NATURE.LIBELLE
+            PeiCaracteristique.AUTORITE_POLICE -> (mapAlias[PeiCaracteristique.AUTORITE_POLICE] as Organisme).LIBELLE
+            PeiCaracteristique.TYPE_DECI -> NATURE_DECI.LIBELLE
+            PeiCaracteristique.SERVICE_PUBLIC -> (mapAlias[PeiCaracteristique.SERVICE_PUBLIC] as Organisme).LIBELLE
+            PeiCaracteristique.MAINTENANCE_CTP -> (mapAlias[PeiCaracteristique.MAINTENANCE_CTP] as Organisme).LIBELLE
+            PeiCaracteristique.COMPLEMENT -> PEI.COMPLEMENT_ADRESSE
+            PeiCaracteristique.DIAMETRE_NOMINAL -> DIAMETRE.LIBELLE
+            PeiCaracteristique.CAPACITE -> PENA.CAPACITE
+            PeiCaracteristique.DATE_RECEPTION -> V_PEI_VISITE_DATE.LAST_RECEPTION
+            PeiCaracteristique.DEBIT -> V_PEI_LAST_MESURES.DEBIT
+            PeiCaracteristique.NUMERO_COMPLET -> PEI.NUMERO_COMPLET
+            PeiCaracteristique.JUMELE -> pibiJumeleTable.NUMERO_COMPLET
             PeiCaracteristique.GROS_DEBIT -> {
-                val caseExpression = DSL.case_()
+                DSL.case_()
                     .`when`(
                         (
                             NATURE.CODE.eq(GlobalConstants.NATURE_PI)
@@ -426,10 +418,9 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                         DSL.`val`("Oui"),
                     )
                     .otherwise(DSL.`val`("Non"))
-                return caseExpression
             }
 
-            PeiCaracteristique.ADRESSE -> return AdresseUtils.getDslConcatForAdresse()
+            PeiCaracteristique.ADRESSE -> AdresseUtils.getDslConcatForAdresse()
         }
     }
 }
