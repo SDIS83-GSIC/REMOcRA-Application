@@ -28,10 +28,9 @@ class ParametresUtils @Inject constructor() {
             mapParametres: Map<String, Parametre>,
             codeParametre: String,
         ): T? {
-            if (!mapParametres.containsKey(codeParametre)) {
-                throw IllegalStateException("Paramètre manquant : $codeParametre")
-            }
+            check(mapParametres.containsKey(codeParametre)) { "Paramètre manquant : $codeParametre" }
 
+            @SuppressWarnings("kotlin:S6611")
             val parametre = mapParametres[codeParametre]!!
             return when (parametre.parametreType) {
                 TypeParametre.INTEGER -> parametre.parametreValeur?.toInt() as T
@@ -50,7 +49,7 @@ class ParametresUtils @Inject constructor() {
 }
 
 /**
- * Utilitaires autour de la gestion des paramètres. Partagées entre le [ParametresProvider] qui les utilise, et le UseCase de CRUD des paramètres dans l'administration.
+ * Utilitaires autour de la gestion des paramètres. Partagées entre le [remocra.app.ParametresProvider] qui les utilise, et le UseCase de CRUD des paramètres dans l'administration.
  */
 
 /**
@@ -69,9 +68,7 @@ fun Map<String, Parametre>.getParametre(key: String): Parametre {
  * */
 fun Map<String, Parametre>.getBoolean(key: String): Boolean {
     val param = this.getParametre(key)
-    if (TypeParametre.BOOLEAN != param.parametreType) {
-        throw IllegalArgumentException("Mauvais type demandé pour la clé $key")
-    }
+    require(TypeParametre.BOOLEAN == param.parametreType) { "Mauvais type demandé pour la clé $key" }
 
     return param.parametreValeur!!.toBooleanStrict()
 }
@@ -82,9 +79,7 @@ fun Map<String, Parametre>.getBoolean(key: String): Boolean {
  * */
 fun Map<String, Parametre>.getBooleanOrNull(key: String): Boolean? {
     val param = this.getParametre(key)
-    if (TypeParametre.BOOLEAN != param.parametreType) {
-        throw IllegalArgumentException("Mauvais type demandé pour la clé $key")
-    }
+    require(TypeParametre.BOOLEAN == param.parametreType) { "Mauvais type demandé pour la clé $key" }
 
     return param.parametreValeur?.toBooleanStrictOrNull()
 }
@@ -95,9 +90,7 @@ fun Map<String, Parametre>.getBooleanOrNull(key: String): Boolean? {
  * */
 fun Map<String, Parametre>.getIntOrNull(key: String): Int? {
     val param = getParametre(key)
-    if (TypeParametre.INTEGER != param.parametreType) {
-        throw IllegalArgumentException("Mauvais type demandé pour la clé $key")
-    }
+    require(TypeParametre.INTEGER == param.parametreType) { "Mauvais type demandé pour la clé $key" }
 
     return param.parametreValeur?.toIntOrNull()
 }
@@ -108,9 +101,7 @@ fun Map<String, Parametre>.getIntOrNull(key: String): Int? {
  * */
 fun Map<String, Parametre>.getInt(key: String): Int {
     val param = getParametre(key)
-    if (TypeParametre.INTEGER != param.parametreType) {
-        throw IllegalArgumentException("Mauvais type demandé pour la clé $key")
-    }
+    require(TypeParametre.INTEGER == param.parametreType) { "Mauvais type demandé pour la clé $key" }
 
     return param.parametreValeur!!.toInt()
 }
@@ -121,9 +112,7 @@ fun Map<String, Parametre>.getInt(key: String): Int {
  * */
 fun Map<String, Parametre>.getDoubleOrNull(key: String): Double? {
     val param = getParametre(key)
-    if (TypeParametre.DOUBLE != param.parametreType) {
-        throw IllegalArgumentException("Mauvais type demandé pour la clé $key")
-    }
+    require(TypeParametre.DOUBLE == param.parametreType) { "Mauvais type demandé pour la clé $key" }
 
     return param.parametreValeur?.toDoubleOrNull()
 }
@@ -134,9 +123,7 @@ fun Map<String, Parametre>.getDoubleOrNull(key: String): Double? {
  * */
 fun Map<String, Parametre>.getStringOrNull(key: String): String? {
     val param = getParametre(key)
-    if (TypeParametre.STRING != param.parametreType) {
-        throw IllegalArgumentException("Mauvais type demandé pour la clé $key")
-    }
+    require(TypeParametre.STRING == param.parametreType) { "Mauvais type demandé pour la clé $key" }
 
     return param.parametreValeur
 }
@@ -147,9 +134,7 @@ fun Map<String, Parametre>.getStringOrNull(key: String): String? {
  * */
 fun Map<String, Parametre>.getString(key: String): String {
     val param = getParametre(key)
-    if (TypeParametre.STRING != param.parametreType) {
-        throw IllegalArgumentException("Mauvais type demandé pour la clé $key")
-    }
+    require(TypeParametre.STRING == param.parametreType) { "Mauvais type demandé pour la clé $key" }
 
     return param.parametreValeur!!
 }
