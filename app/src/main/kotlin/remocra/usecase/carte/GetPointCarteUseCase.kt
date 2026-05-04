@@ -214,5 +214,25 @@ constructor(
         val type: String,
         val coordinates: Array<out Any>,
         val srid: String,
-    )
+    ) {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as FeatureGeom
+
+            if (type != other.type) return false
+            if (!coordinates.contentEquals(other.coordinates)) return false
+            if (srid != other.srid) return false
+
+            return true
+        }
+
+        override fun hashCode(): Int {
+            var result = type.hashCode()
+            result = 31 * result + coordinates.contentHashCode()
+            result = 31 * result + srid.hashCode()
+            return result
+        }
+    }
 }
