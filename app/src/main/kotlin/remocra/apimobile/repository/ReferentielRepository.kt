@@ -188,12 +188,9 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
     fun getPeiCaracteristiques(
         pibiSelectedFields: List<PeiCaracteristique>,
         penaSelectedFields: List<PeiCaracteristique>,
-    ): MutableMap<UUID, List<PeiCaracteristqueData?>> {
-        val mapPeiCaracteristiques: MutableMap<UUID, List<PeiCaracteristqueData?>> =
-            mutableMapOf<UUID, List<PeiCaracteristqueData?>>()
-
+    ): Map<UUID, List<PeiCaracteristqueData?>> {
         // Les PIBI
-        if (!pibiSelectedFields.isEmpty()) {
+        val mapPibi = if (pibiSelectedFields.isNotEmpty()) {
             var onClausePibi: SelectOnConditionStep<Record?> =
                 dsl.select(buildSelectFields(pibiSelectedFields))
                     .from(PEI)
@@ -201,11 +198,13 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                     .on(PEI.ID.eq(PIBI.ID))
             onClausePibi = buildJoinClauses(pibiSelectedFields, onClausePibi, createAlias())
 
-            mapPeiCaracteristiques.putAll(fetchAndMapResults(pibiSelectedFields, onClausePibi))
+            fetchAndMapResults(pibiSelectedFields, onClausePibi)
+        } else {
+            mapOf()
         }
 
         // Les PENA
-        if (!penaSelectedFields.isEmpty()) {
+        val mapPena = if (penaSelectedFields.isNotEmpty()) {
             var onClausePena: SelectOnConditionStep<Record?> =
                 dsl
                     .select(buildSelectFields(penaSelectedFields))
@@ -214,10 +213,12 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                     .on(PEI.ID.eq(PENA.ID))
             onClausePena = buildJoinClauses(penaSelectedFields, onClausePena, createAlias())
 
-            mapPeiCaracteristiques.putAll(fetchAndMapResults(penaSelectedFields, onClausePena))
+            fetchAndMapResults(penaSelectedFields, onClausePena)
+        } else {
+            mapOf()
         }
 
-        return mapPeiCaracteristiques
+        return mapPibi + mapPena
     }
 
     /**

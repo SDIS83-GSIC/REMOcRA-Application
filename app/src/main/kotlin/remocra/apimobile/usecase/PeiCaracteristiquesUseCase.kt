@@ -47,7 +47,7 @@ constructor(
         val mapRetour: MutableMap<UUID, String> = HashMap()
         map.forEach { (key: UUID, value: List<PeiCaracteristqueData?>) ->
             mapRetour[key] = "<div><ul>"
-            value.forEach { it ->
+            value.forEach {
                 if (it == null) {
                     return@forEach
                 }
