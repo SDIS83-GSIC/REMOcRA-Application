@@ -4,6 +4,10 @@ import jakarta.ws.rs.core.Response.Status
 import remocra.GlobalConstants.PLACEHOLDER_ERROR_TYPE
 import remocra.db.jooq.remocra.enums.TypeVisite
 
+private const val AUCUN_SHAPEFILE = "Aucun fichier .shp n'a été trouvé."
+private const val GEOMETRIE_NULLE = "La géométrie ne doit pas être nulle."
+private const val GEOMETRIE_NULLE_POINT = "La géométrie ne doit pas être nulle et doit être de type Point."
+
 /**
  * Enumération des erreurs pouvant être déclenchées au travers de l'utilisation de l'application. <br />
  * Le *code* servira dans l'API, qui le remonte systématiquement.
@@ -203,9 +207,9 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     CALCUL_COUVERTURE_DECI_DISTANCE_MAX_PARCOURS_MANQUANT(4009, "Le paramètre ${ParametreEnum.DECI_DISTANCE_MAX_PARCOURS} doit être renseigné."),
     CALCUL_COUVERTURE_DECI_ISODISTANCES_MANQUANT(4010, "Le paramètre ${ParametreEnum.DECI_ISODISTANCES} doit être renseigné."),
 
-    IMPORT_SHP_ETUDE_SHP_INTROUVABLE(4100, "Aucun fichier .shp n'a été trouvé."),
-    IMPORT_SHP_ETUDE_GEOMETRIE_NULLE(4101, "La géométrie ne doit pas être nulle."),
-    IMPORT_SHP_ETUDE_GEOMETRIE_NULLE_POINT(4102, "La géométrie ne doit pas être nulle et doit être de type Point."),
+    IMPORT_SHP_ETUDE_SHP_INTROUVABLE(4100, AUCUN_SHAPEFILE),
+    IMPORT_SHP_ETUDE_GEOMETRIE_NULLE(4101, GEOMETRIE_NULLE),
+    IMPORT_SHP_ETUDE_GEOMETRIE_NULLE_POINT(4102, GEOMETRIE_NULLE_POINT),
     IMPORT_SHP_ETUDE_NATURE_DECI(4103, "Le code de la nature DECI doit être renseigné."),
     IMPORT_SHP_ETUDE_TYPE_PEI_PROJET(4104, "Le type du PEI doit être renseigné."),
     IMPORT_SHP_ETUDE_DIAMETRE_MANQUANT(4105, "Le diamètre de canalisation doit être renseigné pour un PIBI."),
@@ -396,9 +400,9 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     GESTIONNAIRE_USED_IN_PEI(9106, "Un ou plusieurs PEI sont rattachés à ce gestionnaire"),
     GESTIONNAIRE_USED_IN_SITE(9107, "Un ou plusieurs sites sont rattachés à ce gestionnaire"),
 
-    IMPORT_SITES_SHP_INTROUVABLE(9108, "Aucun fichier .shp n'a été trouvé."),
-    IMPORT_SITES_GEOMETRIE_NULLE(9109, "La géométrie ne doit pas être nulle."),
-    IMPORT_SITES_GEOMETRIE_NULLE_POINT(9110, "La géométrie ne doit pas être nulle et doit être de type Point."),
+    IMPORT_SITES_SHP_INTROUVABLE(9108, AUCUN_SHAPEFILE),
+    IMPORT_SITES_GEOMETRIE_NULLE(9109, GEOMETRIE_NULLE),
+    IMPORT_SITES_GEOMETRIE_NULLE_POINT(9110, GEOMETRIE_NULLE_POINT),
     IMPORT_SITES_CODE_NULL(9111, "Le code ne doit pas être nul."),
     IMPORT_SITES_LIBELLE_NULL(9112, "Le libellé ne doit pas être nul."),
 
@@ -415,9 +419,9 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ZONE_INTEGRATION_FORBIDDEN_UPDATE(9200, "Vous n'avez pas les droits de modification des zones d'intégration", Status.FORBIDDEN),
     ZONE_INTEGRATION_FORBIDDEN_DELETE(9201, "Vous n'avez pas les droits de suppression d'une zone d'intégration", Status.FORBIDDEN),
     ZONE_INTEGRATION_STILL_IN_USE(9202, "Impossible de supprimer cette zone d'intégration car elle est toujours référencé dans : $PLACEHOLDER_ERROR_TYPE"),
-    IMPORT_ZONES_INTEGRATION_SHP_INTROUVABLE(9208, "Aucun fichier .shp n'a été trouvé."),
-    IMPORT_ZONES_INTEGRATION_GEOMETRIE_NULLE(9209, "La géométrie ne doit pas être nulle."),
-    IMPORT_ZONES_INTEGRATION_GEOMETRIE_NULLE_POINT(9210, "La géométrie ne doit pas être nulle et doit être de type Point."),
+    IMPORT_ZONES_INTEGRATION_SHP_INTROUVABLE(9208, AUCUN_SHAPEFILE),
+    IMPORT_ZONES_INTEGRATION_GEOMETRIE_NULLE(9209, GEOMETRIE_NULLE),
+    IMPORT_ZONES_INTEGRATION_GEOMETRIE_NULLE_POINT(9210, GEOMETRIE_NULLE_POINT),
     IMPORT_ZONES_INTEGRATION_CODE_NULL(9211, "Le code ne doit pas être nul."),
     IMPORT_ZONES_INTEGRATION_LIBELLE_NULL(9212, "Le libellé ne doit pas être nul."),
     ZONE_SPECIALE_MULTIPLE(9220, "La géométrie fournie se trouve sur plusieurs zones spéciales."),
