@@ -33,7 +33,7 @@ class ImportUtilisateurUseCase @Inject constructor(
         }
 
         data.utilisateurList!!.forEachIndexed { index, utilisateur ->
-            verificationData.execute(row = utilisateur, ligne = index + 1, userInfo = userInfo, data = data)
+            verificationData.execute(row = utilisateur, ligne = index + 2, userInfo = userInfo, data = data)
         }
 
         return data
