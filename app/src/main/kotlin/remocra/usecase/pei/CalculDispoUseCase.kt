@@ -134,13 +134,27 @@ class CalculDispoUseCase @Inject constructor(
         // on a besoin de la dernière visite :
         val lastVisite = visiteRepository.getLastVisite(pei.peiId)
         val allAnomalies = anomalieRepository.getAllById()
-        val anomaliesDerniereVisite: List<Anomalie> = lastVisite?.let { visiteRepository.getAnomaliesFromVisite(lastVisite.visiteId).map { allAnomalies[it]!! } }
+        val anomaliesDerniereVisite: List<Anomalie> = lastVisite?.let {
+            visiteRepository.getAnomaliesFromVisite(lastVisite.visiteId).map {
+                @SuppressWarnings(
+                    "kotlin:S6611",
+                )
+                allAnomalies[it]!!
+            }
+        }
             ?: listOf()
 
         // On construit un set contenant toutes les anomalies possibles
         val setGlobalAnomalies: MutableSet<Anomalie> = mutableSetOf()
         if (anomaliesDebitPression.isNotEmpty()) {
-            setGlobalAnomalies.addAll(anomaliesDebitPression.map { allAnomalies[it]!! })
+            setGlobalAnomalies.addAll(
+                anomaliesDebitPression.map {
+                    @SuppressWarnings(
+                        "kotlin:S6611",
+                    )
+                    allAnomalies[it]!!
+                },
+            )
         }
         if (anomaliesDerniereVisite.isNotEmpty()) {
             setGlobalAnomalies.addAll(anomaliesDerniereVisite)

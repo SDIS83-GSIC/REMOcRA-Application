@@ -104,8 +104,6 @@ constructor(
             throw IllegalArgumentException("Le numéro doit être unique")
         }
 
-        if (element.listeAireAspiration.filter { it.estDeporte && it.geometrie == null }.isNotEmpty()) {
-            throw IllegalArgumentException("Si une aire d'aspiration est déportée, les coordonnées doivent être renseignées.")
-        }
+        require(!element.listeAireAspiration.any { it.estDeporte && it.geometrie == null }) { "Si une aire d'aspiration est déportée, les coordonnées doivent être renseignées." }
     }
 }

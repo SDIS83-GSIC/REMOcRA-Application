@@ -87,7 +87,13 @@ constructor(
             wrappedUserInfo,
         ).associateBy { it.id }
 
-        return getModeleMinimalPei(listePei.filter { p -> mapAccessibilite[p.peiId] != null && mapAccessibilite[p.peiId]!!.isAccessible }, forNexsis)
+        return getModeleMinimalPei(
+            listePei.filter { p ->
+                val accessibilite = mapAccessibilite[p.peiId]
+                accessibilite != null && accessibilite.isAccessible
+            },
+            forNexsis,
+        )
     }
 
     fun execute(peiId: UUID, forNexsis: Boolean = false): ModeleMinimalPeiData {

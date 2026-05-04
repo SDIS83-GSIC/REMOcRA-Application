@@ -88,13 +88,13 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
      * Marquée comme open pour pouvoir l'overrider en cas de besoin
      */
     open fun isActif(): Boolean {
-        if (parametresProvider.get().mapTasksInfo[getType()] == null) {
-            return false
-        }
-        return parametresProvider.get().mapTasksInfo[getType()]!!.taskActif!!
+        val taskInfo = getTaskInfo()
+        return taskInfo.taskActif!!
     }
 
     abstract fun getTaskParametersClass(): Class<T>
+
+    private fun getTaskInfo() = parametresProvider.get().mapTasksInfo[getType()] ?: throw IllegalStateException("Aucun paramètre trouvé pour la tâche ${getType()}")
 
     fun start(logManager: LogManager, userInfo: WrappedUserInfo, parameters: T? = null, transactionManagerCourant: TransactionManager? = null): Boolean {
         // Si l'environnement n'est pas compatible avec la tâche, on ne fait rien
@@ -109,7 +109,7 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
         }
 
         val taskParameters = parameters
-            ?: objectMapper.readValue(parametresProvider.get().mapTasksInfo[getType()]!!.taskParametres!!.data(), getTaskParametersClass())
+            ?: objectMapper.readValue(getTaskInfo().taskParametres!!.data(), getTaskParametersClass())
 
         // Insertion du job en base
         val transactionManagerToUse = (transactionManagerCourant ?: transactionManager)
@@ -117,7 +117,7 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
             transactionManagerToUse.transactionResult(transactionManagerCourant == null) {
                 jobRepository.createJob(
                     logManager.idJob,
-                    parametresProvider.get().mapTasksInfo[getType()]!!.taskId,
+                    getTaskInfo().taskId,
                     userInfo.utilisateurId!!,
                     taskParameters?.let { JSONB.valueOf(objectMapper.writeValueAsString(it)) },
                 )

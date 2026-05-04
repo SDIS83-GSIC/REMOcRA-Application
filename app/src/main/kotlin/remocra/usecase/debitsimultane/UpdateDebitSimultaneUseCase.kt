@@ -70,15 +70,14 @@ constructor(
                 debitSimultaneRepository.deleteLDebitSimultaneMesurePei(it.debitSimultaneMesureId)
 
                 if (it.debitSimultaneMesureDocumentId != null) {
-                    val doc = mapDocumentByDebitMesure[it.debitSimultaneMesureId]!!
-                    documentUtils.deleteFile(doc.documentNomFichier, Path(doc.documentRepertoire))
+                    mapDocumentByDebitMesure[it.debitSimultaneMesureId]?.let { doc -> documentUtils.deleteFile(doc.documentNomFichier, Path(doc.documentRepertoire)) }
                 }
 
                 debitSimultaneRepository.deleteDebitSimultaneMesure(it.debitSimultaneMesureId)
             }
 
         // On supprime ensuite en base
-        documentRepository.deleteDocumentByIds(listeDebitSimultaneMesure.map { it.debitSimultaneMesureDocumentId }.filterNotNull())
+        documentRepository.deleteDocumentByIds(listeDebitSimultaneMesure.mapNotNull { it.debitSimultaneMesureDocumentId })
 
         element.listeDebitSimultaneMesure.forEach {
             val debitSimultaneMesureId = it.debitSimultaneMesureId ?: UUID.randomUUID()
@@ -154,7 +153,8 @@ constructor(
 
         // Mettre à jour le débit simultané
         // Ce sont les PEI de la dernière mesure qui comptent
-        val listePeiDerniereMesure = element.listeDebitSimultaneMesure.sortedBy { it.debitSimultaneMesureDateMesure }.last().listePeiId
+        val listePeiDerniereMesure =
+            element.listeDebitSimultaneMesure.maxBy { it.debitSimultaneMesureDateMesure }.listePeiId
         val listePoint = peiRepository.getGeometriesPei(listePeiDerniereMesure)
 
         val centroid = Centroid(

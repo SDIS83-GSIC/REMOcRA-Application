@@ -113,7 +113,12 @@ constructor(
         // Une seule requête pour calculer leur accessibilité, on se servira de la map<numero, POJO> par la suite
         val mapAccessibilite = listPeiAccessibilite(listModifiedPei, wrappedUserInfo).associateBy { it.numero }
 
-        return Result.Success(diffs.filterNotNull().filter { p -> mapAccessibilite[p.numeroComplet] != null && mapAccessibilite[p.numeroComplet]!!.isAccessible || (TypeOperation.DELETE == p.typeOperation && TypeObjet.PEI == p.typeObjet) })
+        return Result.Success(
+            diffs.filterNotNull().filter { p ->
+                val numComplet = mapAccessibilite[p.numeroComplet]
+                numComplet != null && numComplet.isAccessible || (TypeOperation.DELETE == p.typeOperation && TypeObjet.PEI == p.typeObjet)
+            },
+        )
     }
 
     /**

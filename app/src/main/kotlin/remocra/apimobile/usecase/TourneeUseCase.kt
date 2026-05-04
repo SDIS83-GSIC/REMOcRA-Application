@@ -49,7 +49,7 @@ constructor(
                 tourneeOrganismeId = it.tourneeOrganismeId,
                 tourneeLibelle = it.tourneeLibelle,
                 tourneeReservationUtilisateurId = idUser,
-                mapPeiIdByTournee[it.tourneeId]!!.filterNotNull(),
+                mapPeiIdByTournee[it.tourneeId]?.filterNotNull() ?: emptyList(),
             )
         }
 
