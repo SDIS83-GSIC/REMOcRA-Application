@@ -7,6 +7,7 @@ import org.jooq.impl.DSL
 import remocra.data.GlobalData
 import remocra.db.CriseRepository.ToponymieResult
 import remocra.db.jooq.remocra.tables.pojos.TypeToponymie
+import remocra.db.jooq.remocra.tables.references.CADASTRE_PARCELLE
 import remocra.db.jooq.remocra.tables.references.CADASTRE_SECTION
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.LIEU_DIT
@@ -49,20 +50,35 @@ class ToponymieRepository @Inject constructor(private val dsl: DSLContext) : Abs
         libelleName: String,
     ): Collection<ToponymieResult> {
         val typeToTableMapping = mapOf(
-            ToponymieProtectedType.COMMUNE.toponymieLibelle to Triple(COMMUNE.ID, COMMUNE.LIBELLE, COMMUNE.GEOMETRIE),
-            ToponymieProtectedType.LIEU_DIT.toponymieLibelle to Triple(LIEU_DIT.ID, LIEU_DIT.LIBELLE, LIEU_DIT.GEOMETRIE),
-            ToponymieProtectedType.PEI.toponymieLibelle to Triple(PEI.ID, PEI.NUMERO_COMPLET, PEI.GEOMETRIE),
-            ToponymieProtectedType.CADASTRE.toponymieLibelle to Triple(CADASTRE_SECTION.ID, CADASTRE_SECTION.NUMERO, CADASTRE_SECTION.GEOMETRIE),
-            ToponymieProtectedType.ROUTES.toponymieLibelle to Triple(VOIE.ID, VOIE.LIBELLE, VOIE.GEOMETRIE),
+            ToponymieProtectedType.COMMUNE.toponymieLibelle to listOf(Triple(COMMUNE.ID, COMMUNE.LIBELLE, COMMUNE.GEOMETRIE)),
+            ToponymieProtectedType.LIEU_DIT.toponymieLibelle to listOf(Triple(LIEU_DIT.ID, LIEU_DIT.LIBELLE, LIEU_DIT.GEOMETRIE)),
+            ToponymieProtectedType.PEI.toponymieLibelle to listOf(Triple(PEI.ID, PEI.NUMERO_COMPLET, PEI.GEOMETRIE)),
+            ToponymieProtectedType.CADASTRE.toponymieLibelle to listOf(
+                Triple(CADASTRE_SECTION.ID, DSL.concat(CADASTRE_SECTION.NUMERO, DSL.`val`(" ("), COMMUNE.LIBELLE, DSL.`val`(")")), CADASTRE_SECTION.GEOMETRIE),
+                Triple(CADASTRE_PARCELLE.ID, DSL.concat(CADASTRE_SECTION.NUMERO, DSL.`val`(" "), CADASTRE_PARCELLE.NUMERO, DSL.`val`(" ("), COMMUNE.LIBELLE, DSL.`val`(")")), CADASTRE_PARCELLE.GEOMETRIE),
+            ),
+            ToponymieProtectedType.ROUTES.toponymieLibelle to listOf(Triple(VOIE.ID, VOIE.LIBELLE, VOIE.GEOMETRIE)),
         )
 
         return proteges
             .filter { it?.typeToponymieActif == true }
+            .sortedBy { ToponymieProtectedType.entries.indexOfFirst { e -> e.toponymieLibelle == it?.typeToponymieCode } }
             .mapNotNull { typeToTableMapping[it?.typeToponymieCode] }
+            .flatten()
             .flatMap { (id, libelle, geometrie) ->
-                val baseQuery = dsl.select(id.`as`("toponymieId"), libelle.`as`("toponymieLibelle"), geometrie.`as`("toponymieGeometrie"))
+                var joinQuery = dsl.select(id.`as`("toponymieId"), libelle.`as`("toponymieLibelle"), geometrie.`as`("toponymieGeometrie"))
                     .from(id.table)
-                    .where(libelle.containsIgnoreCaseUnaccent(libelleName))
+
+                if (id.table == CADASTRE_PARCELLE) {
+                    joinQuery = joinQuery.join(CADASTRE_SECTION).on(CADASTRE_PARCELLE.CADASTRE_SECTION_ID.eq(CADASTRE_SECTION.ID))
+                        .join(COMMUNE).on(CADASTRE_SECTION.COMMUNE_ID.eq(COMMUNE.ID))
+                } else if (id.table == CADASTRE_SECTION) {
+                    joinQuery = joinQuery.join(COMMUNE).on(CADASTRE_SECTION.COMMUNE_ID.eq(COMMUNE.ID))
+                }
+
+                val baseQuery = joinQuery.where(
+                    DSL.and(libelle.containsIgnoreCaseUnaccent(libelleName)),
+                )
 
                 val finalQuery = if (globalGeometry != null) {
                     baseQuery.and(ST_Within(geometrie, globalGeometry))

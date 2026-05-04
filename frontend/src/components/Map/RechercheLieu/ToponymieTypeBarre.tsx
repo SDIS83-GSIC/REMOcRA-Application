@@ -23,16 +23,16 @@ const ToponymieTypeBarre = ({
   return (
     <AsyncTypeahead
       className="h-100"
-      minLength={3}
+      minLength={2}
       placeholder={"Zoomer sur le lieu..."}
       emptyLabel={"Aucun résultat"}
-      promptText={"Saisissez au moins 3 lettres"}
+      promptText={"Saisissez au moins 2 lettres"}
       searchText={"Recherche en cours"}
       isLoading={state.isLoading}
       options={state.options}
       labelKey={(feature) => `${feature.properties.label}`}
       onSearch={(query) => {
-        if (query.length < 3) {
+        if (query.length < 2) {
           return;
         }
 
@@ -87,7 +87,7 @@ const ToponymieTypeBarre = ({
         if (feature.geometry.srid !== "0") {
           map
             .getView()
-            .setCenter(
+            .fit(
               transformExtent(
                 feature.geometry.coordinates,
                 `EPSG:${feature.geometry.srid}`,
