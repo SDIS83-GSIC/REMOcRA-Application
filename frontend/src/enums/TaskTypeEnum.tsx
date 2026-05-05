@@ -88,6 +88,13 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
     label: "Synchronisation SIG vers REMOcRA",
     commentaire: "",
     parametre: {
+      batchInsert: {
+        typeTaskParametre: TYPE_TASK_PARAMETRE.INTEGER,
+        required: true,
+        label: "Nombre de données à insérer par batch :",
+        tooltipMessage:
+          "Un nombre trop élevé peut entraîner des problèmes de mémoire, un nombre trop faible peut ralentir la synchronisation.",
+      },
       listeTableASynchroniser: {
         typeTaskParametre: TYPE_TASK_PARAMETRE.LISTE_TABLE_SYNCHRO_SIG,
         required: true,

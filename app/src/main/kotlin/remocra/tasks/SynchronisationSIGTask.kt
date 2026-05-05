@@ -87,7 +87,7 @@ constructor(
                 fieldsToSelect,
                 tableASynchroniser.schemaSource,
                 tableASynchroniser.tableSource,
-                batchSize = BATCH_SIZE,
+                batchSize = parameters.batchInsert ?: BATCH_SIZE,
             ) { batch ->
                 batchNumber++
                 logManager.info("[REMOcRA] Insertion du batch #$batchNumber contenant ${batch.size} éléments dans ${GlobalConstants.SCHEMA_ENTREPOT_SIG}.$nomTableDestination")
@@ -196,6 +196,7 @@ constructor(
 class SynchronisationSIGTaskParameter(
     override val notification: NotificationMailData?,
     val listeTableASynchroniser: Set<TableASynchroniser>,
+    var batchInsert: Int?,
 ) : SchedulableTaskParameters(notification)
 
 data class TableASynchroniser(

@@ -92,59 +92,63 @@ const ParametreTaskForm = () => {
     },
   );
 
-  const parametreComponentsList: ReactNode[] = [];
-  Object.entries(TaskType[values.taskType]?.parametre).map(([key, value]) => {
+  const parametreComponentsList: ReactNode[] = Object.entries(
+    TaskType[values.taskType]?.parametre ?? {},
+  ).map(([key, value]) => {
     switch (value.typeTaskParametre) {
       case TYPE_TASK_PARAMETRE.INTEGER: {
-        parametreComponentsList.push(
-          <NumberInput
-            name={"taskParametres[" + key + "]"}
-            label={value.label}
-            required={value.required}
-            tooltipText={value.tooltipMessage}
-          />,
+        return (
+          <Row className="m-2">
+            <NumberInput
+              name={"taskParametres[" + key + "]"}
+              label={value.label}
+              required={value.required}
+              tooltipText={value.tooltipMessage}
+            />
+          </Row>
         );
-        break;
       }
       case TYPE_TASK_PARAMETRE.STRING: {
-        parametreComponentsList.push(
-          <TextInput
-            name={"taskParametres[" + key + "]"}
-            label={value.label}
-            required={value.required}
-            tooltipText={value.tooltipMessage}
-          />,
+        return (
+          <Row className="m-2">
+            <TextInput
+              name={"taskParametres[" + key + "]"}
+              label={value.label}
+              required={value.required}
+              tooltipText={value.tooltipMessage}
+            />
+          </Row>
         );
-        break;
       }
       case TYPE_TASK_PARAMETRE.BOOLEAN: {
-        parametreComponentsList.push(
-          <CheckBoxInput
-            name={"taskParametres[" + key + "]"}
-            label={value.label}
-            tooltipText={value.tooltipMessage}
-          />,
+        return (
+          <Row className="m-2">
+            <CheckBoxInput
+              name={"taskParametres[" + key + "]"}
+              label={value.label}
+              tooltipText={value.tooltipMessage}
+            />
+          </Row>
         );
-        break;
       }
       case TYPE_TASK_PARAMETRE.LISTE_TABLE_SYNCHRO_SIG: {
         if (values?.taskParametres["listeTableASynchroniser"] === undefined) {
           setFieldValue("taskParametres[listeTableASynchroniser]", []);
         }
-        parametreComponentsList.push(
-          <AddRemoveComponent
-            name="taskParametres[listeTableASynchroniser]"
-            createComponentToRepeat={createIterableParametreSynchroSIG}
-            listeElements={values?.taskParametres["listeTableASynchroniser"]}
-          />,
+        return (
+          <Row className="m-2">
+            <AddRemoveComponent
+              name="taskParametres[listeTableASynchroniser]"
+              createComponentToRepeat={createIterableParametreSynchroSIG}
+              listeElements={values?.taskParametres["listeTableASynchroniser"]}
+            />
+          </Row>
         );
-        break;
       }
       default: {
-        parametreComponentsList.push(
-          <a>Le type de paramètre {value.typeTaskParametre} est inconnue.</a>,
+        return (
+          <div>Le type de paramètre {value.typeTaskParametre} est inconnu.</div>
         );
-        break;
       }
     }
   });
