@@ -16,6 +16,7 @@ import java.util.UUID
  */
 data class PeiForNumerotationData(
     var peiNumeroInterne: Int?,
+    var peiNumeroInterneInitiale: Int?,
     val peiId: UUID?,
     val peiCommuneId: UUID?,
     val peiZoneSpecialeId: UUID?,

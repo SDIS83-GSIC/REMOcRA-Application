@@ -78,7 +78,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
      *
      * Cela ne veut pas dire que le numéro interne sera différent, c'est le calcul qui le déterminera.
      */
-    fun needComputeNumeroInterne(element: PeiData): Boolean {
+    fun needComputeNumero(element: PeiData): Boolean {
         return element.peiNumeroInterne != element.peiNumeroInterneInitial ||
             calculNumerotationUseCase.needComputeNumeroInterneCommune(element.peiCommuneId, element.peiCommuneIdInitial, element.peiZoneSpecialeId, element.peiZoneSpecialeIdInitial) ||
             calculNumerotationUseCase.needComputeNumeroInterneNatureDeci(element.peiNatureDeciId, element.peiNatureDeciIdInitial) ||
@@ -115,7 +115,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
             // Si on est en création OU si on autorise la renumérotation, et qu'elle est nécessaire
             if (element.peiNumeroInterne == null || element.peiNumeroComplet == null ||
                 parametresProvider.get().getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true &&
-                needComputeNumeroInterne(element)
+                needComputeNumero(element)
             ) {
                 val pair = getNumerotationPeiUseCase.execute(element)
 

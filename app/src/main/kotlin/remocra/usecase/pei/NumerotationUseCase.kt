@@ -136,42 +136,43 @@ constructor(
      * @param pei L'objet PEI contenant les infos utiles au calcul
      * @return Int le numéro interne à utiliser
      */
-    fun computeNumeroInterne(pei: PeiForNumerotationData): Int {
-        // Retour du numéro interne s'il existe
-        if (pei.peiNumeroInterne != null && pei.peiId != null) {
-            return pei.peiNumeroInterne!!
+    fun computeNumeroInterne(pei: PeiForNumerotationData, isRenumerotationEnabled: Boolean): Int =
+        if (pei.peiNumeroInterne == null ||
+            (pei.peiNumeroInterneInitiale == pei.peiNumeroInterne && isRenumerotationEnabled)
+        ) {
+            when (appSettings.codeSdis) {
+                CodeSdis.SDIS_01,
+                CodeSdis.SDIS_16,
+                CodeSdis.SDIS_22,
+                CodeSdis.SDIS_42,
+                CodeSdis.SDIS_61,
+                CodeSdis.SDIS_62,
+                CodeSdis.SDIS_66,
+                CodeSdis.SDIS_78,
+                CodeSdis.SDIS_971,
+                CodeSdis.BSPP,
+                CodeSdis.SDMIS,
+                -> computeNumeroInterneMethodeA(pei)
+                CodeSdis.SDIS_09,
+                CodeSdis.SDIS_21,
+                CodeSdis.SDIS_38,
+                CodeSdis.SDIS_77,
+                CodeSdis.SDIS_89,
+                CodeSdis.SDIS_973,
+                -> computeNumeroInterneMethodeB(pei)
+                CodeSdis.SDIS_39 -> computeNumeroInterneMethodeC(pei)
+                CodeSdis.SDIS_49 -> computeNumeroInterne49()
+                CodeSdis.SDIS_53 -> computeNumeroInterne53(pei)
+                CodeSdis.SDIS_58 -> computeNumeroInterne58(pei)
+                CodeSdis.SDIS_59 -> computeNumeroInterne59(pei)
+                CodeSdis.SDIS_71 -> computeNumeroInterne71(pei)
+                CodeSdis.SDIS_83,
+                -> computeNumeroInterne83(pei)
+                CodeSdis.SDIS_95 -> computeNumeroInterne95(pei)
+            }
+        } else {
+            pei.peiNumeroInterne!!
         }
-        return when (appSettings.codeSdis) {
-            CodeSdis.SDIS_01,
-            CodeSdis.SDIS_16,
-            CodeSdis.SDIS_22,
-            CodeSdis.SDIS_42,
-            CodeSdis.SDIS_61,
-            CodeSdis.SDIS_62,
-            CodeSdis.SDIS_66,
-            CodeSdis.SDIS_78,
-            CodeSdis.SDIS_971,
-            CodeSdis.BSPP,
-            CodeSdis.SDMIS,
-            -> computeNumeroInterneMethodeA(pei)
-            CodeSdis.SDIS_09,
-            CodeSdis.SDIS_21,
-            CodeSdis.SDIS_38,
-            CodeSdis.SDIS_77,
-            CodeSdis.SDIS_89,
-            CodeSdis.SDIS_973,
-            -> computeNumeroInterneMethodeB(pei)
-            CodeSdis.SDIS_39 -> computeNumeroInterneMethodeC(pei)
-            CodeSdis.SDIS_49 -> computeNumeroInterne49()
-            CodeSdis.SDIS_53 -> computeNumeroInterne53(pei)
-            CodeSdis.SDIS_58 -> computeNumeroInterne58(pei)
-            CodeSdis.SDIS_59 -> computeNumeroInterne59(pei)
-            CodeSdis.SDIS_71 -> computeNumeroInterne71(pei)
-            CodeSdis.SDIS_83,
-            -> computeNumeroInterne83(pei)
-            CodeSdis.SDIS_95 -> computeNumeroInterne95(pei)
-        }
-    }
 
     private fun computeNumeroInterne58(pei: PeiForNumerotationData): Int {
         checkCommuneId(pei)
