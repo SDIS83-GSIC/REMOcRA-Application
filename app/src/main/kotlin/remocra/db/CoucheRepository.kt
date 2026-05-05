@@ -215,6 +215,7 @@ class CoucheRepository @Inject constructor(private val dsl: DSLContext) : Abstra
         dsl.selectFrom(COUCHE)
             .where(COUCHE.SOURCE.notIn(listOf(SourceCarto.GEOJSON, SourceCarto.OSM)))
             .and(COUCHE.GROUPE_COUCHE_ID.eq(groupeCoucheId))
+            .orderBy(COUCHE.LIBELLE)
             .fetchInto<Couche>()
 
     fun countAllCoucheForAdmin(
