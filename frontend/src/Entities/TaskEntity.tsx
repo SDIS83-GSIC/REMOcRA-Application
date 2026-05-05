@@ -51,6 +51,7 @@ export type ParametreTableSynchroSIG = {
   listeChampsAUpdate?: TYPE_CHAMPS_UPDATE_SYNCHRO_COMMUNE[];
   typeSynchronisation: TYPE_SYNCHRONISATION_TABLE_SIG;
   scriptPostRecuperation: string;
+  scriptCreationVue: string;
 };
 
 export enum TYPE_CHAMPS_UPDATE_SYNCHRO_COMMUNE {

@@ -70,11 +70,7 @@ class RequestUtils {
         val allowedKeywords = listOf("select", "with")
 
         // Vérifier si des mots-clés interdits sont présents dans la requête
-        for (keyword in forbiddenKeywords) {
-            if (queryLower.contains(keyword)) {
-                throw RemocraResponseException(ErrorType.DASHBOARD_INVALID_KEYWORD)
-            }
-        }
+        checkForbiddenKeywords(queryLower, forbiddenKeywords)
 
         // Vérifier que la requête commence par un mot-clé autorisé
         val startsWithAllowedKeyword = allowedKeywords.any { queryLower.startsWith(it) }
@@ -83,6 +79,34 @@ class RequestUtils {
         }
 
         // Vérifier l'absence de sous-requêtes interdites (exemple : injection de requêtes)
+        checkSuspiciousQuery(queryLower)
+    }
+
+    fun validateQueryWithCreate(sqlQuery: String) {
+        val queryLower = sqlQuery.trim().lowercase()
+
+        val forbiddenKeywords = listOf(
+            "insert", "update", "delete", "drop", "alter", "truncate",
+            "merge", "exec", "execute", "call", "--", "/*", "*/",
+        )
+
+        checkForbiddenKeywords(queryLower, forbiddenKeywords)
+        checkSuspiciousQuery(queryLower)
+
+        if (!queryLower.startsWith("create")) {
+            throw RemocraResponseException(ErrorType.REQUETE_SQL_CREATION_INVALIDE)
+        }
+    }
+
+    private fun checkForbiddenKeywords(query: String, forbiddenKeywords: List<String>) {
+        for (keyword in forbiddenKeywords) {
+            if (query.contains(keyword)) {
+                throw RemocraResponseException(ErrorType.DASHBOARD_INVALID_KEYWORD)
+            }
+        }
+    }
+
+    private fun checkSuspiciousQuery(suspiciousQuery: String) {
         val suspiciousPatterns = listOf(
             Regex(""";\s*(?!${'$'}).*"""), // Commandes multiples dans une requête
             Regex("""--.*"""), // Commentaires SQL
@@ -90,7 +114,7 @@ class RequestUtils {
         )
 
         for (pattern in suspiciousPatterns) {
-            if (pattern.containsMatchIn(queryLower)) {
+            if (pattern.containsMatchIn(suspiciousQuery)) {
                 throw RemocraResponseException(ErrorType.DASHBOARD_INVALID_MULTIPLE_INSTRUCTION)
             }
         }

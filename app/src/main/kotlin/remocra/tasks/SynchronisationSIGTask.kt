@@ -6,6 +6,7 @@ import org.jooq.impl.SQLDataType
 import remocra.GlobalConstants
 import remocra.auth.WrappedUserInfo
 import remocra.data.NotificationMailData
+import remocra.data.enums.ErrorType
 import remocra.db.CommuneRepository
 import remocra.db.EntrepotSigRepository
 import remocra.db.SigRepository
@@ -13,6 +14,8 @@ import remocra.db.VoieRepository
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.bindings.ZonedDateTimeBinding
 import remocra.db.jooq.remocra.enums.TypeTask
+import remocra.exception.RemocraResponseException
+import remocra.utils.RequestUtils
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
 
@@ -23,6 +26,7 @@ constructor(
     private val voieRepository: VoieRepository,
     private val entrepotSigRepository: EntrepotSigRepository,
     private val sigRepository: SigRepository,
+    private val requestUtils: RequestUtils,
 ) :
     SchedulableTask<SynchronisationSIGTaskParameter, SchedulableTaskResults>() {
 
@@ -38,6 +42,7 @@ constructor(
         logManager.info("Récupération des données à synchroniser")
         val startRecuperation = timeSource.markNow()
         listeTableASynchroniser.forEach { tableASynchroniser ->
+            val isStockageSimple = tableASynchroniser.typeSynchronisation == TypeSynchronisation.STOCKAGE_SIMPLE
             val startSynchroTable = timeSource.markNow()
             // [SIG] Récupération de la structure de la table
             logManager.info("[SIG] Récupération des informations coté SIG : ${tableASynchroniser.schemaSource}.${tableASynchroniser.tableSource}")
@@ -57,12 +62,26 @@ constructor(
             }
             logManager.info("[REMOcRA] Champs à insérer : $concatColumn")
             val nomTableDestination = tableASynchroniser.tableDestination ?: tableASynchroniser.tableSource
+            if (!isStockageSimple) {
+                logManager.info("[REMOcRA] Suppression de la vue correspondante")
+                dropViewOfTable(tableASynchroniser.typeSynchronisation)
+            }
             // Suppression de la table si elle est déja présente coté remocra
             logManager.info("[REMOcRA] Suppression de la table $nomTableDestination si elle existe.")
             entrepotSigRepository.dropTable(tableDestination = nomTableDestination)
             // Création de la table coté remocra
             logManager.info("[REMOcRA] Création de la table $nomTableDestination")
             entrepotSigRepository.createTable(tableDestination = nomTableDestination, concatColumn = concatColumn)
+            // Création de la vue côté remocra
+            if (!tableASynchroniser.scriptCreationVue.isNullOrBlank() && !isStockageSimple) {
+                logManager.info("[REMOcRA] Création de la vue correspondante")
+                requestUtils.validateQueryWithCreate(tableASynchroniser.scriptCreationVue)
+                val queryResult = entrepotSigRepository.executeFromString(tableASynchroniser.scriptCreationVue)
+                if (queryResult != 0) {
+                    logManager.error("La requête SQL de création de la vue n'est pas valide.")
+                    throw RemocraResponseException(ErrorType.REQUETE_SQL_CREATION_INVALIDE)
+                }
+            }
             // [SIG] Récupération des données
             // Construction requete Select
             logManager.info("[SIG] Création de la requête 'SELECT ...'")
@@ -104,7 +123,7 @@ constructor(
         /** Traitement des informations reçues : */
         val startPostTraitement = timeSource.markNow()
         logManager.info("Traitement des données")
-        listeTableASynchroniser.forEach { tableASynchroniser ->
+        listeTableASynchroniser.sortedBy { it.typeSynchronisation.ordre }.forEach { tableASynchroniser ->
             val startPostTraitementTable = timeSource.markNow()
             logManager.info("Traitement de ${tableASynchroniser.tableDestination ?: tableASynchroniser.tableSource}")
             logManager.info("Type de synchronisation ${tableASynchroniser.typeSynchronisation}")
@@ -173,10 +192,15 @@ constructor(
             throw IllegalArgumentException("Aucune table à synchroniser")
         }
         parameters.listeTableASynchroniser.forEach { tableASynchroniser ->
+            val isStockageSimple: Boolean = tableASynchroniser.typeSynchronisation == TypeSynchronisation.STOCKAGE_SIMPLE
             if (tableASynchroniser.schemaSource.isEmpty()) {
                 throw IllegalArgumentException("Le schéma source n'est pas fourni")
             } else if (tableASynchroniser.tableSource.isEmpty()) {
                 throw IllegalArgumentException("La table source n'est pas fournie")
+            } else if (tableASynchroniser.scriptCreationVue.isNullOrBlank() && !isStockageSimple) {
+                throw IllegalArgumentException("Le script de création de vue est nécessaire pour le type de synchronisation ${tableASynchroniser.typeSynchronisation}")
+            } else if (!tableASynchroniser.scriptCreationVue.isNullOrBlank() && !isStockageSimple) {
+                requestUtils.validateQueryWithCreate(tableASynchroniser.scriptCreationVue)
             }
         }
     }
@@ -191,6 +215,14 @@ constructor(
 
     private fun getStringifiedExecutionDuration(startReference: TimeSource.Monotonic.ValueTimeMark): String =
         startReference.elapsedNow().toString(DurationUnit.SECONDS, 2)
+
+    private fun dropViewOfTable(typeSynchro: TypeSynchronisation) {
+        when (typeSynchro) {
+            TypeSynchronisation.MISE_A_JOUR_REMOCRA_COMMUNE -> communeRepository.dropViewForEntrepotSig()
+            TypeSynchronisation.MISE_A_JOUR_REMOCRA_VOIE -> voieRepository.dropViewForEntrepotSig()
+            TypeSynchronisation.STOCKAGE_SIMPLE -> Unit
+        }
+    }
 }
 
 class SynchronisationSIGTaskParameter(
@@ -206,10 +238,11 @@ data class TableASynchroniser(
     val typeSynchronisation: TypeSynchronisation,
     val listeChampsAUpdate: List<String>?,
     val scriptPostRecuperation: String?,
+    val scriptCreationVue: String?,
 )
 
-enum class TypeSynchronisation {
-    MISE_A_JOUR_REMOCRA_COMMUNE,
-    MISE_A_JOUR_REMOCRA_VOIE,
-    STOCKAGE_SIMPLE,
+enum class TypeSynchronisation(val ordre: Int) {
+    MISE_A_JOUR_REMOCRA_COMMUNE(1),
+    MISE_A_JOUR_REMOCRA_VOIE(2),
+    STOCKAGE_SIMPLE(3),
 }

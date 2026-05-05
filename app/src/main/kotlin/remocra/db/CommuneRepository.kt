@@ -200,6 +200,8 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             .where(COMMUNE.LIBELLE.containsIgnoreCaseUnaccent(libelle))
             .fetchInto()
 
+    fun dropViewForEntrepotSig() = dsl.dropViewIfExists(V_COMMUNE_SIG).execute()
+
     data class CommuneGeometryOnly(
         val communeGeometry: Geometry,
     )

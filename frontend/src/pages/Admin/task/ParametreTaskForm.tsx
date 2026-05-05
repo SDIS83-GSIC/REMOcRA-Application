@@ -453,6 +453,70 @@ function createIterableParametreSynchroSIG(
   );
 }
 
+export const TooltipScriptVue = ({
+  type,
+}: {
+  type: TYPE_SYNCHRONISATION_TABLE_SIG;
+}) => {
+  switch (type) {
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_REMOCRA_COMMUNE:
+      return (
+        <>
+          La vue doit s'appeler "v_commune_sig" et contenir ces colonnes :{" "}
+          <br />
+          <strong>v_commune_id</strong>: Identifiant unique de la commune en
+          base de données.
+          <br />
+          <strong>v_commune_libelle</strong>: Nom de la commune.
+          <br />
+          <strong>v_commune_code_insee</strong>: Code INSEE de la commune.
+          <br />
+          <strong>v_commune_code_postal</strong>: Code postal de la commune.
+          <br />
+          <strong>v_commune_geometrie</strong>: Emplacement géometrique de la
+          commune.
+          <br />
+          <strong>v_commune_pprif</strong>: PPRIF de la commune.
+          <br />
+          <strong>v_commune_code</strong>: Code unique de la commune.
+          <br />
+          Toutes les colonnes doivent être définies dans la vue. Seule la
+          colonne v_commune_code peut contenir des valeurs nulles.
+        </>
+      );
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_REMOCRA_VOIE:
+      return (
+        <>
+          La vue doit s'appeler "v_voie_sig" et contenir ces colonnes : <br />
+          <strong>v_voie_id</strong>: Identifiant unique de la voie en base de
+          données.
+          <br />
+          <strong>v_voie_libelle</strong>: Nom de la voie.
+          <br />
+          <strong>v_voie_geometrie</strong>: Emplacement géometrique de la voie.
+          <br />
+          <strong>v_voie_commune_id</strong>: Identifiant unique de la commune
+          où se trouve la voie.
+          <br />
+          Toutes les colonnes sont obligatoires.
+        </>
+      );
+  }
+};
+
+export function getDefaultValueForScriptVue(
+  type: TYPE_SYNCHRONISATION_TABLE_SIG,
+) {
+  switch (type) {
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_REMOCRA_COMMUNE:
+      return "CREATE OR REPLACE VIEW entrepotsig.v_commune_sig AS SELECT commune.commune_id AS v_commune_sig_id, commune.commune_libelle AS v_commune_sig_libelle, commune.commune_code_insee AS v_commune_sig_code_insee, commune.commune_code_postal AS v_commune_sig_code_postal, commune.commune_geometrie AS v_commune_sig_geometrie, commune.commune_pprif AS v_commune_sig_pprif, commune.commune_code AS v_commune_sig_code FROM remocra.commune;";
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_REMOCRA_VOIE:
+      return "CREATE OR REPLACE VIEW entrepotsig.v_voie_sig AS SELECT voie.voie_id AS v_voie_sig_id, voie.voie_libelle AS v_voie_sig_libelle, voie.voie_geometrie AS v_voie_sig_geometrie, voie.voie_commune_id AS v_voie_sig_commune_id FROM remocra.voie;";
+    case TYPE_SYNCHRONISATION_TABLE_SIG.STOCKAGE_SIMPLE:
+      return null;
+  }
+}
+
 const ParametreSynchroSIGIterableForm = ({
   index,
   listeElements,
@@ -512,6 +576,10 @@ const ParametreSynchroSIGIterableForm = ({
               `taskParametres[listeTableASynchroniser][${index}].typeSynchronisation`,
               e.id,
             );
+            setFieldValue(
+              `taskParametres[listeTableASynchroniser][${index}].scriptCreationVue`,
+              getDefaultValueForScriptVue(TYPE_SYNCHRONISATION_TABLE_SIG[e.id]),
+            );
           }}
           required={true}
         />
@@ -534,7 +602,7 @@ const ParametreSynchroSIGIterableForm = ({
                   <strong>MISE_A_JOUR_REMOCRA_VOIE</strong> : Met à jour les
                   informations de la table <code>remocra.voie</code>. Ici, seule
                   la géométrie est mise à jour. L&apos;identification se fait
-                  sur le <strong>nom de la voie ET la commune</strong>.
+                  sur le <strong>nom de la voie ET la commune</strong>
                 </li>
                 <li>
                   <strong>STOCKAGE_SIMPLE</strong> : Permet d&apos;obtenir des
@@ -595,6 +663,29 @@ const ParametreSynchroSIGIterableForm = ({
           />
         </Row>
       )}
+      {TYPE_SYNCHRONISATION_TABLE_SIG[
+        listeElements[index]?.typeSynchronisation
+      ] !== TYPE_SYNCHRONISATION_TABLE_SIG.STOCKAGE_SIMPLE &&
+        TYPE_SYNCHRONISATION_TABLE_SIG[
+          listeElements[index]?.typeSynchronisation
+        ] !== undefined && (
+          <Row>
+            <TextAreaInput
+              required={true}
+              name={`taskParametres[listeTableASynchroniser][${index}].scriptCreationVue`}
+              label="Script création de la vue :"
+              tooltipText={
+                <TooltipScriptVue
+                  type={
+                    TYPE_SYNCHRONISATION_TABLE_SIG[
+                      listeElements[index]?.typeSynchronisation
+                    ]
+                  }
+                />
+              }
+            />
+          </Row>
+        )}
     </Col>
   );
 };

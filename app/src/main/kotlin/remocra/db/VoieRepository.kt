@@ -67,6 +67,8 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
             .fetchInto()
     }
 
+    fun dropViewForEntrepotSig() = dsl.dropViewIfExists(V_VOIE_SIG).execute()
+
     data class VoieWithCommune(
         val id: UUID,
         val code: String,
