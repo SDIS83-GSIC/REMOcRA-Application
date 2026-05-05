@@ -201,25 +201,26 @@ const TooltipMapPei = ({
                   </TooltipCustom>
                 </Col>
               )}
-              {hasDroit(user, TYPE_DROIT.PEI_R) && (
-                <Col className="p-1" xs={"auto"}>
-                  <TooltipCustom
-                    tooltipText={"Consulter les documents du PEI"}
-                    tooltipId={"documents-pei-carte"}
-                  >
-                    <Button
-                      variant="info"
-                      onClick={() => {
-                        setShowDocumentPei(true);
-                        overlay?.setPosition(undefined);
-                      }}
-                      disabled={showFormPei || showFormVisite.show}
+              {hasDroit(user, TYPE_DROIT.PEI_R) &&
+                featureSelect?.getProperties().hasDocuments && (
+                  <Col className="p-1" xs={"auto"}>
+                    <TooltipCustom
+                      tooltipText={"Consulter les documents du PEI"}
+                      tooltipId={"documents-pei-carte"}
                     >
-                      <IconDocument />
-                    </Button>
-                  </TooltipCustom>
-                </Col>
-              )}
+                      <Button
+                        variant="info"
+                        onClick={() => {
+                          setShowDocumentPei(true);
+                          overlay?.setPosition(undefined);
+                        }}
+                        disabled={showFormPei || showFormVisite.show}
+                      >
+                        <IconDocument />
+                      </Button>
+                    </TooltipCustom>
+                  </Col>
+                )}
               {hasDroit(user, TYPE_DROIT.VISITE_R) && (
                 <Col className="p-1" xs={"auto"}>
                   <TooltipCustom

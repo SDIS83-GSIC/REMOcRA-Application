@@ -22,6 +22,7 @@ import remocra.db.jooq.remocra.tables.references.EVENEMENT
 import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
 import remocra.db.jooq.remocra.tables.references.L_DEBIT_SIMULTANE_MESURE_PEI
 import remocra.db.jooq.remocra.tables.references.L_INDISPONIBILITE_TEMPORAIRE_PEI
+import remocra.db.jooq.remocra.tables.references.L_PEI_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_SIGNALEMENT_ELEMENT_SIGNALEMENT_TYPE_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.L_TOURNEE_PEI
 import remocra.db.jooq.remocra.tables.references.NATURE_DECI
@@ -70,6 +71,11 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
                 ),
         ).`as`("hasTourneeReservee")
 
+        val hasDocuments = DSL.exists(
+            DSL.select(L_PEI_DOCUMENT.DOCUMENT_ID).from(L_PEI_DOCUMENT)
+                .where(L_PEI_DOCUMENT.PEI_ID.eq(PEI.ID)),
+        ).`as`("hasDocuments")
+
         val hasDebitSimultane = DSL.exists(
             DSL.select(L_DEBIT_SIMULTANE_MESURE_PEI.DEBIT_SIMULTANE_MESURE_ID).from(L_DEBIT_SIMULTANE_MESURE_PEI)
                 .where(L_DEBIT_SIMULTANE_MESURE_PEI.PEI_ID.eq(PEI.ID)),
@@ -93,6 +99,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
             PIBI.TYPE_RESEAU_ID,
             PEI.NUMERO_COMPLET,
             PEI.TYPE_PEI,
+            hasDocuments,
         )
             .from(PEI)
             .innerJoin(NATURE_DECI).on(PEI.NATURE_DECI_ID.eq(NATURE_DECI.ID))
@@ -436,6 +443,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
         val pibiTypeReseauId: UUID?,
         val peiNumeroComplet: String,
         val peiTypePei: String,
+        val hasDocuments: Boolean = false,
 
         // TODO à compléter au besoin
 
