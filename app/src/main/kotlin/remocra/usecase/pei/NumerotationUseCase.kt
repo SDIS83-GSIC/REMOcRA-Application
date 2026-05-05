@@ -284,7 +284,7 @@ constructor(
 
             // On prend le suivant
             numInterne++
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             numInterne = MAX_PEI_NUMERO_INTERNE
         }
         return numInterne
@@ -415,7 +415,7 @@ constructor(
             } else { // PENA
                 return computeNumeroInterne53Private(pei, false)
             }
-        } catch (e: java.lang.Exception) {
+        } catch (_: Exception) {
             return defaultValue
         }
         // Normalement impossible
@@ -607,18 +607,6 @@ constructor(
         val codeZoneSpeciale = if (pei.peiZoneSpecialeId != null) ensureZoneSpeciale(pei).zoneIntegrationCode else null
 
         return (codeZoneSpeciale ?: commune.communeCodeInsee) + "%03d".format(Locale.getDefault(), pei.peiNumeroInterne)
-    }
-
-    /**
-     * <insee> <numero_interne> avec un espace dans insee et le numero interne sur 4 chiffres
-     * Exemple  : 14 118 0001
-     *
-     */
-    private fun computeNumero14(pei: PeiForNumerotationData): String {
-        checkCommuneId(pei)
-
-        val insee = ensureCommune(pei).communeCodeInsee
-        return insee.substring(0, 2) + " " + insee.substring(2, 5) + " " + "%04d".format(Locale.getDefault(), pei.peiNumeroInterne)
     }
 
     /**
@@ -907,29 +895,13 @@ constructor(
         return constanteNatureDeci.equals(pei.natureDeci?.natureDeciCode, ignoreCase = true)
     }
 
-    private fun checkCommuneId(pei: PeiForNumerotationData) {
-        if (pei.peiCommuneId == null) {
-            throw IllegalArgumentException("Pas de commune pour la numérotation")
-        }
-    }
+    private fun checkCommuneId(pei: PeiForNumerotationData) = requireNotNull(pei.peiCommuneId) { "Pas de commune pour la numérotation" }
 
-    private fun checkGestionnaire(pei: PeiForNumerotationData) {
-        if (pei.gestionnaireId == null) {
-            throw IllegalArgumentException("Pas de gestionnaire pour la numérotation")
-        }
-    }
+    private fun checkGestionnaire(pei: PeiForNumerotationData) = requireNotNull(pei.gestionnaireId) { "Pas de gestionnaire pour la numérotation" }
 
-    private fun checkNature(pei: PeiForNumerotationData) {
-        if (pei.nature == null) {
-            throw IllegalArgumentException("Pas de nature pour la numérotation")
-        }
-    }
+    private fun checkNature(pei: PeiForNumerotationData) = requireNotNull(pei.nature) { "Pas de nature pour la numérotation" }
 
-    private fun checkNatureDeci(pei: PeiForNumerotationData) {
-        if (pei.natureDeci == null) {
-            throw IllegalArgumentException("Pas de nature DECI pour la numérotation")
-        }
-    }
+    private fun checkNatureDeci(pei: PeiForNumerotationData) = requireNotNull(pei.natureDeci) { "Pas de nature DECI pour la numérotation" }
 
     /**
      * Retourne TRUE si on a besoin de recalculer le numéro interne à cause d'un changement de domaine. <br />
@@ -1033,7 +1005,7 @@ constructor(
             CodeSdis.SDIS_973,
             CodeSdis.BSPP,
             CodeSdis.SDMIS,
-            -> return communeId != communeIdInitial
+            -> communeId != communeIdInitial
             CodeSdis.SDIS_09,
             CodeSdis.SDIS_21,
             CodeSdis.SDIS_38,
@@ -1049,31 +1021,21 @@ constructor(
 }
 
 /**
- * Extrait le prochain numéro interne de la liste des candidats ; On part de *seed*, on en prend *limit*, on trie par ordre naturel et on retourne le premier
+ * Extrait le prochain numéro interne de la liste des candidats ; On part de *seed*, on en prend *limit* et on retourne le premier
  * @param seed Valeur de début de la génération
  * @param limit équivalent du *limit* SQL
  *
  * @return le prochain numéro interne
  */
-private fun Collection<Int>.getNextNumeroInterne(seed: Int, limit: Int): Int {
-    return generateSequence(seed) { it + 1 }
-        .take(limit + 1)
-        .minus(this.toSet())
-        .sorted()
-        .first()
-}
+private fun Collection<Int>.getNextNumeroInterne(seed: Int, limit: Int): Int =
+    generateSequence(seed) { it + 1 }.take(limit + 1).minus(this.toSet()).first()
 
 /**
- * Extrait le prochain numéro interne de la liste des candidats ; On part de *seed*, on s'arrête quand on arrive à maxValue, on trie par ordre naturel et on retourne le premier
+ * Extrait le prochain numéro interne de la liste des candidats ; On part de *seed*, on s'arrête quand on arrive à maxValue et on retourne le premier
  * @param seed Valeur de début de la génération
  * @param maxValue Valeur max à ne pas dépasser
  *
  * @return le prochain numéro interne
  */
-private fun Collection<Int>.getNextNumeroInterneWhile(seed: Int, maxValue: Int): Int {
-    return generateSequence(seed) { it + 1 }
-        .takeWhile { it <= maxValue }
-        .minus(this.toSet())
-        .sorted()
-        .first()
-}
+private fun Collection<Int>.getNextNumeroInterneWhile(seed: Int, maxValue: Int): Int =
+    generateSequence(seed) { it + 1 }.takeWhile { it <= maxValue }.minus(this.toSet()).first()

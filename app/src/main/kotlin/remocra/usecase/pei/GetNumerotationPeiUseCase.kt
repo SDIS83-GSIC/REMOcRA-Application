@@ -1,9 +1,7 @@
 package remocra.usecase.pei
 
 import jakarta.inject.Inject
-import jakarta.inject.Provider
 import remocra.app.DataCacheProvider
-import remocra.app.ParametresProvider
 import remocra.data.PeiData
 import remocra.data.PeiForNumerotationData
 import remocra.data.PibiData
@@ -12,7 +10,6 @@ import remocra.usecase.AbstractUseCase
 class GetNumerotationPeiUseCase @Inject constructor(
     private val dataCacheProvider: DataCacheProvider,
     private val numerotationUseCase: NumerotationUseCase,
-    private val parametresProvider: Provider<ParametresProvider>,
 ) : AbstractUseCase() {
 
     fun execute(element: PeiData): Pair<String, Int> {
