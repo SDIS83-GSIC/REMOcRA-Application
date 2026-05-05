@@ -77,9 +77,9 @@ constructor(
             }
             logManager.info("[SIG] Liste des fields à SELECT : $fieldsToSelect")
             // Émission de la requête SELECT avec traitement par BATCH
-            // Pour les très grandes tables (millions de lignes), on traite par chunk de 50 000 lignes
+            // Pour les très grandes tables (millions de lignes), on traite par chunk de parameters.batchInsert lignes
             // pour éviter les problèmes de mémoire et les timeouts de connexion
-            logManager.info("[SIG] Début du traitement par BATCH (50 000 lignes/lot)")
+            logManager.info("[SIG] Début du traitement par BATCH (${parameters.batchInsert ?: BATCH_SIZE} lignes/lot)")
             var totalRows = 0
             var batchNumber = 0
 
