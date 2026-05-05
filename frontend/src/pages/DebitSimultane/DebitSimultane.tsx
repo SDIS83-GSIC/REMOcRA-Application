@@ -28,6 +28,7 @@ type DebitSimultaneType = {
   typeReseauLibelle: string | undefined;
   listeDebitSimultaneMesure: DebitSimultaneMesureType[];
   vitesseEau: number;
+  listePeiSelectionnable: IdCodeLibelleType[];
 };
 
 type DebitSimultaneMesureType = {
@@ -38,7 +39,7 @@ type DebitSimultaneMesureType = {
   debitSimultaneMesureDateMesure: Date;
   debitSimultaneMesureCommentaire: string;
   debitSimultaneMesureIdentiqueReseauVille: boolean;
-  listePeiId: string[];
+  listePeiId: (string | undefined)[] | undefined;
   documentNomFichier: string;
   document: Blob;
   documentId: string | null;
@@ -173,7 +174,8 @@ const ComposantToRepeat = ({
   index: number;
   listeElements: DebitSimultaneMesureType[];
 }) => {
-  const { setValues, values, setFieldValue } = useFormikContext();
+  const { setValues, values, setFieldValue } =
+    useFormikContext<DebitSimultaneType>();
 
   const selectDebitRetenu: IdCodeLibelleType[] = [];
 
@@ -189,14 +191,16 @@ const ComposantToRepeat = ({
     listeElements[index].debitSimultaneMesureDateMesure ?? new Date();
   const defaultMesureValue =
     listeElements[index].debitSimultaneMesureDebitMesure ??
-    Math.max(
-      1,
-      Math.floor(
-        values.vitesseEau *
-          Math.pow(Number(values.maxDiametreCanalisation) / 1000, 2) *
-          2826,
-      ),
-    );
+    (values.vitesseEau &&
+    values.maxDiametreCanalisation &&
+    values.vitesseEau > 0 &&
+    values.maxDiametreCanalisation > 0
+      ? Math.floor(
+          values.vitesseEau *
+            Math.pow(Number(values.maxDiametreCanalisation) / 1000, 2) *
+            2826,
+        )
+      : undefined);
 
   useMemo(() => {
     const currentMesure = values.listeDebitSimultaneMesure[index];
@@ -237,7 +241,7 @@ const ComposantToRepeat = ({
       ) {
         setFieldValue(
           `listeDebitSimultaneMesure[${index}].listePeiId`,
-          defaultPeiValue.map((e) => e.id),
+          defaultPeiValue.filter((e) => e !== undefined).map((e) => e.id),
         );
       }
     }
@@ -296,7 +300,7 @@ const ComposantToRepeat = ({
                     index
                   ].debitSimultaneMesureDebitRetenu?.toString(),
               )}
-              onChange={(e) => {
+              onChange={(e: IdCodeLibelleType) => {
                 setFieldValue(
                   `listeDebitSimultaneMesure[${index}].debitSimultaneMesureDebitRetenu`,
                   e.id,
@@ -317,9 +321,12 @@ const ComposantToRepeat = ({
             options={values.listePeiSelectionnable}
             getOptionValue={(t) => t.id}
             value={
-              values.listePeiSelectionnable?.filter((c: IdCodeLibelleType) =>
-                listeElements[index]?.listePeiId?.includes(c.id),
-              ) ?? []
+              values.listePeiSelectionnable?.filter((c: IdCodeLibelleType) => {
+                const peiIds = (listeElements[index]?.listePeiId ?? []).filter(
+                  (id): id is string => id !== undefined,
+                );
+                return c.id ? peiIds.includes(c.id) : false;
+              }) ?? []
             }
             getOptionLabel={(t) => t.libelle}
             onChange={(pei) => {
@@ -336,7 +343,7 @@ const ComposantToRepeat = ({
           <CheckBoxInput
             name={`listeDebitSimultaneMesure[${index}].debitSimultaneMesureIdentiqueReseauVille`}
             label="Identique Réseau Ville"
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setFieldValue(
                 `listeDebitSimultaneMesure[${index}].debitSimultaneMesureIdentiqueReseauVille`,
                 e.target.checked,
