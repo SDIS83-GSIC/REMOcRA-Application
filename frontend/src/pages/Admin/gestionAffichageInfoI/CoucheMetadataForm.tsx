@@ -19,7 +19,47 @@ import { IconInfo } from "../../../components/Icon/Icon.tsx";
 import url from "../../../module/fetch.tsx";
 import { requiredArray, requiredString } from "../../../module/validators.tsx";
 
-function generateMetadataProperties(properties: any) {
+type PropertyType = { name: string };
+
+type CoucheMetadataFormValues = {
+  groupeCoucheId: string | null;
+  coucheId: string | null;
+  coucheMetadataId: string | null;
+  coucheMetadataActif: boolean;
+  coucheMetadataPublic: boolean;
+  coucheMetadataStyle: string | null;
+  groupeFonctionnaliteIds: string[] | null;
+};
+
+type GroupeCoucheData = {
+  groupeCoucheId: string;
+  groupeCoucheCode: string;
+  groupeCoucheLibelle: string;
+  coucheList: CoucheData[];
+};
+
+type CoucheData = {
+  coucheId: string;
+  coucheCode: string;
+  coucheLibelle: string;
+  groupeFonctionnaliteList: GroupeFonctionnaliteData[];
+};
+
+type GroupeFonctionnaliteData = {
+  groupeFonctionnaliteId: string;
+  groupeFonctionnaliteCode: string;
+  groupeFonctionnaliteLibelle: string;
+};
+
+type DescribeFeatureTypeResponse = {
+  paramsCouche: Array<{
+    featureTypes: Array<{
+      properties: PropertyType[];
+    }>;
+  }>;
+};
+
+function generateMetadataProperties(properties: PropertyType[]) {
   return properties
     .map((property: { name: string }) => {
       return `[b]${property.name} : [/b] #${property.name}#\n[br]`;
@@ -27,7 +67,10 @@ function generateMetadataProperties(properties: any) {
     .join("");
 }
 
-export const getInitialValues = (coucheMetadataId?: string, data?: any) => ({
+export const getInitialValues = (
+  coucheMetadataId?: string,
+  data?: Partial<CoucheMetadataFormValues>,
+) => ({
   groupeCoucheId: data?.groupeCoucheId ?? null,
   coucheId: data?.coucheId ?? null,
   coucheMetadataId: coucheMetadataId ?? "",
@@ -39,15 +82,7 @@ export const getInitialValues = (coucheMetadataId?: string, data?: any) => ({
 });
 
 export const prepareValues = (
-  values: {
-    groupeCoucheId: any;
-    coucheId: any;
-    coucheMetadataActif: boolean;
-    coucheMetadataPublic: boolean;
-    coucheMetadataStyle: any;
-
-    groupeFonctionnaliteIds: any;
-  },
+  values: CoucheMetadataFormValues,
   coucheMetadataId?: string,
 ) => ({
   coucheMetadataId: coucheMetadataId,
@@ -77,19 +112,12 @@ const CoucheMetadataForm = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const { handleShowClose, activesKeys } = useAccordionState([false, false]);
 
-  const getError = useCallback(async (errorPending: any) => {
+  const getError = useCallback(async (errorPending: Response) => {
     return await errorPending?.text();
   }, []);
 
-  const { setValues, setFieldValue, values } = useFormikContext<{
-    groupeCoucheId: any;
-    coucheId: any;
-    groupeFonctionnaliteIds: any;
-    coucheMetadata: any;
-    coucheMetadataFlag: boolean;
-    coucheMetadataPublicAccess: boolean;
-    coucheMetadataId: string | null;
-  }>();
+  const { setValues, setFieldValue, values } =
+    useFormikContext<CoucheMetadataFormValues>();
   const {
     run: fetchOption,
     data: describeFeatureType,
@@ -99,9 +127,9 @@ const CoucheMetadataForm = ({
   const properties = useMemo(() => {
     return (
       describeFeatureType?.flatMap(
-        (df: { paramsCouche: any[] }) =>
+        (df: DescribeFeatureTypeResponse) =>
           df?.paramsCouche?.featureTypes?.flatMap(
-            (ft: { properties: any }) => ft.properties ?? [],
+            (ft: { properties: PropertyType[] }) => ft.properties ?? [],
           ) ?? [],
       ) ?? []
     );
@@ -124,7 +152,9 @@ const CoucheMetadataForm = ({
     }
   }, [setFieldValue, coucheInitiale, properties]);
 
-  const handleLayerStyleChange = (event: any) => {
+  const handleLayerStyleChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>,
+  ) => {
     if (event.target.value === "") {
       setFieldValue(
         "coucheMetadataStyle",
@@ -156,38 +186,29 @@ const CoucheMetadataForm = ({
   }
 
   // Liste des groupes de couches
-  const listGroupeCouche = coucheData.map(
-    (groupeCouche: {
-      groupeCoucheId: any;
-      groupeCoucheCode: any;
-      groupeCoucheLibelle: any;
-      coucheList: any;
-    }) => ({
-      id: groupeCouche.groupeCoucheId,
-      code: groupeCouche.groupeCoucheCode,
-      libelle: groupeCouche.groupeCoucheLibelle,
-      listeCouches: groupeCouche.coucheList,
-    }),
-  );
+  const listGroupeCouche = coucheData.map((groupeCouche: GroupeCoucheData) => ({
+    id: groupeCouche.groupeCoucheId,
+    code: groupeCouche.groupeCoucheCode,
+    libelle: groupeCouche.groupeCoucheLibelle,
+    listeCouches: groupeCouche.coucheList,
+  }));
 
   // On récupère le groupe de couche sélectionné directement depuis values (FormData)
   const selectedGroupeCouche = listGroupeCouche.find(
-    (groupeCouche: { id: any }) => groupeCouche.id === values.groupeCoucheId,
+    (groupeCouche: (typeof listGroupeCouche)[0]) =>
+      groupeCouche.id === values.groupeCoucheId,
   );
 
   // Liste des couches en fonction du groupe sélectionné
-  let listCouches = [];
+  let listCouches: ReturnType<
+    (typeof listGroupeCouche)[0]["listeCouches"]["map"]
+  > = [];
   if (selectedGroupeCouche) {
     listCouches = selectedGroupeCouche.listeCouches.map(
-      (layer: {
-        coucheId: any;
-        coucheCode: any;
-        coucheLibelle: any;
-        groupeFonctionnaliteList: any;
-      }) => ({
+      (layer: CoucheData) => ({
         id: layer.coucheId,
         code: layer.coucheCode,
-        libelle: layer.coucheLibelle,
+        libelle: layer.coucheLibelle + " (" + layer.coucheCode + ")",
         groupeFonctionnaliteList: layer.groupeFonctionnaliteList,
       }),
     );
@@ -195,18 +216,18 @@ const CoucheMetadataForm = ({
 
   // On récupère la couche sélectionnée (valeurs du formulaire)
   const selectedCouche = selectedGroupeCouche?.listeCouches.find(
-    (couche: { coucheId: any }) => couche.coucheId === values.coucheId,
+    (couche: CoucheData) => couche.coucheId === values.coucheId,
   );
 
   // Liste des groupes de fonctionnalités en fonction de la couche sélectionnée
-  let listGroupeFonctionnalites = [];
+  let listGroupeFonctionnalites: Array<{
+    id: string;
+    code: string;
+    libelle: string;
+  }> = [];
   if (selectedCouche) {
     listGroupeFonctionnalites = selectedCouche.groupeFonctionnaliteList.map(
-      (groupeFonctionnalite: {
-        groupeFonctionnaliteId: any;
-        groupeFonctionnaliteCode: any;
-        groupeFonctionnaliteLibelle: any;
-      }) => ({
+      (groupeFonctionnalite: GroupeFonctionnaliteData) => ({
         id: groupeFonctionnalite.groupeFonctionnaliteId,
         code: groupeFonctionnalite.groupeFonctionnaliteCode,
         libelle: groupeFonctionnalite.groupeFonctionnaliteLibelle,
@@ -214,15 +235,14 @@ const CoucheMetadataForm = ({
     );
 
     // Tri de la liste des profils droits par libelle
-    listGroupeFonctionnalites = listGroupeFonctionnalites.sort(
-      (a: { libelle: string }, b: { libelle: string }) =>
-        a.libelle.localeCompare(b.libelle),
+    listGroupeFonctionnalites = listGroupeFonctionnalites.sort((a, b) =>
+      a.libelle.localeCompare(b.libelle),
     );
   }
 
   const paramNotFound = "Aucun paramètre trouvé";
   const params = properties.length
-    ? properties.map((p: { name: any }, idx: number) => (
+    ? properties.map((p: PropertyType, idx: number) => (
         <span key={idx}>
           - {p.name}
           <br />
@@ -329,10 +349,10 @@ const CoucheMetadataForm = ({
         options={listGroupeFonctionnalites}
         getOptionValue={(t) => t.id}
         value={
-          values.groupeFonctionnaliteIds?.map((e: any) =>
-            listGroupeFonctionnalites.find((p: any) => p.id === e),
+          values.groupeFonctionnaliteIds?.map((e: string) =>
+            listGroupeFonctionnalites.find((p) => p.id === e),
           ) ??
-          listGroupeFonctionnalites.filter((e: { id: any }) =>
+          listGroupeFonctionnalites.filter((e) =>
             values.groupeFonctionnaliteIds?.includes(e.id),
           )
         }
