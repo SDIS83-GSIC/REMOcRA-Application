@@ -69,7 +69,7 @@ class SigRepository @Inject constructor(@param:Sig @param:Nullable private val d
      */
     private fun mapPostgresTypeToSQL(postgresType: String): String = when (postgresType.lowercase()) {
         // Types entiers
-        "decimal_integer", "int4", "integer" -> "INTEGER"
+        "decimal_integer", "int4", "integer", "tinyint" -> "INTEGER"
         "int8", "bigint" -> "BIGINT"
         "int2", "smallint" -> "SMALLINT"
 
