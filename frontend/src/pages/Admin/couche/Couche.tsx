@@ -102,8 +102,12 @@ export const prepareValues = (
     }),
   );
 
-  formData.append("icone", couche.icone!);
-  formData.append("legende", couche.legende!);
+  if (couche.icone) {
+    formData.append("icone", couche.icone);
+  }
+  if (couche.legende) {
+    formData.append("legende", couche.legende);
+  }
 
   return formData;
 };
