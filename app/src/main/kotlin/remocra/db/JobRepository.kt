@@ -201,4 +201,17 @@ class JobRepository @Inject constructor(private val dsl: DSLContext) : AbstractR
 
     fun deleteByIdJob(jobsIds: Collection<UUID>) =
         dsl.deleteFrom(JOB).where(JOB.ID.`in`(jobsIds)).execute()
+
+    fun getJobsEnCours(): List<UUID> =
+        dsl.select(JOB.ID)
+            .from(JOB)
+            .where(JOB.ETAT_JOB.eq(EtatJob.EN_COURS))
+            .fetchInto()
+
+    fun updateJobEnErreur(listIdJob: List<UUID>) =
+        dsl.update(JOB)
+            .set(JOB.ETAT_JOB, EtatJob.EN_ERREUR)
+            .set(JOB.DATE_FIN, dateUtils.now())
+            .where(JOB.ID.`in`(listIdJob))
+            .execute()
 }

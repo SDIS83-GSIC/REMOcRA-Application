@@ -11,27 +11,56 @@ import remocra.auth.UserInfo
 import remocra.auth.WrappedUserInfo
 import remocra.data.ParametresData
 import remocra.data.enums.TypeSourceModification
+import remocra.db.JobRepository
+import remocra.db.LogLineRepository
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.enums.LogLineGravity
+import remocra.db.jooq.remocra.tables.pojos.LogLine
 import remocra.db.jooq.remocra.tables.pojos.Task
 import remocra.log.LogManagerFactory
 import remocra.tasks.SchedulableTask
 import remocra.tasks.SchedulableTaskParameters
 import remocra.tasks.SchedulableTaskResults
+import remocra.utils.DateUtils
 import java.text.ParseException
 import java.util.Date
+import java.util.UUID
 
 class SchedulableTasksExecutor
 @Inject
 constructor(
     private var tasks: Set<SchedulableTask<out SchedulableTaskParameters, out SchedulableTaskResults>>,
     private val logManagerFactory: LogManagerFactory,
+    private val logLineRepository: LogLineRepository,
     private val parametresProvider: Provider<ParametresData>,
     private val dataCacheProvider: DataCacheProvider,
+    private val jobRepository: JobRepository,
+    private val dateUtils: DateUtils,
 ) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
     fun start() {
+        // ici on est dans un redémarrage de l'application / rechargement des données
+        // on doit donc mettre en erreur les tâches qui ont été arrété alors qu'elles étaient en cours
+
+        val jobEnCours = jobRepository.getJobsEnCours()
+        jobEnCours.forEach {
+            // On insère une log line pour avoir l'information
+            logLineRepository.writeLogLine(
+                LogLine(
+                    logLineId = UUID.randomUUID(),
+                    logLineJobId = it,
+                    logLineGravity = LogLineGravity.ERROR,
+                    logLineDate = dateUtils.now(),
+                    logLineObjectId = null,
+                    logLineMessage = "Le serveur a redémarré ou un rechargement des tâches a eu lieu, ce qui a entraîné un arrêt du traitement.",
+                ),
+            )
+        }
+
+        jobRepository.updateJobEnErreur(jobEnCours)
+
         tasks.forEach { task ->
             try {
                 if (getTaskInfo(task)?.taskPlanification != null) {
