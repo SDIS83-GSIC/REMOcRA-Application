@@ -105,7 +105,7 @@ android-lint = "com.android.lint:8.13.2"
 cyclonedx = "org.cyclonedx.bom:3.1.0"
 flyway = "net.ltgt.flyway:1.0.0"
 forbiddenapis = { id = "de.thetaphi.forbiddenapis", version.ref = "forbiddenapis" }
-jooq = "net.ltgt.jooq-kotlin:0.1.0"
+jooq = "net.ltgt.jooq-kotlin:1.0.0"
 jvmDependencyConflictResolution = "org.gradlex.jvm-dependency-conflict-resolution:2.5"
 kotlin = "org.jetbrains.kotlin.jvm:2.3.0"
 licensee = "app.cash.licensee:1.14.1"
