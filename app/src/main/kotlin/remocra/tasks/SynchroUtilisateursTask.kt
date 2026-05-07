@@ -121,7 +121,7 @@ class SynchroUtilisateurTask @Inject constructor(
                             )
                         } catch (e: Exception) {
                             logger.error("[TASK_SYNCHRO_UTILISATEUR] Erreur : ", e)
-                            logManager.error("[TASK_SYNCHRO_UTILISATEUR] Erreur : impossible d'insérer l'utilisateur '${userRepresentation.username}' (présent an base avec des données incohérentes).")
+                            logManager.error("[TASK_SYNCHRO_UTILISATEUR] Erreur : impossible d'insérer l'utilisateur '${userRepresentation.username}' (présent en base avec des données incohérentes).")
                         }
                     }
                 }
