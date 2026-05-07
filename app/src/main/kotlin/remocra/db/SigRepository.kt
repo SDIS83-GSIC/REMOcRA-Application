@@ -2,6 +2,7 @@ package remocra.db
 
 import jakarta.annotation.Nullable
 import jakarta.inject.Inject
+import jakarta.inject.Provider
 import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.Record
@@ -15,11 +16,11 @@ import kotlin.streams.asSequence
  * Il est donc nécessaire, à chaque utilisation du contexte, de vérifier qu'il n'est pas nul (dsl!!.select[...]) ;
  * dans le cas contraire, une RuntimeException est justifiée.
 */
-class SigRepository @Inject constructor(@param:Sig @param:Nullable private val dsl: DSLContext?) {
+class SigRepository @Inject constructor(@param:Sig @param:Nullable private val dsl: Provider<DSLContext?>) {
 
     fun getMetaStructureTable(schemaName: String, tableName: String): List<ColumnInfo> {
         val databaseType = detectDatabaseType()
-        return dsl!!.meta().tables
+        return dsl.get()!!.meta().tables
             .first { table ->
                 table.schema!!.name == schemaName && table.name == tableName
             }.fields()
@@ -44,7 +45,7 @@ class SigRepository @Inject constructor(@param:Sig @param:Nullable private val d
      * Détecte le type de base de données utilisée pour la source SIG
      */
     private fun detectDatabaseType(): DatabaseType {
-        val conn = dsl!!.configuration().connectionProvider().acquire()
+        val conn = dsl.get()!!.configuration().connectionProvider().acquire()
         val databaseProductName = conn?.metaData?.databaseProductName?.lowercase() ?: "unknown"
         conn?.close()
 
@@ -137,7 +138,7 @@ class SigRepository @Inject constructor(@param:Sig @param:Nullable private val d
         batchSize: Int,
         processBatch: (List<Record>) -> Unit,
     ) {
-        dsl!!.select(listFields)
+        dsl.get()!!.select(listFields)
             .from("$schemaSource.$tableSource")
             .fetchStream()
             .asSequence()
