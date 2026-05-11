@@ -4,6 +4,7 @@ import MyFormik from "../../../components/Form/MyFormik.tsx";
 import { IconCreate } from "../../../components/Icon/Icon.tsx";
 import { URLS } from "../../../routes.tsx";
 import {
+  getInitialNatureValue,
   NatureForm,
   natureValidationSchema,
   prepareNatureValues,
@@ -14,14 +15,7 @@ const CreateNature = () => {
     <Container>
       <PageTitle title="Ajouter une nature" icon={<IconCreate />} />
       <MyFormik
-        initialValues={{
-          natureActif: true,
-          natureCode: "",
-          natureLibelle: "",
-          natureTypePei: "",
-          natureProtected: false,
-          natureTypePeiNexsis: "",
-        }}
+        initialValues={getInitialNatureValue()}
         prepareVariables={(values) => prepareNatureValues(values)}
         validationSchema={natureValidationSchema}
         submitUrl={`/api/nature/create/`}

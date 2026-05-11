@@ -40,12 +40,12 @@ export const natureValidationSchema = object({
   diametreIds: array(),
 });
 
-export const getInitialNatureValue = (data: NatureType) => ({
-  natureActif: data?.natureActif ?? null,
+export const getInitialNatureValue = (data?: NatureType) => ({
+  natureActif: data?.natureActif ?? false,
   natureCode: data?.natureCode ?? null,
   natureLibelle: data?.natureLibelle ?? null,
   natureTypePei: data?.natureTypePei ?? null,
-  natureProtected: data?.natureProtected ?? null,
+  natureProtected: data?.natureProtected ?? false,
   natureParticipeDfci: data?.natureParticipeDfci ?? false,
   diametreIds: data?.diametreIds ?? [],
   natureTypePeiNexsis: data?.natureTypePeiNexsis ?? null,
