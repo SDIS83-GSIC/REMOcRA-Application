@@ -73,6 +73,7 @@ type ParametresSectionCartographie = {
   empriseNative: string | undefined;
   rechercheBan: boolean;
   listeToponymieCode: string[];
+  banCodeDepartement: string;
 };
 
 type ParametresSectionCouvertureHydraulique = {
@@ -873,6 +874,18 @@ const AdminCartographie = ({
             }
           />
         </AdminParametre>
+        {values.rechercheBan && (
+          <AdminParametre type={TYPE_PARAMETRE.STRING}>
+            <TextInput
+              name="cartographie.banCodeDepartement"
+              label="Code département pour la recherche BAN"
+              tooltipText={
+                "La recherche BAN sera limitée aux départements spécifiés séparés par des virgules (ex: 89, 21). Si ce champ est laissé vide, la recherche BAN s'effectuera sur l'ensemble du territoire français."
+              }
+              required={false}
+            />
+          </AdminParametre>
+        )}
 
         {!values.rechercheBan && (
           <>

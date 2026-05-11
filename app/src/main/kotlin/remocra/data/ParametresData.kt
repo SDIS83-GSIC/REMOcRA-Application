@@ -85,6 +85,7 @@ data class ParametresSectionCartographie(
     val empriseNative: String?,
     val rechercheBan: Boolean?,
     val listeToponymieCode: List<String>?,
+    val banCodeDepartement: String?,
 )
 
 data class ParametresSectionPeiLongueIndispo(

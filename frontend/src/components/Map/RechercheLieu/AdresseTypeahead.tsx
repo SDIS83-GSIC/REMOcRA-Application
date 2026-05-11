@@ -1,12 +1,30 @@
 import OLMap from "ol/Map";
 import { transform } from "ol/proj";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { AsyncTypeahead } from "react-bootstrap-typeahead";
+import PARAMETRE from "../../../enums/ParametreEnum.tsx";
+import url from "../../../module/fetch.tsx";
 import { EPSG_4326, RESOLUTION_ZOOM } from "../../../utils/constantsUtils.tsx";
+import { useGet } from "../../Fetch/useFetch.tsx";
 
 const AdresseTypeahead = ({ map }: { map: OLMap }) => {
   const [state, setState] = useState({ isLoading: false, options: [] });
   const apiEpsg = EPSG_4326; // ESPG utilisée pour data.gouv
+
+  const parametresState = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify([PARAMETRE.BAN_CODE_DEPARTEMENT]),
+    }}`,
+  );
+
+  const banCodeDepartement = useMemo<string | undefined>(() => {
+    if (!parametresState.isResolved) {
+      return undefined;
+    }
+
+    return parametresState?.data[PARAMETRE.BAN_CODE_DEPARTEMENT]
+      .parametreValeur;
+  }, [parametresState]);
 
   return (
     <AsyncTypeahead
@@ -19,7 +37,7 @@ const AdresseTypeahead = ({ map }: { map: OLMap }) => {
       isLoading={state.isLoading}
       options={state.options}
       filterBy={
-        (options) => options // On récupère toutes les options que la requête nous renvoie !
+        () => true // On récupère toutes les options que la requête nous renvoie !
       }
       labelKey={(feature) => `${feature.properties.label}`}
       onSearch={(query) => {
@@ -33,7 +51,7 @@ const AdresseTypeahead = ({ map }: { map: OLMap }) => {
         );
         setState({ ...state, isLoading: true });
         fetch(
-          `https://data.geopf.fr/geocodage/search?q=${query}&lat=${coord4326[0]}&lon=${coord4326[1]}`,
+          `https://data.geopf.fr/geocodage/search?q=${query}&lat=${coord4326[0]}&lon=${coord4326[1]}${banCodeDepartement ? `&depcode=${banCodeDepartement}` : ""}`,
         )
           .then((response) => response.json())
           .then((json) =>

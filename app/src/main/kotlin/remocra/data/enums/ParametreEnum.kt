@@ -16,6 +16,7 @@ enum class ParametreEnum(val section: ParametreSection) {
     EMPRISE_NATIVE(ParametreSection.CARTOGRAPHIE),
     RECHERCHE_BAN(ParametreSection.CARTOGRAPHIE),
     LISTE_TOPONYMIE_CODE(ParametreSection.CARTOGRAPHIE),
+    BAN_CODE_DEPARTEMENT(ParametreSection.CARTOGRAPHIE),
 
     // Couverture hydraulique
     DECI_DISTANCE_MAX_PARCOURS(ParametreSection.COUVERTURE_HYDRAULIQUE),

@@ -88,6 +88,7 @@ class UpdateParametresUseCase
                 ParametreEnum.LISTE_TOPONYMIE_CODE,
                 objectMapper.writeValueAsString(parametresAdminData.cartographie.listeToponymieCode),
             )
+            updateParametre(ParametreEnum.BAN_CODE_DEPARTEMENT, parametresAdminData.cartographie.banCodeDepartement)
 
             // Couverture hydraulique
             updateParametre(
@@ -311,6 +312,15 @@ class UpdateParametresUseCase
                 objectMapper.readValue<List<Int>>("[$it]")
             } catch (e: Exception) {
                 throw RemocraResponseException(ErrorType.ADMIN_PARAMETRE_ISODISTANCE_FORMAT)
+            }
+        }
+
+        // Puis on vérifie que si le champ banCodeDepartement est rempli, il est bien au format d'une liste d'entiers
+        element.cartographie.banCodeDepartement?.let {
+            try {
+                objectMapper.readValue<List<Int>>("[$it]")
+            } catch (_: Exception) {
+                throw RemocraResponseException(ErrorType.ADMIN_PARAMETRE_BAN_CODE_DEPARTEMENT)
             }
         }
     }

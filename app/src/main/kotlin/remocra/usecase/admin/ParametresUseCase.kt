@@ -77,6 +77,7 @@ constructor(
             empriseNative = mapParametres.getStringOrNull(ParametreEnum.EMPRISE_NATIVE.name),
             rechercheBan = mapParametres.getBooleanOrNull(ParametreEnum.RECHERCHE_BAN.name),
             listeToponymieCode = mapParametres.getListOfString(ParametreEnum.LISTE_TOPONYMIE_CODE.name, objectMapper),
+            banCodeDepartement = mapParametres.getStringOrNull(ParametreEnum.BAN_CODE_DEPARTEMENT.name),
         )
 
         val couvertureHydraulique = ParametresSectionCouvertureHydraulique(
