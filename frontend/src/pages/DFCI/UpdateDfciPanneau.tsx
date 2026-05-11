@@ -44,7 +44,7 @@ export const UpdateDfciPanneau = ({
         prepareVariables={prepareVariablesPanneau}
         validationSchema={validationSchemaPanneau}
         onSubmit={onSubmit}
-        submitUrl=""
+        submitUrl="/api/dfci-panneau/update"
       >
         <DfciPanneau readOnly={readOnly} />
       </MyFormik>

@@ -2,6 +2,7 @@ package remocra.web.dfci
 
 import jakarta.inject.Inject
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
@@ -13,8 +14,10 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.Public
 import remocra.auth.userInfo
 import remocra.data.enums.TypeElementCarte
+import remocra.db.jooq.remocra.tables.pojos.DfciPanneau
 import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.dfci.GetDfciPanneauUseCase
+import remocra.usecase.dfci.UpdateDfciPanneauUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
@@ -30,6 +33,9 @@ class DfciPanneauxEndpoint : AbstractEndpoint() {
 
     @Inject
     private lateinit var getPointCarteUseCase: GetPointCarteUseCase
+
+    @Inject
+    private lateinit var updateDfciPanneauUseCase: UpdateDfciPanneauUseCase
 
     @Context
     private lateinit var securityContext: SecurityContext
@@ -59,6 +65,35 @@ class DfciPanneauxEndpoint : AbstractEndpoint() {
                 null,
                 TypeElementCarte.DFCI_PANNEAU,
                 securityContext.userInfo,
+            ),
+        ).build()
+
+    /**
+     * Endpoint pour mettre à jour le panneau
+     */
+    @PUT
+    @Path("/update")
+    @Public("En attente du tableau de droit")
+    fun updatePanneau(dfciPanneau: DfciPanneau): Response =
+        Response.ok(
+            updateDfciPanneauUseCase.execute(
+                securityContext.userInfo,
+                DfciPanneau(
+                    dfciPanneauId = dfciPanneau.dfciPanneauId,
+                    dfciPanneauType = dfciPanneau.dfciPanneauType,
+                    dfciPanneauEtat = dfciPanneau.dfciPanneauEtat,
+                    dfciPanneauBzero = dfciPanneau.dfciPanneauBzero,
+                    dfciPanneauDateGps = dfciPanneau.dfciPanneauDateGps,
+                    dfciPanneauPosition = dfciPanneau.dfciPanneauPosition,
+                    dfciPanneauEquipement = dfciPanneau.dfciPanneauEquipement,
+                    dfciPanneauDfciPisteId = dfciPanneau.dfciPanneauDfciPisteId,
+                    dfciPanneauNumPiste = dfciPanneau.dfciPanneauNumPiste,
+                    dfciPanneauLibellePiste = dfciPanneau.dfciPanneauLibellePiste,
+                    dfciPanneauRemarque = dfciPanneau.dfciPanneauRemarque,
+                    dfciPanneauGeometrie = dfciPanneau.dfciPanneauGeometrie,
+                    dfciPanneauCode = dfciPanneau.dfciPanneauCode,
+                    dfciPanneauVersion = dfciPanneau.dfciPanneauVersion + 1, // On incrémente la version de la ligne à chaque update
+                ),
             ),
         ).build()
 }
