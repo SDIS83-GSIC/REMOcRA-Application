@@ -1,5 +1,46 @@
 = Release Notes
 
+== 3.0.7
+
+* https://redmine.atolcd.com/issues/247025[#247025]: PEI PRESCRITS - prescription de PEI
+* https://redmine.atolcd.com/issues/253577[#253577]: [DROITS] LIENS PROFILS ET GROUPE DE FONCTIONNALITES - Tri non fonctionnel et recherche
+* https://redmine.atolcd.com/issues/257223[#257223]: Modules carto - "zoomer sur"
+* https://redmine.atolcd.com/issues/261333[#261333]: [COURRIERS] LISTE DES COURRIERS - Tri par ordre croissant / décroissant non fonctionnel
+* https://redmine.atolcd.com/issues/261966[#261966]: [ETUDE] SIMULATION - Mise en forme du tableau
+* https://redmine.atolcd.com/issues/269361[#269361]: [POINTS D'EAU] TOURNEE - Saisir les visites pour la tournée - Affichage et code INSEE
+* https://redmine.atolcd.com/issues/283035[#283035]: Données champs Perenne et Rotation 6 CCF dans HydraWeb pour PEI DFCI
+* https://redmine.atolcd.com/issues/285189[#285189]: Déplacer un PEI : valider le déplacement
+* https://redmine.atolcd.com/issues/286041[#286041]: pei - le déplacement d'un epi fait revenir le paramétrage de la carte par défaut
+* https://redmine.atolcd.com/issues/286125[#286125]: Notifications "Changement d'état"
+* https://redmine.atolcd.com/issues/286309[#286309]: Nombre de jours pour le renouvellement des visites - Privés sous convention
+* https://redmine.atolcd.com/issues/286861[#286861]: Module de crise filtrage
+* https://redmine.atolcd.com/issues/287027[#287027]: [ADMINISTRATION] TABLEAUX - Tri impossible de certains
+* https://redmine.atolcd.com/issues/287048[#287048]: [ETUDE] SIMULATION - Les simulations sont unilatérales
+* https://redmine.atolcd.com/issues/287637[#287637]: [MOBILE] - Annulation de la réservation d'une visite
+* https://redmine.atolcd.com/issues/287649[#287649]: [Application WEB] - Anomalies inactives
+* https://redmine.atolcd.com/issues/287905[#287905]: Saisie en masse - Date de dernière ROP et dernier CTP
+* https://redmine.atolcd.com/issues/287935[#287935]: Problème de correspondance des identifiants lors de l'import utilisateurs
+* https://redmine.atolcd.com/issues/288018[#288018]: Supprimer le droit : ALERTES_EXPORT_C
+* https://redmine.atolcd.com/issues/288042[#288042]: Nombre de lignes affichées par défaut
+* https://redmine.atolcd.com/issues/288066[#288066]: Notification de changement d'état
+* https://redmine.atolcd.com/issues/288174[#288174]: Outil i : Affichage des couches
+* https://redmine.atolcd.com/issues/288261[#288261]: Tournées : saisie de filtre
+* https://redmine.atolcd.com/issues/288303[#288303]: Couverture hydraulique : correction d'un problème de typage
+* https://redmine.atolcd.com/issues/288306[#288306]: Doublon de PEI : Modifier le message d'erreur
+* https://redmine.atolcd.com/issues/288309[#288309]: Liste des PEI : Trier la colonne Tournées
+* https://redmine.atolcd.com/issues/288344[#288344]: Droit associé aux métadonnées
+* https://redmine.atolcd.com/issues/288447[#288447]: Liste des PEI : Colonne Numéro interne
+* https://redmine.atolcd.com/issues/288932[#288932]: Colone notifiée dans l'onglet Tournées
+* https://redmine.atolcd.com/issues/289035[#289035]: Reverse proxy et création / modification d'un utilisateur
+* https://redmine.atolcd.com/issues/289115[#289115]: Carte : Sélection des PEI
+* https://redmine.atolcd.com/issues/289288[#289288]: Mettre à jour les positions des hydrants
+* https://redmine.atolcd.com/issues/289318[#289318]: Tâche personnalisée
+* https://redmine.atolcd.com/issues/289573[#289573]: Liste des PEI : Lenteurs
+* https://redmine.atolcd.com/issues/289647[#289647]: Mettre à jour les positions des hydrants - enlever le bouton annuler
+* https://redmine.atolcd.com/issues/289716[#289716]: Synchronisation SIG - Types de données
+* https://redmine.atolcd.com/issues/290217[#290217]: Synchronisation SIG - Insertion par batch
+
+
 == 3.0.6
 
 * https://redmine.atolcd.com/issues/277845[#277845]: Module RCCI : créer feu par x,y
