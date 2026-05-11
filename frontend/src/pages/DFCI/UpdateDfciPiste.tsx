@@ -46,7 +46,7 @@ export const UpdateDfciPiste = ({
         prepareVariables={prepareVariablesPiste}
         validationSchema={validationSchemaDfciPiste}
         onSubmit={onSubmit}
-        submitUrl=""
+        submitUrl="/api/dfci-pistes/update"
       >
         <DfciPiste readOnly={readOnly} />
       </MyFormik>
