@@ -2,6 +2,7 @@ package remocra.web.dfci
 
 import jakarta.inject.Inject
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.Produces
@@ -13,8 +14,10 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.Public
 import remocra.auth.userInfo
 import remocra.data.enums.TypeElementCarte
+import remocra.db.jooq.remocra.tables.pojos.DfciAire
 import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.dfci.GetDfciAiresUseCase
+import remocra.usecase.dfci.UpdateAireUseCase
 import remocra.web.AbstractEndpoint
 import java.util.UUID
 
@@ -27,6 +30,9 @@ class DfciAiresEndpoint : AbstractEndpoint() {
 
     @Inject
     private lateinit var getDfciAiresUseCase: GetDfciAiresUseCase
+
+    @Inject
+    private lateinit var updateAireUseCase: UpdateAireUseCase
 
     @Inject
     private lateinit var getPointCarteUseCase: GetPointCarteUseCase
@@ -60,6 +66,32 @@ class DfciAiresEndpoint : AbstractEndpoint() {
                 null,
                 TypeElementCarte.DFCI_AIRE,
                 securityContext.userInfo,
+            ),
+        ).build()
+
+    /**
+     * Endpoint afin de mettre à jour l'aire passée par la requête
+     */
+    @PUT
+    @Path("/update")
+    @Public("En attente du tableau de droit")
+    fun updateAireById(dfciAire: DfciAire): Response =
+        Response.ok(
+            this.updateAireUseCase.execute(
+                securityContext.userInfo,
+                DfciAire(
+                    dfciAireId = dfciAire.dfciAireId,
+                    dfciAireAmenagement = dfciAire.dfciAireAmenagement,
+                    dfciAireDateGps = dfciAire.dfciAireDateGps,
+                    dfciAireGrandeDimension = dfciAire.dfciAireGrandeDimension,
+                    dfciAirePetiteDimension = dfciAire.dfciAirePetiteDimension,
+                    dfciAireType = dfciAire.dfciAireType,
+                    dfciAireDfciPisteId = dfciAire.dfciAireDfciPisteId,
+                    dfciAireGeometrie = dfciAire.dfciAireGeometrie,
+                    dfciAireRemarque = dfciAire.dfciAireRemarque,
+                    dfciAireCode = dfciAire.dfciAireCode,
+                    dfciAireVersion = dfciAire.dfciAireVersion + 1, // On incrémente la version de la ligne à chaque update
+                ),
             ),
         ).build()
 }

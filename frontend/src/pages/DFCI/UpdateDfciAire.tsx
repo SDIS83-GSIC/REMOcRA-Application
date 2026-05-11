@@ -47,7 +47,7 @@ export const UpdateDfciAire = ({
         prepareVariables={prepareVariablesDfciAire}
         validationSchema={validationSchemaDfciAire}
         onSubmit={onSubmit}
-        submitUrl=""
+        submitUrl="/api/dfci-aires/update"
       >
         <DfciAire readOnly={readOnly} />
       </MyFormik>

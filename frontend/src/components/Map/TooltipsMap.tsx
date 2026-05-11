@@ -1270,8 +1270,9 @@ export const TooltipMapDFCI = ({
         onClickSee={() => {
           setShowVoletInfo(true), setReadOnlyForm(true);
         }}
-        disabledEdit={true}
-        labelEdit="En développement"
+        onClickEdit={() => {
+          setShowVoletInfo(true), setReadOnlyForm(false);
+        }}
       />
       <Volet
         handleClose={() => setShowVoletInfo(false)}
