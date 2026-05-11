@@ -46,7 +46,7 @@ export const UpdateDfciDeb = ({
         prepareVariables={prepareVariablesDeb}
         validationSchema={validationSchemaDeb}
         onSubmit={onSubmit}
-        submitUrl=""
+        submitUrl="/api/dfci-deb/update"
       >
         <DfciDeb readOnly={readOnly} />
       </MyFormik>
