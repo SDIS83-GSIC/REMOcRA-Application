@@ -12,4 +12,5 @@ data class NewPeiForMobileApiData(
     val lat: Double,
     val peiTypePei: TypePei,
     val peiObservation: String?,
+    val domaineId: UUID,
 )

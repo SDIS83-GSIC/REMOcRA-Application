@@ -53,6 +53,7 @@ class IncomingRepository @Inject constructor(
         communeId: UUID,
         natureId: UUID,
         natureDeciId: UUID,
+        domaineId: UUID,
         peiTypePei: TypePei,
         peiObservation: String?,
         peiGeometrie: Geometry,
@@ -80,6 +81,7 @@ class IncomingRepository @Inject constructor(
             .set(NEW_PEI.NATURE_ID, natureId)
             .set(NEW_PEI.GESTIONNAIRE_ID, gestionnaireId)
             .set(NEW_PEI.OBSERVATION, peiObservation)
+            .set(NEW_PEI.DOMAINE_ID, domaineId)
             .onConflictDoNothing()
             .execute()
 

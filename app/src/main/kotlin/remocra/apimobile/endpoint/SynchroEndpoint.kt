@@ -133,18 +133,20 @@ class SynchroEndpoint : AbstractEndpoint() {
         @FormParam("peiObservation") peiObservation: String?,
         @FormParam("natureDeciId") natureDeciId: UUID,
         @FormParam("natureId") natureId: UUID,
+        @FormParam("domaineId") domaineId: UUID,
     ) =
         synchroNewPeiUseCase.execute(
             securityContext.userInfo,
             NewPeiForMobileApiData(
-                idPei,
-                gestionnaireId,
-                natureId,
-                natureDeciId,
-                lon,
-                lat,
-                peiTypePei,
-                peiObservation,
+                peiId = idPei,
+                gestionnaireId = gestionnaireId,
+                natureId = natureId,
+                natureDeciId = natureDeciId,
+                lon = lon,
+                lat = lat,
+                peiTypePei = peiTypePei,
+                peiObservation = peiObservation,
+                domaineId = domaineId,
             ),
         ).wrap()
 

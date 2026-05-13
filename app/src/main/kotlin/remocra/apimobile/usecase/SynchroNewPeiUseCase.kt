@@ -57,16 +57,17 @@ constructor(
 
         val result: Int =
             incomingRepository.insertPei(
-                element.peiId,
-                element.gestionnaireId,
-                communeId,
-                element.natureId,
-                element.natureDeciId,
-                element.peiTypePei,
-                element.peiObservation,
-                geometriePei,
-                peiVoieId,
-                appSettings.srid,
+                peiId = element.peiId,
+                gestionnaireId = element.gestionnaireId,
+                communeId = communeId,
+                natureId = element.natureId,
+                natureDeciId = element.natureDeciId,
+                domaineId = element.domaineId,
+                peiTypePei = element.peiTypePei,
+                peiObservation = element.peiObservation,
+                peiGeometrie = geometriePei,
+                peiVoieId = peiVoieId,
+                srid = appSettings.srid,
             )
         when (result) {
             0 -> {

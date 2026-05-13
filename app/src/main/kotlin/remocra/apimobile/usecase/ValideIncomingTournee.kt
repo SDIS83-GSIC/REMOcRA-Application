@@ -165,9 +165,6 @@ class ValideIncomingTournee @Inject constructor(
     private fun gestionNewPei(userInfo: WrappedUserInfo, logManager: LogManager) {
         val listeNewPei = incomingRepository.getNewPei()
 
-        // TODO prendre en compte le domaine proprement
-        val domaineId = domaineRepository.getFistDomaineId()
-
         val peiIdInseres = mutableListOf<UUID>()
 
         listeNewPei.forEach {
@@ -193,7 +190,7 @@ class ValideIncomingTournee @Inject constructor(
                         peiCroisementId = null,
                         peiComplementAdresse = null,
                         peiEnFace = false,
-                        peiDomaineId = domaineId,
+                        peiDomaineId = it.newPeiDomaineId,
                         peiNatureId = it.newPeiNatureId,
                         peiSiteId = null,
                         peiGestionnaireId = it.newPeiGestionnaireId,
@@ -247,7 +244,7 @@ class ValideIncomingTournee @Inject constructor(
                         peiCroisementId = null,
                         peiComplementAdresse = null,
                         peiEnFace = false,
-                        peiDomaineId = domaineId,
+                        peiDomaineId = it.newPeiDomaineId,
                         peiNatureId = it.newPeiNatureId,
                         peiSiteId = null,
                         peiGestionnaireId = it.newPeiGestionnaireId,
