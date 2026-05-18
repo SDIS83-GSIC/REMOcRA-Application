@@ -28,6 +28,7 @@ import remocra.db.jooq.remocra.tables.DashboardConfig
 import remocra.db.jooq.remocra.tables.DashboardQuery
 import remocra.db.jooq.remocra.tables.DebitSimultane
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure
+import remocra.db.jooq.remocra.tables.DfciAire
 import remocra.db.jooq.remocra.tables.DfciCategoriePiste
 import remocra.db.jooq.remocra.tables.DfciMassif
 import remocra.db.jooq.remocra.tables.DfciOuvrage
@@ -289,6 +290,11 @@ open class Remocra : SchemaImpl(DSL.name("remocra"), DefaultCatalog.DEFAULT_CATA
      * The table <code>remocra.debit_simultane_mesure</code>.
      */
     val DEBIT_SIMULTANE_MESURE: DebitSimultaneMesure get() = DebitSimultaneMesure.DEBIT_SIMULTANE_MESURE
+
+    /**
+     * The table <code>remocra.dfci_aire</code>.
+     */
+    val DFCI_AIRE: DfciAire get() = DfciAire.DFCI_AIRE
 
     /**
      * The table <code>remocra.dfci_categorie_piste</code>.
@@ -1012,6 +1018,7 @@ open class Remocra : SchemaImpl(DSL.name("remocra"), DefaultCatalog.DEFAULT_CATA
         DashboardQuery.DASHBOARD_QUERY,
         DebitSimultane.DEBIT_SIMULTANE,
         DebitSimultaneMesure.DEBIT_SIMULTANE_MESURE,
+        DfciAire.DFCI_AIRE,
         DfciCategoriePiste.DFCI_CATEGORIE_PISTE,
         DfciMassif.DFCI_MASSIF,
         DfciOuvrage.DFCI_OUVRAGE,

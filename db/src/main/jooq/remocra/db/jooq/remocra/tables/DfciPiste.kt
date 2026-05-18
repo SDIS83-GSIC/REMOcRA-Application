@@ -36,12 +36,14 @@ import remocra.db.jooq.remocra.enums.TypeImpraticabilite
 import remocra.db.jooq.remocra.enums.TypeProgramme
 import remocra.db.jooq.remocra.enums.TypeTravaux
 import remocra.db.jooq.remocra.enums.TypeVoie
+import remocra.db.jooq.remocra.keys.DFCI_AIRE__DFCI_AIRE_DFCI_AIRE_DFCI_PISTE_ID_FKEY
 import remocra.db.jooq.remocra.keys.DFCI_PISTE_DFCI_PISTE_CODE_KEY
 import remocra.db.jooq.remocra.keys.DFCI_PISTE_PKEY
 import remocra.db.jooq.remocra.keys.DFCI_PISTE__DFCI_PISTE_DFCI_PISTE_DFCI_CATEGORIE_PISTE_ID_FKEY
 import remocra.db.jooq.remocra.keys.DFCI_PISTE__DFCI_PISTE_DFCI_PISTE_DFCI_MASSIF_ID_FKEY
 import remocra.db.jooq.remocra.keys.DFCI_PISTE__DFCI_PISTE_DFCI_PISTE_DFCI_OUVRAGE_ID_FKEY
 import remocra.db.jooq.remocra.keys.DFCI_PISTE__DFCI_PISTE_DFCI_PISTE_DFCI_PRESTATAIRE_ID_FKEY
+import remocra.db.jooq.remocra.tables.DfciAire.DfciAirePath
 import remocra.db.jooq.remocra.tables.DfciCategoriePiste.DfciCategoriePistePath
 import remocra.db.jooq.remocra.tables.DfciMassif.DfciMassifPath
 import remocra.db.jooq.remocra.tables.DfciOuvrage.DfciOuvragePath
@@ -317,6 +319,23 @@ open class DfciPiste(
      */
     fun dfciPrestataire(): DfciPrestatairePath = dfciPrestataire
     val dfciPrestataire: DfciPrestatairePath by lazy { DfciPrestatairePath(this, DFCI_PISTE__DFCI_PISTE_DFCI_PISTE_DFCI_PRESTATAIRE_ID_FKEY, null) }
+
+    private lateinit var _dfciAire: DfciAirePath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.dfci_aire</code>
+     * table
+     */
+    fun dfciAire(): DfciAirePath {
+        if (!this::_dfciAire.isInitialized) {
+            _dfciAire = DfciAirePath(this, null, DFCI_AIRE__DFCI_AIRE_DFCI_AIRE_DFCI_PISTE_ID_FKEY.inverseKey)
+        }
+
+        return _dfciAire
+    }
+
+    val dfciAire: DfciAirePath
+        get(): DfciAirePath = dfciAire()
     override fun getChecks(): List<Check<Record>> = listOf(
         Internal.createCheck(this, DSL.name("dfci_piste_dfci_piste_geometrie_check"), "((geometrytype(dfci_piste_geometrie) = 'LINESTRING'::text))", true),
     )

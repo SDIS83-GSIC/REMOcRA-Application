@@ -25,6 +25,7 @@ import remocra.db.jooq.remocra.tables.DashboardConfig
 import remocra.db.jooq.remocra.tables.DashboardQuery
 import remocra.db.jooq.remocra.tables.DebitSimultane
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure
+import remocra.db.jooq.remocra.tables.DfciAire
 import remocra.db.jooq.remocra.tables.DfciCategoriePiste
 import remocra.db.jooq.remocra.tables.DfciMassif
 import remocra.db.jooq.remocra.tables.DfciOuvrage
@@ -264,6 +265,11 @@ val DEBIT_SIMULTANE: DebitSimultane = DebitSimultane.DEBIT_SIMULTANE
  * The table <code>remocra.debit_simultane_mesure</code>.
  */
 val DEBIT_SIMULTANE_MESURE: DebitSimultaneMesure = DebitSimultaneMesure.DEBIT_SIMULTANE_MESURE
+
+/**
+ * The table <code>remocra.dfci_aire</code>.
+ */
+val DFCI_AIRE: DfciAire = DfciAire.DFCI_AIRE
 
 /**
  * The table <code>remocra.dfci_categorie_piste</code>.

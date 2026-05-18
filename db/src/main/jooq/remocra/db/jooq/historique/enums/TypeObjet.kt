@@ -97,6 +97,7 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     COUCHE("COUCHE"),
     DOCUMENT_SIGNALEMENT("DOCUMENT_SIGNALEMENT"),
     DFCI_PISTE("DFCI_PISTE"),
+    DFCI_AIRE("DFCI_AIRE"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE
