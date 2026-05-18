@@ -33,6 +33,7 @@ import remocra.db.jooq.remocra.tables.DebitSimultane
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure
 import remocra.db.jooq.remocra.tables.DfciAire
 import remocra.db.jooq.remocra.tables.DfciCategoriePiste
+import remocra.db.jooq.remocra.tables.DfciConflit
 import remocra.db.jooq.remocra.tables.DfciDeb
 import remocra.db.jooq.remocra.tables.DfciMassif
 import remocra.db.jooq.remocra.tables.DfciOuvrage
@@ -203,6 +204,9 @@ val DFCI_AIRE_DFCI_AIRE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(D
 val DFCI_AIRE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(DfciAire.DFCI_AIRE, DSL.name("dfci_aire_pkey"), arrayOf(DfciAire.DFCI_AIRE.ID), true)
 val DFCI_CATEGORIE_PISTE_DFCI_CATEGORIE_PISTE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(DfciCategoriePiste.DFCI_CATEGORIE_PISTE, DSL.name("dfci_categorie_piste_dfci_categorie_piste_code_key"), arrayOf(DfciCategoriePiste.DFCI_CATEGORIE_PISTE.CODE), true)
 val DFCI_CATEGORIE_PISTE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(DfciCategoriePiste.DFCI_CATEGORIE_PISTE, DSL.name("dfci_categorie_piste_pkey"), arrayOf(DfciCategoriePiste.DFCI_CATEGORIE_PISTE.ID), true)
+val DFCI_CONFLIT_DFCI_CONFLIT_CHAMP_KEY: UniqueKey<Record> = Internal.createUniqueKey(DfciConflit.DFCI_CONFLIT, DSL.name("dfci_conflit_dfci_conflit_champ_key"), arrayOf(DfciConflit.DFCI_CONFLIT.CHAMP), true)
+val DFCI_CONFLIT_DFCI_CONFLIT_ELEMENT_ID_DFCI_CONFLIT_CHAMP_KEY: UniqueKey<Record> = Internal.createUniqueKey(DfciConflit.DFCI_CONFLIT, DSL.name("dfci_conflit_dfci_conflit_element_id_dfci_conflit_champ_key"), arrayOf(DfciConflit.DFCI_CONFLIT.ELEMENT_ID, DfciConflit.DFCI_CONFLIT.CHAMP), true)
+val DFCI_CONFLIT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(DfciConflit.DFCI_CONFLIT, DSL.name("dfci_conflit_pkey"), arrayOf(DfciConflit.DFCI_CONFLIT.ID), true)
 val DFCI_DEB_DFCI_DEB_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(DfciDeb.DFCI_DEB, DSL.name("dfci_deb_dfci_deb_code_key"), arrayOf(DfciDeb.DFCI_DEB.CODE), true)
 val DFCI_DEB_PKEY: UniqueKey<Record> = Internal.createUniqueKey(DfciDeb.DFCI_DEB, DSL.name("dfci_deb_pkey"), arrayOf(DfciDeb.DFCI_DEB.ID), true)
 val DFCI_MASSIF_DFCI_MASSIF_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(DfciMassif.DFCI_MASSIF, DSL.name("dfci_massif_dfci_massif_code_key"), arrayOf(DfciMassif.DFCI_MASSIF.CODE), true)

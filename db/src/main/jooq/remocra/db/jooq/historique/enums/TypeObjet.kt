@@ -100,6 +100,7 @@ enum class TypeObjet(@get:JvmName("literal") public val literal: String) : EnumT
     DFCI_AIRE("DFCI_AIRE"),
     DFCI_DEB("DFCI_DEB"),
     DFCI_PANNEAU("DFCI_PANNEAU"),
+    DFCI_CONFLIT("DFCI_CONFLIT"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Historique.HISTORIQUE

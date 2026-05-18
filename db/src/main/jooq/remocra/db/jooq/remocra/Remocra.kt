@@ -30,6 +30,7 @@ import remocra.db.jooq.remocra.tables.DebitSimultane
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure
 import remocra.db.jooq.remocra.tables.DfciAire
 import remocra.db.jooq.remocra.tables.DfciCategoriePiste
+import remocra.db.jooq.remocra.tables.DfciConflit
 import remocra.db.jooq.remocra.tables.DfciDeb
 import remocra.db.jooq.remocra.tables.DfciMassif
 import remocra.db.jooq.remocra.tables.DfciOuvrage
@@ -302,6 +303,11 @@ open class Remocra : SchemaImpl(DSL.name("remocra"), DefaultCatalog.DEFAULT_CATA
      * The table <code>remocra.dfci_categorie_piste</code>.
      */
     val DFCI_CATEGORIE_PISTE: DfciCategoriePiste get() = DfciCategoriePiste.DFCI_CATEGORIE_PISTE
+
+    /**
+     * The table <code>remocra.dfci_conflit</code>.
+     */
+    val DFCI_CONFLIT: DfciConflit get() = DfciConflit.DFCI_CONFLIT
 
     /**
      * The table <code>remocra.dfci_deb</code>.
@@ -1032,6 +1038,7 @@ open class Remocra : SchemaImpl(DSL.name("remocra"), DefaultCatalog.DEFAULT_CATA
         DebitSimultaneMesure.DEBIT_SIMULTANE_MESURE,
         DfciAire.DFCI_AIRE,
         DfciCategoriePiste.DFCI_CATEGORIE_PISTE,
+        DfciConflit.DFCI_CONFLIT,
         DfciDeb.DFCI_DEB,
         DfciMassif.DFCI_MASSIF,
         DfciOuvrage.DFCI_OUVRAGE,

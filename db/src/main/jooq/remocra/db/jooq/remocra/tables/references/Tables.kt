@@ -27,6 +27,7 @@ import remocra.db.jooq.remocra.tables.DebitSimultane
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure
 import remocra.db.jooq.remocra.tables.DfciAire
 import remocra.db.jooq.remocra.tables.DfciCategoriePiste
+import remocra.db.jooq.remocra.tables.DfciConflit
 import remocra.db.jooq.remocra.tables.DfciDeb
 import remocra.db.jooq.remocra.tables.DfciMassif
 import remocra.db.jooq.remocra.tables.DfciOuvrage
@@ -277,6 +278,11 @@ val DFCI_AIRE: DfciAire = DfciAire.DFCI_AIRE
  * The table <code>remocra.dfci_categorie_piste</code>.
  */
 val DFCI_CATEGORIE_PISTE: DfciCategoriePiste = DfciCategoriePiste.DFCI_CATEGORIE_PISTE
+
+/**
+ * The table <code>remocra.dfci_conflit</code>.
+ */
+val DFCI_CONFLIT: DfciConflit = DfciConflit.DFCI_CONFLIT
 
 /**
  * The table <code>remocra.dfci_deb</code>.

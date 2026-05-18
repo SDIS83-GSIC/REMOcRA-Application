@@ -6,12 +6,60 @@
 package remocra.db.jooq.entrepotsig.tables.references
 
 import remocra.db.jooq.entrepotsig.tables.VCommuneSig
+import remocra.db.jooq.entrepotsig.tables.VDfciAireSig
+import remocra.db.jooq.entrepotsig.tables.VDfciCategoriePisteSig
+import remocra.db.jooq.entrepotsig.tables.VDfciDebSig
+import remocra.db.jooq.entrepotsig.tables.VDfciMassifSig
+import remocra.db.jooq.entrepotsig.tables.VDfciOuvrageSig
+import remocra.db.jooq.entrepotsig.tables.VDfciPanneauSig
+import remocra.db.jooq.entrepotsig.tables.VDfciPisteSig
+import remocra.db.jooq.entrepotsig.tables.VDfciPrestataireSig
 import remocra.db.jooq.entrepotsig.tables.VVoieSig
 
 /**
  * The table <code>entrepotsig.v_commune_sig</code>.
  */
 val V_COMMUNE_SIG: VCommuneSig = VCommuneSig.V_COMMUNE_SIG
+
+/**
+ * The table <code>entrepotsig.v_dfci_aire_sig</code>.
+ */
+val V_DFCI_AIRE_SIG: VDfciAireSig = VDfciAireSig.V_DFCI_AIRE_SIG
+
+/**
+ * The table <code>entrepotsig.v_dfci_categorie_piste_sig</code>.
+ */
+val V_DFCI_CATEGORIE_PISTE_SIG: VDfciCategoriePisteSig = VDfciCategoriePisteSig.V_DFCI_CATEGORIE_PISTE_SIG
+
+/**
+ * The table <code>entrepotsig.v_dfci_deb_sig</code>.
+ */
+val V_DFCI_DEB_SIG: VDfciDebSig = VDfciDebSig.V_DFCI_DEB_SIG
+
+/**
+ * The table <code>entrepotsig.v_dfci_massif_sig</code>.
+ */
+val V_DFCI_MASSIF_SIG: VDfciMassifSig = VDfciMassifSig.V_DFCI_MASSIF_SIG
+
+/**
+ * The table <code>entrepotsig.v_dfci_ouvrage_sig</code>.
+ */
+val V_DFCI_OUVRAGE_SIG: VDfciOuvrageSig = VDfciOuvrageSig.V_DFCI_OUVRAGE_SIG
+
+/**
+ * The table <code>entrepotsig.v_dfci_panneau_sig</code>.
+ */
+val V_DFCI_PANNEAU_SIG: VDfciPanneauSig = VDfciPanneauSig.V_DFCI_PANNEAU_SIG
+
+/**
+ * The table <code>entrepotsig.v_dfci_piste_sig</code>.
+ */
+val V_DFCI_PISTE_SIG: VDfciPisteSig = VDfciPisteSig.V_DFCI_PISTE_SIG
+
+/**
+ * The table <code>entrepotsig.v_dfci_prestataire_sig</code>.
+ */
+val V_DFCI_PRESTATAIRE_SIG: VDfciPrestataireSig = VDfciPrestataireSig.V_DFCI_PRESTATAIRE_SIG
 
 /**
  * The table <code>entrepotsig.v_voie_sig</code>.
