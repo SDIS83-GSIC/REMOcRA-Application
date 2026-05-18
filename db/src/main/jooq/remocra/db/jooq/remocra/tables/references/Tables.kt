@@ -25,6 +25,11 @@ import remocra.db.jooq.remocra.tables.DashboardConfig
 import remocra.db.jooq.remocra.tables.DashboardQuery
 import remocra.db.jooq.remocra.tables.DebitSimultane
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure
+import remocra.db.jooq.remocra.tables.DfciCategoriePiste
+import remocra.db.jooq.remocra.tables.DfciMassif
+import remocra.db.jooq.remocra.tables.DfciOuvrage
+import remocra.db.jooq.remocra.tables.DfciPiste
+import remocra.db.jooq.remocra.tables.DfciPrestataire
 import remocra.db.jooq.remocra.tables.Diametre
 import remocra.db.jooq.remocra.tables.Document
 import remocra.db.jooq.remocra.tables.DocumentHabilitable
@@ -259,6 +264,31 @@ val DEBIT_SIMULTANE: DebitSimultane = DebitSimultane.DEBIT_SIMULTANE
  * The table <code>remocra.debit_simultane_mesure</code>.
  */
 val DEBIT_SIMULTANE_MESURE: DebitSimultaneMesure = DebitSimultaneMesure.DEBIT_SIMULTANE_MESURE
+
+/**
+ * The table <code>remocra.dfci_categorie_piste</code>.
+ */
+val DFCI_CATEGORIE_PISTE: DfciCategoriePiste = DfciCategoriePiste.DFCI_CATEGORIE_PISTE
+
+/**
+ * The table <code>remocra.dfci_massif</code>.
+ */
+val DFCI_MASSIF: DfciMassif = DfciMassif.DFCI_MASSIF
+
+/**
+ * The table <code>remocra.dfci_ouvrage</code>.
+ */
+val DFCI_OUVRAGE: DfciOuvrage = DfciOuvrage.DFCI_OUVRAGE
+
+/**
+ * The table <code>remocra.dfci_piste</code>.
+ */
+val DFCI_PISTE: DfciPiste = DfciPiste.DFCI_PISTE
+
+/**
+ * The table <code>remocra.dfci_prestataire</code>.
+ */
+val DFCI_PRESTATAIRE: DfciPrestataire = DfciPrestataire.DFCI_PRESTATAIRE
 
 /**
  * The table <code>remocra.diametre</code>.
