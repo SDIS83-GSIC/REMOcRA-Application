@@ -30,8 +30,10 @@ import remocra.db.jooq.remocra.tables.DebitSimultane
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure
 import remocra.db.jooq.remocra.tables.DfciAire
 import remocra.db.jooq.remocra.tables.DfciCategoriePiste
+import remocra.db.jooq.remocra.tables.DfciDeb
 import remocra.db.jooq.remocra.tables.DfciMassif
 import remocra.db.jooq.remocra.tables.DfciOuvrage
+import remocra.db.jooq.remocra.tables.DfciPanneau
 import remocra.db.jooq.remocra.tables.DfciPiste
 import remocra.db.jooq.remocra.tables.DfciPrestataire
 import remocra.db.jooq.remocra.tables.Diametre
@@ -302,6 +304,11 @@ open class Remocra : SchemaImpl(DSL.name("remocra"), DefaultCatalog.DEFAULT_CATA
     val DFCI_CATEGORIE_PISTE: DfciCategoriePiste get() = DfciCategoriePiste.DFCI_CATEGORIE_PISTE
 
     /**
+     * The table <code>remocra.dfci_deb</code>.
+     */
+    val DFCI_DEB: DfciDeb get() = DfciDeb.DFCI_DEB
+
+    /**
      * The table <code>remocra.dfci_massif</code>.
      */
     val DFCI_MASSIF: DfciMassif get() = DfciMassif.DFCI_MASSIF
@@ -310,6 +317,11 @@ open class Remocra : SchemaImpl(DSL.name("remocra"), DefaultCatalog.DEFAULT_CATA
      * The table <code>remocra.dfci_ouvrage</code>.
      */
     val DFCI_OUVRAGE: DfciOuvrage get() = DfciOuvrage.DFCI_OUVRAGE
+
+    /**
+     * The table <code>remocra.dfci_panneau</code>.
+     */
+    val DFCI_PANNEAU: DfciPanneau get() = DfciPanneau.DFCI_PANNEAU
 
     /**
      * The table <code>remocra.dfci_piste</code>.
@@ -1020,8 +1032,10 @@ open class Remocra : SchemaImpl(DSL.name("remocra"), DefaultCatalog.DEFAULT_CATA
         DebitSimultaneMesure.DEBIT_SIMULTANE_MESURE,
         DfciAire.DFCI_AIRE,
         DfciCategoriePiste.DFCI_CATEGORIE_PISTE,
+        DfciDeb.DFCI_DEB,
         DfciMassif.DFCI_MASSIF,
         DfciOuvrage.DFCI_OUVRAGE,
+        DfciPanneau.DFCI_PANNEAU,
         DfciPiste.DFCI_PISTE,
         DfciPrestataire.DFCI_PRESTATAIRE,
         Diametre.DIAMETRE,

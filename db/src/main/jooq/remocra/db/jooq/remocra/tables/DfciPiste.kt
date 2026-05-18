@@ -37,6 +37,7 @@ import remocra.db.jooq.remocra.enums.TypeProgramme
 import remocra.db.jooq.remocra.enums.TypeTravaux
 import remocra.db.jooq.remocra.enums.TypeVoie
 import remocra.db.jooq.remocra.keys.DFCI_AIRE__DFCI_AIRE_DFCI_AIRE_DFCI_PISTE_ID_FKEY
+import remocra.db.jooq.remocra.keys.DFCI_PANNEAU__DFCI_PANNEAU_DFCI_PANNEAU_DFCI_PISTE_ID_FKEY
 import remocra.db.jooq.remocra.keys.DFCI_PISTE_DFCI_PISTE_CODE_KEY
 import remocra.db.jooq.remocra.keys.DFCI_PISTE_PKEY
 import remocra.db.jooq.remocra.keys.DFCI_PISTE__DFCI_PISTE_DFCI_PISTE_DFCI_CATEGORIE_PISTE_ID_FKEY
@@ -47,6 +48,7 @@ import remocra.db.jooq.remocra.tables.DfciAire.DfciAirePath
 import remocra.db.jooq.remocra.tables.DfciCategoriePiste.DfciCategoriePistePath
 import remocra.db.jooq.remocra.tables.DfciMassif.DfciMassifPath
 import remocra.db.jooq.remocra.tables.DfciOuvrage.DfciOuvragePath
+import remocra.db.jooq.remocra.tables.DfciPanneau.DfciPanneauPath
 import remocra.db.jooq.remocra.tables.DfciPrestataire.DfciPrestatairePath
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -336,6 +338,23 @@ open class DfciPiste(
 
     val dfciAire: DfciAirePath
         get(): DfciAirePath = dfciAire()
+
+    private lateinit var _dfciPanneau: DfciPanneauPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.dfci_panneau</code> table
+     */
+    fun dfciPanneau(): DfciPanneauPath {
+        if (!this::_dfciPanneau.isInitialized) {
+            _dfciPanneau = DfciPanneauPath(this, null, DFCI_PANNEAU__DFCI_PANNEAU_DFCI_PANNEAU_DFCI_PISTE_ID_FKEY.inverseKey)
+        }
+
+        return _dfciPanneau
+    }
+
+    val dfciPanneau: DfciPanneauPath
+        get(): DfciPanneauPath = dfciPanneau()
     override fun getChecks(): List<Check<Record>> = listOf(
         Internal.createCheck(this, DSL.name("dfci_piste_dfci_piste_geometrie_check"), "((geometrytype(dfci_piste_geometrie) = 'LINESTRING'::text))", true),
     )

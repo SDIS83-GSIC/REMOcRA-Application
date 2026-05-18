@@ -25,9 +25,11 @@ import org.jooq.impl.Internal
 import org.jooq.impl.SQLDataType
 import org.jooq.impl.TableImpl
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.keys.DFCI_DEB__DFCI_DEB_DFCI_DEB_DFCI_PRESTATAIRE_ID_FKEY
 import remocra.db.jooq.remocra.keys.DFCI_PISTE__DFCI_PISTE_DFCI_PISTE_DFCI_PRESTATAIRE_ID_FKEY
 import remocra.db.jooq.remocra.keys.DFCI_PRESTATAIRE_DFCI_PRESTATAIRE_CODE_KEY
 import remocra.db.jooq.remocra.keys.DFCI_PRESTATAIRE_PKEY
+import remocra.db.jooq.remocra.tables.DfciDeb.DfciDebPath
 import remocra.db.jooq.remocra.tables.DfciPiste.DfciPistePath
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -135,6 +137,23 @@ open class DfciPrestataire(
     override fun getSchema(): Schema? = if (aliased()) null else Remocra.REMOCRA
     override fun getPrimaryKey(): UniqueKey<Record> = DFCI_PRESTATAIRE_PKEY
     override fun getUniqueKeys(): List<UniqueKey<Record>> = listOf(DFCI_PRESTATAIRE_DFCI_PRESTATAIRE_CODE_KEY)
+
+    private lateinit var _dfciDeb: DfciDebPath
+
+    /**
+     * Get the implicit to-many join path to the <code>remocra.dfci_deb</code>
+     * table
+     */
+    fun dfciDeb(): DfciDebPath {
+        if (!this::_dfciDeb.isInitialized) {
+            _dfciDeb = DfciDebPath(this, null, DFCI_DEB__DFCI_DEB_DFCI_DEB_DFCI_PRESTATAIRE_ID_FKEY.inverseKey)
+        }
+
+        return _dfciDeb
+    }
+
+    val dfciDeb: DfciDebPath
+        get(): DfciDebPath = dfciDeb()
 
     private lateinit var _dfciPiste: DfciPistePath
 

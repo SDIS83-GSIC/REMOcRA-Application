@@ -27,8 +27,10 @@ import remocra.db.jooq.remocra.tables.DebitSimultane
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure
 import remocra.db.jooq.remocra.tables.DfciAire
 import remocra.db.jooq.remocra.tables.DfciCategoriePiste
+import remocra.db.jooq.remocra.tables.DfciDeb
 import remocra.db.jooq.remocra.tables.DfciMassif
 import remocra.db.jooq.remocra.tables.DfciOuvrage
+import remocra.db.jooq.remocra.tables.DfciPanneau
 import remocra.db.jooq.remocra.tables.DfciPiste
 import remocra.db.jooq.remocra.tables.DfciPrestataire
 import remocra.db.jooq.remocra.tables.Diametre
@@ -277,6 +279,11 @@ val DFCI_AIRE: DfciAire = DfciAire.DFCI_AIRE
 val DFCI_CATEGORIE_PISTE: DfciCategoriePiste = DfciCategoriePiste.DFCI_CATEGORIE_PISTE
 
 /**
+ * The table <code>remocra.dfci_deb</code>.
+ */
+val DFCI_DEB: DfciDeb = DfciDeb.DFCI_DEB
+
+/**
  * The table <code>remocra.dfci_massif</code>.
  */
 val DFCI_MASSIF: DfciMassif = DfciMassif.DFCI_MASSIF
@@ -285,6 +292,11 @@ val DFCI_MASSIF: DfciMassif = DfciMassif.DFCI_MASSIF
  * The table <code>remocra.dfci_ouvrage</code>.
  */
 val DFCI_OUVRAGE: DfciOuvrage = DfciOuvrage.DFCI_OUVRAGE
+
+/**
+ * The table <code>remocra.dfci_panneau</code>.
+ */
+val DFCI_PANNEAU: DfciPanneau = DfciPanneau.DFCI_PANNEAU
 
 /**
  * The table <code>remocra.dfci_piste</code>.
