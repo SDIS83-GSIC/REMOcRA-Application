@@ -27,8 +27,16 @@ const ExecuteRapportPersonnalise = () => {
     peiNumeroComplet?: string;
   } | null;
 
-  const selectedRapportId = locationState?.rapportPersonnaliseId;
-  const peiNumeroComplet = locationState?.peiNumeroComplet;
+  // Récupérer les paramètres GET depuis l'URL
+  const searchParams = new URLSearchParams(location.search);
+  const urlRapportId = searchParams.get("rapportPersonnaliseId");
+  const urlPeiNumeroComplet = searchParams.get("peiNumeroComplet");
+
+  // Les paramètres URL ont la priorité sur location.state
+  const selectedRapportId =
+    urlRapportId || locationState?.rapportPersonnaliseId;
+  const peiNumeroComplet =
+    urlPeiNumeroComplet || locationState?.peiNumeroComplet;
 
   const { data: listeRapportPerso } = useGet(
     url`/api/rapport-personnalise/list`,
