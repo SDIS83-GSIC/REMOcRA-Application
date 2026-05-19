@@ -73,7 +73,7 @@ const TourneePei = ({
         closeVolet
           ? closeVolet()
           : navigateGoBack(location, navigate, URLS.LIST_TOURNEE);
-        successToast("L'élément a bien été déplacé.");
+        successToast("L'élément a bien été mis à jour.");
       },
       onReject: async (error: {
         text: () => SetStateAction<null> | PromiseLike<SetStateAction<null>>;
