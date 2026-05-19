@@ -10,14 +10,14 @@ import url from "../../module/fetch.tsx";
 const ListePeiTournee = () => {
   const { tourneeId } = useParams();
 
-  const tourneeInfo = useGet(url`/api/tournee/` + tourneeId);
+  const tourneeLibelle = useGet(url`/api/tournee/get-libelle/` + tourneeId);
 
   return (
     <>
       <Container>
         <PageTitle
           icon={<IconPei />}
-          title={`Points d'eau de la tournée : ${tourneeInfo?.data?.tourneeLibelle ?? ""}`}
+          title={`Points d'eau de la tournée : ${tourneeLibelle?.data?.libelle ?? ""}`}
         />
       </Container>
       <Container fluid className={"px-5"}>

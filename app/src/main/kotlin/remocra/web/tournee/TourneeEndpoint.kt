@@ -150,6 +150,12 @@ class TourneeEndpoint : AbstractEndpoint() {
         Response.ok().entity(tourneeRepository.getTourneeById(tourneeId)).build()
 
     @GET
+    @Path("/get-libelle/{tourneeId}")
+    @RequireDroits([Droit.TOURNEE_R, Droit.PEI_R])
+    fun getTourneeLibelleById(@PathParam("tourneeId") tourneeId: UUID): Response =
+        Response.ok().entity(mapOf("libelle" to tourneeRepository.getTourneeLibelleById(tourneeId))).build()
+
+    @GET
     @Path("/genere-carte-tournee/{tourneeId}")
     @Produces("application/pdf")
     @NoCsrf("On utilise une URL directe et donc on n'a pas les entêtes remplis, ce qui fait qu'on est obligé d'utiliser cette annotation")
