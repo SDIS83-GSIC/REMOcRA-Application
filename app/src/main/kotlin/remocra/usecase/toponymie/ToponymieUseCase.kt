@@ -23,7 +23,7 @@ class ToponymieUseCase @Inject constructor(
     fun getParametreToponymies(libelle: String, dependenceObj: UUID?): List<ToponymieResult> {
         // Récupérer les ids des toponymies depuis les paramètres
         val toponymieCodes = parametresProvider.get().mapParametres.getParametre(ParametreEnum.LISTE_TOPONYMIE_CODE.name).parametreValeur
-        val toponymiesList = extractStringList(toponymieCodes ?: "").map { toponymieRepository.getByCode(it) }
+        val toponymiesList = extractStringList(toponymieCodes ?: "").mapNotNull { toponymieRepository.getByCode(it) }
 
         // Si une commune est spécifiée, récupérer la géométrie de la commune
         var comuneGeometrie: Geometry? = null
@@ -32,9 +32,14 @@ class ToponymieUseCase @Inject constructor(
         }
 
         return toponymieRepository.getToponymiesProtegesQuery(
-            toponymiesList,
+            toponymiesList.filter { it.typeToponymieProtected == true && it.typeToponymieActif },
             comuneGeometrie?.toGeomFromText(),
             libelle,
+        ).toList() + toponymieRepository.getOtherToponymiesQuery(
+            comuneGeometrie?.toGeomFromText(),
+            libelle,
+            toponymiesList.filter { it.typeToponymieProtected == false && it.typeToponymieActif }.map { it.typeToponymieId },
+
         ).toList()
     }
 

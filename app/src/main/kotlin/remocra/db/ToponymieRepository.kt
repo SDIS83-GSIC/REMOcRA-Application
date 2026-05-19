@@ -4,6 +4,7 @@ import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.impl.DSL
+import org.locationtech.jts.geom.Geometry
 import remocra.data.GlobalData
 import remocra.db.CriseRepository.ToponymieResult
 import remocra.db.jooq.remocra.tables.pojos.TypeToponymie
@@ -13,6 +14,7 @@ import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.LIEU_DIT
 import remocra.db.jooq.remocra.tables.references.L_TOPONYMIE_CRISE
 import remocra.db.jooq.remocra.tables.references.PEI
+import remocra.db.jooq.remocra.tables.references.TOPONYMIE
 import remocra.db.jooq.remocra.tables.references.TYPE_TOPONYMIE
 import remocra.db.jooq.remocra.tables.references.VOIE
 import remocra.utils.ST_Within
@@ -46,7 +48,7 @@ class ToponymieRepository @Inject constructor(private val dsl: DSLContext) : Abs
 
     fun getToponymiesProtegesQuery(
         proteges: Collection<TypeToponymie?>,
-        globalGeometry: Field<org.locationtech.jts.geom.Geometry?>?,
+        globalGeometry: Field<Geometry?>?,
         libelleName: String,
     ): Collection<ToponymieResult> {
         val typeToTableMapping = mapOf(
@@ -87,6 +89,30 @@ class ToponymieRepository @Inject constructor(private val dsl: DSLContext) : Abs
                 }
                 finalQuery.orderBy(libelle.asc()).fetchInto()
             }
+    }
+
+    fun getOtherToponymiesQuery(
+        globalGeometry: Field<Geometry?>?,
+        libelleName: String,
+        typeIds: Collection<UUID>,
+    ): Collection<ToponymieResult> {
+        val query = dsl.select(
+            TOPONYMIE.ID,
+            TOPONYMIE.LIBELLE,
+            TOPONYMIE.GEOMETRIE,
+        )
+            .from(TOPONYMIE)
+            .where(
+                TOPONYMIE.TYPE_TOPONYMIE_ID.`in`(typeIds)
+                    .and(TOPONYMIE.LIBELLE.containsIgnoreCaseUnaccent(libelleName)),
+            )
+        val filteredQuery = if (globalGeometry != null) {
+            query.and(ST_Within(TOPONYMIE.GEOMETRIE, globalGeometry))
+        } else {
+            query
+        }
+        return filteredQuery.orderBy(TOPONYMIE.LIBELLE.asc())
+            .fetchInto(ToponymieResult::class.java)
     }
 
     fun getByCode(typeToponymie: String): TypeToponymie? =
