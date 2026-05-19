@@ -185,21 +185,16 @@ constructor(
     }
 
     override fun checkParameters(parameters: SynchronisationSIGTaskParameter?) {
-        if (parameters == null) {
-            throw IllegalArgumentException("Aucun paramètre fourni")
-        }
-        if (parameters.listeTableASynchroniser.isEmpty()) {
-            throw IllegalArgumentException("Aucune table à synchroniser")
-        }
+        requireNotNull(parameters) { "Aucun paramètre fourni" }
+        require(parameters.listeTableASynchroniser.isNotEmpty()) { "Aucune table à synchroniser" }
+
         parameters.listeTableASynchroniser.forEach { tableASynchroniser ->
             val isStockageSimple: Boolean = tableASynchroniser.typeSynchronisation == TypeSynchronisation.STOCKAGE_SIMPLE
-            if (tableASynchroniser.schemaSource.isEmpty()) {
-                throw IllegalArgumentException("Le schéma source n'est pas fourni")
-            } else if (tableASynchroniser.tableSource.isEmpty()) {
-                throw IllegalArgumentException("La table source n'est pas fournie")
-            } else if (tableASynchroniser.scriptCreationVue.isNullOrBlank() && !isStockageSimple) {
-                throw IllegalArgumentException("Le script de création de vue est nécessaire pour le type de synchronisation ${tableASynchroniser.typeSynchronisation}")
-            } else if (!tableASynchroniser.scriptCreationVue.isNullOrBlank() && !isStockageSimple) {
+            require(tableASynchroniser.schemaSource.isNotEmpty()) { "Le schéma source n'est pas fourni" }
+            require(tableASynchroniser.tableSource.isNotEmpty()) { "La table source n'est pas fournie" }
+            require(!(tableASynchroniser.scriptCreationVue.isNullOrBlank() && !isStockageSimple)) { "Le script de création de vue est nécessaire pour le type de synchronisation ${tableASynchroniser.typeSynchronisation}" }
+
+            if (!tableASynchroniser.scriptCreationVue.isNullOrBlank() && !isStockageSimple) {
                 requestUtils.validateQueryWithCreate(tableASynchroniser.scriptCreationVue)
             }
         }

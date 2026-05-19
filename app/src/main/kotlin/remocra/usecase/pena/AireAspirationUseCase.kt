@@ -100,9 +100,7 @@ constructor(
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: PenaAspirationData) {
         // Vérifie si on n'a pas de doublon sur le numéro
-        if (element.listeAireAspiration.groupingBy { it.numero }.eachCount().any { it.value > 1 }) {
-            throw IllegalArgumentException("Le numéro doit être unique")
-        }
+        require(!(element.listeAireAspiration.groupingBy { it.numero }.eachCount().any { it.value > 1 })) { "Le numéro doit être unique" }
 
         require(!element.listeAireAspiration.any { it.estDeporte && it.geometrie == null }) { "Si une aire d'aspiration est déportée, les coordonnées doivent être renseignées." }
     }

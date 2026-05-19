@@ -25,9 +25,7 @@ class ParametreEndpoint : AbstractEndpoint() {
         listeParametreCode: Set<String>,
     ): Response {
         val mapParam = parametresProvider.get().mapParametres.filter { listeParametreCode.contains(it.key) }
-        if (mapParam.isEmpty()) {
-            throw IllegalArgumentException("Aucun paramètre n'a été trouvé : $listeParametreCode")
-        }
+        require(mapParam.isNotEmpty()) { "Aucun paramètre n'a été trouvé : $listeParametreCode" }
 
         return Response.ok(mapParam).build()
     }

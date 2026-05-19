@@ -52,12 +52,8 @@ constructor(
     }
 
     override fun checkParameters(parameters: PurgerTaskParameter?) {
-        if (parameters == null) {
-            throw IllegalArgumentException("Aucun paramètre fourni")
-        }
-        if (parameters.purgerJobTermine && parameters.purgerJobJours == null) {
-            throw IllegalArgumentException("Aucun délai spécifié pour déterminer à partir de quand supprimer les logs")
-        }
+        requireNotNull(parameters) { "Aucun paramètre fourni" }
+        require(!(parameters.purgerJobTermine && parameters.purgerJobJours == null)) { "Aucun délai spécifié pour déterminer à partir de quand supprimer les logs" }
     }
 
     override fun getType(): TypeTask {

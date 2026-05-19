@@ -48,9 +48,7 @@ class GenereCarteTourneeUseCase @Inject constructor(
             userInfo.zoneCompetence?.zoneIntegrationId,
         )
 
-        if (tourneeGeometrie.isEmpty()) {
-            throw IllegalArgumentException("Aucun PEI associé à la tournée : $tourneeId")
-        }
+        require(tourneeGeometrie.isNotEmpty()) { "Aucun PEI associé à la tournée : $tourneeId" }
 
         val coordinates = tourneeGeometrie.map { it.peiGeometrie.coordinate }
 

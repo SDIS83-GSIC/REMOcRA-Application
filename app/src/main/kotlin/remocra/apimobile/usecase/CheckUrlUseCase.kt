@@ -37,14 +37,10 @@ class CheckUrlUseCase @Inject constructor(
             val token = "${tokenResponse.tokenType} ${tokenResponse.accessToken}"
             val client = keycloakApi.getClientRemocraMobile(token).execute().body()?.firstOrNull()
 
-            if (client == null) {
-                throw IllegalArgumentException("Le client remocra-mobile n'existe pas dans keyclaok")
-            }
+            requireNotNull(client) { "Le client remocra-mobile n'existe pas dans keycloak" }
 
             // On vérifie ensuite si les informations n'ont pas changé
-            if (client.redirectUris.first() != LOGIN || client.attributes["post.logout.redirect.uris"] != LOGOUT) {
-                throw IllegalArgumentException("Les informations ont été changée !")
-            }
+            require(!(client.redirectUris.first() != LOGIN || client.attributes["post.logout.redirect.uris"] != LOGOUT)) { "Les informations ont été changée !" }
 
             mobileData = MobileData(
                 dateProchaineConnexion = dureeSession.takeIf { accepteModeDeconnecte == true }?.let {

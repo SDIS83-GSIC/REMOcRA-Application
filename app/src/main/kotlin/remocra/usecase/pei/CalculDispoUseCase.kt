@@ -59,15 +59,11 @@ class CalculDispoUseCase @Inject constructor(
     }
 
     private fun checkDiametreId(pei: PeiForCalculDispoData) {
-        if (pei.diametreId == null) {
-            throw IllegalArgumentException("Pas de diamètre pour le calcul de dispo")
-        }
+        requireNotNull(pei.diametreId) { "Pas de diamètre pour le calcul de dispo" }
     }
 
     private fun checkReservoirId(pei: PeiForCalculDispoData) {
-        if (pei.reservoirId == null) {
-            throw IllegalArgumentException("Pas de réservoir pour le calcul de dispo")
-        }
+        requireNotNull(pei.reservoirId) { "Pas de réservoir pour le calcul de dispo" }
     }
 
     /**
