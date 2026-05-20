@@ -5,9 +5,9 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import remocra.apimobile.data.VisiteAnomalieForApiMobileData
 import remocra.apimobile.repository.IncomingRepository
-import remocra.app.DataCacheProvider
 import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
+import remocra.db.AnomalieRepository
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
@@ -16,7 +16,7 @@ class SynchroVisiteAnomalieUseCase
 @Inject
 constructor(
     private val incomingRepository: IncomingRepository,
-    private val dataCacheProvider: DataCacheProvider,
+    private val anomalieRepository: AnomalieRepository,
 ) :
     AbstractCUDUseCase<VisiteAnomalieForApiMobileData>(TypeOperation.INSERT) {
 
@@ -50,7 +50,7 @@ constructor(
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: VisiteAnomalieForApiMobileData) {
         // On vérifie si l'anomalie est toujours dans REMOcRA
-        if (dataCacheProvider.getAnomalies().values.none { it.anomalieId == element.anomalieId }) {
+        if (anomalieRepository.getAllAnomalie().none { it.anomalieId == element.anomalieId }) {
             throw RemocraResponseException(ErrorType.API_SYNCHRO_VISITE_ANOMALIE_NO_REMOCRA, element.anomalieId.toString())
         }
     }
