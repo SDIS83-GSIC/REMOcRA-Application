@@ -1,4 +1,4 @@
-import { useFormikContext } from "formik";
+import { getIn, useFormikContext } from "formik";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { Badge, Col, Container, Row } from "react-bootstrap";
 import { object } from "yup";
@@ -32,6 +32,7 @@ import typeAffichageCoordonnees from "../../../enums/TypeAffichageCoordonnees.ts
 import typeRouteHistoriquePei from "../../../enums/TypeRouteHistoriquePei.tsx";
 import TYPE_PARAMETRE from "../../../enums/TypesParametres.tsx";
 import url from "../../../module/fetch.tsx";
+import { requiredNumber, requiredString } from "../../../module/validators.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 
 type ParametresSectionGeneral = {
@@ -163,7 +164,16 @@ export const getInitialValues = (
       })) ?? [],
   },
   cartographie: data?.cartographie,
-  couvertureHydraulique: data?.couvertureHydraulique,
+  couvertureHydraulique: {
+    ...data?.couvertureHydraulique,
+    deciIsodistances: Array.isArray(
+      data?.couvertureHydraulique?.deciIsodistances,
+    )
+      ? data.couvertureHydraulique.deciIsodistances.join(",")
+      : typeof data?.couvertureHydraulique?.deciIsodistances === "string"
+        ? data.couvertureHydraulique.deciIsodistances
+        : "",
+  },
   dfci: data?.dfci,
   permis: data?.permis,
   pei: {
@@ -182,7 +192,69 @@ export const getInitialValues = (
   utilisateur: data?.utilisateur,
 });
 
-export const validationSchema = object({});
+export const validationSchema = object({
+  general: object({
+    titrePage: requiredString,
+    toleranceVoiesMetres: requiredNumber,
+  }),
+  signalement: object({
+    signalementDeliberationDestinataireEmail: requiredString,
+    signalementDeliberationObjetEmail: requiredString,
+    signalementDeliberationCorpsEmail: requiredString,
+  }),
+  cartographie: object({
+    coordonneesFormatAffichage: requiredString,
+  }),
+  couvertureHydraulique: object({
+    deciDistanceMaxParcours: requiredNumber,
+    deciIsodistances: requiredString,
+    profondeurCouverture: requiredNumber,
+  }),
+  dfci: object({
+    dfciTravauxDestinataireEmail: requiredString,
+    dfciTravauxObjetEmail: requiredString,
+    dfciTravauxCorpsEmail: requiredString,
+  }),
+  permis: object({
+    permisToleranceChargementMetres: requiredNumber,
+  }),
+  pei: object({
+    peiHighlightDuree: requiredNumber,
+    peiHighlightRayon: requiredNumber,
+    peiHighlightLargeur: requiredNumber,
+    peiSelectionRayon: requiredNumber,
+    peiSelectionLargeur: requiredNumber,
+    peiToleranceCommuneMetres: requiredNumber,
+    peiRouteHistorique: requiredString,
+    vitesseEau: requiredNumber,
+    peiDelaiCtrlUrgent: requiredNumber,
+    peiDelaiCtrlWarn: requiredNumber,
+    peiDelaiRecoUrgent: requiredNumber,
+    peiDelaiRecoWarn: requiredNumber,
+    peiRenouvellementCtrlPrive: requiredNumber,
+    peiRenouvellementCtrlPublic: requiredNumber,
+    peiRenouvellementCtrlConventionne: requiredNumber,
+    peiRenouvellementCtrlIcpe: requiredNumber,
+    peiRenouvellementCtrlIcpeConventionne: requiredNumber,
+    peiRenouvellementRecoPrive: requiredNumber,
+    peiRenouvellementRecoPublic: requiredNumber,
+    peiRenouvellementRecoIcpe: requiredNumber,
+    peiRenouvellementRecoIcpeConventionne: requiredNumber,
+    peiRenouvellementRecoConventionne: requiredNumber,
+    peiDeplacementDistWarn: requiredNumber,
+    bufferCarte: requiredNumber,
+    declarationPeiDestinataireEmail: requiredString,
+    declarationPeiObjetEmail: requiredString,
+    declarationPeiCorpsEmail: requiredString,
+  }),
+  peiLongueIndispo: object({
+    peiLongueIndisponibiliteMessage: requiredString,
+    peiLongueIndisponibiliteJours: requiredNumber,
+  }),
+  mobile: object({
+    dureeValiditeToken: requiredNumber,
+  }),
+});
 
 export const prepareVariables = (values: AdminParametresValue) => {
   return {
@@ -216,6 +288,42 @@ export const prepareVariables = (values: AdminParametresValue) => {
   };
 };
 
+/**
+ * Permet de vérifier si le formulaire est conforme. S'il ne l'est pas, on ouvre la section qui doit être modifiée
+ * et on scroll jusqu'au premier champ en erreur.
+ */
+function checkValidity(
+  values: AdminParametresValue,
+  show: (e: number) => void,
+  listValuesWithConstraints: { name: string; accordionIndex: number }[],
+) {
+  let firstErrorField: string | null = null;
+
+  listValuesWithConstraints.forEach((e) => {
+    const value = getIn(values, e.name);
+
+    if (
+      value === null ||
+      value === "" ||
+      value === undefined ||
+      (Array.isArray(value) && value.length === 0)
+    ) {
+      show(e.accordionIndex);
+      if (!firstErrorField) {
+        firstErrorField = e.name;
+      }
+    }
+  });
+
+  // Scroll vers le premier champ en erreur
+  if (firstErrorField) {
+    const fieldElement = document.querySelector(`[name="${firstErrorField}"]`);
+    if (fieldElement) {
+      fieldElement.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
+}
+
 const AdminParametres = () => {
   const adminParametresState = useGet(url`/api/admin/parametres`);
   const { data } = adminParametresState;
@@ -237,10 +345,91 @@ const AdminParametres = () => {
 export const AdminParametresInterne = () => {
   const { values, setFieldValue } = useFormikContext<AdminParametresValue>();
   const allCaracteristiques = useGet(url`/api/admin/pei-caracteristique`)?.data;
-  const { activesKeys, handleShowClose } = useAccordionState(
+  const { activesKeys, handleShowClose, show } = useAccordionState(
     Array(10).fill(false),
   );
   const { user } = useAppContext();
+
+  // Liste des champs obligatoires avec leur index dans l'accordion
+  // Permet d'ouvrir la section correspondante si un champ obligatoire n'est pas renseigné
+  const listValuesWithConstraints: { name: string; accordionIndex: number }[] =
+    [
+      // Général (0)
+      { name: "general.titrePage", accordionIndex: 0 },
+      { name: "general.toleranceVoiesMetres", accordionIndex: 0 },
+      // Signalement (1)
+      {
+        name: "signalement.signalementDeliberationDestinataireEmail",
+        accordionIndex: 1,
+      },
+      {
+        name: "signalement.signalementDeliberationObjetEmail",
+        accordionIndex: 1,
+      },
+      {
+        name: "signalement.signalementDeliberationCorpsEmail",
+        accordionIndex: 1,
+      },
+      // Cartographie (2)
+      { name: "cartographie.coordonneesFormatAffichage", accordionIndex: 2 },
+      { name: "pei.peiHighlightDuree", accordionIndex: 2 },
+      { name: "pei.peiHighlightRayon", accordionIndex: 2 },
+      { name: "pei.peiHighlightLargeur", accordionIndex: 2 },
+      { name: "pei.peiSelectionRayon", accordionIndex: 2 },
+      { name: "pei.peiSelectionLargeur", accordionIndex: 2 },
+      // Couverture hydraulique (3)
+      {
+        name: "couvertureHydraulique.deciDistanceMaxParcours",
+        accordionIndex: 3,
+      },
+      { name: "couvertureHydraulique.deciIsodistances", accordionIndex: 3 },
+      { name: "couvertureHydraulique.profondeurCouverture", accordionIndex: 3 },
+      // DFCI (4)
+      { name: "dfci.dfciTravauxDestinataireEmail", accordionIndex: 4 },
+      { name: "dfci.dfciTravauxObjetEmail", accordionIndex: 4 },
+      { name: "dfci.dfciTravauxCorpsEmail", accordionIndex: 4 },
+      // Permis (5)
+      { name: "permis.permisToleranceChargementMetres", accordionIndex: 5 },
+      // PEI (6) - dans l'ordre d'affichage
+      { name: "pei.peiColonnes", accordionIndex: 6 },
+      { name: "pei.peiToleranceCommuneMetres", accordionIndex: 6 },
+      { name: "pei.peiRouteHistorique", accordionIndex: 6 },
+      { name: "pei.vitesseEau", accordionIndex: 6 },
+      { name: "pei.peiDelaiCtrlUrgent", accordionIndex: 6 },
+      { name: "pei.peiDelaiCtrlWarn", accordionIndex: 6 },
+      { name: "pei.peiDelaiRecoUrgent", accordionIndex: 6 },
+      { name: "pei.peiDelaiRecoWarn", accordionIndex: 6 },
+      { name: "pei.peiRenouvellementCtrlPrive", accordionIndex: 6 },
+      { name: "pei.peiRenouvellementCtrlPublic", accordionIndex: 6 },
+      { name: "pei.peiRenouvellementCtrlConventionne", accordionIndex: 6 },
+      { name: "pei.peiRenouvellementCtrlIcpe", accordionIndex: 6 },
+      { name: "pei.peiRenouvellementCtrlIcpeConventionne", accordionIndex: 6 },
+      { name: "pei.peiRenouvellementRecoPrive", accordionIndex: 6 },
+      { name: "pei.peiRenouvellementRecoPublic", accordionIndex: 6 },
+      { name: "pei.peiRenouvellementRecoIcpe", accordionIndex: 6 },
+      { name: "pei.peiRenouvellementRecoIcpeConventionne", accordionIndex: 6 },
+      { name: "pei.peiRenouvellementRecoConventionne", accordionIndex: 6 },
+      { name: "pei.peiDeplacementDistWarn", accordionIndex: 6 },
+      { name: "pei.bufferCarte", accordionIndex: 6 },
+      { name: "pei.declarationPeiDestinataireEmail", accordionIndex: 6 },
+      { name: "pei.declarationPeiObjetEmail", accordionIndex: 6 },
+      { name: "pei.declarationPeiCorpsEmail", accordionIndex: 6 },
+      // PEI longue indisponibilité (7)
+      {
+        name: "peiLongueIndispo.peiLongueIndisponibiliteMessage",
+        accordionIndex: 7,
+      },
+      {
+        name: "peiLongueIndispo.peiLongueIndisponibiliteJours",
+        accordionIndex: 7,
+      },
+      {
+        name: "peiLongueIndispo.peiLongueIndisponibiliteTypeOrganisme",
+        accordionIndex: 7,
+      },
+      // Application mobile (9)
+      { name: "mobile.dureeValiditeToken", accordionIndex: 9 },
+    ];
 
   return (
     values && (
@@ -329,7 +518,12 @@ export const AdminParametresInterne = () => {
             handleShowClose={handleShowClose}
           />
           <br />
-          <SubmitFormButtons returnLink={true} />
+          <SubmitFormButtons
+            returnLink={true}
+            onClick={() => {
+              checkValidity(values, show, listValuesWithConstraints);
+            }}
+          />
         </Container>
       </FormContainer>
     )
