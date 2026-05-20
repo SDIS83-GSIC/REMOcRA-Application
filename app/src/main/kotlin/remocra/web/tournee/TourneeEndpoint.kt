@@ -28,12 +28,14 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.LTourneePei
 import remocra.db.jooq.remocra.tables.pojos.Tournee
 import remocra.security.NoCsrf
+import remocra.usecase.document.DocumentUtils
 import remocra.usecase.tournee.CreateTourneeUseCase
 import remocra.usecase.tournee.DeleteTourneeUseCase
 import remocra.usecase.tournee.DesaffecterTourneeUseCase
 import remocra.usecase.tournee.FetchTourneeDataUseCase
 import remocra.usecase.tournee.ForcerAvancementTourneeUseCase
 import remocra.usecase.tournee.GenereCarteTourneeUseCase
+import remocra.usecase.tournee.GenererCanevasRopUseCase
 import remocra.usecase.tournee.GenererRapportPostRopUseCase
 import remocra.usecase.tournee.RelancerIntegrationTourneeIncomingUseCase
 import remocra.usecase.tournee.UpdateLTourneePeiUseCase
@@ -85,6 +87,12 @@ class TourneeEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var genererRapportPostRopUseCase: GenererRapportPostRopUseCase
+
+    @Inject
+    lateinit var genererCanevasRopUseCase: GenererCanevasRopUseCase
+
+    @Inject
+    lateinit var documentUtils: DocumentUtils
 
     @Inject
     lateinit var objectMapper: ObjectMapper
@@ -352,5 +360,20 @@ class TourneeEndpoint : AbstractEndpoint() {
             tourneeId,
             userInfo = securityContext.userInfo,
         ).wrapNoContent()
+    }
+
+    @GET
+    @Path("/generer-canevas-rop/{tourneeId}")
+    @Produces("application/pdf")
+    @RequireDroits([Droit.ADMIN_ROP_A])
+    @NoCsrf("On utilise une URL directe et donc on n'a pas les entêtes remplis")
+    fun genererCanevasRop(
+        @PathParam("tourneeId") tourneeId: UUID,
+    ): Response {
+        val canevasPath = genererCanevasRopUseCase.execute(
+            tourneeId,
+            userInfo = securityContext.userInfo,
+        )
+        return documentUtils.checkFile(canevasPath)
     }
 }

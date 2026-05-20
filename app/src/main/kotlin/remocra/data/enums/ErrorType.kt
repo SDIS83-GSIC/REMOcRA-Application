@@ -685,6 +685,9 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     RAPPORT_VISITE_ROI_MODEL_INEXISTANT(31015, "Modèle de courrier pour rapport visite ROI introuvable."),
     COURRIER_VISITE_ROI_ERREUR(31016, "Erreur lors de la création du courrier pour la visite ROI : aucun destinataire trouvé."),
 
+    CANEVAS_ROP_MODELE_INEXISTANT(31017, "Modèle de courrier pour canevas ROP introuvable"),
+    CANEVAS_ROP_ERREUR_GENERATION(31018, "Erreur lors de la génération du canevas ROP de la tournée"),
+
     //
     // ********************************************************************************
     // Image

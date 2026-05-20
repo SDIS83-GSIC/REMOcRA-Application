@@ -44,6 +44,7 @@ import VRAI_FAUX from "../../enums/VraiFauxEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
+import { recupererNomFichierDepuisEntete } from "../../utils/fonctionsUtils.tsx";
 import { formatDateWithFallback } from "../../utils/formatDateUtils.tsx";
 import { filterValuesToVariable } from "./FilterTournee.tsx";
 
@@ -76,13 +77,18 @@ const ListTournee = ({
     useGet(url`/api/courriers/modeles/exists-rapport-post-rop`, {})?.data ===
       true && hasDroit(user, TYPE_DROIT.ADMIN_ROP_A);
 
+  const canGenererCanevasRop =
+    useGet(url`/api/courriers/modeles/exists-canevas-rop`, {})?.data === true &&
+    hasDroit(user, TYPE_DROIT.ADMIN_ROP_A);
+
   /**
    * Constante permettant de savoir le nombre d'actions de génération de documents activées
-   * (génération de la carte de la tournée et/ou du rapport post ROP pour l'instant)
+   * (génération de la carte de la tournée, du rapport post ROP et/ou du canevas ROP)
    * Le libellé diffère, et on n'affiche un sous-menu que s'il y a plus d'une action possible
    */
   const nbActionsGeneration =
     (canGenererRapportPostRop ? 1 : 0) +
+    (canGenererCanevasRop ? 1 : 0) +
     (parametreGenerationCarteTournee === "true" ? 1 : 0);
 
   // Re-mount the QueryTable to trigger a fresh fetch when needed
@@ -371,7 +377,7 @@ const ListTournee = ({
     onClick: async (tourneeId: string[] | object) => {
       const toastId = persistentToast(
         "Génération de la carte de la tournée",
-        "Génération de la carte en cours...",
+        "Génération de la carte en cours…",
       );
       try {
         const response = await fetch(
@@ -395,14 +401,10 @@ const ListTournee = ({
 
         const blob = await response.blob();
         const disposition = response.headers.get("Content-Disposition");
-        let filename = "carte-tournee.pdf";
-        if (disposition && disposition.includes("filename=")) {
-          filename = disposition
-            .split("filename=")[1]
-            .split(";")[0]
-            .replace(/["']/g, "")
-            .trim();
-        }
+        const filename = recupererNomFichierDepuisEntete(
+          disposition,
+          "carte-tournee.pdf",
+        );
         const urlBlob = window.URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = urlBlob;
@@ -451,7 +453,69 @@ const ListTournee = ({
     },
   };
 
-  if (canGenererRapportPostRop && parametreGenerationCarteTournee === "true") {
+  const canevasRopButton: ButtonType = {
+    row: (row: RowTournee) => row,
+    type: TYPE_BUTTON.BUTTON,
+    icon: <IconDocument />,
+    textEnable:
+      nbActionsGeneration > 1 ? "Canevas ROP" : "Générer le canevas ROP",
+    classEnable: "success",
+    onClick: async (tourneeId: string[] | object) => {
+      const toastId = persistentToast(
+        "Génération du canevas ROP",
+        "Génération du canevas en cours…",
+      );
+      try {
+        const response = await fetch(
+          url`/api/tournee/generer-canevas-rop/${tourneeId}`,
+        );
+        removeToast(toastId);
+        if (!response.ok) {
+          const errorText = await response.text();
+          errorToast(errorText || "Une erreur est survenue");
+          return;
+        }
+
+        const contentType = response.headers.get("Content-Type");
+        if (!contentType || !contentType.includes("application/pdf")) {
+          const errorText = await response.text();
+          errorToast(errorText || "Le fichier retourné n'est pas un PDF.");
+          return;
+        }
+
+        const blob = await response.blob();
+        const disposition = response.headers.get("Content-Disposition");
+        const filename = recupererNomFichierDepuisEntete(
+          disposition,
+          "canevas-rop.pdf",
+        );
+        const urlBlob = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = urlBlob;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(urlBlob);
+      } catch (_error) {
+        removeToast(toastId);
+        errorToast("Une erreur est survenue");
+      }
+    },
+  };
+
+  const generationButtons: ButtonType[] = [];
+  if (parametreGenerationCarteTournee === "true") {
+    generationButtons.push(carteTourneeButton);
+  }
+  if (canGenererRapportPostRop) {
+    generationButtons.push(rapportPostRopButton);
+  }
+  if (canGenererCanevasRop) {
+    generationButtons.push(canevasRopButton);
+  }
+
+  if (generationButtons.length > 1) {
     // Regroupe les actions de génération dans un sous-menu
     listeButton.push({
       row: (row: RowTournee) => row,
@@ -459,14 +523,10 @@ const ListTournee = ({
       icon: <IconDocument />,
       textEnable: "Générer un document",
       classEnable: "success",
-      children: [carteTourneeButton, rapportPostRopButton],
-      enabled: (row: RowTournee) =>
-        row.original.tourneeDateDerniereRealisation === null,
+      children: generationButtons,
     });
-  } else if (parametreGenerationCarteTournee === "true") {
-    listeButton.push(carteTourneeButton);
-  } else if (canGenererRapportPostRop) {
-    listeButton.push(rapportPostRopButton);
+  } else if (generationButtons.length === 1) {
+    listeButton.push(generationButtons[0]);
   }
 
   if (incomingTournee && incomingTournee.length > 0) {

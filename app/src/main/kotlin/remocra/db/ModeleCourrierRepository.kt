@@ -406,4 +406,25 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
 
     fun getByType(typeCourrier: TypeCourrier): ModeleCourrier? = dsl.selectFrom(MODELE_COURRIER)
         .where(MODELE_COURRIER.TYPE.eq(typeCourrier)).fetchOneInto()
+
+    // On factorise la condition pour éviter de la dupliquer dans existsCanevasRop et getCanevasRop
+    private fun canevasRopCondition() = MODELE_COURRIER.TYPE.eq(TypeCourrier.CANEVAS_ROP).and(MODELE_COURRIER.ACTIF.isTrue)
+
+    fun existsCanevasRop(): Boolean = dsl.fetchExists(
+        dsl.select(MODELE_COURRIER.ID)
+            .from(MODELE_COURRIER)
+            .where(canevasRopCondition()),
+    )
+
+    /**
+     * Retourne le modèle de courrier de type RAPPORT_POST_ROP s'il existe, null sinon
+     */
+    fun getRapportPostRop(): ModeleCourrier? = dsl.selectFrom(MODELE_COURRIER)
+        .where(MODELE_COURRIER.TYPE.eq(TypeCourrier.RAPPORT_POST_ROP)).fetchOneInto()
+
+    /**
+     * Retourne le modèle de courrier de type CANEVAS_ROP s'il existe, null sinon
+     */
+    fun getCanevasRop(): ModeleCourrier? = dsl.selectFrom(MODELE_COURRIER)
+        .where(canevasRopCondition()).fetchOneInto()
 }
