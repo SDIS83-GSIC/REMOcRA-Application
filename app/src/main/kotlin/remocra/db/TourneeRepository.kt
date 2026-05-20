@@ -682,6 +682,7 @@ class TourneeRepository
             .join(V_PEI_VISITE_DATE)
             .on(PEI.ID.eq(V_PEI_VISITE_DATE.PEI_ID))
             .where(L_TOURNEE_PEI.TOURNEE_ID.eq(tourneeId))
+            .orderBy(L_TOURNEE_PEI.ORDRE)
             .fetchInto()
     }
 
