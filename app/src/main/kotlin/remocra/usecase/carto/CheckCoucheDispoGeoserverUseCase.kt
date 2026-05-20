@@ -16,7 +16,13 @@ class CheckCoucheDispoGeoserverUseCase @Inject constructor(
             val workspace = it[0]
             val name = it[1]
 
-            return geoserverApi.getCoucheGeoserver(workspace, name).execute().body() != null
+            // Vérification couche classique
+            val coucheExiste = geoserverApi.getCoucheGeoserver(workspace, name).execute().body() != null
+            if (coucheExiste) return true
+
+            // Vérification agrégation (layer group)
+            val aggregationExiste = geoserverApi.getLayerGroup(name).execute().body() != null
+            return aggregationExiste
         }
     }
 }
