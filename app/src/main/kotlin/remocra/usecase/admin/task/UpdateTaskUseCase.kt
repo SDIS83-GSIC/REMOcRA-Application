@@ -35,9 +35,7 @@ class UpdateTaskUseCase @Inject constructor(private val taskRepository: TaskRepo
         val taskParameters = objectMapper.readValue(element.taskParametres.toString(), SynchronisationSIGTaskParameter::class.java)
         taskParameters.listeTableASynchroniser.forEach { tableASynchroniser ->
             if (tableASynchroniser.typeSynchronisation != TypeSynchronisation.STOCKAGE_SIMPLE) {
-                if (tableASynchroniser.scriptCreationVue.isNullOrBlank()) {
-                    throw IllegalArgumentException("Le script de création de vue est nécessaire pour le type de synchronisation ${tableASynchroniser.typeSynchronisation}")
-                }
+                require(!tableASynchroniser.scriptCreationVue.isNullOrBlank()) { "Le script de création de vue est nécessaire pour le type de synchronisation ${tableASynchroniser.typeSynchronisation}" }
                 requestUtils.validateQueryWithCreate(tableASynchroniser.scriptCreationVue)
             }
         }
