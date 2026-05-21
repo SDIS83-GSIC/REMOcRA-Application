@@ -37,7 +37,7 @@ class GenererRapportPostRopUseCase @Inject constructor(
             ?: throw RemocraResponseException(ErrorType.RAPPORT_POST_ROP_MODELE_INEXISTANT)
 
         val listPeiTournee = tourneeRepository.getListPeiByListTournee(listOf(tourneeId))[tourneeId]
-        if (listPeiTournee == null || listPeiTournee.isEmpty()) {
+        if (listPeiTournee.isNullOrEmpty()) {
             throw RemocraResponseException(ErrorType.RAPPORT_POST_ROP_NO_PEI)
         }
 
