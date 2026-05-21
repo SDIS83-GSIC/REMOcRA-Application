@@ -3,10 +3,7 @@ package remocra.exception
 import remocra.data.enums.ErreurImportCtp
 import remocra.data.importctp.LigneImportCtpData
 
-class ImportCtpException(typeErreur: ErreurImportCtp, data: LigneImportCtpData) : Exception() {
-    private val typeErreur: ErreurImportCtp = typeErreur
-
-    private val data: LigneImportCtpData = data
+class ImportCtpException(private val typeErreur: ErreurImportCtp, private val data: LigneImportCtpData) : Exception() {
 
     fun getTypeErreur(): ErreurImportCtp {
         return typeErreur
