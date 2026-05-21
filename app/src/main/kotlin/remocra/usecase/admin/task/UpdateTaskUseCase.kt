@@ -1,6 +1,7 @@
 package remocra.usecase.admin.task
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
 import org.apache.logging.log4j.core.util.CronExpression
 import remocra.auth.WrappedUserInfo
@@ -10,6 +11,7 @@ import remocra.db.TaskRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.db.jooq.remocra.tables.pojos.Task
 import remocra.eventbus.parametres.ParametresModifiedEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
@@ -30,13 +32,18 @@ class UpdateTaskUseCase @Inject constructor(private val taskRepository: TaskRepo
         // La méthode isValidExpression retourne un booléan indiquant si l'expression est conforme ou non
         // Donc si false, l'expression est invalide, on remonte l'info dans le Front
         if (!CronExpression.isValidExpression(element.taskPlanification)) {
-            throw(IllegalArgumentException("La CronExpression fournie est invalide : ${element.taskPlanification}"))
+            throw RemocraResponseException(ErrorType.ADMIN_TASK_SYNCHRO_CRON_INVALIDE, "${element.taskPlanification}")
         }
-        val taskParameters = objectMapper.readValue(element.taskParametres.toString(), SynchronisationSIGTaskParameter::class.java)
-        taskParameters.listeTableASynchroniser.forEach { tableASynchroniser ->
-            if (tableASynchroniser.typeSynchronisation != TypeSynchronisation.STOCKAGE_SIMPLE) {
-                require(!tableASynchroniser.scriptCreationVue.isNullOrBlank()) { "Le script de création de vue est nécessaire pour le type de synchronisation ${tableASynchroniser.typeSynchronisation}" }
-                requestUtils.validateQueryWithCreate(tableASynchroniser.scriptCreationVue)
+        if (element.taskType == TypeTask.SYNCHRONISATION_SIG) {
+            val taskParameters =
+                objectMapper.readValue<SynchronisationSIGTaskParameter>(element.taskParametres.toString())
+            taskParameters.listeTableASynchroniser.forEach { tableASynchroniser ->
+                if (tableASynchroniser.typeSynchronisation != TypeSynchronisation.STOCKAGE_SIMPLE) {
+                    if (tableASynchroniser.scriptCreationVue.isNullOrBlank()) {
+                        throw RemocraResponseException(ErrorType.ADMIN_TASK_SYNCHRO_SIG_SCRIPT_VUE, "${tableASynchroniser.typeSynchronisation}")
+                    }
+                    requestUtils.validateQueryWithCreate(tableASynchroniser.scriptCreationVue)
+                }
             }
         }
     }
