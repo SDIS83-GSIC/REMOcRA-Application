@@ -1,9 +1,16 @@
 import { Feature } from "ol";
 import { asArray, asString } from "ol/color";
 import { never, platformModifierKeyOnly } from "ol/events/condition";
-import { getCenter, getHeight, getWidth } from "ol/extent";
+import { Extent, getCenter, getHeight, getWidth } from "ol/extent";
 import { LineString, Point, Polygon } from "ol/geom";
-import { DragBox, Draw, Modify, Select, Translate } from "ol/interaction";
+import {
+  DragBox,
+  Draw,
+  Interaction,
+  Modify,
+  Select,
+  Translate,
+} from "ol/interaction";
 import VectorLayer from "ol/layer/Vector";
 import OLMap from "ol/Map";
 import VectorSource from "ol/source/Vector";
@@ -88,27 +95,35 @@ const LINE_DASHES = [
   ["longdashdot", "Tirets longs / Pointillés"],
 ];
 
-export const useToolbarPersoContext = ({ map, cartographiePersoLayer }) => {
+type ToolbarPersoContextProps = {
+  map: OLMap | undefined;
+  cartographiePersoLayer: VectorLayer | undefined;
+};
+
+export const useToolbarPersoContext = ({
+  map,
+  cartographiePersoLayer,
+}: ToolbarPersoContextProps) => {
   const [featureStyle, setFeatureStyle] = useState(defaultStyle);
-  const [selectedFeatures, setSelectedFeatures] = useState([]);
+  const [selectedFeatures, setSelectedFeatures] = useState<Feature[]>([]);
 
   const tools = useMemo(() => {
-    if (!map) {
+    if (!map || !cartographiePersoLayer) {
       return {};
     }
 
     const drawPointCtrl = new Draw({
-      source: cartographiePersoLayer.getSource(),
+      source: cartographiePersoLayer.getSource() ?? undefined,
       type: "Point",
     });
 
     const drawLineCtrl = new Draw({
-      source: cartographiePersoLayer.getSource(),
+      source: cartographiePersoLayer.getSource() ?? undefined,
       type: "LineString",
     });
 
     const drawShapeCtrl = new Draw({
-      source: cartographiePersoLayer.getSource(),
+      source: cartographiePersoLayer.getSource() ?? undefined,
       type: "Polygon",
     });
 
@@ -129,11 +144,6 @@ export const useToolbarPersoContext = ({ map, cartographiePersoLayer }) => {
       toggleCondition: platformModifierKeyOnly,
     });
     const dragBoxCtrl = new DragBox({
-      style: new Style({
-        stroke: new Stroke({
-          color: [0, 0, 255, 1],
-        }),
-      }),
       minArea: 25,
     });
     dragBoxCtrl.on("boxend", function (e) {
@@ -141,9 +151,9 @@ export const useToolbarPersoContext = ({ map, cartographiePersoLayer }) => {
         selectCtrl.getFeatures().clear();
       }
       const boxExtent = dragBoxCtrl.getGeometry().getExtent();
-      const boxFeatures = cartographiePersoLayer
-        .getSource()
-        .getFeaturesInExtent(boxExtent);
+      const boxFeatures =
+        cartographiePersoLayer.getSource()?.getFeaturesInExtent(boxExtent) ??
+        [];
 
       selectCtrl.getFeatures().extend(boxFeatures);
 
@@ -155,23 +165,23 @@ export const useToolbarPersoContext = ({ map, cartographiePersoLayer }) => {
       const idx2 = map?.getInteractions().getArray().indexOf(dragBoxCtrl);
       if (active) {
         if (idx1 === -1 && idx2 === -1) {
-          map.addInteraction(selectCtrl);
-          map.addInteraction(dragBoxCtrl);
+          map?.addInteraction(selectCtrl);
+          map?.addInteraction(dragBoxCtrl);
         }
       } else {
-        map.removeInteraction(selectCtrl);
-        map.removeInteraction(dragBoxCtrl);
+        map?.removeInteraction(selectCtrl);
+        map?.removeInteraction(dragBoxCtrl);
       }
     }
 
-    function toggleCtrl(active, ctrl) {
+    function toggleCtrl(active: boolean, ctrl: Interaction) {
       const idx = map?.getInteractions().getArray().indexOf(ctrl);
       if (active) {
         if (idx === -1) {
-          map.addInteraction(ctrl);
+          map?.addInteraction(ctrl);
         }
       } else {
-        map.removeInteraction(ctrl);
+        map?.removeInteraction(ctrl);
       }
     }
 
@@ -188,30 +198,38 @@ export const useToolbarPersoContext = ({ map, cartographiePersoLayer }) => {
     }
 
     const modifyShapeCtrl = new Modify({
-      source: cartographiePersoLayer.getSource(),
+      source: cartographiePersoLayer.getSource() ?? undefined,
     });
 
-    const calculateCenter = (geometry) => {
-      let center, coordinates, minRadius;
+    const calculateCenter = (geometry: {
+      getType: () => any;
+      getCoordinates: () => unknown;
+      getCoordinateAt: (arg0: number) => any;
+      getExtent: () => Extent;
+    }) => {
+      let center: number[];
+      let coordinates: number[][] | undefined;
+      let minRadius: number;
       const type = geometry.getType();
       if (type === "Polygon") {
         let x = 0;
         let y = 0;
         let i = 0;
-        coordinates = geometry.getCoordinates()[0].slice(1);
-        coordinates.forEach(function (coordinate) {
+        const polygonCoordinates = geometry.getCoordinates() as number[][][];
+        coordinates = polygonCoordinates[0].slice(1);
+        coordinates.forEach(function (coordinate: number[]) {
           x += coordinate[0];
           y += coordinate[1];
           i++;
         });
         center = [x / i, y / i];
       } else if (type === "LineString") {
-        center = geometry.getCoordinateAt(0.5);
-        coordinates = geometry.getCoordinates();
+        center = geometry.getCoordinateAt(0.5) as number[];
+        coordinates = geometry.getCoordinates() as number[][];
       } else {
-        center = getCenter(geometry.getExtent());
+        center = getCenter(geometry.getExtent()) as number[];
       }
-      let sqDistances;
+      let sqDistances: number[] | undefined;
       if (coordinates) {
         sqDistances = coordinates.map(function (coordinate) {
           const dx = coordinate[0] - center[0];
@@ -233,23 +251,29 @@ export const useToolbarPersoContext = ({ map, cartographiePersoLayer }) => {
         sqDistances: sqDistances,
       };
     };
-
     const defaultStyle = new Modify({
-      source: cartographiePersoLayer.getSource(),
+      source: cartographiePersoLayer.getSource() ?? undefined,
     })
       .getOverlay()
       .getStyleFunction();
 
     // FIXME faire en sorte d'afficher une géométrie dédiée lors de la modification, actuellement seul le point sélectionné est visuellement déplacé
+
     const modifyScaleCtrl = new Modify({
-      source: cartographiePersoLayer.getSource(),
+      source: cartographiePersoLayer.getSource() ?? undefined,
       deleteCondition: never,
       insertVertexCondition: never,
-      style: function (feature) {
-        feature.get("features").forEach(function (modifyFeature) {
+      style: function (feature, resolution) {
+        feature.get("features").forEach(function (modifyFeature: {
+          get: (arg0: string) => any;
+        }) {
           const modifyGeometry = modifyFeature.get("modifyGeometry");
           if (modifyGeometry) {
-            const point = feature.getGeometry().getCoordinates();
+            const pointGeometry = feature?.getGeometry();
+            if (!(pointGeometry instanceof Point)) {
+              return;
+            }
+            const point = pointGeometry.getCoordinates();
             let modifyPoint = modifyGeometry.point;
             if (!modifyPoint) {
               // save the initial geometry and vertex position
@@ -288,17 +312,17 @@ export const useToolbarPersoContext = ({ map, cartographiePersoLayer }) => {
           }
         });
 
-        return defaultStyle(feature);
+        return defaultStyle?.(feature, resolution);
       },
     });
 
     modifyScaleCtrl.on("modifystart", function (event) {
       event.features.forEach(function (feature) {
-        feature.set(
-          "modifyGeometry",
-          { geometry: feature.getGeometry().clone() },
-          true,
-        );
+        const geometry = feature.getGeometry();
+        if (!geometry) {
+          return;
+        }
+        feature.set("modifyGeometry", { geometry: geometry.clone() }, true);
       });
     });
 
@@ -335,12 +359,12 @@ export const useToolbarPersoContext = ({ map, cartographiePersoLayer }) => {
       const idx2 = map?.getInteractions().getArray().indexOf(translateCtrl);
       if (active) {
         if (idx1 === -1 && idx2 === -1) {
-          map.addInteraction(translateSelectCtrl);
-          map.addInteraction(translateCtrl);
+          map?.addInteraction(translateSelectCtrl);
+          map?.addInteraction(translateCtrl);
         }
       } else {
-        map.removeInteraction(translateSelectCtrl);
-        map.removeInteraction(translateCtrl);
+        map?.removeInteraction(translateSelectCtrl);
+        map?.removeInteraction(translateCtrl);
       }
     }
 
@@ -389,13 +413,13 @@ const MapToolbarCartographiePerso = ({
   cartographiePersoLayer,
 }: {
   toggleTool: (toolId: string) => void;
-  activeTool: string;
+  activeTool: string | undefined;
   featureStyle: Style;
   setFeatureStyle: (style: Style) => void;
   selectedFeatures: Feature[];
   cartographiePersoLayer: VectorLayer;
 }) => {
-  const [previewRef, setPreviewRef] = useState<HTMLDivElement>(null);
+  const [previewRef, setPreviewRef] = useState<HTMLDivElement | null>(null);
   const [showPanel, setShowPanel] = useState(false);
   const [previewStyle] = useState(featureStyle);
 
@@ -407,10 +431,8 @@ const MapToolbarCartographiePerso = ({
     const initialMap = new OLMap({
       controls: [],
       interactions: [],
-      allOverlays: true,
-      target: previewRef,
+      target: previewRef || undefined,
       layers: [],
-      theme: false,
       view: new View({
         extent: [-25, -20, 30, 20],
         center: [0, 0],
@@ -464,8 +486,8 @@ const MapToolbarCartographiePerso = ({
       return;
     }
     previewLayer
-      .getSource()
-      .getFeatures()
+      ?.getSource()
+      ?.getFeatures()
       .forEach((f) => {
         f.setStyle(previewStyle);
       });
@@ -483,7 +505,7 @@ const MapToolbarCartographiePerso = ({
 
   function deleteFeature() {
     selectedFeatures.forEach((f) => {
-      cartographiePersoLayer.getSource().removeFeature(f);
+      cartographiePersoLayer?.getSource()?.removeFeature(f);
     });
   }
 
@@ -588,10 +610,11 @@ const MapToolbarCartographiePerso = ({
                   const format = FORMATS.filter(
                     (f) => f.code === evt.target.value,
                   )[0];
-                  document.getElementById("papersheet").style.width =
-                    format.value.width;
-                  document.getElementById("papersheet").style.height =
-                    format.value.height;
+                  const papersheet = document.getElementById("papersheet");
+                  if (papersheet) {
+                    papersheet.style.width = format.value.width;
+                    papersheet.style.height = format.value.height;
+                  }
                 }}
               >
                 {FORMATS.map((v, k) => (
@@ -622,11 +645,13 @@ const MapToolbarCartographiePerso = ({
                       min={1}
                       max={200}
                       step={1}
-                      defaultValue={previewStyle.getImage().getRadius()}
+                      defaultValue={(
+                        previewStyle?.getImage() as CircleStyle
+                      )?.getRadius()}
                       onChange={(evt) => {
-                        previewStyle
-                          .getImage()
-                          .setRadius(parseInt(evt.target.value));
+                        (previewStyle?.getImage() as CircleStyle)?.setRadius(
+                          parseInt(evt.target.value),
+                        );
                         updatePreview();
                       }}
                     />
@@ -637,11 +662,13 @@ const MapToolbarCartographiePerso = ({
                       min={0}
                       max={359}
                       step={1}
-                      defaultValue={previewStyle.getImage().getRotation()}
+                      defaultValue={(
+                        previewStyle?.getImage() as CircleStyle
+                      )?.getRotation()}
                       onChange={(evt) => {
-                        previewStyle
-                          .getImage()
-                          .setRotation(parseInt(evt.target.value));
+                        (previewStyle?.getImage() as CircleStyle)?.setRotation(
+                          parseInt(evt.target.value),
+                        );
                         updatePreview();
                       }}
                     />
@@ -658,20 +685,40 @@ const MapToolbarCartographiePerso = ({
                     <Form.Label>Couleur</Form.Label>
                     <Form.Control
                       type="color"
-                      defaultValue={previewStyle
-                        .getStroke()
-                        .getColor()
-                        .substring(0, 7)}
+                      defaultValue={(() => {
+                        const color =
+                          previewStyle?.getStroke()?.getColor() ?? "#000000";
+                        if (typeof color === "string") {
+                          return color.substring(0, 7);
+                        }
+                        if (Array.isArray(color)) {
+                          return asString(color).substring(0, 7);
+                        }
+                        // fallback for CanvasPattern/CanvasGradient or unknown
+                        return "#000000";
+                      })()}
                       onChange={(evt) => {
                         const newColor = asString(
                           asArray(evt.target.value).concat(
-                            asArray(previewStyle.getFill().getColor())[3] ?? 1,
+                            (() => {
+                              const fillColor = previewStyle
+                                ?.getFill()
+                                ?.getColor();
+                              if (
+                                typeof fillColor === "string" ||
+                                Array.isArray(fillColor)
+                              ) {
+                                return asArray(fillColor)[3] ?? 1;
+                              }
+                              // fallback for CanvasPattern/CanvasGradient or unknown
+                              return 1;
+                            })(),
                           ),
                         );
-                        previewStyle.getStroke().setColor(newColor);
-                        previewStyle
-                          .getImage()
-                          .getStroke(previewStyle.getStroke());
+                        previewStyle?.getStroke()?.setColor(newColor);
+                        (previewStyle?.getImage() as CircleStyle)?.setStroke(
+                          previewStyle?.getStroke(),
+                        );
                         updatePreview();
                       }}
                     />
@@ -682,19 +729,38 @@ const MapToolbarCartographiePerso = ({
                       min={0}
                       max={1}
                       step={0.01}
-                      defaultValue={
-                        asArray(previewStyle.getStroke().getColor())[3] ?? 1
-                      }
+                      defaultValue={(() => {
+                        const color = previewStyle?.getStroke()?.getColor();
+                        if (typeof color === "string" || Array.isArray(color)) {
+                          return asArray(color)[3] ?? 1;
+                        }
+                        // fallback for CanvasPattern/CanvasGradient or unknown
+                        return 1;
+                      })()}
                       onChange={(evt) => {
                         const newColor = asString(
-                          asArray(previewStyle.getStroke().getColor())
-                            .slice(0, 3)
-                            .concat(parseFloat(evt.target.value)),
+                          (() => {
+                            const color =
+                              previewStyle?.getStroke()?.getColor() ??
+                              "#000000";
+                            if (
+                              typeof color === "string" ||
+                              Array.isArray(color)
+                            ) {
+                              return asArray(color)
+                                .slice(0, 3)
+                                .concat(parseFloat(evt.target.value));
+                            }
+                            // fallback for CanvasPattern/CanvasGradient or unknown
+                            return asArray("#000000")
+                              .slice(0, 3)
+                              .concat(parseFloat(evt.target.value));
+                          })(),
                         );
-                        previewStyle.getStroke().setColor(newColor);
-                        previewStyle
-                          .getImage()
-                          .setStroke(previewStyle.getStroke());
+                        previewStyle?.getStroke()?.setColor(newColor);
+                        (previewStyle?.getImage() as CircleStyle)?.setStroke(
+                          previewStyle?.getStroke(),
+                        );
                         updatePreview();
                       }}
                     />
@@ -705,14 +771,14 @@ const MapToolbarCartographiePerso = ({
                       min={0}
                       max={100}
                       step={1}
-                      defaultValue={previewStyle.getStroke().getWidth()}
+                      defaultValue={previewStyle?.getStroke()?.getWidth()}
                       onChange={(evt) => {
                         previewStyle
-                          .getStroke()
-                          .setWidth(parseInt(evt.target.value));
-                        previewStyle
-                          .getImage()
-                          .setStroke(previewStyle.getStroke());
+                          ?.getStroke()
+                          ?.setWidth(parseInt(evt.target.value));
+                        (previewStyle?.getImage() as CircleStyle)?.setStroke(
+                          previewStyle?.getStroke(),
+                        );
                         updatePreview();
                       }}
                     />
@@ -721,10 +787,12 @@ const MapToolbarCartographiePerso = ({
                     <Form.Label>Fins de ligne</Form.Label>
                     <Form.Select
                       onChange={(evt) => {
-                        previewStyle.getStroke().setLineCap(evt.target.value);
                         previewStyle
-                          .getImage()
-                          .setStroke(previewStyle.getStroke());
+                          ?.getStroke()
+                          ?.setLineCap(evt.target.value as CanvasLineCap);
+                        (previewStyle?.getImage() as CircleStyle)?.setStroke(
+                          previewStyle?.getStroke(),
+                        );
                         updatePreview();
                       }}
                     >
@@ -759,10 +827,10 @@ const MapToolbarCartographiePerso = ({
                           default:
                             dash = [1];
                         }
-                        previewStyle.getStroke().setLineDash(dash);
-                        previewStyle
-                          .getImage()
-                          .setStroke(previewStyle.getStroke());
+                        previewStyle?.getStroke()?.setLineDash(dash);
+                        (previewStyle?.getImage() as CircleStyle)?.setStroke(
+                          previewStyle?.getStroke(),
+                        );
                         updatePreview();
                       }}
                     >
@@ -785,18 +853,39 @@ const MapToolbarCartographiePerso = ({
                     <Form.Label>Couleur</Form.Label>
                     <Form.Control
                       type="color"
-                      defaultValue={previewStyle
-                        .getFill()
-                        .getColor()
-                        .substring(0, 7)}
+                      defaultValue={(() => {
+                        const color = previewStyle?.getFill()?.getColor();
+                        if (typeof color === "string") {
+                          return color.substring(0, 7);
+                        }
+                        if (Array.isArray(color)) {
+                          return asString(color).substring(0, 7);
+                        }
+                        // fallback for CanvasPattern/CanvasGradient or unknown
+                        return "#000000";
+                      })()}
                       onChange={(evt) => {
                         const newColor = asString(
                           asArray(evt.target.value).concat(
-                            asArray(previewStyle.getFill().getColor())[3] ?? 1,
+                            (() => {
+                              const fillColor = previewStyle
+                                ?.getFill()
+                                ?.getColor();
+                              if (
+                                typeof fillColor === "string" ||
+                                Array.isArray(fillColor)
+                              ) {
+                                return asArray(fillColor)[3] ?? 1;
+                              }
+                              // fallback for CanvasPattern/CanvasGradient or unknown
+                              return 1;
+                            })(),
                           ),
                         );
-                        previewStyle.getFill().setColor(newColor);
-                        previewStyle.getImage().setFill(previewStyle.getFill());
+                        previewStyle?.getFill()?.setColor(newColor);
+                        (previewStyle?.getImage() as CircleStyle)?.setFill(
+                          previewStyle?.getFill(),
+                        );
                         updatePreview();
                       }}
                     />
@@ -807,17 +896,39 @@ const MapToolbarCartographiePerso = ({
                       min={0}
                       max={1}
                       step={0.01}
-                      defaultValue={
-                        asArray(previewStyle.getFill().getColor())[3] ?? 1
-                      }
+                      defaultValue={(() => {
+                        const fillColor = previewStyle?.getFill()?.getColor();
+                        if (
+                          typeof fillColor === "string" ||
+                          Array.isArray(fillColor)
+                        ) {
+                          return asArray(fillColor)[3] ?? 1;
+                        }
+                        // fallback for CanvasPattern/CanvasGradient or unknown
+                        return 1;
+                      })()}
                       onChange={(evt) => {
                         const newColor = asString(
-                          asArray(previewStyle.getFill().getColor())
+                          (() => {
+                            const fillColor = previewStyle
+                              ?.getFill()
+                              ?.getColor();
+                            if (
+                              typeof fillColor === "string" ||
+                              Array.isArray(fillColor)
+                            ) {
+                              return asArray(fillColor ?? "#000000");
+                            }
+                            // fallback for CanvasPattern/CanvasGradient or unknown
+                            return asArray("#000000");
+                          })()
                             .slice(0, 3)
                             .concat(parseFloat(evt.target.value)),
                         );
-                        previewStyle.getFill().setColor(newColor);
-                        previewStyle.getImage().setFill(previewStyle.getFill());
+                        previewStyle?.getFill()?.setColor(newColor);
+                        (previewStyle?.getImage() as CircleStyle)?.setFill(
+                          previewStyle?.getFill(),
+                        );
                         updatePreview();
                       }}
                     />

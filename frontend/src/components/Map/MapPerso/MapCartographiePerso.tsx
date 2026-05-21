@@ -122,7 +122,7 @@ const MapCartographiePerso = () => {
             mapToolbarRef.current && (
               <MapToolbarCartographiePerso
                 toggleTool={toggleTool}
-                activeTool={activeTool}
+                activeTool={activeTool ?? undefined}
                 featureStyle={featureStyle}
                 setFeatureStyle={setFeatureStyle}
                 selectedFeatures={selectedFeatures}
