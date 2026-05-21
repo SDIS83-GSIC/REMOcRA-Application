@@ -252,7 +252,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
         )
     }
 
-    private fun buildDroitCondition(user: WrappedUserInfo, parent: remocra.db.jooq.remocra.tables.Organisme): Condition =
+    private fun buildDroitCondition(user: WrappedUserInfo): Condition =
         when {
             user.isSuperAdmin ||
                 user.droits?.any {
@@ -278,7 +278,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
     fun getAllForAdmin(user: WrappedUserInfo, params: Params<Filter, Sort>): Collection<OrganismeComplet> {
         val parent = ORGANISME.`as`("parent")
         val conditionBase = params.filterBy?.toCondition() ?: DSL.trueCondition()
-        val conditionDroit = buildDroitCondition(user, parent)
+        val conditionDroit = buildDroitCondition(user)
 
         return dsl.select(
             ORGANISME.ID,
@@ -314,7 +314,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
     fun getCountForAdmin(user: WrappedUserInfo, params: Params<Filter, Sort>): Int {
         val parent = ORGANISME.`as`("parent")
         val baseCondition = params.filterBy?.toCondition() ?: DSL.trueCondition()
-        val droitCondition = buildDroitCondition(user, parent)
+        val droitCondition = buildDroitCondition(user)
 
         return dsl
             .selectDistinct(ORGANISME.ID)
