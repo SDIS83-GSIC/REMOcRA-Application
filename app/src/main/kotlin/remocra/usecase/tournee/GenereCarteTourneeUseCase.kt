@@ -59,14 +59,17 @@ class GenereCarteTourneeUseCase @Inject constructor(
         val maxY = coordinates.maxOf { it.y }
 
         // Génération de la bbox avec buffer et ratio A4
-        val buffer = addBuffer(coordinates = Coordonnee(minX = minX, minY = minY, maxX = maxX, maxY = maxY), buffer = bufferCarteParam)
+        val bufferedMapData = addBuffer(
+            coordinates = Coordonnee(minX = minX, minY = minY, maxX = maxX, maxY = maxY),
+            buffer = bufferCarteParam,
+        )
 
         val infoCarteTournee = GenererCarteData(
-            bbox = buffer.bbox,
+            bbox = bufferedMapData.bbox,
             nomTournee = tourneeRepository.getTourneeLibelle(tourneeId),
             nbPei = tourneeRepository.getNbPei(tourneeId),
             tourneeId = tourneeId,
-            orientation = buffer.orientation,
+            orientation = bufferedMapData.orientation,
         )
 
         // Calcul des dimensions image WMS selon orientation (A4 ratio)
@@ -111,12 +114,12 @@ class GenereCarteTourneeUseCase @Inject constructor(
         val imagePNGWidth = getImagePNGDimensions(image)
 
         // Calcul de l'échelle de la carte basée sur la taille réelle de l'image
-        val largeurReelle = buffer.bbox[2] - buffer.bbox[0] // maxX - minX
+        val largeurReelle = bufferedMapData.bbox[2] - bufferedMapData.bbox[0] // maxX - minX
         val scale = "1:" + (largeurReelle / (imagePNGWidth.toFloat() / SCALE_FACTOR)).toInt()
 
         // On crée le fichier PDF
         val report = XDocReportRegistry.getRegistry().loadReport(
-            FileInputStream(GlobalConstants.DOSSIER_CARTE_TOURNEE_TEMPLATE.resolve("carte-tournee-${buffer.orientation.name.lowercase()}.odt").toFile()),
+            FileInputStream(GlobalConstants.DOSSIER_CARTE_TOURNEE_TEMPLATE.resolve("carte-tournee-${bufferedMapData.orientation.name.lowercase()}.odt").toFile()),
             TemplateEngineKind.Freemarker,
         )
         val context = report.createContext()
@@ -181,50 +184,50 @@ fun addBuffer(
     tailleMinY: Double = TAILLE_MIN_Y_A4_PORTRAIT,
 ): GeoserveurData {
     // Application du buffer brut
-    val XminRaw = coordinates.minX - buffer
-    val XmaxRaw = coordinates.maxX + buffer
-    val YminRaw = coordinates.minY - buffer
-    val YmaxRaw = coordinates.maxY + buffer
+    val xMinRaw = coordinates.minX - buffer
+    val xMaxRaw = coordinates.maxX + buffer
+    val yMinRaw = coordinates.minY - buffer
+    val yMaxRaw = coordinates.maxY + buffer
 
-    var X = XmaxRaw - XminRaw
-    var Y = YmaxRaw - YminRaw
+    var xSize = xMaxRaw - xMinRaw
+    var ySize = yMaxRaw - yMinRaw
 
-    val Xcentroid = (XminRaw + XmaxRaw) / 2
-    val Ycentroid = (YminRaw + YmaxRaw) / 2
+    val xCentroid = (xMinRaw + xMaxRaw) / 2
+    val yCentroid = (yMinRaw + yMaxRaw) / 2
 
     // Choix du ratio en fonction de l'orientation naturelle de la bbox brute
-    val isPaysage = X > Y
+    val isPaysage = xSize > ySize
 
     // Forçage du ratio A4 (paysage ou portrait)
     if (isPaysage) {
-        Y = X * RATIO_XY_PAYSAGE
-        if (Y < coordinates.maxY - coordinates.minY) {
-            X = Y * RATIO_XY_PORTRAIT
+        ySize = xSize * RATIO_XY_PAYSAGE
+        if (ySize < coordinates.maxY - coordinates.minY) {
+            xSize = ySize * RATIO_XY_PORTRAIT
         }
     } else {
-        X = Y * RATIO_XY_PAYSAGE
-        if (X < coordinates.maxX - coordinates.minX) {
-            Y = X * RATIO_XY_PORTRAIT
+        xSize = ySize * RATIO_XY_PAYSAGE
+        if (xSize < coordinates.maxX - coordinates.minX) {
+            ySize = xSize * RATIO_XY_PORTRAIT
         }
     }
 
     // Respect des dimensions minimales (A4)
-    val minX = maxOf(X, if (isPaysage) tailleMinX else tailleMinY)
-    val minY = maxOf(Y, if (isPaysage) tailleMinY else tailleMinX)
+    val minX = maxOf(xSize, if (isPaysage) tailleMinX else tailleMinY)
+    val minY = maxOf(ySize, if (isPaysage) tailleMinY else tailleMinX)
 
-    X = minX
-    Y = minY
+    xSize = minX
+    ySize = minY
 
     // Recentrage de la bbox après ajustement
-    val Xmin = Xcentroid - X / 2
-    val Xmax = Xcentroid + X / 2
-    val Ymin = Ycentroid - Y / 2
-    val Ymax = Ycentroid + Y / 2
+    val xMin = xCentroid - xSize / 2
+    val xMax = xCentroid + xSize / 2
+    val yMin = yCentroid - ySize / 2
+    val yMax = yCentroid + ySize / 2
 
     // Orientation réelle après transformation
-    val orientation = if (X >= Y) Orientation.PAYSAGE else Orientation.PORTRAIT
+    val orientation = if (xSize >= ySize) Orientation.PAYSAGE else Orientation.PORTRAIT
 
-    return GeoserveurData(bbox = listOf(Xmin, Ymin, Xmax, Ymax), orientation = orientation)
+    return GeoserveurData(bbox = listOf(xMin, yMin, xMax, yMax), orientation = orientation)
 }
 
 // Calcule les dimensions d'image (WMS) selon le ratio A4 et l'orientation
