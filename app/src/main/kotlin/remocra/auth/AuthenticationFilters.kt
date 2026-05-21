@@ -24,6 +24,7 @@ val SecurityContext.userInfo: WrappedUserInfo
     get() = WrappedUserInfo().apply {
         this.userInfo = (userPrincipal as? RemocraUserPrincipal)?.userInfo
         this.organismeInfo = (userPrincipal as? OrganismePrincipal)?.organismeInfo
+        this.apacheHopInfo = (userPrincipal as? ApacheHopPrincipal)?.apacheHopInfo
     }
 
 class AuthenticationFeature : DynamicFeature {

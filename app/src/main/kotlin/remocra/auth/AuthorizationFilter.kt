@@ -26,10 +26,6 @@ annotation class RequireDroits(val droits: Array<Droit>)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class RequireDroitsApi(val droitsApi: Array<DroitApi>)
 
-@Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.RUNTIME)
-annotation class RequireAuth
-
 /**
  * Permet de vérifier que la ressource ciblée est bien accessible au demandeur.
  * Toute méthode définie dans un Endpoint doit
@@ -41,14 +37,13 @@ class AuthorizationFeature : DynamicFeature {
         val isPublic = resourceInfo.resourceMethod.isAnnotationPresent(Public::class.java)
         val isRequireDroitPresent = resourceInfo.resourceMethod.isAnnotationPresent(RequireDroits::class.java)
         val isRequireDroitApiPresent = resourceInfo.resourceMethod.isAnnotationPresent(RequireDroitsApi::class.java)
-        val isRequireAuth = resourceInfo.resourceMethod.isAnnotationPresent(RequireAuth::class.java)
 
         // Normalement déjà vérifié par les tests ArchUnit, mais ça coûte pas grand chose de le vérifier aussi au runtime
         // surtout que c'est fait une seule fois au démarrage.
-        if (!isPublic && !isRequireDroitPresent && !isRequireDroitApiPresent && !isRequireAuth) {
+        if (!isPublic && !isRequireDroitPresent && !isRequireDroitApiPresent) {
             throw RuntimeException("Pas de contexte d'autorisation défini pour la méthode ${resourceInfo.resourceMethod}")
         }
-        if (!(isPublic xor isRequireDroitPresent xor isRequireDroitApiPresent xor isRequireAuth)) {
+        if (!(isPublic xor isRequireDroitPresent xor isRequireDroitApiPresent)) {
             throw RuntimeException("@Public et @RequireDroit/@RequireDroitApi définis pour la méthode ${resourceInfo.resourceMethod}")
         }
 
@@ -58,14 +53,12 @@ class AuthorizationFeature : DynamicFeature {
                 val pkg = "${resourceInfo.resourceClass.packageName}."
                 when {
                     pkg.startsWith("remocra.apimobile.") -> context.register(ApiMobileAuthorizationFilter(droitsPossibles))
+                    pkg.startsWith("remocra.apiapachehop.") -> context.register(ApacheHopAuthorizationFilter(droitsPossibles))
                     else -> context.register(AuthorizationFilter(droitsPossibles))
                 }
             }
             isRequireDroitApiPresent -> {
                 context.register(ApiAuthorizationFilter(resourceInfo.resourceMethod.getAnnotation(RequireDroitsApi::class.java)!!.droitsApi.toSet()))
-            }
-            isRequireAuth -> {
-                context.register(ApacheHopAuthorizationFilter())
             }
             else -> assert(isPublic)
         }
@@ -100,8 +93,9 @@ private class ApiAuthorizationFilter(
 }
 
 @Priority(Priorities.AUTHORIZATION)
-private class ApacheHopAuthorizationFilter() : AbstractOidcAuthorizationFilter() {
+private class ApacheHopAuthorizationFilter(
+    private val droitsPossibles: Set<Droit>,
+) : AbstractOauthAuthorizationFilter() {
     override fun isAuthorized(securityContext: SecurityContext): Boolean =
-        // Pour l'instant, on n'a pas de droits pour Apache Hop, et on considère que si on a réussi à s'authentifier, c'est que c'est bon pour Apache Hop
-        true
+        securityContext.userInfo.let { droitsPossibles.intersect(it.droits?.toSet() ?: emptySet()).isNotEmpty() }
 }

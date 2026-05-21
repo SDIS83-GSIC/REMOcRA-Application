@@ -5,4 +5,7 @@ import net.ltgt.oauth.common.SimpleTokenPrincipal
 
 class ApacheHopPrincipal(
     tokenInfo: TokenIntrospectionSuccessResponse,
-) : SimpleTokenPrincipal(tokenInfo)
+    val apacheHopInfo: ApacheHopInfo,
+) : SimpleTokenPrincipal(tokenInfo) {
+    override fun getName(): String = "Apache HOP"
+}

@@ -40,14 +40,28 @@
       "protocol": "openid-connect",
       "clientAuthenticatorType": "client-secret",
       "secret": "$(env:CLIENT_SECRET_APACHE_HOP)",
-      "publicClient": true,
+      "publicClient": false,
       "standardFlowEnabled": false,
       "serviceAccountsEnabled": true,
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
       "attributes": {
         "oauth2.device.authorization.grant.enabled": "true"
-      }
+      },
+      "protocolMappers": [
+        {
+          "name": "audience-remocra-apache-hop",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "userinfo.token.claim": "false",
+            "included.client.audience": "remocra-apache-hop"
+          }
+        }
+      ]
     }
   ],
   "users": [

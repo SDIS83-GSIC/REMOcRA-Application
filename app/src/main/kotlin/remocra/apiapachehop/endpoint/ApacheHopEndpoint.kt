@@ -13,9 +13,10 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.apiapachehop.data.NotifierCourrierData
 import remocra.apiapachehop.usecase.NotifieUseCase
 import remocra.apiapachehop.usecase.NotifierCourrierUseCase
-import remocra.auth.RequireAuth
+import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.NotificationMailData
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.security.NoCsrf
 import remocra.web.AbstractEndpoint
 import java.util.UUID
@@ -37,7 +38,7 @@ class ApacheHopEndpoint : AbstractEndpoint() {
     @Path("/notifier-courrier")
     @POST
     @NoCsrf("Point d'entrée pour Apache Hop")
-    @RequireAuth
+    @RequireDroits([Droit.COURRIER_C])
     fun notifierCourrier(
         notifierCourrierData: NotifierCourrierData,
     ): Response {
@@ -52,7 +53,7 @@ class ApacheHopEndpoint : AbstractEndpoint() {
     @Path("/notifier-mail")
     @POST
     @NoCsrf("Point d'entrée pour Apache Hop")
-    @RequireAuth
+    @RequireDroits([Droit.COURRIER_C])
     fun notifierMail(
         notificationMailData: NotificationMailData,
         @QueryParam("jobId") jobId: UUID,

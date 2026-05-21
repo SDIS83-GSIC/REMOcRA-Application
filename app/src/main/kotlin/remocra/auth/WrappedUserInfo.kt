@@ -15,6 +15,8 @@ class WrappedUserInfo {
 
     var organismeInfo: OrganismeInfo? = null
 
+    var apacheHopInfo: ApacheHopInfo? = null
+
     /**
      * Méthodes déléguées de [UserInfo]
      */
@@ -22,7 +24,8 @@ class WrappedUserInfo {
         get() = userInfo?.utilisateur
 
     val droits: Collection<Droit>?
-        get() = userInfo?.droits
+        get() = userInfo?.droits ?: apacheHopInfo?.droits
+
     val groupeFonctionnalites: GroupeFonctionnalites?
         get() = userInfo?.groupeFonctionnalites
 
@@ -79,6 +82,7 @@ class WrappedUserInfo {
         // On regarde le type concret de l'utilisateur wrappé
         val user = userInfo
         val organisme = organismeInfo
+        val apacheHop = apacheHopInfo
         if (user != null) {
             return AuteurTracabiliteData(
                 idAuteur = user.utilisateurId,
@@ -95,6 +99,14 @@ class WrappedUserInfo {
                 email = organisme.email,
                 typeSourceModification = typeSourceModification,
             )
+        } else if (apacheHop != null) {
+            return AuteurTracabiliteData(
+                idAuteur = apacheHop.auteurId,
+                nom = apacheHop.nom,
+                prenom = apacheHop.prenom,
+                email = apacheHop.email,
+                typeSourceModification = apacheHop.typeSourceModification,
+            )
         }
         throw IllegalStateException("WrappedUserInfo : userInfo et organismeInfo NULL")
     }
@@ -109,7 +121,10 @@ class WrappedUserInfo {
             return userInfo!!.droits.intersect(droitsWeb).isNotEmpty()
         } else if (!droitsApi.isNullOrEmpty() && organismeInfo != null) {
             return organismeInfo!!.droits.intersect(droitsApi).isNotEmpty()
+        } else if (!droitsWeb.isNullOrEmpty() && apacheHopInfo != null) {
+            return apacheHopInfo!!.droits.intersect(droitsWeb).isNotEmpty()
         }
+
         // A défaut, on retourne un false plutôt qu'un exception pour éviter de faire planter les transactions.
         return false
     }
@@ -140,5 +155,6 @@ class WrappedUserInfo {
      * Permet de récupérer la source de la modification : REMOcRA Web, API ou Mobile
      */
     val typeSourceModification: TypeSourceModification
-        get() = (userInfo?.typeSourceModification ?: organismeInfo?.typeSourceModification) as TypeSourceModification
+        get() = (userInfo?.typeSourceModification ?: organismeInfo?.typeSourceModification ?: apacheHopInfo?.typeSourceModification)
+            ?: throw IllegalStateException("WrappedUserInfo : impossible de déterminer le typeSourceModification, userInfo, organismeInfo et apacheHopInfo sont tous null")
 }

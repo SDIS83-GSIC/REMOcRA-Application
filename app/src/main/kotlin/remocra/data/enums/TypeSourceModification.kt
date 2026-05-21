@@ -1,5 +1,5 @@
 package remocra.data.enums
 
 enum class TypeSourceModification {
-    API, MOBILE, REMOCRA_WEB
+    API, MOBILE, REMOCRA_WEB, APACHE_HOP
 }

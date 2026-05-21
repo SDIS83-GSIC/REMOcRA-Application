@@ -24,7 +24,6 @@ import remocra.auth.ApacheHopAuthenticationFilter
 import remocra.auth.ApiAuthenticationFilter
 import remocra.auth.ApiMobileAuthenticationFilter
 import remocra.auth.Public
-import remocra.auth.RequireAuth
 import remocra.auth.RequireDroits
 import remocra.auth.RequireDroitsApi
 import remocra.db.AbstractRepository
@@ -53,8 +52,6 @@ class ArchitectureTest {
             .beAnnotatedWith(RequireDroits::class.java)
             .orShould()
             .beAnnotatedWith(Public::class.java)
-            .orShould()
-            .beAnnotatedWith(RequireAuth::class.java)
 
     @ArchTest
     val dontDependOnUseCases: ArchRule = classes()
@@ -185,6 +182,4 @@ class ApiArchitectureTest {
             .beAnnotatedWith(RequireDroitsApi::class.java)
             .orShould()
             .beAnnotatedWith(Public::class.java)
-            .orShould()
-            .beAnnotatedWith(RequireAuth::class.java)
 }

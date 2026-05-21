@@ -4,6 +4,7 @@ import jakarta.inject.Inject
 import jakarta.inject.Singleton
 import net.ltgt.oauth.common.CachedTokenPrincipalProvider
 import net.ltgt.oauth.common.TokenPrincipal
+import remocra.auth.ApacheHopInfo
 import remocra.auth.ApacheHopPrincipal
 import remocra.auth.AuthModule
 
@@ -12,6 +13,6 @@ class ApacheHopPrincipalProvider @Inject constructor(
     authnSettings: AuthModule.AuthnSettings,
 ) : CachedTokenPrincipalProvider(Caffeine.from(authnSettings.tokenIntrospectionCacheSpec)) {
     override fun load(introspectionResponse: TokenIntrospectionSuccessResponse): TokenPrincipal {
-        return ApacheHopPrincipal(introspectionResponse)
+        return ApacheHopPrincipal(introspectionResponse, ApacheHopInfo())
     }
 }
