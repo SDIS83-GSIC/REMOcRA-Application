@@ -164,7 +164,7 @@ constructor(
         return LayersRes(
             features = feature.map {
                 Feature(
-                    geometry = if (it.elementGeometrie.geometryType.equals("Point")) {
+                    geometry = if (it.elementGeometrie.geometryType == "Point") {
                         FeatureGeom(
                             type = it.elementGeometrie.geometryType,
                             coordinates =
@@ -174,7 +174,7 @@ constructor(
                     } else {
                         FeatureGeom(
                             type = it.elementGeometrie.geometryType,
-                            coordinates = if (it.elementGeometrie.geometryType.equals("MultiPolygon")) {
+                            coordinates = if (it.elementGeometrie.geometryType == "MultiPolygon") {
                                 arrayOf(
                                     arrayOf(
                                         it.elementGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }
