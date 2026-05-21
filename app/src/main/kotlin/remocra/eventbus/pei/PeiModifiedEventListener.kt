@@ -75,7 +75,7 @@ constructor(
     private fun deletePei(event: PeiModifiedEvent) {
         executeRequest(
             objectAsString = null,
-            endpoint = "/sig/point-eau-incendie/${event.peiId}",
+            peiId = event.peiId,
             typeOperation = event.typeOperation,
         )
     }
@@ -94,7 +94,7 @@ constructor(
         val data = createData(event.peiId)
         executeRequest(
             objectAsString = nexSisObjectMapper.writeValueAsString(data),
-            endpoint = "/sig/point-eau-incendie",
+            peiId = null,
             typeOperation = event.typeOperation,
         )
     }
@@ -107,7 +107,7 @@ constructor(
 
         executeRequest(
             objectAsString = nexSisObjectMapper.writeValueAsString(data),
-            endpoint = "/sig/point-eau-incendie/${event.peiId}",
+            peiId = event.peiId,
             typeOperation = event.typeOperation,
         )
     }
@@ -124,9 +124,9 @@ constructor(
     /**
      * Exécute la requête HTTP vers NexSIS, en fonction du Endpoint souhaité
      */
-    private fun executeRequest(objectAsString: String?, endpoint: String, typeOperation: TypeOperation) {
+    private fun executeRequest(objectAsString: String?, typeOperation: TypeOperation, peiId: UUID?) {
         if (appSettings.nexsis.mock) {
-            logger.debug("Appel à l'API NexSIS : endpoint={}, typeOperation={}, objectAsString={}", endpoint, typeOperation, objectAsString)
+            logger.debug("Appel à l'API NexSIS : peidId={}, endpoint={}, typeOperation={}, objectAsString={}", peiId, appSettings.nexsis.url, typeOperation, objectAsString)
             return
         }
 
@@ -162,7 +162,7 @@ constructor(
             throw IllegalStateException(e.message)
         }
 
-        val apiUri = buildNexsisUri(appSettings.nexsis.url, "/internet/api$endpoint")
+        val apiUri = buildNexsisUri(appSettings.nexsis.url, "/${peiId.takeIf { it != null } ?: ""}")
         val request =
             HttpRequest.newBuilder(apiUri)
                 .let {

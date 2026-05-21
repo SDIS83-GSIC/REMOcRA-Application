@@ -158,7 +158,7 @@ GEOSERVER_PASSWORD=xxxxxxxxxxxxxxxxx
 .6+| *Nexsis*
 | NEXSIS_ENABLED | Activation de nexsis | false
 | CODE_STRUCTURE | Code fourni par NexSIS pour la structure, à recopier exactement comme fourni. Exemple : "083-sis" pour le SDIS 83 |
-| NEXSIS_URL | Url de nexsis | http://nexsis.gouv.fr
+| NEXSIS_URL | Endpoint utilisé par nexsis pour créer, modifier ou supprimer un PEI | http://nexsis.gouv.fr/api/sig/point-eau-incendie
 | NEXSIS_USER | Utilisateur de connexion à nexsis |
 | NEXSIS_PASSWORD | Mot de passe de l'utilisateur |
 | NEXSIS_TOKEN_ENDPOINT | Url de l'endpoint pour récupérer le token d'authentification auprès de nexsis |
