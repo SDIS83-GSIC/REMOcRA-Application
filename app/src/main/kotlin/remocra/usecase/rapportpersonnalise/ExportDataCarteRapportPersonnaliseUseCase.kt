@@ -86,18 +86,21 @@ constructor(
             // On ne peut pas passer le type "Geometry", il faut que ça soit un type précis. On se base doit sur le premier élément
             val geometrie = data.firstOrNull { it["geometrie"] != null }?.toString()
 
-            if (geometrie == null) {
-                throw IllegalArgumentException("Aucune géométrie n'est présente.")
-            }
+            requireNotNull(geometrie) { "Aucune géométrie n'est présente." }
 
-            if (geometrie.contains("POINT")) {
-                builder.add("the_geom", MultiPoint::class.java)
-            } else if (geometrie.contains("LINESTRING")) {
-                builder.add("the_geom", MultiLineString::class.java)
-            } else if (geometrie.contains("POLYGON")) {
-                builder.add("the_geom", MultiPolygon::class.java)
-            } else {
-                throw IllegalArgumentException("Impossible de trouver le type de géométrie")
+            when {
+                geometrie.contains("POINT") -> {
+                    builder.add("the_geom", MultiPoint::class.java)
+                }
+                geometrie.contains("LINESTRING") -> {
+                    builder.add("the_geom", MultiLineString::class.java)
+                }
+                geometrie.contains("POLYGON") -> {
+                    builder.add("the_geom", MultiPolygon::class.java)
+                }
+                else -> {
+                    throw IllegalArgumentException("Impossible de trouver le type de géométrie")
+                }
             }
 
             // Ajouter les autres colonnes
