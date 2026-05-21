@@ -171,7 +171,7 @@ abstract class SimpleTask<T : TaskParameters, U : JobResults> : CoroutineScope {
         if (parameters?.notification != null) {
             eventBus.post(NotificationEvent(parameters.notification!!, idJob))
         } else {
-            val jsonNotif = parametresProvider.get().mapTasksInfo[getType()]!!.taskNotification?.data()
+            val jsonNotif = getTaskInfo().taskNotification?.data()
             try {
                 if (jsonNotif == null) {
                     return
