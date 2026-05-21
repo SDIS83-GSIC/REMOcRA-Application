@@ -98,7 +98,7 @@ class PeiRepository
             PEI.OBSERVATION,
             PEI.DATE_CHANGEMENT_DISPO,
             PEI.PERENNE,
-            PEI.ROTATION_6_CCF,
+            PEI.ROTATION_6_CCF.`as`("peiRotation6Ccf"),
             PEI.DATE_RELEVE_GPS,
         )
     }
@@ -681,7 +681,7 @@ class PeiRepository
                 peiServicePublicDeciId = pei.peiServicePublicDeciId,
                 peiDateChangementDispo = pei.peiDateChangementDispo,
                 peiPerenne = pei.peiPerenne,
-                peiRotation_6Ccf = pei.peiRotation_6Ccf,
+                peiRotation_6Ccf = pei.peiRotation6Ccf,
                 peiDateReleveGps = pei.peiDateReleveGps,
             ),
         )

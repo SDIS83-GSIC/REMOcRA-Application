@@ -32,7 +32,7 @@ class DownloadTemplateImportUserUseCase @Inject constructor(
         val organisme: String? = null,
 
         @param:JsonProperty("profil_utilisateur")
-        val profil_utilisateur: String? = null,
+        val profilUtilisateur: String? = null,
 
         @param:JsonProperty("actif")
         val actif: String? = null,

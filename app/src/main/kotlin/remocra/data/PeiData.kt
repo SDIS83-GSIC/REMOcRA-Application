@@ -45,7 +45,7 @@ open class PeiData(
     open val peiObservation: String?,
     open var peiDateChangementDispo: ZonedDateTime?,
     open val peiPerenne: Boolean?,
-    open val peiRotation_6Ccf: Boolean?,
+    open val peiRotation6Ccf: Boolean?,
 
     // Attributs supplémentaires pour le recalcul de la numérotation à l'enregistrement ; non modifiables
     open val peiNumeroInterneInitial: Int? = peiNumeroInterne,
@@ -97,7 +97,7 @@ data class PibiData(
     override val peiNiveauId: UUID?,
     override val peiObservation: String?,
     override val peiPerenne: Boolean?,
-    override val peiRotation_6Ccf: Boolean?,
+    override val peiRotation6Ccf: Boolean?,
 
     override val peiNumeroInterneInitial: Int? = peiNumeroInterne,
     override val peiCommuneIdInitial: UUID? = peiCommuneId,
@@ -154,7 +154,7 @@ data class PibiData(
     peiObservation,
     peiDateChangementDispo,
     peiPerenne,
-    peiRotation_6Ccf,
+    peiRotation6Ccf,
     peiNumeroInterneInitial,
     peiCommuneIdInitial,
     peiZoneSpecialeIdInitial,
@@ -195,7 +195,7 @@ data class PenaData(
     override val peiNiveauId: UUID?,
     override val peiObservation: String?,
     override val peiPerenne: Boolean?,
-    override val peiRotation_6Ccf: Boolean?,
+    override val peiRotation6Ccf: Boolean?,
 
     override val peiNumeroInterneInitial: Int? = peiNumeroInterne,
     override val peiCommuneIdInitial: UUID? = peiCommuneId,
@@ -243,7 +243,7 @@ data class PenaData(
     peiObservation,
     peiDateChangementDispo,
     peiPerenne,
-    peiRotation_6Ccf,
+    peiRotation6Ccf,
     peiNumeroInterneInitial,
     peiCommuneIdInitial,
     peiZoneSpecialeIdInitial,

@@ -169,9 +169,9 @@ class DocumentHabilitableRepository @Inject constructor(private val dsl: DSLCont
             .set(dsl.newRecord(L_THEMATIQUE_DOCUMENT_HABILITABLE, lThematiqueDocumentHabilitable))
             .execute()
 
-    fun insertGroupeFonctionnalitesDocumentHabilitable(LGroupeFonctionnalitesDocumentHabilitable: LGroupeFonctionnalitesDocumentHabilitable) =
+    fun insertGroupeFonctionnalitesDocumentHabilitable(lGroupeFonctionnalitesDocumentHabilitable: LGroupeFonctionnalitesDocumentHabilitable) =
         dsl.insertInto(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE)
-            .set(dsl.newRecord(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE, LGroupeFonctionnalitesDocumentHabilitable))
+            .set(dsl.newRecord(L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE, lGroupeFonctionnalitesDocumentHabilitable))
             .execute()
 
     fun deleteDocumentHabilitable(documentHabilitableId: UUID) =

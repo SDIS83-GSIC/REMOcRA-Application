@@ -3,7 +3,6 @@ package remocra.apimobile.usecase
 import jakarta.inject.Inject
 import remocra.apimobile.repository.IncomingRepository
 import remocra.auth.WrappedUserInfo
-import remocra.auth.userInfo
 import remocra.data.CreationVisiteCtrl
 import remocra.data.PeiData
 import remocra.data.PenaData
@@ -204,7 +203,7 @@ class ValideIncomingTournee @Inject constructor(
                         peiNiveauId = null,
                         peiObservation = it.newPeiObservation,
                         peiPerenne = null,
-                        peiRotation_6Ccf = null,
+                        peiRotation6Ccf = null,
                         peiNumeroInterneInitial = null,
                         peiCommuneIdInitial = null,
                         peiZoneSpecialeIdInitial = null,
@@ -258,7 +257,7 @@ class ValideIncomingTournee @Inject constructor(
                         peiNiveauId = null,
                         peiObservation = it.newPeiObservation,
                         peiPerenne = null,
-                        peiRotation_6Ccf = null,
+                        peiRotation6Ccf = null,
                         peiNumeroInterneInitial = null,
                         peiCommuneIdInitial = null,
                         peiZoneSpecialeIdInitial = null,
