@@ -2,7 +2,6 @@ package remocra.couverturehydraulique.usecase
 
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Coordinate
-import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.LineString
 import org.locationtech.jts.geom.Point
@@ -322,35 +321,6 @@ class ReseauUseCase @Inject constructor(
     }
 
     /**
-     * Crée les sommets et met à jour les connexions après la séparation d'un tronçon.
-     *
-     * @param jonction Informations sur la jonction.
-     * @param tronconOriginal Tronçon original avant séparation.
-     * @param nouvelleVoieId Identifiant du nouveau tronçon créé.
-     */
-    private fun createSommetsAndConnexions(
-        jonction: JonctionInfo,
-        tronconOriginal: Reseau,
-        nouvelleVoieId: UUID,
-    ) {
-        val sommetJonctionId = sommetRepository.ensureSommet(jonction.jonctionGeometrie)
-
-        // Mise à jour des connexions
-        reseauRepository.updateSommetDestination(jonction.tronconId, sommetJonctionId)
-
-        reseauRepository.updateSommetSource(
-            nouvelleVoieId,
-            sommetSource = sommetJonctionId,
-        )
-        if (tronconOriginal.reseauSommetDestination != null) {
-            reseauRepository.updateSommetDestination(
-                nouvelleVoieId,
-                sommetDestination = tronconOriginal.reseauSommetDestination!!,
-            )
-        }
-    }
-
-    /**
      * Crée les sommets et met à jour les connexions pour deux tronçons découpés et la jonction PEI.
      *
      * @param jonction Informations sur la jonction.
@@ -391,20 +361,5 @@ class ReseauUseCase @Inject constructor(
 
     fun deleteTroncon(tronconId: UUID) {
         reseauRepository.delete(tronconId)
-    }
-
-    /**
-     * Fusionne deux géométries en une seule.
-     *
-     * @param geom1 Première géométrie.
-     * @param geom2 Deuxième géométrie.
-     * @return Géométrie fusionnée. Ou si échec, retourne la première géométrie (ISO SQL V2).
-     */
-    private fun mergeGeometries(geom1: Geometry, geom2: Geometry): Geometry {
-        return try {
-            geom1.union(geom2)
-        } catch (_: Exception) {
-            geom1
-        }
     }
 }
