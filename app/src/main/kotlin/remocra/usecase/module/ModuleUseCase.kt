@@ -28,7 +28,7 @@ constructor(
                 moduleType = it.moduleType,
                 moduleTitre = it.moduleTitre,
                 moduleProtected = it.moduleProtected,
-                moduleLinkImage = it.moduleImage?.let { image ->
+                moduleLinkImage = it.moduleImage?.let { _ ->
                     uriInfo
                         .clone()
                         .queryParam("moduleId", it.moduleId)
