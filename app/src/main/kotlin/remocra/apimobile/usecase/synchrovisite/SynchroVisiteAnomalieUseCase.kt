@@ -50,7 +50,7 @@ constructor(
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: VisiteAnomalieForApiMobileData) {
         // On vérifie si l'anomalie est toujours dans REMOcRA
-        if (dataCacheProvider.getAnomalies().values.firstOrNull { it.anomalieId == element.anomalieId } == null) {
+        if (dataCacheProvider.getAnomalies().values.none { it.anomalieId == element.anomalieId }) {
             throw RemocraResponseException(ErrorType.API_SYNCHRO_VISITE_ANOMALIE_NO_REMOCRA, element.anomalieId.toString())
         }
     }
