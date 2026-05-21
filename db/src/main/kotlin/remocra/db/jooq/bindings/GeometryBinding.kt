@@ -74,9 +74,7 @@ class GeometryBinding : Binding<Geometry, org.locationtech.jts.geom.Geometry> {
             return
         }
 
-        if (ctx.value().srid == 0) {
-            throw IllegalArgumentException("Le SRID doit être renseigné")
-        }
+        require(ctx.value().srid != 0) { "Le SRID doit être renseigné" }
 
         ctx.render()
             .sql("ST_GeomFromText(")
