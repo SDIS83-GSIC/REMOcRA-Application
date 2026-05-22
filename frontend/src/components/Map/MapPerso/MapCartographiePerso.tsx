@@ -2,7 +2,7 @@ import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -18,6 +18,16 @@ import MapToolbarCartographiePerso, {
   useToolbarPersoContext,
 } from "./MapToolbarCartographiePerso.tsx";
 import "./MapCartographiePerso.css";
+
+const createDefaultStyle = () =>
+  new Style({
+    fill: new Fill({ color: "rgba(5, 176, 255, 1)" }),
+    stroke: new Stroke({ color: "rgba(5, 176, 255, 1)", width: 2 }),
+    image: new CircleStyle({
+      radius: 7,
+      fill: new Fill({ color: "#00c3ffff" }),
+    }),
+  });
 
 const MapCartographiePerso = () => {
   const now = new Date();
@@ -41,23 +51,7 @@ const MapCartographiePerso = () => {
     if (map) {
       const wl = new VectorLayer({
         source: new VectorSource(),
-        style: () => {
-          return new Style({
-            fill: new Fill({
-              color: "rgba(5, 176, 255, 1)",
-            }),
-            stroke: new Stroke({
-              color: "rgba(5, 176, 255, 1)",
-              width: 2,
-            }),
-            image: new CircleStyle({
-              radius: 7,
-              fill: new Fill({
-                color: "#00c3ffff",
-              }),
-            }),
-          });
-        },
+        style: createDefaultStyle(),
         opacity: 1,
         zIndex: 9000,
       });
@@ -67,14 +61,20 @@ const MapCartographiePerso = () => {
     }
   }, [map]);
 
-  const {
-    tools: extraTools,
-    featureStyle,
-    setFeatureStyle,
-    selectedFeatures,
-  } = useToolbarPersoContext({
+  // Lever l'état du style général ici
+  const [featureStyle, setFeatureStyle] = useState(() => createDefaultStyle());
+
+  // Synchronise le style du layer à chaque changement du style général
+  useEffect(() => {
+    if (cartographiePersoLayer && featureStyle) {
+      cartographiePersoLayer.setStyle(featureStyle.clone());
+    }
+  }, [cartographiePersoLayer, featureStyle]);
+  const { tools: extraTools, selectedFeatures } = useToolbarPersoContext({
     map,
     cartographiePersoLayer,
+    featureStyle,
+    SetFeatureStyle: setFeatureStyle,
   });
 
   const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
@@ -128,6 +128,7 @@ const MapCartographiePerso = () => {
                 setFeatureStyle={setFeatureStyle}
                 selectedFeatures={selectedFeatures}
                 cartographiePersoLayer={cartographiePersoLayer}
+                tools={extraTools}
               />
             )
           }

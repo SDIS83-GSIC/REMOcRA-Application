@@ -1,6 +1,7 @@
 import { Feature, MapBrowserEvent } from "ol";
-import { asArray, asString } from "ol/color";
-import { EventsKey } from "ol/events";
+import { asArray, asString, Color } from "ol/color";
+import { ColorLike, PatternDescriptor } from "ol/colorlike";
+import type { EventsKey } from "ol/events";
 import { never, platformModifierKeyOnly } from "ol/events/condition";
 import { getCenter } from "ol/extent";
 import { LineString, Point, Polygon } from "ol/geom";
@@ -19,7 +20,7 @@ import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import View from "ol/View";
-import { useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Button, ButtonGroup, Form, ToggleButton } from "react-bootstrap";
 import FormRange from "react-bootstrap/FormRange";
 import AccordionCustom, {
@@ -39,25 +40,6 @@ import {
 import TooltipCustom from "../../Tooltip/Tooltip.tsx";
 import Volet from "../../Volet/Volet.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
-
-const defaultStyle = new Style({
-  fill: new Fill({
-    color: "#64C0FFFF",
-  }),
-  stroke: new Stroke({
-    color: "#64C0FFFF",
-    width: 2,
-  }),
-  image: new CircleStyle({
-    radius: 5,
-    stroke: new Stroke({
-      color: "#64C0FFFF",
-    }),
-    fill: new Fill({
-      color: "#64C0FFFF",
-    }),
-  }),
-});
 
 const FORMATS = [
   {
@@ -100,14 +82,25 @@ const LINE_DASHES = [
 type ToolbarPersoContextProps = {
   map: OLMap | undefined;
   cartographiePersoLayer: VectorLayer | undefined;
+  featureStyle: Style;
+  SetFeatureStyle: (style: Style) => void;
 };
 
 export const useToolbarPersoContext = ({
   map,
   cartographiePersoLayer,
+  featureStyle,
+  SetFeatureStyle,
 }: ToolbarPersoContextProps) => {
-  const [featureStyle, setFeatureStyle] = useState(defaultStyle);
   const [selectedFeatures, setSelectedFeatures] = useState<Feature[]>([]);
+  // Ajout pour gestion du select
+  const selectCtrlRef = useRef<Select | null>(null);
+  // Ref pour le style courant
+  const featureStyleRef = useRef(featureStyle);
+  // Sync ref à chaque changement de style
+  useEffect(() => {
+    featureStyleRef.current = featureStyle;
+  }, [featureStyle]);
 
   const tools = useMemo(() => {
     if (!map || !cartographiePersoLayer) {
@@ -130,21 +123,28 @@ export const useToolbarPersoContext = ({
     });
 
     drawPointCtrl.on("drawend", (event) => {
-      event.feature.setStyle(featureStyle.clone());
+      const s = featureStyleRef.current.clone();
+      event.feature.setStyle(s);
+      event.feature.set("_userStyle", s);
     });
 
     drawLineCtrl.on("drawend", (event) => {
-      event.feature.setStyle(featureStyle.clone());
+      const s = featureStyleRef.current.clone();
+      event.feature.setStyle(s);
+      event.feature.set("_userStyle", s);
     });
 
     drawShapeCtrl.on("drawend", (event) => {
-      event.feature.setStyle(featureStyle.clone());
+      const s = featureStyleRef.current.clone();
+      event.feature.setStyle(s);
+      event.feature.set("_userStyle", s);
     });
 
     const selectCtrl = new Select({
       layers: [cartographiePersoLayer],
       toggleCondition: platformModifierKeyOnly,
     });
+    selectCtrlRef.current = selectCtrl;
     selectCtrl.on("select", () => {
       setSelectedFeatures(selectCtrl.getFeatures().getArray());
     });
@@ -165,7 +165,8 @@ export const useToolbarPersoContext = ({
       setSelectedFeatures(selectCtrl.getFeatures().getArray());
     });
 
-    function toggleSelectDraw(active = false) {
+    // Désactive select sans clear la sélection
+    function toggleSelectDraw(active = false, keepSelection = false) {
       const idx1 = map?.getInteractions().getArray().indexOf(selectCtrl);
       const idx2 = map?.getInteractions().getArray().indexOf(dragBoxCtrl);
       if (active) {
@@ -176,6 +177,10 @@ export const useToolbarPersoContext = ({
       } else {
         map?.removeInteraction(selectCtrl);
         map?.removeInteraction(dragBoxCtrl);
+        if (!keepSelection) {
+          selectCtrl.getFeatures().clear();
+          setSelectedFeatures([]);
+        }
       }
     }
 
@@ -469,15 +474,50 @@ export const useToolbarPersoContext = ({
     };
 
     return tools;
-  }, [map, cartographiePersoLayer, featureStyle.clone]);
+  }, [map, cartographiePersoLayer]);
 
   return {
     tools,
     featureStyle,
-    setFeatureStyle,
+    SetFeatureStyle,
     selectedFeatures,
   };
 };
+
+// Utilitaire pour convertir n'importe quel format OL en hexadécimal #RRGGBB
+function colorToHex(
+  color: Color | ColorLike | PatternDescriptor | null | undefined,
+) {
+  if (!color) {
+    return "#000000";
+  }
+  let arr: Color | ColorLike | PatternDescriptor = color;
+  if (typeof color === "string") {
+    if (color.startsWith("#")) {
+      return color.substring(0, 7);
+    }
+    if (color.startsWith("rgba") || color.startsWith("rgb")) {
+      arr = asArray(color);
+    } else {
+      arr = asArray(color);
+    }
+  } else if (Array.isArray(color)) {
+    arr = color;
+  } else {
+    // CanvasPattern, CanvasGradient, PatternDescriptor, etc.
+    return "#000000";
+  }
+  return (
+    "#" +
+    asArray(arr)
+      .slice(0, 3)
+      .map((x: number) => {
+        const hex = Math.round(x).toString(16);
+        return hex.length === 1 ? "0" + hex : hex;
+      })
+      .join("")
+  );
+}
 
 const MapToolbarCartographiePerso = ({
   toggleTool: toggleToolCallback,
@@ -486,6 +526,7 @@ const MapToolbarCartographiePerso = ({
   setFeatureStyle,
   selectedFeatures,
   cartographiePersoLayer,
+  tools,
 }: {
   toggleTool: (toolId: string) => void;
   activeTool: string | undefined;
@@ -493,29 +534,62 @@ const MapToolbarCartographiePerso = ({
   setFeatureStyle: (style: Style) => void;
   selectedFeatures: Feature[];
   cartographiePersoLayer: VectorLayer;
+  tools: Record<
+    string,
+    {
+      action: (active: boolean, keepSelection?: boolean) => void;
+      actionPossibleEnDeplacement?: boolean;
+      keepSelectionOnDeplacement?: boolean;
+    }
+  >;
 }) => {
-  const [previewRef, setPreviewRef] = useState<HTMLDivElement | null>(null);
+  // --- STYLE DE FORMULAIRE ---
+  const [formStyle, setFormStyle] = useState<Style>(() => featureStyle.clone());
+  const previewRef = useRef<HTMLDivElement>(null);
   const [showPanel, setShowPanel] = useState(false);
-  const [previewStyle] = useState(featureStyle);
+  // Pour stocker les styles d'origine
+  const originalStylesRef = useRef<Map<Feature, Style | undefined>>(new Map());
 
-  const { activesKeys, handleShowClose } = useAccordionState(
-    Array(3).fill(true),
+  // --- SYNCHRONISATION DU FORMULAIRE AVEC LA SÉLECTION ---
+  useLayoutEffect(() => {
+    if (!showPanel) {
+      return;
+    }
+    if (selectedFeatures.length === 1) {
+      const style = selectedFeatures[0].getStyle?.();
+      if (style instanceof Style) {
+        setFormStyle(style.clone());
+      } else {
+        setFormStyle(featureStyle.clone());
+      }
+    } else {
+      setFormStyle(featureStyle.clone());
+    }
+  }, [selectedFeatures, featureStyle]); // showPanel intentionnellement absent : géré par handleOpenPanel
+
+  const previewMap = useMemo(
+    () =>
+      new OLMap({
+        controls: [],
+        interactions: [],
+        layers: [],
+        view: new View({
+          extent: [-25, -20, 30, 20],
+          center: [0, 0],
+          zoom: 2,
+        }),
+      }),
+    [],
   );
 
-  const previewMap = useMemo(() => {
-    const initialMap = new OLMap({
-      controls: [],
-      interactions: [],
-      target: previewRef || undefined,
-      layers: [],
-      view: new View({
-        extent: [-25, -20, 30, 20],
-        center: [0, 0],
-        zoom: 2,
-      }),
-    });
-    return initialMap;
-  }, [previewRef]);
+  useEffect(() => {
+    if (previewRef.current) {
+      previewMap.setTarget(previewRef.current);
+    }
+    return () => {
+      previewMap.setTarget(undefined);
+    };
+  }, [previewMap]);
 
   const previewLayer = useMemo(() => {
     // Alimentation des géométries de prévisualisation
@@ -550,12 +624,6 @@ const MapToolbarCartographiePerso = ({
     return vectorLayer;
   }, [featureStyle, previewMap.addLayer]);
 
-  useLayoutEffect(() => {
-    if (previewRef) {
-      previewMap.setTarget(previewRef);
-    }
-  }, [previewRef, previewMap.setTarget]);
-
   function updatePreview() {
     if (!previewLayer.getSource()) {
       return;
@@ -564,18 +632,42 @@ const MapToolbarCartographiePerso = ({
       ?.getSource()
       ?.getFeatures()
       .forEach((f) => {
-        f.setStyle(previewStyle);
+        f.setStyle(formStyle);
       });
+    // Appliquer le style de preview sur les features sélectionnées uniquement pour la preview (pas de persistance)
+    if (selectedFeatures.length) {
+      selectedFeatures.forEach((f) => {
+        // Stocker le style d'origine si pas déjà fait
+        if (!originalStylesRef.current.has(f)) {
+          const style = f.getStyle?.();
+          if (style === undefined || style instanceof Style) {
+            originalStylesRef.current.set(f, style);
+          } else {
+            originalStylesRef.current.set(f, undefined);
+          }
+        }
+        f.setStyle(formStyle.clone());
+      });
+    } else {
+      setFeatureStyle(formStyle.clone());
+    }
   }
 
   function updateFeatureStyle() {
     if (selectedFeatures.length) {
       selectedFeatures.forEach((f) => {
-        f.setStyle(previewStyle.clone());
+        const s = formStyle.clone();
+        f.setStyle(s);
+        f.set("_userStyle", s);
+        originalStylesRef.current.delete(f);
       });
+      originalStylesRef.current.clear();
+      // Désactive visuellement le bouton select-draw
+      toggleToolCallback("select-draw");
     } else {
-      setFeatureStyle(previewStyle);
+      setFeatureStyle(formStyle.clone());
     }
+    setShowPanel(false);
   }
 
   function deleteFeature() {
@@ -583,6 +675,62 @@ const MapToolbarCartographiePerso = ({
       cartographiePersoLayer?.getSource()?.removeFeature(f);
     });
   }
+
+  function handleOpenPanel() {
+    // Calcule le style à afficher dans le formulaire (et en preview)
+    let initialStyle: Style;
+    if (selectedFeatures.length === 1) {
+      const userStyle = selectedFeatures[0].get("_userStyle");
+      initialStyle =
+        userStyle instanceof Style ? userStyle.clone() : featureStyle.clone();
+    } else {
+      initialStyle = featureStyle.clone();
+    }
+    setFormStyle(initialStyle);
+
+    if (selectedFeatures.length) {
+      // Désactive l'outil select-draw dans la logique métier mais garde la sélection
+      if (
+        tools?.["select-draw"] &&
+        typeof tools["select-draw"].action === "function"
+      ) {
+        tools["select-draw"].action(false, true);
+      }
+      // Appliquer le style de preview uniquement pour la preview (pas de persistance)
+      selectedFeatures.forEach((f) => {
+        if (!originalStylesRef.current.has(f)) {
+          const style = f.getStyle?.();
+          if (style === undefined || style instanceof Style) {
+            originalStylesRef.current.set(f, style);
+          } else {
+            originalStylesRef.current.set(f, undefined);
+          }
+        }
+        f.setStyle(initialStyle.clone());
+      });
+    }
+    setShowPanel(true);
+  }
+
+  function handleClosePanel() {
+    // Restaure le style d'origine si on ferme sans appliquer
+    if (selectedFeatures.length) {
+      selectedFeatures.forEach((f) => {
+        if (originalStylesRef.current.has(f)) {
+          const orig = originalStylesRef.current.get(f);
+          f.setStyle(orig);
+        }
+      });
+      originalStylesRef.current.clear();
+      // Désactive visuellement le bouton select-draw
+      toggleToolCallback("select-draw");
+    }
+    setShowPanel(false);
+  }
+
+  const { activesKeys, handleShowClose } = useAccordionState(
+    Array(3).fill(true),
+  );
 
   return (
     <>
@@ -594,6 +742,7 @@ const MapToolbarCartographiePerso = ({
             toolLabelTooltip={"Sélectionner des éléments"}
             toggleTool={toggleToolCallback}
             activeTool={activeTool}
+            disabled={showPanel} // Désactive le bouton quand le volet de style est ouvert
           />
         </ButtonGroup>
         <ButtonGroup>
@@ -626,7 +775,9 @@ const MapToolbarCartographiePerso = ({
           >
             <ToggleButton
               name={"pick-style"}
-              onClick={() => setShowPanel(!showPanel)}
+              onClick={() =>
+                showPanel ? handleClosePanel() : handleOpenPanel()
+              }
               id={"pick-style"}
               value={"pick-style"}
               type={"radio"}
@@ -704,7 +855,7 @@ const MapToolbarCartographiePerso = ({
       </>
       <Volet
         show={showPanel}
-        handleClose={() => setShowPanel(false)}
+        handleClose={handleClosePanel}
         title={"Modifier le style"}
       >
         <AccordionCustom
@@ -721,12 +872,12 @@ const MapToolbarCartographiePerso = ({
                       max={200}
                       step={1}
                       defaultValue={(
-                        previewStyle?.getImage() as CircleStyle
+                        formStyle?.getImage() as CircleStyle | undefined
                       )?.getRadius()}
                       onChange={(evt) => {
-                        (previewStyle?.getImage() as CircleStyle)?.setRadius(
-                          parseInt(evt.target.value),
-                        );
+                        (
+                          formStyle?.getImage() as CircleStyle | undefined
+                        )?.setRadius(parseInt(evt.target.value));
                         updatePreview();
                       }}
                     />
@@ -737,13 +888,11 @@ const MapToolbarCartographiePerso = ({
                       min={0}
                       max={359}
                       step={1}
-                      defaultValue={(
-                        previewStyle?.getImage() as CircleStyle
-                      )?.getRotation()}
+                      defaultValue={formStyle?.getImage()?.getRotation()}
                       onChange={(evt) => {
-                        (previewStyle?.getImage() as CircleStyle)?.setRotation(
-                          parseInt(evt.target.value),
-                        );
+                        formStyle
+                          ?.getImage()
+                          ?.setRotation(parseInt(evt.target.value));
                         updatePreview();
                       }}
                     />
@@ -751,7 +900,6 @@ const MapToolbarCartographiePerso = ({
                 </>
               ),
             },
-
             {
               header: "Ligne",
               content: (
@@ -760,25 +908,15 @@ const MapToolbarCartographiePerso = ({
                     <Form.Label>Couleur</Form.Label>
                     <Form.Control
                       type="color"
-                      defaultValue={(() => {
-                        const color =
-                          previewStyle?.getStroke()?.getColor() ?? "#000000";
-                        if (typeof color === "string") {
-                          return color.substring(0, 7);
-                        }
-                        if (Array.isArray(color)) {
-                          return asString(color).substring(0, 7);
-                        }
-                        // fallback for CanvasPattern/CanvasGradient or unknown
-                        return "#000000";
-                      })()}
+                      defaultValue={colorToHex(
+                        formStyle?.getStroke()?.getColor(),
+                      )}
                       onChange={(evt) => {
                         const newColor = asString(
                           asArray(evt.target.value).concat(
                             (() => {
-                              const fillColor = previewStyle
-                                ?.getFill()
-                                ?.getColor();
+                              const fillColor =
+                                formStyle?.getFill()?.getColor() ?? "#000000";
                               if (
                                 typeof fillColor === "string" ||
                                 Array.isArray(fillColor)
@@ -790,9 +928,9 @@ const MapToolbarCartographiePerso = ({
                             })(),
                           ),
                         );
-                        previewStyle?.getStroke()?.setColor(newColor);
-                        (previewStyle?.getImage() as CircleStyle)?.setStroke(
-                          previewStyle?.getStroke(),
+                        formStyle?.getStroke()?.setColor(newColor);
+                        (formStyle?.getImage() as CircleStyle)?.setStroke(
+                          formStyle?.getStroke(),
                         );
                         updatePreview();
                       }}
@@ -805,7 +943,7 @@ const MapToolbarCartographiePerso = ({
                       max={1}
                       step={0.01}
                       defaultValue={(() => {
-                        const color = previewStyle?.getStroke()?.getColor();
+                        const color = formStyle?.getStroke()?.getColor();
                         if (typeof color === "string" || Array.isArray(color)) {
                           return asArray(color)[3] ?? 1;
                         }
@@ -816,8 +954,7 @@ const MapToolbarCartographiePerso = ({
                         const newColor = asString(
                           (() => {
                             const color =
-                              previewStyle?.getStroke()?.getColor() ??
-                              "#000000";
+                              formStyle?.getStroke()?.getColor() ?? "#000000";
                             if (
                               typeof color === "string" ||
                               Array.isArray(color)
@@ -832,9 +969,9 @@ const MapToolbarCartographiePerso = ({
                               .concat(parseFloat(evt.target.value));
                           })(),
                         );
-                        previewStyle?.getStroke()?.setColor(newColor);
-                        (previewStyle?.getImage() as CircleStyle)?.setStroke(
-                          previewStyle?.getStroke(),
+                        formStyle?.getStroke()?.setColor(newColor);
+                        (formStyle?.getImage() as CircleStyle)?.setStroke(
+                          formStyle?.getStroke(),
                         );
                         updatePreview();
                       }}
@@ -846,13 +983,13 @@ const MapToolbarCartographiePerso = ({
                       min={0}
                       max={100}
                       step={1}
-                      defaultValue={previewStyle?.getStroke()?.getWidth()}
+                      defaultValue={formStyle?.getStroke()?.getWidth()}
                       onChange={(evt) => {
-                        previewStyle
+                        formStyle
                           ?.getStroke()
                           ?.setWidth(parseInt(evt.target.value));
-                        (previewStyle?.getImage() as CircleStyle)?.setStroke(
-                          previewStyle?.getStroke(),
+                        (formStyle?.getImage() as CircleStyle)?.setStroke(
+                          formStyle?.getStroke(),
                         );
                         updatePreview();
                       }}
@@ -861,14 +998,23 @@ const MapToolbarCartographiePerso = ({
                   <Form.Group>
                     <Form.Label>Fins de ligne</Form.Label>
                     <Form.Select
+                      value={(() => {
+                        const stroke = formStyle.getStroke();
+                        if (stroke && stroke.getLineCap) {
+                          return stroke.getLineCap?.() || "round";
+                        }
+                        return "round";
+                      })()}
                       onChange={(evt) => {
-                        previewStyle
-                          ?.getStroke()
-                          ?.setLineCap(evt.target.value as CanvasLineCap);
-                        (previewStyle?.getImage() as CircleStyle)?.setStroke(
-                          previewStyle?.getStroke(),
-                        );
-                        updatePreview();
+                        const stroke = formStyle.getStroke();
+                        if (stroke && stroke.setLineCap) {
+                          stroke.setLineCap(evt.target.value as CanvasLineCap);
+                          const img = formStyle.getImage();
+                          if (img && (img as CircleStyle).setStroke) {
+                            (img as CircleStyle).setStroke(stroke);
+                          }
+                          updatePreview();
+                        }
                       }}
                     >
                       {LINE_CAPS.map((v, k) => (
@@ -881,6 +1027,43 @@ const MapToolbarCartographiePerso = ({
                   <Form.Group>
                     <Form.Label>Style de ligne</Form.Label>
                     <Form.Select
+                      value={(() => {
+                        const stroke = formStyle.getStroke();
+                        if (!stroke) {
+                          return "solid";
+                        }
+                        const dash = stroke.getLineDash?.() || [1];
+                        if (
+                          dash.length === 2 &&
+                          dash[0] === 0 &&
+                          dash[1] === 10
+                        ) {
+                          return "dot";
+                        }
+                        if (dash.length === 1 && dash[0] === 10) {
+                          return "dash";
+                        }
+                        if (
+                          dash.length === 3 &&
+                          dash[0] === 10 &&
+                          dash[1] === 0 &&
+                          dash[2] === 10
+                        ) {
+                          return "dashdot";
+                        }
+                        if (dash.length === 1 && dash[0] === 30) {
+                          return "longdash";
+                        }
+                        if (
+                          dash.length === 3 &&
+                          dash[0] === 30 &&
+                          dash[1] === 0 &&
+                          dash[2] === 30
+                        ) {
+                          return "longdashdot";
+                        }
+                        return "solid";
+                      })()}
                       onChange={(evt) => {
                         let dash = [1];
                         switch (evt.target.value) {
@@ -902,11 +1085,15 @@ const MapToolbarCartographiePerso = ({
                           default:
                             dash = [1];
                         }
-                        previewStyle?.getStroke()?.setLineDash(dash);
-                        (previewStyle?.getImage() as CircleStyle)?.setStroke(
-                          previewStyle?.getStroke(),
-                        );
-                        updatePreview();
+                        const stroke = formStyle.getStroke();
+                        if (stroke && stroke.setLineDash) {
+                          stroke.setLineDash(dash);
+                          const img = formStyle.getImage();
+                          if (img && (img as CircleStyle).setStroke) {
+                            (img as CircleStyle).setStroke(stroke);
+                          }
+                          updatePreview();
+                        }
                       }}
                     >
                       {LINE_DASHES.map((v, k) => (
@@ -919,7 +1106,6 @@ const MapToolbarCartographiePerso = ({
                 </>
               ),
             },
-
             {
               header: "Remplissage",
               content: (
@@ -928,38 +1114,24 @@ const MapToolbarCartographiePerso = ({
                     <Form.Label>Couleur</Form.Label>
                     <Form.Control
                       type="color"
-                      defaultValue={(() => {
-                        const color = previewStyle?.getFill()?.getColor();
-                        if (typeof color === "string") {
-                          return color.substring(0, 7);
-                        }
-                        if (Array.isArray(color)) {
-                          return asString(color).substring(0, 7);
-                        }
-                        // fallback for CanvasPattern/CanvasGradient or unknown
-                        return "#000000";
-                      })()}
+                      defaultValue={colorToHex(
+                        formStyle?.getFill()?.getColor(),
+                      )}
                       onChange={(evt) => {
+                        const fillColor = formStyle?.getFill()?.getColor();
+                        let alpha = 1;
+                        if (
+                          typeof fillColor === "string" ||
+                          Array.isArray(fillColor)
+                        ) {
+                          alpha = asArray(fillColor)[3] ?? 1;
+                        }
                         const newColor = asString(
-                          asArray(evt.target.value).concat(
-                            (() => {
-                              const fillColor = previewStyle
-                                ?.getFill()
-                                ?.getColor();
-                              if (
-                                typeof fillColor === "string" ||
-                                Array.isArray(fillColor)
-                              ) {
-                                return asArray(fillColor)[3] ?? 1;
-                              }
-                              // fallback for CanvasPattern/CanvasGradient or unknown
-                              return 1;
-                            })(),
-                          ),
+                          asArray(evt.target.value).concat(alpha),
                         );
-                        previewStyle?.getFill()?.setColor(newColor);
-                        (previewStyle?.getImage() as CircleStyle)?.setFill(
-                          previewStyle?.getFill(),
+                        formStyle?.getFill()?.setColor(newColor);
+                        (formStyle?.getImage() as CircleStyle)?.setFill(
+                          formStyle?.getFill(),
                         );
                         updatePreview();
                       }}
@@ -972,7 +1144,7 @@ const MapToolbarCartographiePerso = ({
                       max={1}
                       step={0.01}
                       defaultValue={(() => {
-                        const fillColor = previewStyle?.getFill()?.getColor();
+                        const fillColor = formStyle?.getFill()?.getColor();
                         if (
                           typeof fillColor === "string" ||
                           Array.isArray(fillColor)
@@ -985,9 +1157,7 @@ const MapToolbarCartographiePerso = ({
                       onChange={(evt) => {
                         const newColor = asString(
                           (() => {
-                            const fillColor = previewStyle
-                              ?.getFill()
-                              ?.getColor();
+                            const fillColor = formStyle?.getFill()?.getColor();
                             if (
                               typeof fillColor === "string" ||
                               Array.isArray(fillColor)
@@ -1000,9 +1170,9 @@ const MapToolbarCartographiePerso = ({
                             .slice(0, 3)
                             .concat(parseFloat(evt.target.value)),
                         );
-                        previewStyle?.getFill()?.setColor(newColor);
-                        (previewStyle?.getImage() as CircleStyle)?.setFill(
-                          previewStyle?.getFill(),
+                        formStyle?.getFill()?.setColor(newColor);
+                        (formStyle?.getImage() as CircleStyle)?.setFill(
+                          formStyle?.getFill(),
                         );
                         updatePreview();
                       }}
@@ -1017,7 +1187,7 @@ const MapToolbarCartographiePerso = ({
 
         <Button onClick={updateFeatureStyle}>Appliquer</Button>
         <div
-          ref={setPreviewRef}
+          ref={previewRef}
           style={{
             width: "400px",
             height: "400px",
