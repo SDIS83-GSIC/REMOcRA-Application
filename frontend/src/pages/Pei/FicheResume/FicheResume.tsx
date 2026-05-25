@@ -334,9 +334,9 @@ const HistoriqueDebitPression = ({ pibiId }: { pibiId: string }) => {
               <thead>
                 <tr>
                   <th>Date de contrôle</th>
-                  <th>Débit à 1 bar (m³/h)</th>
                   <th>Pression statique (bar)</th>
                   <th>Pression dynamique au débit nominal (bar)</th>
+                  <th>Débit à 1 bar (m³/h)</th>
                 </tr>
               </thead>
               <tbody>
@@ -344,9 +344,9 @@ const HistoriqueDebitPression = ({ pibiId }: { pibiId: string }) => {
                   return (
                     <tr key={index}>
                       <td>{formatDateTime(e.visiteDate)}</td>
-                      <td>{e.debit}</td>
                       <td>{e.pression}</td>
                       <td>{e.pressionDyn}</td>
+                      <td>{e.debit}</td>
                     </tr>
                   );
                 })}
@@ -354,9 +354,9 @@ const HistoriqueDebitPression = ({ pibiId }: { pibiId: string }) => {
               <tfoot>
                 <tr>
                   <td className="fw-bold">Moyenne</td>
-                  <td>{data.moyenneDebit}</td>
                   <td>{data.moyennePression}</td>
                   <td>{data.moyennePressionDyn}</td>
+                  <td>{data.moyenneDebit}</td>
                 </tr>
               </tfoot>
             </Table>
