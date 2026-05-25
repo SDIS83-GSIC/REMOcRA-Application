@@ -334,9 +334,9 @@ const HistoriqueDebitPression = ({ pibiId }: { pibiId: string }) => {
               <thead>
                 <tr>
                   <th>Date de contrôle</th>
-                  <th>Débit (m³/h)</th>
-                  <th>Pression (bar)</th>
-                  <th>Pression dynamique (bar)</th>
+                  <th>Débit à 1 bar (m³/h)</th>
+                  <th>Pression statique (bar)</th>
+                  <th>Pression dynamique au débit nominal (bar)</th>
                 </tr>
               </thead>
               <tbody>
