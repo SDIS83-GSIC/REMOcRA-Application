@@ -98,11 +98,6 @@ constructor(
         )
     }
 
-    fun containsWordNotInSingleQuote(text: String, word: String): Boolean {
-        val regex = """(?<!')\b$word\b(?!')""".toRegex(RegexOption.IGNORE_CASE)
-        return regex.containsMatchIn(text)
-    }
-
     private fun checkContraintes(userInfo: WrappedUserInfo, element: RapportCourrierData) {
         // Aucun paramètre ne doivent avoir le même code
         if (element.listeRapportCourrierParametre.map { it.rapportCourrierParametreCode }.distinct().size != element.listeRapportCourrierParametre.size) {
@@ -111,14 +106,15 @@ constructor(
 
         // TODO vérifier qu'on n'est pas injection ?
         if (element.rapportCourrierSourceSql.contains("CREATE", true) ||
-            containsWordNotInSingleQuote(element.rapportCourrierSourceSql, "UPDATE") ||
+            requestUtils.containsWordNotInSingleQuote(element.rapportCourrierSourceSql, "INSERT") ||
+            requestUtils.containsWordNotInSingleQuote(element.rapportCourrierSourceSql, "UPDATE") ||
             element.rapportCourrierSourceSql.contains("DROP", true) ||
-            containsWordNotInSingleQuote(element.rapportCourrierSourceSql, "DELETE") ||
+            requestUtils.containsWordNotInSingleQuote(element.rapportCourrierSourceSql, "DELETE") ||
             element.rapportCourrierSourceSql.contains("TRUNCATE", true)
         ) {
             throw RemocraResponseException(
                 ErrorType.ADMIN_RAPPORT_PERSO_REQUETE_INVALID,
-                "Ne doit pas contenir de CREATE, UPDATE, DROP, DELETE ou TRUNCATE",
+                "Ne doit pas contenir de CREATE, INSERT, UPDATE, DROP, DELETE ou TRUNCATE",
             )
         }
 

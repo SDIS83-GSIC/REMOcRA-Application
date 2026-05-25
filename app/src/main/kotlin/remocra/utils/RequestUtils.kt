@@ -56,21 +56,31 @@ class RequestUtils {
         return requeteModifiee
     }
 
+    fun containsWordNotInSingleQuote(text: String, word: String): Boolean {
+        val regex = """(?<!')\b$word\b(?!')""".toRegex(RegexOption.IGNORE_CASE)
+        return regex.containsMatchIn(text)
+    }
+
     fun validateReadOnlyQuery(sqlQuery: String) {
         // Convertir la requête en minuscules pour une analyse insensible à la casse
         val queryLower = sqlQuery.trim().lowercase()
 
         // Liste des mots-clés interdits (actions en écriture ou dangereuses)
         val forbiddenKeywords = listOf(
-            "insert", "update", "delete", "drop", "alter", "create", "truncate",
+            "drop", "alter", "create", "truncate",
             "merge", "exec", "execute", "call", "--", "/*", "*/",
         )
+
+        // Liste des mots-clés autorisés seulement s'ils sont entre simple quote (type operation pour l'historique)
+        val allowedInSingleQuoteKeywords = listOf("insert", "update", "delete")
 
         // Liste des mots-clés autorisés pour les requêtes en lecture
         val allowedKeywords = listOf("select", "with")
 
         // Vérifier si des mots-clés interdits sont présents dans la requête
         checkForbiddenKeywords(queryLower, forbiddenKeywords)
+        // Vérifier que les mots-clés autorisés ne sont pas utilisés en dehors de simples quotes
+        checkAllowedInSingleQuoteKeywords(queryLower, allowedInSingleQuoteKeywords)
 
         // Vérifier que la requête commence par un mot-clé autorisé
         val startsWithAllowedKeyword = allowedKeywords.any { queryLower.startsWith(it) }
@@ -103,6 +113,12 @@ class RequestUtils {
             if (query.contains(keyword)) {
                 throw RemocraResponseException(ErrorType.DASHBOARD_INVALID_KEYWORD)
             }
+        }
+    }
+
+    private fun checkAllowedInSingleQuoteKeywords(query: String, allowedKeywords: List<String>) {
+        if (allowedKeywords.any { query.contains(it) }) {
+            throw RemocraResponseException(ErrorType.DASHBOARD_INVALID_KEYWORD)
         }
     }
 
