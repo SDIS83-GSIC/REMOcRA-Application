@@ -23,7 +23,7 @@ const UpdateCouche = () => {
   return (
     <Container>
       <PageTitle
-        title="Modification d'un de couche"
+        title="Modification d'une couche"
         icon={<IconMapComponent />}
       />
       <MyFormik
