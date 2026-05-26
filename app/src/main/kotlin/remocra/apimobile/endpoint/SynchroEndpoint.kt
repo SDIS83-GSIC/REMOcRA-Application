@@ -24,12 +24,14 @@ import remocra.apimobile.data.TourneeSynchroForApiMobileData
 import remocra.apimobile.data.VisiteAnomalieForApiMobileData
 import remocra.apimobile.data.VisiteForApiMobileData
 import remocra.apimobile.usecase.CheckZoneCompetenceUseCase
-import remocra.apimobile.usecase.SynchroNewPeiUseCase
 import remocra.apimobile.usecase.TourneeUseCase
 import remocra.apimobile.usecase.synchrofintournee.SynchroFinTourneeUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactRoleUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroContactUseCase
+import remocra.apimobile.usecase.synchrogestionnaire.SynchroFinGestionnairesUseCase
 import remocra.apimobile.usecase.synchrogestionnaire.SynchroGestionnaireUseCase
+import remocra.apimobile.usecase.synchronewpei.SynchroFinNewPeiUseCase
+import remocra.apimobile.usecase.synchronewpei.SynchroNewPeiUseCase
 import remocra.apimobile.usecase.synchropeideplacement.SynchroPeiDeplacementUseCase
 import remocra.apimobile.usecase.synchrophotopei.SynchroPhotoPeiUseCase
 import remocra.apimobile.usecase.synchrotournee.SynchroTourneeUseCase
@@ -80,6 +82,12 @@ class SynchroEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var synchroFinTourneeUseCase: SynchroFinTourneeUseCase
+
+    @Inject
+    lateinit var synchroFinNewPeiUseCase: SynchroFinNewPeiUseCase
+
+    @Inject
+    lateinit var synchroFinGestionnairesUseCase: SynchroFinGestionnairesUseCase
 
     @Inject
     lateinit var synchroPeiDeplacementUseCase: SynchroPeiDeplacementUseCase
@@ -353,6 +361,26 @@ class SynchroEndpoint : AbstractEndpoint() {
         tourneeId: UUID,
     ): Response {
         return Response.ok(synchroFinTourneeUseCase.execute(tourneeId, securityContext.userInfo)).build()
+    }
+
+    @Path("/incoming-gestionnaire-to-remocra/{gestionnaireId}")
+    @POST
+    @RequireDroits([Droit.PEI_R])
+    fun endSynchroGestionnaires(
+        @PathParam("gestionnaireId")
+        gestionnaireId: UUID,
+    ): Response {
+        return Response.ok(synchroFinGestionnairesUseCase.execute(securityContext.userInfo, gestionnaireId)).build()
+    }
+
+    @Path("/incoming-new-pei-to-remocra/{peiId}")
+    @POST
+    @RequireDroits([Droit.PEI_R])
+    fun endSynchroNewPei(
+        @PathParam("peiId")
+        peiId: UUID,
+    ): Response {
+        return Response.ok(synchroFinNewPeiUseCase.execute(securityContext.userInfo, peiId)).build()
     }
 
     @Path("/check-zone-competence")

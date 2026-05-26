@@ -1,4 +1,4 @@
-package remocra.apimobile.usecase
+package remocra.apimobile.usecase.synchronewpei
 
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Geometry
