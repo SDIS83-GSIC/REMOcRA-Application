@@ -27,7 +27,9 @@ import remocra.utils.ST_Within
 import java.util.UUID
 import kotlin.math.absoluteValue
 
-class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
+class UtilisateurRepository @Inject constructor(
+    private val dsl: DSLContext,
+) : AbstractRepository() {
     fun getUtilisateurById(idUtilisateur: UUID): Utilisateur? =
         dsl.selectFrom(UTILISATEUR)
             .where(UTILISATEUR.ID.eq(idUtilisateur))
@@ -430,7 +432,7 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             .fetchSingleInto()
     }
 
-    private fun getUtilisteurListByTypeOrganisme(vararg typeOrganismeList: String): List<GlobalData.IdLibelleData> =
+    private fun getUtilisteurListByTypeOrganisme(typeOrganismeList: List<String>?): List<GlobalData.IdLibelleData> =
         dsl
             .select(UTILISATEUR.ID.`as`("id"))
             .select(
@@ -447,20 +449,28 @@ class UtilisateurRepository @Inject constructor(private val dsl: DSLContext) : A
             )
             .from(UTILISATEUR)
             .join(PROFIL_UTILISATEUR).on(PROFIL_UTILISATEUR.ID.eq(UTILISATEUR.PROFIL_UTILISATEUR_ID))
-            .join(TYPE_ORGANISME).on(TYPE_ORGANISME.ID.eq(PROFIL_UTILISATEUR.TYPE_ORGANISME_ID).and(TYPE_ORGANISME.CODE.`in`(*typeOrganismeList)))
+            .join(TYPE_ORGANISME).on(
+                TYPE_ORGANISME.ID.eq(PROFIL_UTILISATEUR.TYPE_ORGANISME_ID),
+            )
+            .where(
+                if (typeOrganismeList.isNullOrEmpty()) {
+                    DSL.noCondition()
+                } else
+                    TYPE_ORGANISME.CODE.`in`(typeOrganismeList),
+            )
             .fetchInto()
 
     //  Direction départementale des Territoires et de la Mer + Office National des Forêts
-    fun getUtilisateurDdtmonf() = getUtilisteurListByTypeOrganisme("DDTM", "ONF")
+    fun getUtilisateurDdtmonf(listeDdtmonf: List<String>) = getUtilisteurListByTypeOrganisme(listeDdtmonf)
 
     // SDIS, CIS et affiliés
-    fun getUtilisateurSdis() = getUtilisteurListByTypeOrganisme("SDIS", "CIS", "CIS-ETAPE-1", "CIS-ETAPE-2")
+    fun getUtilisateurSdis(listeSdis: List<String>) = getUtilisteurListByTypeOrganisme(listeSdis)
 
     // Gendarmerie
-    fun getUtilisateurGendarmerie() = getUtilisteurListByTypeOrganisme("GENDARMERIE")
+    fun getUtilisateurGendarmerie(listeGendarmerie: List<String>) = getUtilisteurListByTypeOrganisme(listeGendarmerie)
 
     // Police
-    fun getUtilisateurPolice() = getUtilisteurListByTypeOrganisme("POLICE")
+    fun getUtilisateurPolice(listePolice: List<String>) = getUtilisteurListByTypeOrganisme(listePolice)
 
     fun getForList(): Collection<GlobalData.IdCodeLibelleData> = dsl.select(
         UTILISATEUR.ID.`as`("id"),

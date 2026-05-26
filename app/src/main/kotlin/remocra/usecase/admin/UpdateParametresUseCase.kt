@@ -53,6 +53,7 @@ class UpdateParametresUseCase
             permis = element.permis,
             peiLongueIndispo = element.peiLongueIndispo,
             utilisateur = element.utilisateur,
+            rcci = element.rcci,
         )
 
         if (userInfo.hasDroit(droitWeb = Droit.ADMIN_PARAM_APPLI)) {
@@ -237,6 +238,12 @@ class UpdateParametresUseCase
                 ParametreEnum.PEI_LONGUE_INDISPONIBILITE_TYPE_ORGANISME,
                 objectMapper.writeValueAsString(parametresAdminData.peiLongueIndispo.peiLongueIndisponibiliteTypeOrganisme),
             )
+
+            // RCCI
+            updateParametre(ParametreEnum.LISTE_TYPE_ORGA_DDTM_ONF, objectMapper.writeValueAsString(parametresAdminData.rcci.listeTypeOrganismeDdtmOnf))
+            updateParametre(ParametreEnum.LISTE_TYPE_ORGA_SDIS, objectMapper.writeValueAsString(parametresAdminData.rcci.listeTypeOrganismeSdis))
+            updateParametre(ParametreEnum.LISTE_TYPE_ORGA_GENDARMERIE, objectMapper.writeValueAsString(parametresAdminData.rcci.listeTypeOrganismeGendarmerie))
+            updateParametre(ParametreEnum.LISTE_TYPE_ORGA_POLICE, objectMapper.writeValueAsString(parametresAdminData.rcci.listeTypeOrganismePolice))
 
             // Utilisateur
             updateParametre(

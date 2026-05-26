@@ -34,6 +34,7 @@ import TYPE_PARAMETRE from "../../../enums/TypesParametres.tsx";
 import url from "../../../module/fetch.tsx";
 import { requiredNumber, requiredString } from "../../../module/validators.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
+import TypeOrganismeMultiSelectParam from "./TypeOrganismeMultiSelectParam.tsx";
 
 type ParametresSectionGeneral = {
   mentionCnil: string;
@@ -118,6 +119,13 @@ type ParametresSectionPeiLongueIndispo = {
   peiLongueIndisponibiliteTypeOrganisme: [];
 };
 
+type ParametresSectionRcci = {
+  listeTypeOrganismeDdtmOnf: [];
+  listeTypeOrganismeSdis: [];
+  listeTypeOrganismeGendarmerie: [];
+  listeTypeOrganismePolice: [];
+};
+
 type ParametresSectionUtilisateur = {
   organismeDefaut: string;
   profilUtilisateurDefaut: string;
@@ -133,6 +141,7 @@ type AdminParametresValue = {
   permis: ParametresSectionPermis;
   pei: ParametresSectionPei;
   peiLongueIndispo: ParametresSectionPeiLongueIndispo;
+  rcci: ParametresSectionRcci;
   utilisateur: ParametresSectionUtilisateur;
 };
 
@@ -148,6 +157,7 @@ export const getInitialValues = (
   permis: ParametresSectionPermis;
   pei: ParametresSectionPei;
   peiLongueIndispo: ParametresSectionPeiLongueIndispo;
+  rcci: ParametresSectionRcci;
   utilisateur: ParametresSectionUtilisateur;
 } => ({
   general: data?.general,
@@ -189,6 +199,7 @@ export const getInitialValues = (
       })) ?? [],
   },
   peiLongueIndispo: data?.peiLongueIndispo,
+  rcci: data?.rcci,
   utilisateur: data?.utilisateur,
 });
 
@@ -284,6 +295,7 @@ export const prepareVariables = (values: AdminParametresValue) => {
         values?.pei?.caracteristiquesPibiTooltipWebIds?.map((e) => e.id) ?? [],
     },
     peiLongueIndispo: values?.peiLongueIndispo,
+    rcci: values?.rcci,
     utilisateur: values?.utilisateur,
   };
 };
@@ -486,6 +498,15 @@ export const AdminParametresInterne = () => {
                       content: (
                         <AdminPeiLongueIndispo
                           values={values.peiLongueIndispo}
+                          setFieldValue={setFieldValue}
+                        />
+                      ),
+                    },
+                    {
+                      header: "RCCI",
+                      content: (
+                        <AdminRcci
+                          values={values.rcci}
                           setFieldValue={setFieldValue}
                         />
                       ),
@@ -1693,7 +1714,6 @@ const AdminPeiLongueIndispo = ({
   values: ParametresSectionPeiLongueIndispo;
   setFieldValue: (name: string, value: any) => void;
 }) => {
-  const typeOrganismeState = useGet(url`/api/type-organisme/get-active`);
   return (
     values && (
       <>
@@ -1712,37 +1732,14 @@ const AdminPeiLongueIndispo = ({
             label="Nombre de jours avant de considérer un PEI comme indisponible depuis trop longtemps"
           />
         </AdminParametre>
-        <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
-          <Multiselect
-            name={"peiLongueIndispo.peiLongueIndisponibiliteTypeOrganisme"}
-            label="Types d'organismes concernés par le message à afficher en cas de PEI indisponible depuis trop longtemps"
-            options={typeOrganismeState?.data}
-            getOptionValue={(t) => t.typeOrganismeCode}
-            getOptionLabel={(t) => t.typeOrganismeLibelle}
-            value={
-              values?.peiLongueIndisponibiliteTypeOrganisme?.map((e) =>
-                typeOrganismeState?.data?.find(
-                  (r: { typeOrganismeCode: string }) =>
-                    r.typeOrganismeCode === e,
-                ),
-              ) ?? undefined
-            }
-            onChange={(typeOrganisme) => {
-              const typeOrganismeCode = typeOrganisme.map(
-                (e: { typeOrganismeCode: string }) => e.typeOrganismeCode,
-              );
-              typeOrganismeCode.length > 0
-                ? setFieldValue(
-                    "peiLongueIndispo.peiLongueIndisponibiliteTypeOrganisme",
-                    typeOrganismeCode,
-                  )
-                : setFieldValue(
-                    "peiLongueIndispo.peiLongueIndisponibiliteTypeOrganisme",
-                    [],
-                  );
-            }}
-          />
-        </AdminParametre>
+        <TypeOrganismeMultiSelectParam
+          name="peiLongueIndispo.peiLongueIndisponibiliteTypeOrganisme"
+          label="Types d'organismes concernés par le message à afficher en cas de PEI indisponible depuis trop longtemps"
+          selectedCodes={
+            values?.peiLongueIndisponibiliteTypeOrganisme as string[]
+          }
+          setFieldValue={setFieldValue}
+        />
       </>
     )
   );
@@ -1759,6 +1756,52 @@ const AdminPermis = ({ values }: { values: ParametresSectionPermis }) => {
             tooltipText={"TODO"}
           />
         </AdminParametre>
+      </>
+    )
+  );
+};
+
+const AdminRcci = ({
+  values,
+  setFieldValue,
+}: {
+  values: ParametresSectionRcci;
+  setFieldValue: (name: string, value: any) => void;
+}) => {
+  return (
+    values && (
+      <>
+        <TypeOrganismeMultiSelectParam
+          name="rcci.listeTypeOrganismeDdtmOnf"
+          label="Types d'organismes dont les utilisateurs seront remontés dans la liste DDTM/ONF dans les RCCI"
+          selectedCodes={values?.listeTypeOrganismeDdtmOnf as string[]}
+          setFieldValue={setFieldValue}
+          required={false}
+        />
+
+        <TypeOrganismeMultiSelectParam
+          name="rcci.listeTypeOrganismeSdis"
+          label="Types d'organismes dont les utilisateurs seront remontés dans la liste SDIS dans les RCCI"
+          selectedCodes={values?.listeTypeOrganismeSdis as string[]}
+          setFieldValue={setFieldValue}
+          required={false}
+        />
+
+        <TypeOrganismeMultiSelectParam
+          name="rcci.listeTypeOrganismeGendarmerie"
+          label="Types d'organismes dont les utilisateurs seront remontés dans la liste Gendarmerie dans les RCCI"
+          selectedCodes={values?.listeTypeOrganismeGendarmerie as string[]}
+          setFieldValue={setFieldValue}
+          required={false}
+        />
+
+        <TypeOrganismeMultiSelectParam
+          name="rcci.listeTypeOrganismePolice"
+          label="Types d'organismes dont les utilisateurs seront remontés dans la liste Police dans les RCCI"
+          selectedCodes={values?.listeTypeOrganismePolice as string[]}
+          setFieldValue={setFieldValue}
+          required={false}
+        />
       </>
     )
   );

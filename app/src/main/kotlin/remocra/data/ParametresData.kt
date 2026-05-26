@@ -20,6 +20,7 @@ data class ParametresAdminData(
     val permis: ParametresSectionPermis,
     val pei: ParametresSectionPei,
     val peiLongueIndispo: ParametresSectionPeiLongueIndispo,
+    val rcci: ParametresSectionRcci,
     val utilisateur: ParametresSectionUtilisateur,
 
 )
@@ -34,6 +35,7 @@ data class ParametresAdminDataInput(
     val permis: ParametresSectionPermis,
     val pei: ParametresSectionPei,
     val peiLongueIndispo: ParametresSectionPeiLongueIndispo,
+    val rcci: ParametresSectionRcci,
     val utilisateur: ParametresSectionUtilisateur,
 )
 
@@ -107,6 +109,13 @@ data class ParametresSectionCouvertureHydrauliqueInput(
 
 data class ParametresSectionPermis(
     val permisToleranceChargementMetres: Int?,
+)
+
+data class ParametresSectionRcci(
+    val listeTypeOrganismeDdtmOnf: List<String>?,
+    val listeTypeOrganismeSdis: List<String>?,
+    val listeTypeOrganismeGendarmerie: List<String>?,
+    val listeTypeOrganismePolice: List<String>?,
 )
 
 data class ParametresSectionPei(

@@ -11,6 +11,7 @@ import remocra.data.ParametresSectionMobile
 import remocra.data.ParametresSectionPei
 import remocra.data.ParametresSectionPeiLongueIndispo
 import remocra.data.ParametresSectionPermis
+import remocra.data.ParametresSectionRcci
 import remocra.data.ParametresSectionSignalement
 import remocra.data.ParametresSectionUtilisateur
 import remocra.data.enums.ParametreEnum
@@ -89,6 +90,13 @@ constructor(
         val permis = ParametresSectionPermis(
             permisToleranceChargementMetres = mapParametres.getIntOrNull(ParametreEnum.PERMIS_TOLERANCE_CHARGEMENT_METRES.name),
         )
+        val rcci = ParametresSectionRcci(
+            listeTypeOrganismeDdtmOnf = mapParametres.getListOfString(ParametreEnum.LISTE_TYPE_ORGA_DDTM_ONF.name, objectMapper),
+            listeTypeOrganismeSdis = mapParametres.getListOfString(ParametreEnum.LISTE_TYPE_ORGA_SDIS.name, objectMapper),
+            listeTypeOrganismeGendarmerie = mapParametres.getListOfString(ParametreEnum.LISTE_TYPE_ORGA_GENDARMERIE.name, objectMapper),
+            listeTypeOrganismePolice = mapParametres.getListOfString(ParametreEnum.LISTE_TYPE_ORGA_POLICE.name, objectMapper),
+        )
+
         val pei = ParametresSectionPei(
             bufferCarte = mapParametres.getIntOrNull(ParametreEnum.BUFFER_CARTE.name),
             peiColonnes = mapParametres.getListOfString(ParametreEnum.PEI_COLONNES.name, objectMapper),
@@ -164,6 +172,7 @@ constructor(
             pei = pei,
             peiLongueIndispo = peiLongueIndispo,
             utilisateur = utilisateur,
+            rcci = rcci,
         )
     }
 }

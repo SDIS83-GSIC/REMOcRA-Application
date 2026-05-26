@@ -98,6 +98,12 @@ enum class ParametreEnum(val section: ParametreSection) {
     // Permis
     PERMIS_TOLERANCE_CHARGEMENT_METRES(ParametreSection.PERMIS),
 
+    // RCCI
+    LISTE_TYPE_ORGA_DDTM_ONF(ParametreSection.RCCI),
+    LISTE_TYPE_ORGA_SDIS(ParametreSection.RCCI),
+    LISTE_TYPE_ORGA_GENDARMERIE(ParametreSection.RCCI),
+    LISTE_TYPE_ORGA_POLICE(ParametreSection.RCCI),
+
     // Utilisateur
     ORGANISME_DEFAUT(ParametreSection.UTILISATEUR),
     PROFIL_UTILISATEUR_DEFAUT(ParametreSection.UTILISATEUR),
@@ -105,6 +111,6 @@ enum class ParametreEnum(val section: ParametreSection) {
     ;
 
     enum class ParametreSection {
-        ALERTE, CARTOGRAPHIE, COUVERTURE_HYDRAULIQUE, DFCI, GENERAL, MOBILE, PEI, PERMIS, SIGNALEMENT, UTILISATEUR
+        ALERTE, CARTOGRAPHIE, COUVERTURE_HYDRAULIQUE, DFCI, GENERAL, MOBILE, PEI, PERMIS, RCCI, SIGNALEMENT, UTILISATEUR
     }
 }
