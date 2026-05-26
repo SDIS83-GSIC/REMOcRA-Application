@@ -6,13 +6,13 @@ import remocra.tasks.ApacheHopTask
 import remocra.tasks.BasculeAutoIndispoTempTask
 import remocra.tasks.ChangementEtatPeiTask
 import remocra.tasks.ImportCadastreTask
+import remocra.tasks.IntegrationTourneeTask
 import remocra.tasks.JobResults
 import remocra.tasks.NotifAvantDebutIndispoTempTask
 import remocra.tasks.NotifAvantFinIndispoTempTask
 import remocra.tasks.NotifResteIndispoIndispoTempTask
 import remocra.tasks.PurgerTask
 import remocra.tasks.RelanceCalculDispoTask
-import remocra.tasks.RelanceIntegrationTourneeTask
 import remocra.tasks.RelanceNumerotationTask
 import remocra.tasks.SchedulableTask
 import remocra.tasks.SchedulableTaskParameters
@@ -27,7 +27,7 @@ object ScheduleModule : RemocraModule() {
         KotlinMultibinder.newSetBinder<SimpleTask<out TaskParameters, out JobResults>>(kotlinBinder).apply {
             addBinding().to<RelanceCalculDispoTask>().asEagerSingleton()
             addBinding().to<RelanceNumerotationTask>().asEagerSingleton()
-            addBinding().to<RelanceIntegrationTourneeTask>().asEagerSingleton()
+            addBinding().to<IntegrationTourneeTask>().asEagerSingleton()
             addBinding().to<ImportCadastreTask>().asEagerSingleton()
         }
 

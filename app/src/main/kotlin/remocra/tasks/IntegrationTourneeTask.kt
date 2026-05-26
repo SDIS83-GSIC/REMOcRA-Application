@@ -6,11 +6,17 @@ import remocra.auth.WrappedUserInfo
 import remocra.db.jooq.remocra.enums.TypeTask
 import java.util.UUID
 
-class RelanceIntegrationTourneeTask @Inject constructor(
+/**
+ * Tâche de traitement de l'intégration d'une tournée depuis incoming.
+ * Cette tâche est déclenchée à la fin de la synchronisation d'une tournée, ou lors de la relance manuelle de l'intégration d'une tournée.
+ * Elle valide la tournée dans incoming et effectue les traitements nécessaires pour l'intégrer dans Remocra.
+ *
+ */
+class IntegrationTourneeTask @Inject constructor(
     private val valideIncomingTournee: ValideIncomingTournee,
-) : SimpleTask<RelanceIntegrationTourneeParameters, JobResults>() {
+) : SimpleTask<IntegrationTourneeParameters, JobResults>() {
 
-    override fun execute(parameters: RelanceIntegrationTourneeParameters?, userInfo: WrappedUserInfo): JobResults? {
+    override fun execute(parameters: IntegrationTourneeParameters?, userInfo: WrappedUserInfo): JobResults {
         logManager.info("Traitement de la tournée ${parameters!!.tourneeId}")
         valideIncomingTournee.execute(parameters.tourneeId, userInfo, logManager, transactionManager)
         logManager.info("Fin de traitement de la tournée ${parameters.tourneeId}")
@@ -19,7 +25,7 @@ class RelanceIntegrationTourneeTask @Inject constructor(
         return JobResults()
     }
 
-    override fun checkParameters(parameters: RelanceIntegrationTourneeParameters?) {
+    override fun checkParameters(parameters: IntegrationTourneeParameters?) {
         if (parameters == null) {
             logManager.error("Erreur : les paramètres de la tâche sont null")
         }
@@ -29,8 +35,8 @@ class RelanceIntegrationTourneeTask @Inject constructor(
         return TypeTask.INTEGRER_INCOMING_REMOCRA
     }
 
-    override fun getTaskParametersClass(): Class<RelanceIntegrationTourneeParameters> {
-        return RelanceIntegrationTourneeParameters::class.java
+    override fun getTaskParametersClass(): Class<IntegrationTourneeParameters> {
+        return IntegrationTourneeParameters::class.java
     }
 
     override fun notifySpecific(
@@ -41,6 +47,6 @@ class RelanceIntegrationTourneeTask @Inject constructor(
     }
 }
 
-class RelanceIntegrationTourneeParameters() : TaskParameters(notification = null) {
+class IntegrationTourneeParameters() : TaskParameters(notification = null) {
     lateinit var tourneeId: UUID
 }
