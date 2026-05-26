@@ -166,6 +166,9 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
             .from(L_CONTACT_ROLE)
             .innerJoin(L_CONTACT_GESTIONNAIRE)
             .on(L_CONTACT_ROLE.CONTACT_ID.eq(L_CONTACT_GESTIONNAIRE.CONTACT_ID))
+            .innerJoin(GESTIONNAIRE)
+            .on(GESTIONNAIRE.ID.eq(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID))
+            .where(GESTIONNAIRE.ACTIF.isTrue)
             .fetchInto()
     }
 
