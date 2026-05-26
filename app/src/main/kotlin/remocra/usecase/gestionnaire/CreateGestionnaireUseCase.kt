@@ -3,6 +3,7 @@ package remocra.usecase.gestionnaire
 import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
+import remocra.data.enums.TypeSourceModification
 import remocra.db.GestionnaireRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -20,7 +21,9 @@ constructor(
     AbstractCUDUseCase<Gestionnaire>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
-        if (!userInfo.hasDroit(droitWeb = Droit.GEST_SITE_A)) {
+        if ((!userInfo.hasDroit(droitWeb = Droit.GEST_SITE_A) && userInfo.typeSourceModification == TypeSourceModification.REMOCRA_WEB) ||
+            (!userInfo.hasDroit(droitWeb = Droit.MOBILE_GESTIONNAIRE_C) && userInfo.typeSourceModification == TypeSourceModification.MOBILE)
+        ) {
             throw RemocraResponseException(ErrorType.GESTIONNAIRE_FORBIDDEN_INSERT)
         }
     }

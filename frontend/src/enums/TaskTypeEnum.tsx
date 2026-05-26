@@ -195,7 +195,26 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
   INTEGRER_INCOMING_REMOCRA: {
     id: "INTEGRER_INCOMING_REMOCRA",
     code: "INTEGRER_INCOMING_REMOCRA",
-    label: "Relancer l'intégration d'une tournée (incoming vers remocra)",
+    label: "Mobile - Intégrer une tournée (incoming vers remocra)",
+    commentaire: "",
+    parametre: {},
+    notification: false,
+    isConfigurable: false,
+  },
+  INTEGRER_INCOMING_NEW_PEI_REMOCRA: {
+    id: "INTEGRER_INCOMING_NEW_PEI_REMOCRA",
+    code: "INTEGRER_INCOMING_NEW_PEI_REMOCRA",
+    label: "Mobile - Intégrer un nouveau PEI (incoming vers remocra)",
+    commentaire: "",
+    parametre: {},
+    notification: false,
+    isConfigurable: false,
+  },
+  INTEGRER_INCOMING_GESTIONNAIRE_REMOCRA: {
+    id: "INTEGRER_INCOMING_GESTIONNAIRE_REMOCRA",
+    code: "INTEGRER_INCOMING_GESTIONNAIRE_REMOCRA",
+    label:
+      "Mobile - Intégrer un gestionnaire & ses contacts (incoming vers remocra)",
     commentaire: "",
     parametre: {},
     notification: false,

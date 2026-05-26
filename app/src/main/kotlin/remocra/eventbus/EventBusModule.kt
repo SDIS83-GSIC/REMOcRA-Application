@@ -8,6 +8,8 @@ import remocra.RemocraModule
 import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider
 import remocra.eventbus.anomalie.AnomalieModifiedEventListener
+import remocra.eventbus.mobile.IntegrationGestionnaireEventListener
+import remocra.eventbus.mobile.IntegrationNewPeiEventListener
 import remocra.eventbus.mobile.IntegrationTourneeEventListener
 import remocra.eventbus.notification.NotificationEventListener
 import remocra.eventbus.pei.PeiModifiedEventListener
@@ -21,6 +23,8 @@ object EventBusModule : RemocraModule() {
         multibinder.apply {
             addBinding().to<NotificationEventListener>()
             addBinding().to<IntegrationTourneeEventListener>()
+            addBinding().to<IntegrationGestionnaireEventListener>()
+            addBinding().to<IntegrationNewPeiEventListener>()
             addBinding().to<TracabiliteEventListener<*>>()
             addBinding().to<PeiModifiedEventListener>()
             addBinding().to<AnomalieModifiedEventListener>()

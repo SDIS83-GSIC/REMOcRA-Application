@@ -4,6 +4,7 @@ import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
 import remocra.data.ContactData
 import remocra.data.enums.ErrorType
+import remocra.data.enums.TypeSourceModification
 import remocra.db.ContactRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -85,8 +86,14 @@ constructor(
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: ContactData) {
-        if ((!element.isGestionnaire && !userInfo.hasDroit(droitWeb = Droit.ORGANISME_CONTACT_A)) || (element.isGestionnaire && !userInfo.hasDroit(droitWeb = Droit.GEST_CONTACT_A))) {
-            throw RemocraResponseException(ErrorType.CONTACT_FORBIDDEN_DELETE)
+        val forbidden = when (userInfo.typeSourceModification) {
+            TypeSourceModification.REMOCRA_WEB -> (!element.isGestionnaire && !userInfo.hasDroit(droitWeb = Droit.ORGANISME_CONTACT_A)) ||
+                (element.isGestionnaire && !userInfo.hasDroit(droitWeb = Droit.GEST_CONTACT_A))
+            TypeSourceModification.MOBILE -> element.isGestionnaire && !userInfo.hasDroit(Droit.MOBILE_GESTIONNAIRE_C)
+            else -> false
+        }
+        if (forbidden) {
+            throw RemocraResponseException(ErrorType.CONTACT_FORBIDDEN_UPDATE)
         }
     }
 }

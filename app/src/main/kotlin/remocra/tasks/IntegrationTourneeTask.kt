@@ -28,6 +28,7 @@ class IntegrationTourneeTask @Inject constructor(
     override fun checkParameters(parameters: IntegrationTourneeParameters?) {
         if (parameters == null) {
             logManager.error("Erreur : les paramètres de la tâche sont null")
+            throw IllegalArgumentException("Les paramètres de la tâche ne peuvent pas être null")
         }
     }
 

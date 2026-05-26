@@ -237,17 +237,20 @@ class IncomingRepository @Inject constructor(
             .onConflictDoNothing()
             .execute()
 
-    fun getGestionnaires(): Collection<Gestionnaire> =
-        dsl.selectFrom(GESTIONNAIRE).fetchInto()
+    fun getGestionnaire(gestionnaireId: UUID): Gestionnaire? =
+        dsl.selectFrom(GESTIONNAIRE).where(GESTIONNAIRE.ID.eq(gestionnaireId)).fetchOneInto()
 
-    fun getContacts(): Collection<Contact> =
-        dsl.selectFrom(CONTACT).fetchInto()
+    fun getContacts(gestionnaireId: UUID): Collection<Contact> =
+        dsl.selectFrom(CONTACT).where(CONTACT.GESTIONNAIRE_ID.eq(gestionnaireId)).fetchInto()
 
-    fun getContactRole(): Collection<LContactRole> =
-        dsl.selectFrom(L_CONTACT_ROLE).fetchInto()
+    fun getContactRole(gestionnaireId: UUID): Collection<LContactRole> =
+        dsl.select(*L_CONTACT_ROLE.fields()).from(L_CONTACT_ROLE)
+            .join(CONTACT)
+            .on(CONTACT.ID.eq(L_CONTACT_ROLE.CONTACT_ID))
+            .where(CONTACT.GESTIONNAIRE_ID.eq(gestionnaireId)).fetchInto()
 
-    fun getNewPei(): Collection<NewPei> =
-        dsl.selectFrom(NEW_PEI).fetchInto()
+    fun getNewPei(peiId: UUID): NewPei? =
+        dsl.selectFrom(NEW_PEI).where(NEW_PEI.ID.eq(peiId)).fetchOneInto()
 
     fun getPeiDeplacement(tourneeId: UUID): Collection<PeiDeplacement> =
         dsl.selectFrom(PEI_DEPLACEMENT).where(PEI_DEPLACEMENT.TOURNEE_ID.eq(tourneeId)).fetchInto()
@@ -276,9 +279,9 @@ class IncomingRepository @Inject constructor(
             .on(VISITE.ID.eq(L_VISITE_ANOMALIE.VISITE_ID))
             .where(VISITE.TOURNEE_ID.eq(tourneeId)).fetchInto()
 
-    fun deleteNewPei(listeNewPeiId: Collection<UUID>) =
+    fun deleteNewPei(newPeiId: UUID) =
         dsl.deleteFrom(NEW_PEI)
-            .where(NEW_PEI.ID.`in`(listeNewPeiId))
+            .where(NEW_PEI.ID.eq(newPeiId))
             .execute()
 
     fun deletePeiDeplacement(tourneeId: UUID) =
@@ -311,9 +314,9 @@ class IncomingRepository @Inject constructor(
             .where(L_CONTACT_ROLE.CONTACT_ID.`in`(listeContactId))
             .execute()
 
-    fun deleteGestionnaire(listeGestionnaireId: Collection<UUID>) =
+    fun deleteGestionnaire(gestionnaireId: UUID) =
         dsl.deleteFrom(GESTIONNAIRE)
-            .where(GESTIONNAIRE.ID.`in`(listeGestionnaireId))
+            .where(GESTIONNAIRE.ID.eq(gestionnaireId))
             .execute()
 
     fun deletePhotoPei(listePhotoPeiId: Collection<UUID>) =
