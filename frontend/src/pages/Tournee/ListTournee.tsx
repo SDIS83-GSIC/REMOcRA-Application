@@ -159,13 +159,29 @@ const ListTournee = ({
 
   const listeButton: ButtonType[] = [];
 
+  type RowTournee = {
+    original: {
+      tourneeLibelle: string;
+      tourneeNbPei?: number;
+      organismeLibelle?: string;
+      tourneePourcentageAvancement?: number;
+      tourneeUtilisateurReservationLibelle?: string;
+      tourneeNextRopDate?: string;
+      isModifiable?: boolean;
+      tourneeNotifiee?: boolean;
+      tourneeNbRopRealisee?: number;
+      estDansIncoming?: boolean;
+      tourneeDateDerniereRealisation?: string | null;
+    };
+  };
+
   listeButton.push({
-    row: (row: { original: { tourneeLibelle: string } }) => {
+    row: (row: RowTournee) => {
       return row;
     },
     type: TYPE_BUTTON.LINK,
     route: (tourneeId) => URLS.TOURNEE_LISTE_PEI(tourneeId),
-    state: (row: { original: { tourneeLibelle: string } }) => ({
+    state: (row: RowTournee) => ({
       tourneeLibelle: row.original.tourneeLibelle,
     }),
     textEnable: "Lister les points d'eau",
@@ -176,7 +192,7 @@ const ListTournee = ({
     "La tournée est réservée ou contient des PEI qui sont en dehors de votre zone de compétence";
   if (hasDroit(user, TYPE_DROIT.TOURNEE_A)) {
     listeButton.push({
-      row: (row) => {
+      row: (row: RowTournee) => {
         return row;
       },
       type: TYPE_BUTTON.UPDATE,
@@ -193,7 +209,7 @@ const ListTournee = ({
         return isDisabled(v);
       },
       textDisable: textDisable,
-      row: (row) => {
+      row: (row: RowTournee) => {
         return row;
       },
       type: TYPE_BUTTON.DELETE,
@@ -201,7 +217,7 @@ const ListTournee = ({
     });
 
     listeButton.push({
-      row: (row) => {
+      row: (row: RowTournee) => {
         return row;
       },
       route: (idTournee) => URLS.TOURNEE_PEI(idTournee),
@@ -215,7 +231,7 @@ const ListTournee = ({
       },
     });
   }
-  function isDisabled(v: any): boolean {
+  function isDisabled(v: RowTournee): boolean {
     return (
       v.original.tourneeUtilisateurReservationLibelle != null ||
       !v.original.isModifiable
@@ -234,7 +250,7 @@ const ListTournee = ({
     ]);
   if (hasVisiteTourneeRight) {
     listeButton.push({
-      row: (row) => {
+      row: (row: RowTournee) => {
         return row;
       },
       route: (idTournee) => URLS.TOURNEE_VISITE(idTournee),
@@ -252,7 +268,7 @@ const ListTournee = ({
   // Bouton désaffectation de la tournée
   if (hasDroit(user, TYPE_DROIT.TOURNEE_RESERVATION_D)) {
     listeButton.push({
-      row: (row) => {
+      row: (row: RowTournee) => {
         return row;
       },
       type: TYPE_BUTTON.CONFIRM,
@@ -265,7 +281,7 @@ const ListTournee = ({
       },
       classEnable: "danger",
       textDisable: "La tournée n'est pas réservée.",
-      disable: (v: any) => {
+      disable: (v: RowTournee) => {
         return v.original.tourneeUtilisateurReservationLibelle == null;
       },
     });
@@ -275,7 +291,7 @@ const ListTournee = ({
   if (hasDroit(user, TYPE_DROIT.TOURNEE_FORCER_POURCENTAGE_E)) {
     // Forcer à 0%
     listeButton.push({
-      row: (row) => {
+      row: (row: RowTournee) => {
         return row;
       },
       type: TYPE_BUTTON.CONFIRM,
@@ -288,7 +304,8 @@ const ListTournee = ({
       pathname: url`/api/tournee/avancement-force-0/`,
       icon: <IconZeroPourcent />,
       confirmModal: {
-        header: "Forcer l'avancement de la tournée à 0% ?",
+        header: (row) =>
+          `Forcer l'avancement de la tournée ${row.original.tourneeLibelle} à 0% ?`,
         content: "Voulez-vous continuer ? ",
       },
       disable: (v) => {
@@ -299,7 +316,7 @@ const ListTournee = ({
 
     // Forcer à 100%
     listeButton.push({
-      row: (row) => {
+      row: (row: RowTournee) => {
         return row;
       },
       type: TYPE_BUTTON.CONFIRM,
@@ -308,10 +325,11 @@ const ListTournee = ({
           ? "L'avancement de la tournée est déjà à 100"
           : "Impossible de modifier une tournée réservée";
       },
-      textEnable: "Forcer l'avancement de la tournée à 100",
+      textEnable: "Forcer l'avancement de la tournée  à 100",
       pathname: url`/api/tournee/avancement-force-100/`,
       confirmModal: {
-        header: "Forcer l'avancement de la tournée à 100% ?",
+        header: (row) =>
+          `Forcer l'avancement de la tournée ${row.original.tourneeLibelle} à 100% ?`,
         content: "Voulez-vous continuer ? ",
       },
       icon: <IconCentPourcent />,
@@ -323,7 +341,7 @@ const ListTournee = ({
   }
 
   listeButton.push({
-    row: (row) => {
+    row: (row: RowTournee) => {
       return row;
     },
     onClick: (tourneeId) => fetchGeometry(GET_TYPE_GEOMETRY.TOURNEE, tourneeId),
@@ -335,7 +353,7 @@ const ListTournee = ({
 
   // Bouton génération de la carte de la tournée, activé sur paramétrage
   const carteTourneeButton: ButtonType = {
-    row: (row) => row,
+    row: (row: RowTournee) => row,
     type: TYPE_BUTTON.BUTTON,
     icon: <IconeGenereCarteTournee />,
     textEnable:
@@ -395,7 +413,7 @@ const ListTournee = ({
 
   // Bouton génération du rapport post ROP, activé si le modèle de courrier correspondant existe
   const rapportPostRopButton: ButtonType = {
-    row: (row) => row,
+    row: (row: RowTournee) => row,
     type: TYPE_BUTTON.CONFIRM,
     icon: <IconDocument />,
     textEnable:
@@ -429,13 +447,14 @@ const ListTournee = ({
   if (canGenererRapportPostRop && parametreGenerationCarteTournee === "true") {
     // Regroupe les actions de génération dans un sous-menu
     listeButton.push({
-      row: (row) => row,
+      row: (row: RowTournee) => row,
       type: TYPE_BUTTON.DROPDOWN,
       icon: <IconDocument />,
       textEnable: "Générer un document",
       classEnable: "success",
       children: [carteTourneeButton, rapportPostRopButton],
-      enabled: (row) => row.original.tourneeDateDerniereRealisation === null,
+      enabled: (row: RowTournee) =>
+        row.original.tourneeDateDerniereRealisation === null,
     });
   } else if (parametreGenerationCarteTournee === "true") {
     listeButton.push(carteTourneeButton);
@@ -445,11 +464,11 @@ const ListTournee = ({
 
   if (incomingTournee && incomingTournee.length > 0) {
     listeButton.push({
-      row: (row) => {
+      row: (row: RowTournee) => {
         return row;
       },
       type: TYPE_BUTTON.CONFIRM,
-      hide: (row) => !row?.estDansIncoming,
+      hide: (row: RowTournee) => !row?.original.estDansIncoming,
       icon: <IconImport />,
       textEnable: "Réintégrer la tournée de incoming à REMOcRA",
       classEnable: "info",
@@ -470,7 +489,7 @@ const ListTournee = ({
     }),
   );
 
-  const filterValuesToVariableWithPei = (values) => {
+  const filterValuesToVariableWithPei = (values: Record<string, unknown>) => {
     const base = filterValuesToVariable(values); // logique actuelle
     if (peiId) {
       base.peiId = peiId; // on impose le PEI sélectionné
