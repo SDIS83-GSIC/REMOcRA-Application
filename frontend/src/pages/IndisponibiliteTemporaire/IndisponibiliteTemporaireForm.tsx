@@ -20,7 +20,21 @@ import url from "../../module/fetch.tsx";
 import { requiredArray, requiredString } from "../../module/validators.tsx";
 import { formatDateTimeForDateTimeInput } from "../../utils/formatDateUtils.tsx";
 
-export const getInitialValues = (data) => ({
+export type IndisponibiliteTemporaireFormValues = {
+  indisponibiliteTemporaireMotif: string;
+  indisponibiliteTemporaireObservation?: string;
+  debutImmediat: boolean;
+  finInconnue: boolean;
+  indisponibiliteTemporaireDateDebut?: string | number | Date;
+  indisponibiliteTemporaireDateFin?: string | number | Date;
+  listePeiId?: string[];
+  indisponibiliteTemporaireMailAvantIndisponibilite?: boolean;
+  indisponibiliteTemporaireMailApresIndisponibilite?: boolean;
+};
+
+export const getInitialValues = (
+  data: Partial<IndisponibiliteTemporaireFormValues>,
+) => ({
   indisponibiliteTemporaireMotif: data?.indisponibiliteTemporaireMotif,
   indisponibiliteTemporaireObservation:
     data?.indisponibiliteTemporaireObservation,
@@ -28,7 +42,7 @@ export const getInitialValues = (data) => ({
   finInconnue: data?.indisponibiliteTemporaireDateFin === undefined,
   indisponibiliteTemporaireDateDebut: data?.indisponibiliteTemporaireDateDebut,
   indisponibiliteTemporaireDateFin: data?.indisponibiliteTemporaireDateFin,
-  listePeiId: data?.indisponibiliteTemporaireListePeiId,
+  listePeiId: data?.listePeiId,
   indisponibiliteTemporaireMailAvantIndisponibilite:
     data?.indisponibiliteTemporaireMailAvantIndisponibilite,
   indisponibiliteTemporaireMailApresIndisponibilite:
@@ -38,27 +52,25 @@ export const validationSchema = object({
   indisponibiliteTemporaireMotif: requiredString,
   listePeiId: requiredArray,
 });
-export const prepareVariables = (values) => ({
+export const prepareVariables = (
+  values: IndisponibiliteTemporaireFormValues,
+) => ({
   indisponibiliteTemporaireMotif: values.indisponibiliteTemporaireMotif,
-
   indisponibiliteTemporaireObservation:
     values.indisponibiliteTemporaireObservation,
-
   indisponibiliteTemporaireDateDebut: values.debutImmediat
     ? new Date().toISOString()
-    : new Date(values.indisponibiliteTemporaireDateDebut).toISOString(),
-
+    : new Date(values.indisponibiliteTemporaireDateDebut!).toISOString(),
   indisponibiliteTemporaireDateFin: values.finInconnue
     ? null
-    : new Date(values.indisponibiliteTemporaireDateFin).toISOString(),
-
+    : new Date(values.indisponibiliteTemporaireDateFin!).toISOString(),
   listePeiId: values?.listePeiId,
-
   indisponibiliteTemporaireMailAvantIndisponibilite:
     values?.indisponibiliteTemporaireMailAvantIndisponibilite,
   indisponibiliteTemporaireMailApresIndisponibilite:
     values?.indisponibiliteTemporaireMailApresIndisponibilite,
 });
+
 const IndisponibiliteTemporaireForm = ({
   title,
   listePeiId,
@@ -66,7 +78,8 @@ const IndisponibiliteTemporaireForm = ({
   title: string;
   listePeiId?: string[];
 }) => {
-  const { values, setFieldValue } = useFormikContext();
+  const { values, setFieldValue } =
+    useFormikContext<IndisponibiliteTemporaireFormValues>();
   const peiState = useGet(url`/api/pei/get-id-numero`);
   return (
     <>
@@ -74,7 +87,7 @@ const IndisponibiliteTemporaireForm = ({
         <PageTitle
           title={title}
           icon={<IconIndisponibiliteTemporaire />}
-          displayReturnButton={!(listePeiId?.length > 0)}
+          displayReturnButton={!((listePeiId?.length ?? 0) > 0)}
         />
         <FormContainer>
           <SectionTitle>Mise en indisponibilité</SectionTitle>
@@ -102,6 +115,23 @@ const IndisponibiliteTemporaireForm = ({
                 name={"debutImmediat"}
                 required={false}
                 label={"Immédiate"}
+                onChange={() => {
+                  const newValue = !values.debutImmediat;
+                  setFieldValue("debutImmediat", newValue);
+                  if (!newValue) {
+                    // On décoche : on met la date du moment
+                    setFieldValue(
+                      "indisponibiliteTemporaireDateDebut",
+                      new Date().toISOString().slice(0, 16),
+                    );
+                  } else {
+                    // On coche : on vide la date
+                    setFieldValue(
+                      "indisponibiliteTemporaireDateDebut",
+                      undefined,
+                    );
+                  }
+                }}
               />
             </Col>
             {!values.debutImmediat && (
@@ -114,7 +144,7 @@ const IndisponibiliteTemporaireForm = ({
                       value={
                         values.indisponibiliteTemporaireDateDebut &&
                         formatDateTimeForDateTimeInput(
-                          values.indisponibiliteTemporaireDateDebut,
+                          new Date(values.indisponibiliteTemporaireDateDebut),
                         )
                       }
                       label={"Date de début"}
@@ -141,6 +171,25 @@ const IndisponibiliteTemporaireForm = ({
                 name={"finInconnue"}
                 required={false}
                 label={"Date de fin inconnue"}
+                onChange={() => {
+                  const newValue = !values.finInconnue;
+                  setFieldValue("finInconnue", newValue);
+                  if (!newValue) {
+                    // On décoche : on met la date du moment + 1 min pour avoir une date différente de la date de début par défaut
+                    setFieldValue(
+                      "indisponibiliteTemporaireDateFin",
+                      new Date(Date.now() + 1 * 60000)
+                        .toISOString()
+                        .slice(0, 16),
+                    );
+                  } else {
+                    // On coche : on vide la date
+                    setFieldValue(
+                      "indisponibiliteTemporaireDateFin",
+                      undefined,
+                    );
+                  }
+                }}
               />
             </Col>
             {!values.finInconnue && (
@@ -153,7 +202,7 @@ const IndisponibiliteTemporaireForm = ({
                       value={
                         values.indisponibiliteTemporaireDateFin &&
                         formatDateTimeForDateTimeInput(
-                          values.indisponibiliteTemporaireDateFin,
+                          new Date(values.indisponibiliteTemporaireDateFin),
                         )
                       }
                       label={"Date de fin prévue"}
@@ -184,11 +233,13 @@ const IndisponibiliteTemporaireForm = ({
                 getOptionLabel={(t) => t.peiNumeroComplet}
                 value={
                   values?.listePeiId?.map((e) =>
-                    peiState?.data?.find((pei) => pei.peiId === e),
+                    peiState?.data?.find(
+                      (pei: { peiId: string }) => pei.peiId === e,
+                    ),
                   ) ?? undefined
                 }
                 onChange={(pei) => {
-                  const peiId = pei.map((e) => e.peiId);
+                  const peiId = pei.map((e: { peiId: string }) => e.peiId);
                   peiId.length > 0
                     ? setFieldValue("listePeiId", peiId)
                     : setFieldValue("listePeiId", undefined);
