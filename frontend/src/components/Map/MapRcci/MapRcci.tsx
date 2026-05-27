@@ -1,4 +1,3 @@
-import type { Feature } from "ol";
 import VectorLayer from "ol/layer/Vector";
 import { Fill, Icon, Stroke, Style, Text } from "ol/style";
 import { useCallback, useMemo, useRef } from "react";

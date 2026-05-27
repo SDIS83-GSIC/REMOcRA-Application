@@ -8,7 +8,7 @@ import OLMap from "ol/Map";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import { useMemo, useState } from "react";
-import { Button, Col, Dropdown, Row } from "react-bootstrap";
+import { Button, Dropdown, Row } from "react-bootstrap";
 import { object } from "yup";
 import { SignalementElementEntity } from "../../../Entities/SignalementElementEntity.tsx";
 import SOUS_TYPE_TYPE_GEOMETRIE from "../../../enums/Signalement/SousTypeTypeGeometrie.tsx";

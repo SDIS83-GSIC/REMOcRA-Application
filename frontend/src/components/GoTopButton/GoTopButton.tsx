@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Col, Row } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { IconArrowUp } from "../Icon/Icon.tsx";

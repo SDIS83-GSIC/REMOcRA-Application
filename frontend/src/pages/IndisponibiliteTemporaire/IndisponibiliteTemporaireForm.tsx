@@ -1,5 +1,4 @@
 import { useFormikContext } from "formik";
-import { Button } from "react-bootstrap";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -19,7 +18,6 @@ import { IconIndisponibiliteTemporaire } from "../../components/Icon/Icon.tsx";
 import SectionTitle from "../../components/SectionTitle/SectionTitle.tsx";
 import url from "../../module/fetch.tsx";
 import { requiredArray, requiredString } from "../../module/validators.tsx";
-import { URLS } from "../../routes.tsx";
 import { formatDateTimeForDateTimeInput } from "../../utils/formatDateUtils.tsx";
 
 export const getInitialValues = (data) => ({

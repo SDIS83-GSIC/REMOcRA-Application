@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect } from "react";
 import { Container } from "react-bootstrap";
 import { useGet } from "../components/Fetch/useFetch.tsx";
 import Footer from "../components/Footer/Footer.tsx";

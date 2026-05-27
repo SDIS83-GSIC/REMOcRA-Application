@@ -1,9 +1,6 @@
 import { useFormik } from "formik";
-import { useState } from "react";
 import useQueryParams from "../../components/Fetch/useQueryParams.tsx";
-import QueryTable, {
-  useFilterContext,
-} from "../../components/Table/QueryTable.tsx";
+import QueryTable from "../../components/Table/QueryTable.tsx";
 import COLUMN_PEI from "../../enums/ColumnPeiEnum.tsx";
 import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
 import NOMENCLATURE from "../../enums/NomenclaturesEnum.tsx";

@@ -1,4 +1,3 @@
-import React from "react";
 import { Container } from "react-bootstrap";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import FilterInput from "../../components/Filter/FilterInput.tsx";

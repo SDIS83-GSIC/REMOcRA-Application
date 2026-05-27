@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import Row from "react-bootstrap/Row";
 
 const SectionTitle = ({ children }: { children: ReactNode }) => {

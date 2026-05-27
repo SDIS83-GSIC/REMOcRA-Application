@@ -1,19 +1,16 @@
-import { getUid } from "ol";
 import { GeoJSON } from "ol/format";
 import VectorLayer from "ol/layer/Vector";
 import { bbox } from "ol/loadingstrategy";
 import "ol/ol.css";
-import { add } from "date-fns";
 import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useGet } from "../../Fetch/useFetch.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
-import { refreshLayerGeoserver } from "../MapUtils.tsx";
 import MapToolbarCrise, { useToolbarCriseContext } from "./MapToolbarCrise.tsx";
 
 const MapCrise = ({

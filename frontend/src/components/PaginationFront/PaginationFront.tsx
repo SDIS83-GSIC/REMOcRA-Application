@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import { Col, Form, InputGroup, Pagination, Row } from "react-bootstrap";
-import { DEFAULT_PAGINATION } from "../../utils/constantsUtils";
+import { DEFAULT_PAGINATION } from "../../utils/constantsUtils.tsx";
 
 const PaginationFront = ({
   values,

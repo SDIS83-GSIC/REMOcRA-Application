@@ -1,10 +1,7 @@
 import {
-  LabelList,
-  LabelProps,
   Legend,
   Pie,
   PieChart,
-  PieLabel,
   PieLabelRenderProps,
   PieSectorShapeProps,
   ResponsiveContainer,

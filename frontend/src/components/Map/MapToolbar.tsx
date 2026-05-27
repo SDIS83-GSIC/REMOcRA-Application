@@ -22,7 +22,7 @@ import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import url from "../../module/fetch.tsx";
 import AccesRapideTypeahead from "../../pages/AccesRapide/AccesRapideTypeahead.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
-import { useGet, usePost } from "../Fetch/useFetch.tsx";
+import { useGet } from "../Fetch/useFetch.tsx";
 import {
   IconDistance,
   IconInfo,

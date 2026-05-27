@@ -6,14 +6,11 @@ import { Geometry } from "ol/geom";
 import { DragBox, Draw, Modify, Select } from "ol/interaction";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button, ButtonGroup, Row } from "react-bootstrap";
 import { object, string } from "yup";
 import { hasDroit, isAuthorized } from "../../../droits.tsx";
-import {
-  PeiEntity,
-  PeiInfoEntityElement,
-} from "../../../Entities/PeiEntity.tsx";
+import { PeiInfoEntityElement } from "../../../Entities/PeiEntity.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import PARAMETRE from "../../../enums/ParametreEnum.tsx";
 import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";

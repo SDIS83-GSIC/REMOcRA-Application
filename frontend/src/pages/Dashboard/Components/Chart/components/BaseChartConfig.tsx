@@ -1,5 +1,3 @@
-import { ReactNodeLike } from "prop-types";
-import { ReactNode } from "react";
 import { Form } from "react-bootstrap";
 import { SelectInput } from "../../../../../components/Form/Form.tsx";
 import useChartColorConfig from "../hooks/useChartColorConfig.tsx";
