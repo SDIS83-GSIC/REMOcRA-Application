@@ -55,9 +55,10 @@ const AccesRapidePei = () => {
       <Container fluid className={"px-5"}>
         {/* Tournée */}
         <Row className="align-items-end mb-3">
-          <Col className="d-flex align-items-start flex-column" sm={2}>
+          <Col className="d-flex align-items-start flex-column" sm={3}>
             <FormLabel name={"tournee"} label="Tournée :" required={false} />
             <AccesRapideTypeahead
+              className="w-100"
               label="Tournée"
               queryUrl="/api/tournee/acces-rapide"
               setter={handleTourneeObject}
@@ -76,9 +77,10 @@ const AccesRapidePei = () => {
         </Row>
         {/* PEI */}
         <Row className="align-items-end mb-3">
-          <Col className="d-flex align-items-start flex-column" sm={2}>
+          <Col className="d-flex align-items-start flex-column" sm={3}>
             <FormLabel name={"pei"} label="PEI :" required={false} />
             <AccesRapideTypeahead
+              className="w-100"
               label="PEI"
               queryUrl="/api/pei/acces-rapide"
               setter={handlePeiObject}
@@ -97,9 +99,10 @@ const AccesRapidePei = () => {
         </Row>
         {/* Commune */}
         <Row className="align-items-end mb-3">
-          <Col className="d-flex align-items-start flex-column" sm={2}>
+          <Col className="d-flex align-items-start flex-column" sm={3}>
             <FormLabel name={"commune"} label="Commune :" required={false} />
             <AccesRapideTypeahead
+              className="w-100"
               label="Commune"
               queryUrl="/api/commune/acces-rapide"
               setter={handleCommuneObject}

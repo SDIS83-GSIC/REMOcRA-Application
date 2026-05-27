@@ -13,11 +13,13 @@ const AccesRapideTypeahead = ({
   queryUrl,
   setter,
   dependentObject,
+  className,
 }: {
   label: string;
   queryUrl: string;
   setter: (value: string | null) => void;
   dependentObject?: ItemSearch | null;
+  className?: string;
 }) => {
   const [motif, setMotif] = useState<string>("");
   const queryParams: Record<string, any> = { motifLibelle: motif };
@@ -48,6 +50,7 @@ const AccesRapideTypeahead = ({
 
   return (
     <AsyncTypeahead
+      className={className}
       minLength={2}
       placeholder={label}
       emptyLabel={"Aucun résultat"}
