@@ -541,6 +541,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     API_ERROR_NB_ANOMALIE_CONTROLEE(20025, "Une ou plusieurs anomalies contrôlées n'existent pas ou ne sont pas disponibles pour ce type de visite."),
     API_ANOMALIE_CONSTATEE_NOT_CONTROLEE(20026, "Une ou plusieurs anomalies ont été marquées constatées sans avoir été contrôlées."),
     API_SYNCHRO_DEPLACER_PEI_FORBIDDEN(20027, "Vous n'avez pas les droits pour déplacer un PEI depuis l'application mobile"),
+    API_SYNCHRO_NEW_PEI_VOIE(20028, "Aucune voie trouvée pour le nouveau PEI : $PLACEHOLDER_ERROR_TYPE."),
 
     API_MOBILE_COMMUNE_NON_TROUVEE(20028, "Impossible de trouver une commune pour ces nouvelles coordonnées."),
     API_MOBILE_VOIE_NON_TROUVEE(20029, "Aucune voie trouvée pour ce PEI dans cette commune"),

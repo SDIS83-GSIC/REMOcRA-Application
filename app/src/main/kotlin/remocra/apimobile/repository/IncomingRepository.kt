@@ -35,6 +35,7 @@ import remocra.db.jooq.remocra.enums.StatutSynchronisation
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.VOIE
+import remocra.utils.ST_DWithin
 import remocra.utils.ST_SetSrid
 import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
@@ -109,12 +110,12 @@ class IncomingRepository @Inject constructor(
             )
             .fetchOneInto()
 
-    fun getVoie(geometrie: Geometry, srid: Int): UUID? =
+    fun getVoie(geometrie: Geometry, srid: Int, toleranceVoie: Int): UUID? =
         dsl
-            .select(VOIE.LIBELLE)
+            .select(VOIE.ID)
             .from(VOIE)
             .where(
-                ST_Within(
+                ST_DWithin(
                     ST_Transform(
                         ST_SetSrid(
                             geometrie.toGeomFromText(),
@@ -123,8 +124,10 @@ class IncomingRepository @Inject constructor(
                         srid = srid,
                     ),
                     VOIE.GEOMETRIE,
+                    toleranceVoie.toDouble(),
                 ),
             )
+            .limit(1)
             .fetchOneInto()
 
     fun insertGestionnaireIncoming(

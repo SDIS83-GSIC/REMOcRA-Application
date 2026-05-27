@@ -6,9 +6,11 @@ import org.locationtech.jts.io.ParseException
 import org.locationtech.jts.io.WKTReader
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import remocra.GlobalConstants
 import remocra.apimobile.data.NewPeiForMobileApiData
 import remocra.apimobile.repository.IncomingRepository
 import remocra.app.AppSettings
+import remocra.app.ParametresProvider
 import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -22,6 +24,7 @@ class SynchroNewPeiUseCase
 constructor(
     private val incomingRepository: IncomingRepository,
     private val appSettings: AppSettings,
+    private val parametresProvider: ParametresProvider,
 ) :
     AbstractCUDUseCase<NewPeiForMobileApiData>(TypeOperation.INSERT) {
 
@@ -42,18 +45,22 @@ constructor(
     override fun execute(userInfo: WrappedUserInfo, element: NewPeiForMobileApiData): NewPeiForMobileApiData {
         // On va chercher toutes les infos dont on a besoin
 
+        val toleranceVoie = parametresProvider.getParametreInt(GlobalConstants.TOLERANCE_VOIES_METRES)
+            ?: throw IllegalArgumentException("Le paramètre TOLERANCE_VOIES_METRES est nul, veuillez renseigner une valeur")
+
         // Géométrie du PEI
         val geometriePei: Geometry = getGeometrieWithCoordonnnees(element.lon, element.lat)
 
         // Commune
         val communeId: UUID? = incomingRepository.getCommuneWithGeometrie(geometriePei, appSettings.srid)
 
-        val peiVoieId = incomingRepository.getVoie(geometriePei, appSettings.srid)
-
         if (communeId == null) {
             logger.error("Impossible d'insérer le PEI : il n'est sur aucune commune connue.")
             throw RemocraResponseException(ErrorType.API_SYNCHRO_NO_COMMUNE)
         }
+
+        val peiVoieId = incomingRepository.getVoie(geometriePei, appSettings.srid, toleranceVoie)
+            ?: throw RemocraResponseException(ErrorType.API_SYNCHRO_NEW_PEI_VOIE, "${element.peiId} - ${element.lon} - ${element.lat}")
 
         val result: Int =
             incomingRepository.insertPei(
