@@ -82,7 +82,7 @@ export function usePost(
   return useAsync({
     ...asyncOptions,
     deferFn: useCallback<DeferFn<any>>(
-      ([body], props, { signal }) => {
+      async ([body, { setSubmitting } = {}], props, { signal }) => {
         const options = isMultipartFormData
           ? getFetchOptions({
               signal,
@@ -95,7 +95,14 @@ export function usePost(
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(body),
             });
-        return doFetch(url, options);
+
+        try {
+          return await doFetch(url, options);
+        } finally {
+          if (typeof setSubmitting === "function") {
+            setSubmitting(false);
+          }
+        }
       },
       [isMultipartFormData, url],
     ),
@@ -126,7 +133,7 @@ export function usePut(
   return useAsync({
     ...asyncOptions,
     deferFn: useCallback<DeferFn<any>>(
-      ([body], props, { signal }) => {
+      async ([body, { setSubmitting } = {}], props, { signal }) => {
         const options = isMultipartFormData
           ? getFetchOptions({
               signal,
@@ -139,7 +146,13 @@ export function usePut(
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(body),
             });
-        return doFetch(url, options);
+        try {
+          return await doFetch(url, options);
+        } finally {
+          if (typeof setSubmitting === "function") {
+            setSubmitting(false);
+          }
+        }
       },
       [isMultipartFormData, url],
     ),
