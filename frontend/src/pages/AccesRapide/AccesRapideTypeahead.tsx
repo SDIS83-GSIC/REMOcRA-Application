@@ -33,7 +33,7 @@ const AccesRapideTypeahead = ({
     ? `${queryUrl}?${new URLSearchParams(queryParams).toString()}`
     : null;
 
-  const { data, run, isResolved } = useGetRun(queryString || "", {});
+  const { data, run, isResolved } = useGetRun(queryString || "");
 
   useEffect(() => {
     if (motif.length > 0) {

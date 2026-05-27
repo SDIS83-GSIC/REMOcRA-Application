@@ -12,16 +12,22 @@ import useLocalisation, {
 import url from "../../module/fetch.tsx";
 import AccesRapideTypeahead from "./AccesRapideTypeahead.tsx";
 
+type VoieOption = {
+  voieId: string;
+  voieLibelle: string;
+  voieCommuneId: string;
+};
+
 const AccesRapidePei = () => {
   const [tourneeId, setTourneeId] = useState<string | null>();
   const [peiId, setPeiId] = useState<string | null>();
   const [communeId, setCommuneId] = useState<string | null>();
   const [voieId, setVoieId] = useState<string | null>();
 
-  const { run: fetchOptionVoie, data: optionVoie } = useGetRun(
+  const { run: fetchOptionVoie, data: optionVoieData } = useGetRun(
     url`/api/voie/${communeId}`,
-    {},
   );
+  const optionVoie = optionVoieData as VoieOption | undefined;
 
   const { fetchGeometry } = useLocalisation();
 
@@ -39,9 +45,7 @@ const AccesRapidePei = () => {
     if (
       (communeId && !optionVoie) ||
       (optionVoie &&
-        optionVoie.find(
-          (voie: { voieCommuneId: string }) => voie.voieCommuneId !== communeId,
-        ))
+        optionVoie.some((voie) => voie.voieCommuneId !== communeId))
     ) {
       fetchOptionVoie();
     }
@@ -112,15 +116,13 @@ const AccesRapidePei = () => {
             <FormLabel name={"voie"} label="Voie :" required={false} />
             <SelectFilterFromList
               name={"voie"}
-              listIdCodeLibelle={
-                optionVoie &&
-                optionVoie.map((v) => {
-                  return {
-                    id: v.voieId,
-                    libelle: v.voieLibelle,
-                  };
-                })
-              }
+              listIdCodeLibelle={(optionVoie || []).map((v) => {
+                return {
+                  id: v.voieId,
+                  code: "",
+                  libelle: v.voieLibelle,
+                };
+              })}
               onChange={(e) => setVoieId(e ? e.value : null)}
               isClearable={true}
               disabled={!communeId}
@@ -130,7 +132,7 @@ const AccesRapidePei = () => {
             <Button
               variant="primary"
               onClick={() => {
-                if (!voieId || voieId === undefined) {
+                if (!voieId) {
                   fetchGeometry(GET_TYPE_GEOMETRY.COMMUNE, communeId);
                 } else {
                   fetchGeometry(GET_TYPE_GEOMETRY.VOIE, voieId);
