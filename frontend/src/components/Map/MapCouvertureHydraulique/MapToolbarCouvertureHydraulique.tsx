@@ -113,6 +113,7 @@ export const useToolbarCouvertureHydrauliqueContext = ({
   const [geometrieMove, setGeometrieMove] = useState<string | null>(null);
 
   const [busy, setBusy] = useState(false);
+  const [loadingPeiPlusProche, setLoadingPeiPlusProche] = useState(false);
 
   // Base pour la future logique de création de topologie
   const handleCreerTopologie = async () => {
@@ -258,31 +259,36 @@ export const useToolbarCouvertureHydrauliqueContext = ({
       workingLayer.getSource().clear();
     });
     peiPlusProcheCtrl.on("drawend", async (event) => {
-      const geometry = event.feature.getGeometry() as Point;
-      const result = await doFetch(
-        url`/api/couverture-hydraulique/calcul/pei-plus-proche`,
-        getFetchOptions({
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            longitude: geometry!.getFlatCoordinates()[0],
-            latitude: geometry!.getFlatCoordinates()[1],
-            srid: map.getView().getProjection().getCode().split(":")[1],
+      setLoadingPeiPlusProche(true);
+      try {
+        const geometry = event.feature.getGeometry() as Point;
+        const result = await doFetch(
+          url`/api/couverture-hydraulique/calcul/pei-plus-proche`,
+          getFetchOptions({
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              longitude: geometry!.getFlatCoordinates()[0],
+              latitude: geometry!.getFlatCoordinates()[1],
+              srid: map.getView().getProjection().getCode().split(":")[1],
+            }),
           }),
-        }),
-      );
-      if (result?.chemin != null) {
-        const wktChemin = result.chemin;
-        const wktPei = result.peiGeometry;
-        const distance = result.dist;
+        );
+        if (result?.chemin != null) {
+          const wktChemin = result.chemin;
+          const wktPei = result.peiGeometry;
+          const distance = result.dist;
 
-        // Affichage des features
-        const sridSource = "EPSG:" + wktPei.split(";")[0].split("=").pop();
-        cheminPlusCourtFeaturePei(workingLayer, wktPei, distance, sridSource);
-        cheminPlusCourtFeatureChemin(workingLayer, wktChemin, sridSource);
-        cheminPlusCourtFeatureClic(workingLayer, geometry);
-      } else {
-        errorToast("Aucun PEI n'a été trouvé.");
+          // Affichage des features
+          const sridSource = "EPSG:" + wktPei.split(";")[0].split("=").pop();
+          cheminPlusCourtFeaturePei(workingLayer, wktPei, distance, sridSource);
+          cheminPlusCourtFeatureChemin(workingLayer, wktChemin, sridSource);
+          cheminPlusCourtFeatureClic(workingLayer, geometry);
+        } else {
+          errorToast("Aucun PEI n'a été trouvé.");
+        }
+      } finally {
+        setLoadingPeiPlusProche(false);
       }
     });
 
@@ -540,6 +546,7 @@ export const useToolbarCouvertureHydrauliqueContext = ({
     visibleMove,
     handleCreerTopologie,
     busy,
+    loadingPeiPlusProche,
   };
 };
 
@@ -566,6 +573,7 @@ const MapToolbarCouvertureHydraulique = ({
   visibleMove,
   handleCreerTopologie,
   busy,
+  loadingPeiPlusProche,
 }: {
   map: OLMap;
   dataPeiProjetLayer: any;
@@ -589,6 +597,7 @@ const MapToolbarCouvertureHydraulique = ({
   visibleMove: boolean;
   handleCreerTopologie: () => void;
   busy: boolean;
+  loadingPeiPlusProche: boolean;
 }) => {
   return (
     <div className="d-flex align-items-center">
@@ -629,20 +638,30 @@ const MapToolbarCouvertureHydraulique = ({
         activeTool={activeTool}
         disabled={disabledEditPeiProjet || busy}
       />
+
       <ToolbarButton
         toolName={"pei-plus-proche"}
-        toolIcon={<IconPeiPlusProche />}
+        toolIcon={
+          loadingPeiPlusProche ? (
+            <Spinner animation="border" size="sm" />
+          ) : (
+            <IconPeiPlusProche />
+          )
+        }
         toolLabelTooltip={
-          busy
-            ? CREATION_TOPOLOGIE_EN_COURS
-            : disabledEditPeiProjet
-              ? "L'étude est terminée, vous ne pouvez plus trouver le PEI le plus proche"
-              : "Trouver le PEI le plus proche"
+          loadingPeiPlusProche
+            ? "Recherche du PEI le plus proche en cours, veuillez patienter…"
+            : busy
+              ? CREATION_TOPOLOGIE_EN_COURS
+              : disabledEditPeiProjet
+                ? "L'étude est terminée, vous ne pouvez plus trouver le PEI le plus proche"
+                : "Trouver le PEI le plus proche"
         }
         toggleTool={toggleToolCallback}
         activeTool={activeTool}
-        disabled={disabledEditPeiProjet || busy}
+        disabled={disabledEditPeiProjet || busy || loadingPeiPlusProche}
       />
+
       <ButtonWithTooltipIfDisabled
         tooltipId="creer-topologie-disabled"
         tooltipText={

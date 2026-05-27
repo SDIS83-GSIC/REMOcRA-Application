@@ -74,6 +74,7 @@ const MapCouvertureHydraulique = ({
     visibleMove,
     handleCreerTopologie,
     busy,
+    loadingPeiPlusProche,
   } = useToolbarCouvertureHydrauliqueContext({
     map,
     workingLayer,
@@ -130,6 +131,7 @@ const MapCouvertureHydraulique = ({
             visibleMove={visibleMove}
             handleCreerTopologie={handleCreerTopologie}
             busy={busy}
+            loadingPeiPlusProche={loadingPeiPlusProche}
           />
         )
       }
