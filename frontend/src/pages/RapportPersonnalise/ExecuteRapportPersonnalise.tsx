@@ -41,6 +41,9 @@ const ExecuteRapportPersonnalise = () => {
   }>();
 
   const [offset, setOffset] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(
+    localStorage.getItem("itemsPerPage") || DEFAULT_PAGINATION,
+  );
   const [activeTab, setActiveTab] = useState<string>("data");
   const [valuesFormik, setValuesFormik] = useState<any>();
   const [isDownload, setIsDownload] = useState(false);
@@ -317,7 +320,7 @@ const ExecuteRapportPersonnalise = () => {
                     </thead>
                     <tbody>
                       {tableau?.values
-                        ?.slice(offset, offset + DEFAULT_PAGINATION)
+                        ?.slice(offset, offset + limit)
                         ?.map((ligne, index) => {
                           return (
                             <tr key={index} className={"fw-normal"}>
@@ -340,6 +343,7 @@ const ExecuteRapportPersonnalise = () => {
                       key={tableau?.values?.length}
                       values={tableau?.values}
                       setOffset={setOffset}
+                      setLimit={setLimit}
                     />
                   )}
                 </div>

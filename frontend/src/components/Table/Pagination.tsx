@@ -2,16 +2,18 @@ import classnames from "classnames";
 import { ReactNode, useEffect, useState } from "react";
 import { Button, FloatingLabel, Form } from "react-bootstrap";
 import ReactSelect from "react-select";
-import { DEFAULT_PAGINATION } from "../../utils/constantsUtils.tsx";
+import {
+  DEFAULT_PAGINATION,
+  PAGINATION_OPTIONS,
+} from "../../utils/constantsUtils.tsx";
 import decorateInteger from "../../utils/formatNumberUtils.tsx";
 import useQueryParams from "../Fetch/useQueryParams.tsx";
 import { IconNextPage, IconPreviousPage } from "../Icon/Icon.tsx";
 import styles from "./Pagination.module.css";
 
-const PAGINATION = [10, 15, 25, 50, 100];
 const PAGINATION_DEFAULT = DEFAULT_PAGINATION.toString();
 const PAGINATION_KEY = "itemsPerPage";
-const PAGINATION_VALUES = PAGINATION.map((data) => {
+const PAGINATION_VALUES = PAGINATION_OPTIONS.map((data) => {
   return { value: data, label: data };
 });
 

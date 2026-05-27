@@ -1,35 +1,65 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Col, Form, InputGroup, Pagination, Row } from "react-bootstrap";
-import { DEFAULT_PAGINATION } from "../../utils/constantsUtils.tsx";
+import ReactSelect from "react-select";
+import {
+  DEFAULT_PAGINATION,
+  PAGINATION_OPTIONS,
+} from "../../utils/constantsUtils.tsx";
+
+const PAGINATION_DEFAULT = DEFAULT_PAGINATION.toString();
+const PAGINATION_KEY = "itemsPerPage";
+const PAGINATION_VALUES = PAGINATION_OPTIONS.map((data) => {
+  return { value: data, label: data };
+});
 
 const PaginationFront = ({
   values,
   setOffset,
+  setLimit,
 }: {
   values: any[];
   setOffset: (n: number) => void;
+  setLimit?: (n: number) => void;
 }) => {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageInput, setPageInput] = useState<string>("1");
-
   const [totalPage, setTotalPage] = useState<number>();
+
+  const [itemsPerPage, setItemsPerPage] = useState<number>(
+    parseInt(localStorage.getItem(PAGINATION_KEY) || PAGINATION_DEFAULT),
+  );
+
+  useEffect(() => {
+    localStorage.setItem(PAGINATION_KEY, itemsPerPage.toString());
+  }, [itemsPerPage]);
 
   // Fonction pour naviguer vers une page spécifique
   const goToPage = useCallback(
     (page: number) => {
       if (page >= 1 && page <= (totalPage || 1)) {
         setCurrentPage(page);
-        setOffset((page - 1) * DEFAULT_PAGINATION);
+        setOffset((page - 1) * itemsPerPage);
         setPageInput(page.toString());
       }
     },
-    [totalPage, setOffset],
+    [totalPage, setOffset, itemsPerPage],
+  );
+
+  const handleItemsPerPageChange = useCallback(
+    (newLimit: number) => {
+      setItemsPerPage(newLimit);
+      setLimit?.(newLimit);
+      setCurrentPage(1);
+      setOffset(0);
+      setPageInput("1");
+    },
+    [setLimit, setOffset],
   );
 
   const paginationItems = useMemo(() => {
     const pages = [];
 
-    const nbPage = Math.ceil((values?.length || 0) / DEFAULT_PAGINATION);
+    const nbPage = Math.ceil((values?.length || 0) / itemsPerPage);
     setTotalPage(nbPage);
 
     if (nbPage <= 5) {
@@ -107,7 +137,7 @@ const PaginationFront = ({
     }
 
     return pages;
-  }, [values, currentPage, goToPage]);
+  }, [values, currentPage, goToPage, itemsPerPage]);
 
   // Gérer la saisie dans le champ de page
   const handlePageInputChange = (value: string) => {
@@ -127,7 +157,7 @@ const PaginationFront = ({
 
   return (
     <Row className="align-items-center">
-      <Col xs={2} className="text-center">
+      <Col xs={2}>
         <InputGroup size="sm">
           <InputGroup.Text>Page</InputGroup.Text>
           <Form.Control
@@ -144,6 +174,7 @@ const PaginationFront = ({
           />
           <InputGroup.Text>/ {totalPage || 1}</InputGroup.Text>
         </InputGroup>
+        <small>{values?.length} résultat(s)</small>
       </Col>
       <Col xs={8} className="text-center">
         <Pagination className={"my-3 d-flex justify-content-center"}>
@@ -159,7 +190,20 @@ const PaginationFront = ({
         </Pagination>
       </Col>
       <Col xs={2} className="text-center">
-        <small>{values?.length} résultat(s)</small>
+        <small className="mb-1">Résultats par page :</small>
+        <ReactSelect
+          menuPlacement="top"
+          value={
+            PAGINATION_VALUES.find((o) => o.value === itemsPerPage) || {
+              value: itemsPerPage,
+              label: itemsPerPage,
+            }
+          }
+          options={PAGINATION_VALUES}
+          onChange={(opt) => opt && handleItemsPerPageChange(opt.value)}
+          isClearable={false}
+          closeMenuOnSelect={true}
+        />
       </Col>
     </Row>
   );
