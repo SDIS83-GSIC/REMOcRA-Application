@@ -34,6 +34,7 @@
         "noUselessTypeConstraint": "error"
       },
       "correctness": {
+        "useImportExtensions": "error",
         "noUnusedImports": "error",
         "noChildrenProp": "error",
         "noConstAssign": "error",
