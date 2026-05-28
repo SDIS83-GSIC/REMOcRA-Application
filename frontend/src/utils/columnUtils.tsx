@@ -971,35 +971,36 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
           "L'indisponibilité temporaire est en cours ou contient des PEI en dehors de votre zone de compétence",
         pathname: url`/api/indisponibilite-temporaire/delete/`,
       });
-
-      if (hasDroit(user, TYPE_DROIT.INDISPO_TEMP_U)) {
-        listeButton.push({
-          isPost: false,
-          row: (row) => {
-            return row;
-          },
-          type: TYPE_BUTTON.CONFIRM,
-          disable: (v) => {
-            return (
-              getStatutIndispo(
-                v.original.indisponibiliteTemporaireDateDebut,
-                v.original.indisponibiliteTemporaireDateFin,
-              ) !== STATUT_INDISPONIBILITE_TEMPORAIRE.EN_COURS
-            );
-          },
-          confirmModal: {
-            header: "Clore l'indisponibilité temporaire ?",
-            content: "Voulez-vous continuer ? ",
-          },
-          textDisable:
-            "Impossible de clore une indisponibilité temporaire qui n'est pas en cours",
-          textEnable: "Clore l'indisponibilité temporaire",
-          pathname: url`/api/indisponibilite-temporaire/clore/`,
-          icon: <IconCloseIndisponibiliteTemporaire />,
-          classEnable: "warning",
-        });
-      }
     }
+
+    if (hasDroit(user, TYPE_DROIT.INDISPO_TEMP_U)) {
+      listeButton.push({
+        isPost: false,
+        row: (row) => {
+          return row;
+        },
+        type: TYPE_BUTTON.CONFIRM,
+        disable: (v) => {
+          return (
+            getStatutIndispo(
+              v.original.indisponibiliteTemporaireDateDebut,
+              v.original.indisponibiliteTemporaireDateFin,
+            ) !== STATUT_INDISPONIBILITE_TEMPORAIRE.EN_COURS
+          );
+        },
+        confirmModal: {
+          header: "Clore l'indisponibilité temporaire ?",
+          content: "Voulez-vous continuer ? ",
+        },
+        textDisable:
+          "Impossible de clore une indisponibilité temporaire qui n'est pas en cours",
+        textEnable: "Clore l'indisponibilité temporaire",
+        pathname: url`/api/indisponibilite-temporaire/clore/`,
+        icon: <IconCloseIndisponibiliteTemporaire />,
+        classEnable: "warning",
+      });
+    }
+
     listeButton.push({
       row: (row) => {
         return row;
