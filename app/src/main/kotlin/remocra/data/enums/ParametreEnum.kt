@@ -26,6 +26,7 @@ enum class ParametreEnum(val section: ParametreSection) {
     DFCI_TRAVAUX_DESTINATAIRE_EMAIL(ParametreSection.DFCI),
     DFCI_TRAVAUX_OBJET_EMAIL(ParametreSection.DFCI),
     DFCI_TRAVAUX_CORPS_EMAIL(ParametreSection.DFCI),
+    DFCI_TOLERANCE_DFCI_PISTE_METRES(ParametreSection.DFCI),
 
     // Général
     MENTION_CNIL(ParametreSection.GENERAL),
