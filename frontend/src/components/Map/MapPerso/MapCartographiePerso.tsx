@@ -85,6 +85,17 @@ const MapCartographiePerso = () => {
       extraTools: extraTools,
     });
 
+  // Force le resize de la carte juste avant impression pour garantir le bon rendu
+  useEffect(() => {
+    const handleBeforePrint = () => {
+      if (map && typeof map.updateSize === "function") {
+        map.updateSize();
+      }
+    };
+    window.addEventListener("beforeprint", handleBeforePrint);
+    return () => window.removeEventListener("beforeprint", handleBeforePrint);
+  }, [map]);
+
   return (
     <SquelettePage navbar={<Header />}>
       <div style={{ marginBottom: "100px" }} className="noprint">
@@ -133,7 +144,7 @@ const MapCartographiePerso = () => {
             )
           }
         />
-        <Row>
+        <Row className="map-footer">
           <Col className={"h-100 text-italic col-sm-auto"}>
             <p
               className={"text-nowrap"}
