@@ -6,13 +6,15 @@ import remocra.apimobile.data.ContactRoleForApiMobileData
 import remocra.apimobile.data.PeiAnomalieForApiMobileData
 import remocra.apimobile.data.PeiForApiMobileData
 import remocra.apimobile.repository.ReferentielRepository
-import remocra.app.DataCacheProvider
 import remocra.app.ParametresProvider
 import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ParametreEnum
 import remocra.db.AnomalieRepository
+import remocra.db.DomaineRepository
 import remocra.db.FonctionContactRepository
 import remocra.db.GestionnaireRepository
+import remocra.db.NatureDeciRepository
+import remocra.db.NatureRepository
 import remocra.db.RoleRepository
 import remocra.db.jooq.remocra.enums.Disponibilite
 import remocra.db.jooq.remocra.enums.Droit
@@ -36,10 +38,12 @@ import java.util.UUID
 class BuildReferentielUseCase
 @Inject
 constructor(
-    private val dataCacheProvider: DataCacheProvider,
     private val referentielRepository: ReferentielRepository,
     private val gestionnaireRepository: GestionnaireRepository,
     private val fonctionContactRepository: FonctionContactRepository,
+    private val natureRepository: NatureRepository,
+    private val natureDeciRepository: NatureDeciRepository,
+    private val domaineRepository: DomaineRepository,
     private val roleRepository: RoleRepository,
     private val parametresProvider: ParametresProvider,
     private val decorateListPeiForApi: DecorateListPeiForApi,
@@ -84,8 +88,8 @@ constructor(
             listRole = roleRepository.getAllForMobile(),
             listContactRole = referentielRepository.getContactRoleList(),
             listTypePei = TypePei.entries,
-            listNature = dataCacheProvider.getNatures().values,
-            listNatureDeci = dataCacheProvider.getNaturesDeci().values,
+            listNature = natureRepository.getAll(),
+            listNatureDeci = natureDeciRepository.getAll(),
             // on remonte toutes les anomalies / catégories et même les inactives pour pouvoir faire les désassigner si elles sont affectées à un PEI
             listAnomalie = anomalieRepository.getAllAnomalie(),
             listAnomalieCategorie = anomalieRepository.getAllAnomalieCategorieForAdmin(),
@@ -107,7 +111,7 @@ constructor(
             utilisateurConnecte = nomPrenom,
             peiCaracteristiques = peiCaracteristiquesUseCase.getPeiCaracteristiquesMobile(),
             listFonctionContact = fonctionContactRepository.getAllForMobile(),
-            listDomaine = dataCacheProvider.getDomaines().values,
+            listDomaine = domaineRepository.getAll(),
             mapDisponibiliteByLibelle = Disponibilite.entries.associateWith { dispoDecorator.decorateDisponibilite(it) },
         )
     }

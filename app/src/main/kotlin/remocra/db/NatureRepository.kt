@@ -28,6 +28,9 @@ class NatureRepository @Inject constructor(private val dsl: DSLContext) : Nomenc
     fun getAllForAdmin(): Collection<Nature> =
         dsl.selectFrom(NATURE).where(NATURE.ACTIF).orderBy(NATURE.TYPE_PEI).fetchInto()
 
+    fun getAll(): Collection<Nature> =
+        dsl.selectFrom(NATURE).orderBy(NATURE.TYPE_PEI).fetchInto()
+
     fun getNatureForSelect(): List<NatureSelectData> =
         dsl.select(NATURE.ID, NATURE.LIBELLE, NATURE.PARTICIPE_DFCI).from(NATURE).orderBy(NATURE.LIBELLE).fetchInto()
 

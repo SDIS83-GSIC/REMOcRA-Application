@@ -14,6 +14,9 @@ class NatureDeciRepository @Inject constructor(private val dsl: DSLContext) : No
             .orderBy(NATURE_DECI.LIBELLE)
             .fetchInto()
 
+    fun getAll(): List<NatureDeci> =
+        dsl.selectFrom(NATURE_DECI).fetchInto()
+
     data class IdLibelleNatureDeci(
         val natureDeciId: UUID,
         val natureDeciLibelle: String,
