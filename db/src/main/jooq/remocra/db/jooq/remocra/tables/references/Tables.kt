@@ -48,7 +48,6 @@ import remocra.db.jooq.remocra.tables.GroupeCouche
 import remocra.db.jooq.remocra.tables.GroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.Job
-import remocra.db.jooq.remocra.tables.LCommuneCis
 import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
@@ -383,11 +382,6 @@ val INDISPONIBILITE_TEMPORAIRE: IndisponibiliteTemporaire = IndisponibiliteTempo
  * The table <code>remocra.job</code>.
  */
 val JOB: Job = Job.JOB
-
-/**
- * The table <code>remocra.l_commune_cis</code>.
- */
-val L_COMMUNE_CIS: LCommuneCis = LCommuneCis.L_COMMUNE_CIS
 
 /**
  * The table <code>remocra.l_contact_gestionnaire</code>.

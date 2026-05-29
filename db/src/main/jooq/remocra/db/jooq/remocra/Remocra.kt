@@ -51,7 +51,6 @@ import remocra.db.jooq.remocra.tables.GroupeCouche
 import remocra.db.jooq.remocra.tables.GroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.Job
-import remocra.db.jooq.remocra.tables.LCommuneCis
 import remocra.db.jooq.remocra.tables.LContactGestionnaire
 import remocra.db.jooq.remocra.tables.LContactOrganisme
 import remocra.db.jooq.remocra.tables.LContactRole
@@ -408,11 +407,6 @@ open class Remocra : SchemaImpl(DSL.name("remocra"), DefaultCatalog.DEFAULT_CATA
      * The table <code>remocra.job</code>.
      */
     val JOB: Job get() = Job.JOB
-
-    /**
-     * The table <code>remocra.l_commune_cis</code>.
-     */
-    val L_COMMUNE_CIS: LCommuneCis get() = LCommuneCis.L_COMMUNE_CIS
 
     /**
      * The table <code>remocra.l_contact_gestionnaire</code>.
@@ -1059,7 +1053,6 @@ open class Remocra : SchemaImpl(DSL.name("remocra"), DefaultCatalog.DEFAULT_CATA
         GroupeFonctionnalites.GROUPE_FONCTIONNALITES,
         IndisponibiliteTemporaire.INDISPONIBILITE_TEMPORAIRE,
         Job.JOB,
-        LCommuneCis.L_COMMUNE_CIS,
         LContactGestionnaire.L_CONTACT_GESTIONNAIRE,
         LContactOrganisme.L_CONTACT_ORGANISME,
         LContactRole.L_CONTACT_ROLE,

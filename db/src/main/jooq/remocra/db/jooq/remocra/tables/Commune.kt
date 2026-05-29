@@ -40,7 +40,6 @@ import remocra.db.jooq.remocra.keys.CADASTRE_SECTION__CADASTRE_SECTION_CADASTRE_
 import remocra.db.jooq.remocra.keys.COMMUNE_COMMUNE_CODE_INSEE_KEY
 import remocra.db.jooq.remocra.keys.COMMUNE_PKEY
 import remocra.db.jooq.remocra.keys.LIEU_DIT__LIEU_DIT_LIEU_DIT_COMMUNE_ID_FKEY
-import remocra.db.jooq.remocra.keys.L_COMMUNE_CIS__L_COMMUNE_CIS_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_CRISE_COMMUNE__L_CRISE_COMMUNE_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB__OLDEB_OLDEB_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.PEI__PEI_PEI_COMMUNE_ID_FKEY
@@ -48,11 +47,9 @@ import remocra.db.jooq.remocra.keys.PERMIS__PERMIS_PERMIS_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI__RCCI_RCCI_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.keys.VOIE__VOIE_VOIE_COMMUNE_ID_FKEY
 import remocra.db.jooq.remocra.tables.CadastreSection.CadastreSectionPath
-import remocra.db.jooq.remocra.tables.LCommuneCis.LCommuneCisPath
 import remocra.db.jooq.remocra.tables.LCriseCommune.LCriseCommunePath
 import remocra.db.jooq.remocra.tables.LieuDit.LieuDitPath
 import remocra.db.jooq.remocra.tables.Oldeb.OldebPath
-import remocra.db.jooq.remocra.tables.Organisme.OrganismePath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import remocra.db.jooq.remocra.tables.Permis.PermisPath
 import remocra.db.jooq.remocra.tables.Rcci.RcciPath
@@ -253,23 +250,6 @@ open class Commune(
     val cadastreSection: CadastreSectionPath
         get(): CadastreSectionPath = cadastreSection()
 
-    private lateinit var _lCommuneCis: LCommuneCisPath
-
-    /**
-     * Get the implicit to-many join path to the
-     * <code>remocra.l_commune_cis</code> table
-     */
-    fun lCommuneCis(): LCommuneCisPath {
-        if (!this::_lCommuneCis.isInitialized) {
-            _lCommuneCis = LCommuneCisPath(this, null, L_COMMUNE_CIS__L_COMMUNE_CIS_COMMUNE_ID_FKEY.inverseKey)
-        }
-
-        return _lCommuneCis
-    }
-
-    val lCommuneCis: LCommuneCisPath
-        get(): LCommuneCisPath = lCommuneCis()
-
     private lateinit var _lCriseCommune: LCriseCommunePath
 
     /**
@@ -392,13 +372,6 @@ open class Commune(
      */
     val etude: EtudePath
         get(): EtudePath = lEtudeCommune().etude()
-
-    /**
-     * Get the implicit many-to-many join path to the
-     * <code>remocra.organisme</code> table
-     */
-    val organisme: OrganismePath
-        get(): OrganismePath = lCommuneCis().organisme()
     override fun `as`(alias: String): Commune = Commune(DSL.name(alias), this)
     override fun `as`(alias: Name): Commune = Commune(alias, this)
     override fun `as`(alias: Table<*>): Commune = Commune(alias.qualifiedName, this)
