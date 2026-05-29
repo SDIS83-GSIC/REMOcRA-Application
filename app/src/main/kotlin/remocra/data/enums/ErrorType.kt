@@ -543,9 +543,9 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     API_SYNCHRO_DEPLACER_PEI_FORBIDDEN(20027, "Vous n'avez pas les droits pour déplacer un PEI depuis l'application mobile"),
     API_SYNCHRO_NEW_PEI_VOIE(20028, "Aucune voie trouvée pour le nouveau PEI : $PLACEHOLDER_ERROR_TYPE."),
 
-    API_MOBILE_COMMUNE_NON_TROUVEE(20028, "Impossible de trouver une commune pour ces nouvelles coordonnées."),
-    API_MOBILE_VOIE_NON_TROUVEE(20029, "Aucune voie trouvée pour ce PEI dans cette commune"),
-    API_MOBILE_TOLERANCE_VOIE_METRES_NULL(20030, "Le paramètre TOLERANCE_VOIES_METRES est nul, veuillez renseigner une valeur"),
+    API_MOBILE_COMMUNE_NON_TROUVEE(20029, "Impossible de trouver une commune pour ces nouvelles coordonnées."),
+    API_MOBILE_VOIE_NON_TROUVEE(20030, "Aucune voie trouvée pour ce PEI dans cette commune"),
+    API_MOBILE_TOLERANCE_VOIE_METRES_NULL(20031, "Le paramètre TOLERANCE_VOIES_METRES est nul, veuillez renseigner une valeur"),
 
     ADMIN_PARAMETRE_FORBIDDEN(21000, "Vous n'avez pas les droits d'administration", Status.FORBIDDEN),
     ADMIN_PARAMETRE_ISODISTANCE_FORMAT(21001, "Les isodistances n'ont pas le format attendu "),
