@@ -106,14 +106,9 @@ class TourneeRepository
                 ORGANISME.LIBELLE,
                 TOURNEE.POURCENTAGE_AVANCEMENT,
                 TOURNEE.RESERVATION_UTILISATEUR_ID,
-                concat(
-                    UTILISATEUR.PRENOM,
-                    DSL.`val`(" "),
-                    UTILISATEUR.NOM,
-                    DSL.`val`(" ("),
-                    UTILISATEUR.USERNAME,
-                    DSL.`val`(")"),
-                ).`as`("tourneeUtilisateurReservationLibelle"),
+                UTILISATEUR.PRENOM,
+                UTILISATEUR.NOM,
+                UTILISATEUR.USERNAME,
                 TOURNEE.DATE_SYNCHRONISATION,
                 peiCounterCte.field("TOURNEE_NB_PEI"),
                 nextRopCte.field("TOURNEE_NEXT_ROP_DATE"),
@@ -344,7 +339,9 @@ class TourneeRepository
         val organismeLibelle: String,
         val tourneePourcentageAvancement: Int?,
         val tourneeReservationUtilisateurId: UUID?,
-        val tourneeUtilisateurReservationLibelle: String?,
+        val utilisateurPrenom: String?,
+        val utilisateurNom: String?,
+        val utilisateurUsername: String?,
         val tourneeDateSynchronisation: ZonedDateTime?,
         val tourneeDateDerniereRealisation: ZonedDateTime?,
         val tourneeNbPei: Int,
@@ -353,7 +350,21 @@ class TourneeRepository
         var estDansIncoming: Boolean = false,
         var tourneeNotifiee: Boolean = false,
         val tourneeNbRopRealisee: Int = 0,
-    )
+    ) {
+        val tourneeUtilisateurReservationLibelle: String? =
+            utilisateurUsername?.let { username ->
+                buildList {
+                    utilisateurPrenom
+                        ?.takeIf { it.isNotBlank() }
+                        ?.let { add(it) }
+                    utilisateurNom
+                        ?.takeIf { it.isNotBlank() }
+                        ?.let { add(it) }
+
+                    add(if (isNotEmpty()) "($username)" else username)
+                }.joinToString(" ")
+            }
+    }
 
     data class Filter(
         val tourneeLibelle: String?,
