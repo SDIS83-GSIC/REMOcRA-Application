@@ -249,6 +249,7 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
             .join(COUCHE).on(COUCHE.ID.eq(COUCHE_METADATA.COUCHE_ID))
             .where(COUCHE_METADATA.ACTIF.isTrue)
             .and(COUCHE_METADATA.COUCHE_ID.`in`(couchesIds))
+            .and(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID.eq(groupeFonctionnaliteId))
             .fetchInto<CoucheMetadataWithLibelle>()
 
     data class SortCouche(
