@@ -4,7 +4,7 @@ import { Point } from "ol/geom";
 import { Draw, Modify } from "ol/interaction";
 import { ModifyEvent } from "ol/interaction/Modify";
 import { Circle, Fill, Stroke, Style } from "ol/style";
-import { useMemo, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { ButtonGroup } from "react-bootstrap";
 import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
@@ -37,17 +37,23 @@ export const useToolbarPermisContext = ({
   const [featureStyle] = useState(defaultStyle);
   const { error: errorToast } = useToastContext();
 
+  const voletOuvert = useRef(false);
+
   const [showSearchPermis, setShowSearchPermis] = useState(false);
   const handleCloseSearchPermis = () => setShowSearchPermis(false);
 
   const [showCreatePermis, setShowPermis] = useState(false);
   const handleClosePermis = () => {
+    voletOuvert.current = false;
     setShowPermis(false);
     workingLayer.getSource().refresh();
   };
   const [featureState, setFeatureState] = useState<any>(null);
   const [showUpdatePermis, setShowUpdatePermis] = useState(false);
-  const handleCloseUpdatePermis = () => setShowUpdatePermis(false);
+  const handleCloseUpdatePermis = () => {
+    voletOuvert.current = false;
+    setShowUpdatePermis(false);
+  };
 
   const [pointPermis, setPointPermis] = useState<Point | null>(null);
 
@@ -66,11 +72,19 @@ export const useToolbarPermisContext = ({
       },
     });
     createPermis.on("drawstart", async () => {
+      if (voletOuvert.current) {
+        createPermis.abortDrawing();
+        return;
+      }
       // Avant de redessiner un point, on supprime les autres points, le but est d'avoir juste un seul point à la fois.
       workingLayer.getSource().clear();
     });
 
     createPermis.on("drawend", async (event) => {
+      if (voletOuvert.current) {
+        workingLayer.getSource().removeFeature(event.feature);
+        return;
+      }
       (
         await fetch(
           url`/api/zone-integration/check`,
@@ -93,6 +107,7 @@ export const useToolbarPermisContext = ({
             event.feature.setStyle(featureStyle.clone());
             const geometry = event.feature.getGeometry();
             setPointPermis(geometry);
+            voletOuvert.current = true;
             setShowPermis(true);
           } else {
             workingLayer.getSource().removeFeature(event.feature);
@@ -120,7 +135,11 @@ export const useToolbarPermisContext = ({
       source: dataPermisLayer.getSource(),
     });
     movePermisCtrl.on("modifyend", async (event: ModifyEvent) => {
-      if (!event.features || event.features.getLength() !== 1) {
+      if (
+        !event.features ||
+        event.features.getLength() !== 1 ||
+        voletOuvert.current
+      ) {
         return;
       }
       (
@@ -143,6 +162,7 @@ export const useToolbarPermisContext = ({
         .then((text) => {
           if (text === "true") {
             setFeatureState(event.features.getArray()[0].getProperties());
+            voletOuvert.current = true;
             setShowUpdatePermis(true);
           } else {
             dataPermisLayer.getSource().refresh();
@@ -203,6 +223,7 @@ export const useToolbarPermisContext = ({
     featureState,
     setShowUpdatePermis,
     setFeatureState,
+    voletOuvert,
   };
 };
 const MapToolbarPermis = ({
@@ -223,6 +244,7 @@ const MapToolbarPermis = ({
   toggleTool: toggleToolCallback,
   activeTool,
   hasRightToInteract = false,
+  voletOuvert,
 }: {
   map?: OLMap;
   dataPermisLayer: any;
@@ -242,6 +264,7 @@ const MapToolbarPermis = ({
   activeTool: string;
 
   hasRightToInteract: boolean;
+  voletOuvert: React.MutableRefObject<boolean>;
 }) => {
   return (
     <>
@@ -256,6 +279,7 @@ const MapToolbarPermis = ({
           toolLabelTooltip={"Rechercher un permis"}
           toggleTool={toggleToolCallback}
           activeTool={activeTool}
+          disabled={voletOuvert.current}
         />
         {hasRightToInteract && (
           <>
@@ -265,6 +289,7 @@ const MapToolbarPermis = ({
               toolLabelTooltip={"Créer un permis"}
               toggleTool={toggleToolCallback}
               activeTool={activeTool}
+              disabled={voletOuvert.current}
             />
             <ToolbarButton
               toolName={"deplacer-permis"}
@@ -272,6 +297,7 @@ const MapToolbarPermis = ({
               toolLabelTooltip={"Déplacer un permis"}
               toggleTool={toggleToolCallback}
               activeTool={activeTool}
+              disabled={voletOuvert.current}
             />
           </>
         )}
@@ -309,6 +335,7 @@ const MapToolbarPermis = ({
         dataPermisLayer={dataPermisLayer}
         disabled={false}
         hasRightToInteract={hasRightToInteract}
+        voletOuvert={voletOuvert}
       />
       {/* Volet d'Update suite à un déplacement */}
       <Volet

@@ -62,6 +62,7 @@ const MapPermis = () => {
     featureState,
     showUpdatePermis,
     handleCloseUpdatePermis,
+    voletOuvert,
   } = useToolbarPermisContext({
     map,
     workingLayer,
@@ -125,6 +126,7 @@ const MapPermis = () => {
               toggleTool={toggleTool}
               activeTool={activeTool}
               hasRightToInteract={hasRightToInteract}
+              voletOuvert={voletOuvert}
             />
           )
         }

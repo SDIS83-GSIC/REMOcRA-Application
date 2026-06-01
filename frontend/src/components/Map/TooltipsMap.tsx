@@ -911,18 +911,32 @@ export const TooltipMapEditPermis = ({
   dataPermisLayer,
   disabled,
   hasRightToInteract = false,
+  voletOuvert,
 }: {
   map: OLMap;
   disabledEditPermis: boolean;
   dataPermisLayer: any;
   disabled: boolean;
   hasRightToInteract: boolean;
+  voletOuvert: React.MutableRefObject<boolean>;
 }) => {
   const ref = useRef(null);
+  const [permisSelectionne, setPermisSelectionne] = useState<{
+    elementId: string;
+    geometry: { getFlatCoordinates: () => number[] };
+  } | null>(null);
   const [showUpdatePermis, setShowUpdatePermis] = useState(false);
-  const handleCloseUpdatePermis = () => setShowUpdatePermis(false);
+  const handleCloseUpdatePermis = () => {
+    voletOuvert.current = false;
+    setShowUpdatePermis(false);
+    setPermisSelectionne(null);
+  };
   const [showPermisReadOnly, setShowPermisReadOnly] = useState(false);
-  const handleClosePermisReadOnly = () => setShowPermisReadOnly(false);
+  const handleClosePermisReadOnly = () => {
+    voletOuvert.current = false;
+    setShowPermisReadOnly(false);
+    setPermisSelectionne(null);
+  };
 
   const { featureSelect, overlay } = useTooltipMap({
     ref: ref,
@@ -932,6 +946,7 @@ export const TooltipMapEditPermis = ({
   const displayEditDeleteButton =
     hasRightToInteract &&
     !disabledEditPermis &&
+    !voletOuvert.current &&
     featureSelect?.getProperties().typeElementCarte === "PERMIS" &&
     featureSelect?.getProperties().elementId != null;
   if (disabled) {
@@ -943,7 +958,13 @@ export const TooltipMapEditPermis = ({
         featureSelect={featureSelect}
         overlay={overlay}
         onClickEdit={() => {
-          setShowUpdatePermis(true), setShowPermisReadOnly(false);
+          if (voletOuvert.current) {
+            return;
+          }
+          voletOuvert.current = true;
+          setPermisSelectionne(featureSelect?.getProperties());
+          setShowUpdatePermis(true);
+          setShowPermisReadOnly(false);
         }}
         displayButtonEdit={displayEditDeleteButton}
         displayButtonDelete={displayEditDeleteButton}
@@ -954,9 +975,15 @@ export const TooltipMapEditPermis = ({
         }}
         deletePath={"/api/permis/" + featureSelect?.getProperties().elementId}
         disabled={disabled}
-        displayButtonSee={true}
+        displayButtonSee={!voletOuvert.current}
         onClickSee={() => {
-          setShowPermisReadOnly(true), setShowUpdatePermis(false);
+          if (voletOuvert.current) {
+            return;
+          }
+          voletOuvert.current = true;
+          setPermisSelectionne(featureSelect?.getProperties());
+          setShowPermisReadOnly(true);
+          setShowUpdatePermis(false);
         }}
       />
       <Volet
@@ -965,13 +992,9 @@ export const TooltipMapEditPermis = ({
         className="w-auto"
       >
         <UpdatePermis
-          permisId={featureSelect?.getProperties().elementId}
-          coordonneeX={
-            featureSelect?.getProperties().geometry.getFlatCoordinates()[0]
-          }
-          coordonneeY={
-            featureSelect?.getProperties().geometry.getFlatCoordinates()[1]
-          }
+          permisId={permisSelectionne?.elementId}
+          coordonneeX={permisSelectionne?.geometry.getFlatCoordinates()[0]}
+          coordonneeY={permisSelectionne?.geometry.getFlatCoordinates()[1]}
           srid={map.getView().getProjection().getCode().split(":")[1]}
           deplacement={false}
           onSubmit={() => {
@@ -987,13 +1010,9 @@ export const TooltipMapEditPermis = ({
         className="w-auto"
       >
         <UpdatePermis
-          permisId={featureSelect?.getProperties().elementId}
-          coordonneeX={
-            featureSelect?.getProperties().geometry.getFlatCoordinates()[0]
-          }
-          coordonneeY={
-            featureSelect?.getProperties().geometry.getFlatCoordinates()[1]
-          }
+          permisId={permisSelectionne?.elementId}
+          coordonneeX={permisSelectionne?.geometry.getFlatCoordinates()[0]}
+          coordonneeY={permisSelectionne?.geometry.getFlatCoordinates()[1]}
           srid={map.getView().getProjection().getCode().split(":")[1]}
           deplacement={false}
           readOnly={true}
