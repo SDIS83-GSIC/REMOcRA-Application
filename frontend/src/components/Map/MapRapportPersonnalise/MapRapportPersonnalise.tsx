@@ -3,6 +3,7 @@ import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
 import { addWktLayer } from "../MapUtils.tsx";
+import "./MapRapportPersonnalise.css";
 
 const MapRapportPersonnalise = ({ wkt }: { wkt: string[] }) => {
   const mapElement = useRef<HTMLDivElement>();
@@ -41,20 +42,21 @@ const MapRapportPersonnalise = ({ wkt }: { wkt: string[] }) => {
   }, [map, projection, wkt, workingLayer]);
 
   return (
-    <MapComponent
-      map={map}
-      workingLayer={workingLayer}
-      showOutilI={showOutilI}
-      outilI={infoOutilI}
-      handleCloseInfoI={handleCloseInfoI}
-      availableLayers={availableLayers}
-      addOrRemoveLayer={addOrRemoveLayer}
-      layerListRef={layerListRef}
-      mapToolbarRef={mapToolbarRef}
-      mapElement={mapElement}
-      toggleTool={toggleTool}
-      activeTool={activeTool}
-    />
+    <div className="map-wrapper-rapport">
+      <MapComponent
+        map={map}
+        showOutilI={showOutilI}
+        outilI={infoOutilI}
+        handleCloseInfoI={handleCloseInfoI}
+        availableLayers={availableLayers}
+        addOrRemoveLayer={addOrRemoveLayer}
+        layerListRef={layerListRef}
+        mapToolbarRef={mapToolbarRef}
+        mapElement={mapElement}
+        toggleTool={toggleTool}
+        activeTool={activeTool}
+      />
+    </div>
   );
 };
 
