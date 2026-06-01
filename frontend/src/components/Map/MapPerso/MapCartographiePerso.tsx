@@ -119,7 +119,8 @@ const MapCartographiePerso = () => {
           toggleTool={toggleTool}
           activeTool={activeTool}
           toolbarElement={
-            mapToolbarRef.current && (
+            mapToolbarRef.current &&
+            cartographiePersoLayer && (
               <MapToolbarCartographiePerso
                 toggleTool={toggleTool}
                 activeTool={activeTool ?? undefined}

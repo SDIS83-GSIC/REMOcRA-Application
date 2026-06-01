@@ -1,7 +1,8 @@
-import { Feature } from "ol";
+import { Feature, MapBrowserEvent } from "ol";
 import { asArray, asString } from "ol/color";
+import { EventsKey } from "ol/events";
 import { never, platformModifierKeyOnly } from "ol/events/condition";
-import { Extent, getCenter, getHeight, getWidth } from "ol/extent";
+import { getCenter } from "ol/extent";
 import { LineString, Point, Polygon } from "ol/geom";
 import {
   DragBox,
@@ -11,6 +12,7 @@ import {
   Select,
   Translate,
 } from "ol/interaction";
+import { ModifyEvent } from "ol/interaction/Modify";
 import VectorLayer from "ol/layer/Vector";
 import OLMap from "ol/Map";
 import VectorSource from "ol/source/Vector";
@@ -143,6 +145,9 @@ export const useToolbarPersoContext = ({
       layers: [cartographiePersoLayer],
       toggleCondition: platformModifierKeyOnly,
     });
+    selectCtrl.on("select", () => {
+      setSelectedFeatures(selectCtrl.getFeatures().getArray());
+    });
     const dragBoxCtrl = new DragBox({
       minArea: 25,
     });
@@ -201,138 +206,188 @@ export const useToolbarPersoContext = ({
       source: cartographiePersoLayer.getSource() ?? undefined,
     });
 
-    const calculateCenter = (geometry: {
-      getType: () => any;
-      getCoordinates: () => unknown;
-      getCoordinateAt: (arg0: number) => any;
-      getExtent: () => Extent;
-    }) => {
-      let center: number[];
-      let coordinates: number[][] | undefined;
-      let minRadius: number;
-      const type = geometry.getType();
-      if (type === "Polygon") {
-        let x = 0;
-        let y = 0;
-        let i = 0;
-        const polygonCoordinates = geometry.getCoordinates() as number[][][];
-        coordinates = polygonCoordinates[0].slice(1);
-        coordinates.forEach(function (coordinate: number[]) {
-          x += coordinate[0];
-          y += coordinate[1];
-          i++;
-        });
-        center = [x / i, y / i];
-      } else if (type === "LineString") {
-        center = geometry.getCoordinateAt(0.5) as number[];
-        coordinates = geometry.getCoordinates() as number[][];
-      } else {
-        center = getCenter(geometry.getExtent()) as number[];
-      }
-      let sqDistances: number[] | undefined;
-      if (coordinates) {
-        sqDistances = coordinates.map(function (coordinate) {
-          const dx = coordinate[0] - center[0];
-          const dy = coordinate[1] - center[1];
-          return dx * dx + dy * dy;
-        });
-        minRadius = Math.sqrt(Math.max(...sqDistances)) / 3;
-      } else {
-        minRadius =
-          Math.max(
-            getWidth(geometry.getExtent()),
-            getHeight(geometry.getExtent()),
-          ) / 3;
-      }
-      return {
-        center: center,
-        coordinates: coordinates,
-        minRadius: minRadius,
-        sqDistances: sqDistances,
-      };
-    };
     const defaultStyle = new Modify({
       source: cartographiePersoLayer.getSource() ?? undefined,
     })
       .getOverlay()
       .getStyleFunction();
 
-    // FIXME faire en sorte d'afficher une géométrie dédiée lors de la modification, actuellement seul le point sélectionné est visuellement déplacé
+    const scaleRotatePreviewSource = new VectorSource();
+    const scaleRotatePreviewLayer = new VectorLayer({
+      source: scaleRotatePreviewSource,
+      style: (feature) => {
+        const originalFeature = feature.get("originalFeature");
+        return (
+          originalFeature?.getStyle?.() ?? cartographiePersoLayer.getStyle()
+        );
+      },
+    });
+    scaleRotatePreviewLayer.setZIndex(
+      (cartographiePersoLayer.getZIndex() ?? 0) + 1,
+    );
 
     const modifyScaleCtrl = new Modify({
       source: cartographiePersoLayer.getSource() ?? undefined,
       deleteCondition: never,
       insertVertexCondition: never,
-      style: function (feature, resolution) {
-        feature.get("features").forEach(function (modifyFeature: {
-          get: (arg0: string) => any;
-        }) {
-          const modifyGeometry = modifyFeature.get("modifyGeometry");
-          if (modifyGeometry) {
-            const pointGeometry = feature?.getGeometry();
-            if (!(pointGeometry instanceof Point)) {
-              return;
-            }
-            const point = pointGeometry.getCoordinates();
-            let modifyPoint = modifyGeometry.point;
-            if (!modifyPoint) {
-              // save the initial geometry and vertex position
-              modifyPoint = point;
-              modifyGeometry.point = modifyPoint;
-              modifyGeometry.geometry0 = modifyGeometry.geometry;
-              // get anchor and minimum radius of vertices to be used
-              const result = calculateCenter(modifyGeometry.geometry0);
-              modifyGeometry.center = result.center;
-              modifyGeometry.minRadius = result.minRadius;
-            }
-
-            const center = modifyGeometry.center;
-            const minRadius = modifyGeometry.minRadius;
-            let dx, dy;
-            dx = modifyPoint[0] - center[0];
-            dy = modifyPoint[1] - center[1];
-            const initialRadius = Math.sqrt(dx * dx + dy * dy);
-            if (initialRadius > minRadius) {
-              const initialAngle = Math.atan2(dy, dx);
-              dx = point[0] - center[0];
-              dy = point[1] - center[1];
-              const currentRadius = Math.sqrt(dx * dx + dy * dy);
-              if (currentRadius > 0) {
-                const currentAngle = Math.atan2(dy, dx);
-                const geometry = modifyGeometry.geometry0.clone();
-                geometry.scale(
-                  currentRadius / initialRadius,
-                  undefined,
-                  center,
-                );
-                geometry.rotate(currentAngle - initialAngle, center);
-                modifyGeometry.geometry = geometry;
-              }
-            }
-          }
-        });
-
-        return defaultStyle?.(feature, resolution);
-      },
     });
 
-    modifyScaleCtrl.on("modifystart", function (event) {
-      event.features.forEach(function (feature) {
+    // Style invisible pour masquer la feature originale
+    const invisibleStyle = new Style({
+      fill: new Fill({ color: "rgba(0,0,0,0.0)" }),
+      stroke: new Stroke({ color: "rgba(0,0,0,0)", width: 0 }),
+      image: new CircleStyle({ radius: 0 }),
+    });
+
+    modifyScaleCtrl.on("modifystart", function (event: ModifyEvent) {
+      event.features.forEach(function (feature: Feature) {
         const geometry = feature.getGeometry();
         if (!geometry) {
           return;
         }
-        feature.set("modifyGeometry", { geometry: geometry.clone() }, true);
+        // Récupère le style d'origine (objet ou fonction)
+        let originalStyle = feature.getStyle?.();
+        if (typeof originalStyle === "function") {
+          originalStyle = originalStyle(feature, 1) || defaultStyle;
+        }
+        // Crée la preview avec le style d'origine cloné si possible
+        const previewFeature = new Feature(geometry.clone());
+        let previewStyle: Style =
+          defaultStyle instanceof Style ? defaultStyle : new Style();
+        // Vérifie que le style est bien une instance de Style (et non une fonction)
+        if (originalStyle instanceof Style) {
+          previewStyle = originalStyle.clone();
+        } else if (defaultStyle instanceof Style) {
+          previewStyle = defaultStyle.clone();
+        }
+        previewFeature.setStyle(previewStyle);
+        scaleRotatePreviewSource.addFeature(previewFeature);
+        // Stocke la géométrie et le style d'origine
+        feature.set("_geometry0", geometry.clone());
+        feature.set("_previewFeature", previewFeature);
+        // Si la feature n'a pas de style propre, stocke null (pour restaurer le style du layer)
+        feature.set(
+          "_originalStyle",
+          feature.getStyle ? (feature.getStyle() ?? null) : null,
+        );
+        // Masque la feature originale
+        feature.setStyle(invisibleStyle);
       });
     });
 
-    modifyScaleCtrl.on("modifyend", function (event) {
-      event.features.forEach(function (feature) {
-        const modifyGeometry = feature.get("modifyGeometry");
-        if (modifyGeometry) {
-          feature.setGeometry(modifyGeometry.geometry);
-          feature.unset("modifyGeometry", true);
+    // Gestion du drag pour la preview (écouteur pointerdrag sur la map)
+    let pointerDragListener: EventsKey | null = null;
+
+    modifyScaleCtrl.on("modifystart", function (event: ModifyEvent) {
+      const map =
+        event.mapBrowserEvent?.map ||
+        (event.target && event.target.getMap && event.target.getMap());
+      if (map) {
+        // Toujours retirer l'ancien listener si présent
+        if (pointerDragListener) {
+          map.un("pointerdrag", pointerDragListener.listener);
+          pointerDragListener = null;
         }
+        pointerDragListener = map.on(
+          "pointerdrag",
+          function (evt: MapBrowserEvent<PointerEvent>) {
+            event.features.forEach(function (feature: Feature) {
+              const previewFeature = feature.get("_previewFeature");
+              const geometry0 = feature.get("_geometry0");
+              if (!previewFeature || !geometry0) {
+                return;
+              }
+              const coordinate = evt.coordinate;
+              let point0 = feature.get("_point0");
+              let center0 = feature.get("_center0");
+              let radius0 = feature.get("_radius0");
+              let angle0 = feature.get("_angle0");
+              if (!point0) {
+                point0 = coordinate;
+                feature.set("_point0", point0);
+                let center;
+                const type = geometry0.getType();
+                if (type === "Polygon") {
+                  let x = 0,
+                    y = 0,
+                    i = 0;
+                  const coords = geometry0.getCoordinates()[0].slice(1);
+                  coords.forEach((c: number[]) => {
+                    x += c[0];
+                    y += c[1];
+                    i++;
+                  });
+                  center = [x / i, y / i];
+                } else if (type === "LineString") {
+                  center = geometry0.getCoordinateAt(0.5);
+                } else {
+                  center = getCenter(geometry0.getExtent());
+                }
+                center0 = center;
+                feature.set("_center0", center0);
+                radius0 = Math.sqrt(
+                  Math.pow(point0[0] - center0[0], 2) +
+                    Math.pow(point0[1] - center0[1], 2),
+                );
+                feature.set("_radius0", radius0);
+                angle0 = Math.atan2(
+                  point0[1] - center0[1],
+                  point0[0] - center0[0],
+                );
+                feature.set("_angle0", angle0);
+              }
+              const currentRadius = Math.sqrt(
+                Math.pow(coordinate[0] - center0[0], 2) +
+                  Math.pow(coordinate[1] - center0[1], 2),
+              );
+              const currentAngle = Math.atan2(
+                coordinate[1] - center0[1],
+                coordinate[0] - center0[0],
+              );
+              const scale = currentRadius / radius0;
+              const rotate = currentAngle - angle0;
+              const newGeometry = geometry0.clone();
+              newGeometry.scale(scale, undefined, center0);
+              newGeometry.rotate(rotate, center0);
+              previewFeature.setGeometry(newGeometry);
+            });
+          },
+        );
+      }
+    });
+
+    modifyScaleCtrl.on("modifyend", function (event: ModifyEvent) {
+      // Retire l'écouteur pointerdrag
+      const map =
+        event.mapBrowserEvent?.map ||
+        (event.target && event.target.getMap && event.target.getMap());
+      if (map && pointerDragListener) {
+        map.un("pointerdrag", pointerDragListener.listener);
+        pointerDragListener = null;
+      }
+      event.features.forEach(function (feature: Feature) {
+        const previewFeature = feature.get("_previewFeature");
+        if (previewFeature) {
+          const finalGeometry = previewFeature.getGeometry();
+          if (finalGeometry) {
+            feature.setGeometry(finalGeometry.clone());
+          }
+          scaleRotatePreviewSource.removeFeature(previewFeature);
+          feature.unset("_previewFeature");
+        }
+        // Restaure le style d'origine (null ou undefined => style du layer)
+        const originalStyle = feature.get("_originalStyle");
+        if (originalStyle !== undefined && originalStyle !== null) {
+          feature.setStyle(originalStyle);
+        } else {
+          feature.setStyle(undefined);
+        }
+        feature.unset("_originalStyle");
+        feature.unset("_geometry0");
+        feature.unset("_point0");
+        feature.unset("_center0");
+        feature.unset("_radius0");
+        feature.unset("_angle0");
       });
     });
 
@@ -342,6 +397,26 @@ export const useToolbarPersoContext = ({
 
     function toggleModifyScale(active = false) {
       toggleCtrl(active, modifyScaleCtrl);
+      if (active) {
+        if (!map?.getLayers().getArray().includes(scaleRotatePreviewLayer)) {
+          map?.addLayer(scaleRotatePreviewLayer);
+        }
+      } else {
+        const source = cartographiePersoLayer?.getSource();
+        source?.getFeatures().forEach((feature) => {
+          const modifyGeometry = feature.get("modifyGeometry");
+          if (modifyGeometry?.previewFeature) {
+            scaleRotatePreviewSource.removeFeature(
+              modifyGeometry.previewFeature,
+            );
+          }
+
+          feature.unset("modifyGeometry", true);
+        });
+
+        scaleRotatePreviewSource.clear();
+        map?.removeLayer(scaleRotatePreviewLayer);
+      }
     }
 
     const translateSelectCtrl = new Select({
