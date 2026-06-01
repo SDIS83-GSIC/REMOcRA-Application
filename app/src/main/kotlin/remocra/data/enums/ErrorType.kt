@@ -511,6 +511,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_TASK_FORBIDDEN(16000, "Vous n'avez pas les droits d'administration des tâches planifiées.", Status.FORBIDDEN),
     ADMIN_TASK_SYNCHRO_SIG_SCRIPT_VUE(16001, "Le script de création de vue est nécessaire pour le type de synchronisation  $PLACEHOLDER_ERROR_TYPE"),
     ADMIN_TASK_SYNCHRO_CRON_INVALIDE(16002, "La CronExpression fournie est invalide : $PLACEHOLDER_ERROR_TYPE"),
+    ADMIN_TASK_SYNCHRO_UTILSATEUR_EMAIL(16003, "Si 'Accepter les utilisateurs sans email' est cochée, alors l'adresse mail par défaut doit être renseignée."),
 
     API_SYNCHRO_ERREUR_RESERVATION(20000, "Erreur lors de la réservation des tournées $PLACEHOLDER_ERROR_TYPE"),
     API_SYNCHRO_NO_COMMUNE(20001, "Impossible d'insérer le PEI : il n'est sur aucune commune connue."),

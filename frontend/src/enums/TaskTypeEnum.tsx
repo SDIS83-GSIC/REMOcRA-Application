@@ -16,6 +16,19 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
         label: "Supprimer les utilisateurs :",
         tooltipMessage: "",
       },
+      accepteUserSansEmail: {
+        typeTaskParametre: TYPE_TASK_PARAMETRE.BOOLEAN,
+        required: false,
+        label: "Accepter les utilisateurs sans email :",
+        tooltipMessage: "",
+      },
+      emailParDefaut: {
+        typeTaskParametre: TYPE_TASK_PARAMETRE.STRING,
+        required: false,
+        label: "Email par défaut :",
+        tooltipMessage:
+          "Est utile si la case 'Accepter les utilisateurs sans email' est cochée. Correspond à l'email qui sera utilisée pour les utilisateurs sans adresse mail lors de la synchronisation.",
+      },
     },
     notification: false,
     isConfigurable: true,

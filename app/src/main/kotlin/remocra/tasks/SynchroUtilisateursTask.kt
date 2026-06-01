@@ -73,6 +73,15 @@ class SynchroUtilisateurTask @Inject constructor(
                         for (userRepresentation: UserRepresentation in usersKeycloak.body()!!) {
                             // Si l'utilisateur est déjà en base
                             val utilisateurExistant = listeUtilisateursRemocra?.firstOrNull { it.utilisateurKeycloakId == userRepresentation.id }
+                            val email: String = userRepresentation.email?.takeIf { it.isNotEmpty() }
+                                ?: if (parameters?.accepteUserSansEmail == true) {
+                                    parameters.emailParDefaut
+                                        ?: throw IllegalArgumentException("L'adresse mail par défaut doit être définie")
+                                } else {
+                                    val errorMessage = "[TASK_SYNCHRO_UTILISATEUR] L'utilisateur '${userRepresentation.username}' n'a pas d'adresse mail et le paramètre 'accepteUserSansEmail' est à false"
+                                    logManager.error(errorMessage)
+                                    throw IllegalArgumentException(errorMessage)
+                                }
                             if (utilisateurExistant != null) {
                                 // On met à jour les propriétés si besoin
                                 if (utilisateurExistant.utilisateurEmail != userRepresentation.email ||
@@ -83,7 +92,7 @@ class SynchroUtilisateurTask @Inject constructor(
                                         idUtilisateur = utilisateurExistant.utilisateurId,
                                         nom = userRepresentation.lastName,
                                         prenom = userRepresentation.firstName,
-                                        email = userRepresentation.email,
+                                        email = email,
                                         actif = userRepresentation.enabled,
                                     )
                                     nbUtilisateurUpdate++
@@ -97,7 +106,7 @@ class SynchroUtilisateurTask @Inject constructor(
                                 try {
                                     val utilisateur = utilisateurRepository.insertUtilisateur(
                                         id = UUID.randomUUID(),
-                                        email = userRepresentation.email,
+                                        email = email,
                                         prenom = userRepresentation.firstName,
                                         nom = userRepresentation.lastName,
                                         username = userRepresentation.username,
@@ -151,7 +160,11 @@ class SynchroUtilisateurTask @Inject constructor(
     }
 
     override fun checkParameters(parameters: SynchroUtilisateurTaskParameters?) {
-        // Par défaut le champ "canSuppress" est false
+        if (parameters?.accepteUserSansEmail == true && parameters.emailParDefaut == null) {
+            val errorMessage = "L'adresse mail par défaut doit être définie"
+            logManager.error(errorMessage)
+            throw IllegalArgumentException(errorMessage)
+        }
     }
 
     override fun getType(): TypeTask =
@@ -169,4 +182,6 @@ class SynchroUtilisateurTask @Inject constructor(
 data class SynchroUtilisateurTaskParameters(
     override val notification: NotificationMailData?,
     val canSuppressUser: Boolean = false,
+    val accepteUserSansEmail: Boolean = false,
+    val emailParDefaut: String?,
 ) : SchedulableTaskParameters(notification)

@@ -16,6 +16,7 @@ import remocra.db.jooq.remocra.tables.pojos.Task
 import remocra.eventbus.parametres.ParametresModifiedEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
+import remocra.tasks.SynchroUtilisateurTaskParameters
 import remocra.tasks.SynchronisationSIGTaskParameter
 import remocra.tasks.TypeSynchronisation
 import remocra.usecase.AbstractCUDUseCase
@@ -44,6 +45,14 @@ class UpdateTaskUseCase @Inject constructor(private val taskRepository: TaskRepo
                     }
                     requestUtils.validateQueryWithCreate(tableASynchroniser.scriptCreationVue)
                 }
+            }
+        }
+
+        if (element.taskType == TypeTask.SYNCHRO_UTILISATEUR) {
+            val taskParameters = objectMapper.readValue<SynchroUtilisateurTaskParameters>(element.taskParametres.toString())
+
+            if (taskParameters.accepteUserSansEmail && taskParameters.emailParDefaut == null) {
+                throw RemocraResponseException(ErrorType.ADMIN_TASK_SYNCHRO_UTILSATEUR_EMAIL)
             }
         }
     }
