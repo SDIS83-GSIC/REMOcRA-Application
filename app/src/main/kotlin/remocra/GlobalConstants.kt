@@ -71,6 +71,8 @@ object GlobalConstants {
 
     val DOSSIER_DOCUMENT = DOSSIER_DATA.resolve("documents")
 
+    val DOSSIER_MOBILE_LOG = DOSSIER_DOCUMENT.resolve("mobile-log")
+
     val DOSSIER_APACHE_HOP = DOSSIER_DATA.resolve("apache_hop")
     val DOSSIER_APACHE_HOP_CONFIG = DOSSIER_APACHE_HOP.resolve("config")
     val DOSSIER_APACHE_HOP_TASK = DOSSIER_APACHE_HOP.resolve("tasks")

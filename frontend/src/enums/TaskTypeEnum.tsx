@@ -220,6 +220,15 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
     notification: false,
     isConfigurable: false,
   },
+  MOBILE_EXPORT_LOG: {
+    id: "MOBILE_EXPORT_LOG",
+    code: "MOBILE_EXPORT_LOG",
+    label: "Mobile - Exporter les logs de l'application mobile",
+    commentaire: "",
+    parametre: {},
+    notification: false,
+    isConfigurable: false,
+  },
   IMPORT_CADASTRE: {
     id: "IMPORT_CADASTRE",
     code: "IMPORT_CADASTRE",

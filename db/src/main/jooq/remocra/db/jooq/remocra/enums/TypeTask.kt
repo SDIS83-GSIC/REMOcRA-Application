@@ -68,6 +68,7 @@ enum class TypeTask(@get:JvmName("literal") public val literal: String) : EnumTy
     IMPORT_CADASTRE("IMPORT_CADASTRE"),
     INTEGRER_INCOMING_NEW_PEI_REMOCRA("INTEGRER_INCOMING_NEW_PEI_REMOCRA"),
     INTEGRER_INCOMING_GESTIONNAIRE_REMOCRA("INTEGRER_INCOMING_GESTIONNAIRE_REMOCRA"),
+    MOBILE_EXPORT_LOG("MOBILE_EXPORT_LOG"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA

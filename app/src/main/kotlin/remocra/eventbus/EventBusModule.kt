@@ -11,6 +11,7 @@ import remocra.eventbus.anomalie.AnomalieModifiedEventListener
 import remocra.eventbus.mobile.IntegrationGestionnaireEventListener
 import remocra.eventbus.mobile.IntegrationNewPeiEventListener
 import remocra.eventbus.mobile.IntegrationTourneeEventListener
+import remocra.eventbus.mobile.MobileExportLogEventListener
 import remocra.eventbus.notification.NotificationEventListener
 import remocra.eventbus.pei.PeiModifiedEventListener
 import remocra.eventbus.tracabilite.TracabiliteEventListener
@@ -30,6 +31,7 @@ object EventBusModule : RemocraModule() {
             addBinding().to<AnomalieModifiedEventListener>()
             addBinding().to<ParametresProvider>()
             addBinding().to<DataCacheProvider>()
+            addBinding().to<MobileExportLogEventListener>()
         }
 
         bind<EventBus>().to<EventBusImpl>().`in`(Singleton::class.java)

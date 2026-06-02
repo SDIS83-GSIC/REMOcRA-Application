@@ -22,11 +22,17 @@ constructor(
         logManager.info("Exécution du job")
         /** Suppression du contenu de documents/tmp/ */
         if (parameters!!.purgerDocumentTemp) {
-            logManager.info("[Purge Document Temporaire] Début de la suppression")
             try {
                 val dateLimiteDeConservation = dateUtils.now().minusHours(GlobalConstants.DELAI_PURGE_FICHIER_TEMPORAIRE)
+
+                logManager.info("[Purge Document Temporaire] Début de la suppression")
                 documentUtils.cleanDirectoryFileOlderThan(GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE, dateLimiteDeConservation)
                 logManager.info("[Purge Document Temporaire] Suppression terminée avec succès")
+
+                // Idem pour les fichiers de logs mobiles
+                logManager.info("[Purge Document de log Mobile] Début de la suppression")
+                documentUtils.cleanDirectoryFileOlderThan(GlobalConstants.DOSSIER_MOBILE_LOG, dateLimiteDeConservation)
+                logManager.info("[Purge Document de log Mobile] Suppression terminée avec succès")
             } catch (e: Exception) {
                 logManager.error("Une erreur est survenue lors de la suppression du contenu de ${GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE} : $e")
             }
