@@ -202,7 +202,10 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
                     .where(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID.eq(COUCHE_METADATA.ID)),
             )
             .and(params.filterBy?.toCondition() ?: DSL.trueCondition())
-            .orderBy(params.sortBy?.toCondition())
+            .orderBy(
+                params.sortBy?.toCondition()?.takeIf { it.isNotEmpty() }
+                    ?: listOf(GROUPE_COUCHE.LIBELLE.asc(), COUCHE.LIBELLE.asc()),
+            )
             .limit(params.limit)
             .offset(params.offset)
             .fetchInto(ResponseCouche::class.java)
