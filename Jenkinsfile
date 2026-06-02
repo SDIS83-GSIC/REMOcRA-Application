@@ -59,6 +59,9 @@ pipeline {
           }
         }
         stage('Sonar') {
+          when {
+            expression { !isGerritReview() }
+          }
           steps {
             sonarscanner()
           }
