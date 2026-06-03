@@ -468,7 +468,7 @@ const ListTournee = ({
         return row;
       },
       type: TYPE_BUTTON.CONFIRM,
-      hide: (row: RowTournee) => !row?.original.estDansIncoming,
+      hide: (row: RowTournee["original"]) => !row?.estDansIncoming,
       icon: <IconImport />,
       textEnable: "Réintégrer la tournée de incoming à REMOcRA",
       classEnable: "info",
