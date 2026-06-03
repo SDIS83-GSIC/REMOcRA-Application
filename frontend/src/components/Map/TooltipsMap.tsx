@@ -1230,9 +1230,13 @@ export const TooltipMapRisque = ({
 export const TooltipMapDFCI = ({
   map,
   dataDfciAireLayer,
+  dataDfciPisteLayer,
 }: {
   map?: OLMap;
   dataDfciAireLayer:
+    | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
+    | undefined;
+  dataDfciPisteLayer:
     | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
     | undefined;
 }) => {
@@ -1275,6 +1279,9 @@ export const TooltipMapDFCI = ({
             switch (typeElem) {
               case DFCI_ELEMENT.AIRE:
                 dataDfciAireLayer?.getSource()?.refresh();
+                break;
+              case DFCI_ELEMENT.PISTE:
+                dataDfciPisteLayer?.getSource()?.refresh();
                 break;
             }
           }}

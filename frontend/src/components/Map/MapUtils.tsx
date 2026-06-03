@@ -149,10 +149,10 @@ export function createVectorLayer(
       style ??
       new Style({
         fill: new Fill({
-          color: "rgba(0, 0, 0, 0)",
-        }),
+          color: "rgba(0, 0, 0, 0.01)", //Applique un style invisible à l'oeil nu par defaut en l'absence de geoserver
+        }), //(bug OpenLayer ne permettant pas de cliquer sur des lignes totalement transparentes)
         stroke: new Stroke({
-          color: "rgba(0, 0, 0, 0)",
+          color: "rgba(0, 0, 0, 0.01)",
           width: 4,
         }),
         image: new CircleStyle({

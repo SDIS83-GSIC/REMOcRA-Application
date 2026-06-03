@@ -11,9 +11,13 @@ import { TooltipMapDFCI } from "../TooltipsMap.tsx";
 const MapToolbarDFCI = ({
   map,
   dataDfciAireLayer,
+  dataDfciPisteLayer,
 }: {
   map?: OLMap;
   dataDfciAireLayer:
+    | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
+    | undefined;
+  dataDfciPisteLayer:
     | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
     | undefined;
 }) => {
@@ -25,7 +29,11 @@ const MapToolbarDFCI = ({
           titreVolet="Liste des documents DFCI"
         />
       </ButtonGroup>
-      <TooltipMapDFCI map={map} dataDfciAireLayer={dataDfciAireLayer} />
+      <TooltipMapDFCI
+        map={map}
+        dataDfciAireLayer={dataDfciAireLayer}
+        dataDfciPisteLayer={dataDfciPisteLayer}
+      />
     </>
   );
 };

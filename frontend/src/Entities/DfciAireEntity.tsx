@@ -1,3 +1,5 @@
+import { idCodeLibelleFromEnum } from "../utils/idCodeLibelleFromEnum.tsx";
+
 /**
  * Enumération des différents type possible d'une aire
  */
@@ -6,9 +8,7 @@ export enum TypeAire {
   RETOURNEMENT = "Retournement",
 }
 
-export const listTypeAire = Object.entries(TypeAire).map(([key, value]) => {
-  return { id: key, code: key, libelle: value.toString() };
-});
+export const listTypeAire = idCodeLibelleFromEnum(TypeAire);
 
 /**
  * Type représentant les données d'une aire

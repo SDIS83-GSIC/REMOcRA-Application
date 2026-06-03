@@ -46,6 +46,21 @@ const MapDFCI = () => {
     );
   }, [map, projection]);
 
+  const dataDfciPisteLayer = useMemo(() => {
+    if (!map) {
+      return;
+    }
+    return createPointLayer(
+      map,
+      (extent, projection) =>
+        `/api/dfci-pistes/layer?bbox=` +
+        extent.join(",") +
+        "&srid=" +
+        projection.getCode(),
+      projection,
+    );
+  }, [map, projection]);
+
   const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
     useToolbarContext({
       availableLayers: availableLayers,
@@ -74,7 +89,11 @@ const MapDFCI = () => {
         activeTool={activeTool}
         toolbarElement={
           mapToolbarRef.current && (
-            <MapToolbarDFCI map={map} dataDfciAireLayer={dataDfciAireLayer} />
+            <MapToolbarDFCI
+              map={map}
+              dataDfciAireLayer={dataDfciAireLayer}
+              dataDfciPisteLayer={dataDfciPisteLayer}
+            />
           )
         }
       />

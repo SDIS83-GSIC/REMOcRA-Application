@@ -1,5 +1,6 @@
 import { DFCI_ELEMENT } from "../../enums/DfciElementEnum.tsx";
 import { UpdateDfciAire } from "./UpdateDfciAire.tsx";
+import { UpdateDfciPiste } from "./UpdateDfciPiste.tsx";
 
 /**
  * Composant permettant de visualiser l'élément
@@ -22,6 +23,14 @@ const DfciUpdateElement = ({
       return (
         <UpdateDfciAire
           aireId={elementId}
+          onSubmit={onSubmit}
+          readOnly={readOnly}
+        />
+      );
+    case DFCI_ELEMENT.PISTE:
+      return (
+        <UpdateDfciPiste
+          pisteId={elementId}
           onSubmit={onSubmit}
           readOnly={readOnly}
         />
