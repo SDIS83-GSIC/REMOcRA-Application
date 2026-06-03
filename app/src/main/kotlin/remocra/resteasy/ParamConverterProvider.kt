@@ -4,11 +4,13 @@ import jakarta.ws.rs.ext.ParamConverter
 import jakarta.ws.rs.ext.ParamConverterProvider
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.io.WKTReader
+import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.time.LocalDate
 import java.time.OffsetDateTime
 import java.time.ZonedDateTime
 import java.time.format.DateTimeParseException
+import java.util.UUID
 
 class ParamConverterProvider : ParamConverterProvider {
     @Suppress("UNCHECKED_CAST")
@@ -21,7 +23,10 @@ class ParamConverterProvider : ParamConverterProvider {
             ZonedDateTime::class.java -> ZonedDateTimeParamConverter as ParamConverter<T>
             LocalDate::class.java -> LocalDateParamConverter as ParamConverter<T>
             OffsetDateTime::class.java -> OffsetDateTimeDateParamConverter as ParamConverter<T>
-            Set::class.java -> SetParamConverter as ParamConverter<T>
+            Set::class.java -> {
+                val itemType = (genericType as? ParameterizedType)?.actualTypeArguments?.firstOrNull()
+                SetParamConverter(itemType) as ParamConverter<T>
+            }
             Geometry::class.java -> GeometryParamConverter as ParamConverter<T>
             else -> null
         }
@@ -73,19 +78,30 @@ private object OffsetDateTimeDateParamConverter : ParamConverter<OffsetDateTime>
         }
 }
 
-private object SetParamConverter : ParamConverter<Set<*>> {
+private class SetParamConverter(
+    private val itemType: Type?,
+) : ParamConverter<Set<*>> {
 
     override fun toString(value: Set<*>?): String =
         (value ?: throw IllegalArgumentException()).toString()
 
     override fun fromString(value: String?): Set<*>? =
         (value ?: throw IllegalArgumentException())
-            .takeUnless { it.isEmpty() }
-            ?.replace("[", "")
-            ?.replace("]", "")
-            ?.replace("\"", "")
+            .takeUnless { it.isBlank() }
+            ?.removePrefix("[")
+            ?.removeSuffix("]")
             ?.split(",")
-            ?.toHashSet()
+            ?.mapNotNull { token ->
+                val normalized = token.trim().trim('"')
+                if (normalized.isBlank()) null else convertValue(normalized)
+            }
+            ?.toSet()
+
+    private fun convertValue(value: String): Any =
+        when (itemType) {
+            UUID::class.java -> UUID.fromString(value)
+            else -> value
+        }
 }
 
 private object GeometryParamConverter : ParamConverter<Geometry> {
