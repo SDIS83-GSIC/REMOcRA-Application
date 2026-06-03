@@ -86,6 +86,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
         1103,
         "Le PEI fait partie d'une tournée réservée, impossible de le supprimer",
     ),
+    PEI_TOURNEE_RESERVE(1104, "Impossible de modifier l'affectation des tournées : $PLACEHOLDER_ERROR_TYPE. Elles sont réservées"),
+    TOURNEE_DESAFFECTER(1105, "Vous n'avez pas le droit de désaffecter un PEI d'une tournée"),
 
     FORBIDDEN(1300, "Le numéro spécifié ne correspond à aucun hydrant qui vous est accessible", Status.FORBIDDEN),
     BAD_PATTERN(1010, "La date spécifiée n'existe pas ou ne respecte pas le format YYYY-MM-DD hh:mm"),

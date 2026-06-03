@@ -21,6 +21,7 @@ import { requiredString } from "../../../module/validators.tsx";
 import CreateDebitSimultane from "../../../pages/DebitSimultane/CreateDebitSimultane.tsx";
 import CreateIndisponibiliteTemporaire from "../../../pages/IndisponibiliteTemporaire/CreateIndisponibiliteTemporaire.tsx";
 import AffecterPeiTourneeMap from "../../../pages/Tournee/AffecterPeiTourneeMap.tsx";
+import DesaffecterPeiTourneeMap from "../../../pages/Tournee/DesaffecterPeiTourneeMap.tsx";
 import { useAppContext } from "../../App/AppProvider.tsx";
 import { useGet } from "../../Fetch/useFetch.tsx";
 import { CheckBoxInput, FormContainer, TextInput } from "../../Form/Form.tsx";
@@ -32,6 +33,7 @@ import {
   IconMoveObjet,
   IconSelect,
   IconTournee,
+  IconUnlock,
 } from "../../Icon/Icon.tsx";
 import VoletButtonListeDocumentThematique from "../../ListeDocumentThematique/VoletButtonListeDocumentThematique.tsx";
 import EditModal from "../../Modal/EditModal.tsx";
@@ -44,7 +46,7 @@ import ToolbarButton from "../ToolbarButton.tsx";
 import TooltipMapPei from "../TooltipsMap.tsx";
 
 // Type pour les PEI sélectionnés pour les tournées
-type PeiSelect = {
+export type PeiSelect = {
   peiId: string;
   numeroComplet: string;
 };
@@ -92,6 +94,9 @@ export const useToolbarPeiContext = ({
 
   const [showCreateTournee, setShowCreateTournee] = useState(false);
   const handleCloseTournee = () => setShowCreateTournee(false);
+
+  const [showDesaffecterTournee, setShowDesaffecterTournee] = useState(false);
+  const handleCloseDesaffecterTournee = () => setShowDesaffecterTournee(false);
 
   const [showCreateDebitSimultane, setShowCreateDebitSimultane] =
     useState(false);
@@ -503,6 +508,10 @@ export const useToolbarPeiContext = ({
     setShowCreateTournee(true);
   }
 
+  function createDesaffecterTournee() {
+    setShowDesaffecterTournee(true);
+  }
+
   function createIndispoTemp() {
     setShowCreateIndispoTemp(true);
   }
@@ -539,8 +548,11 @@ export const useToolbarPeiContext = ({
     listePeiId,
     createIndispoTemp,
     createUpdateTournee,
+    createDesaffecterTournee,
     showCreateTournee,
+    showDesaffecterTournee,
     handleCloseTournee,
+    handleCloseDesaffecterTournee,
     listePeiTourneePublic,
     listePeiTourneePrive,
     listePeiTourneeIcpe,
@@ -575,7 +587,10 @@ const MapToolbarPei = ({
   listePeiId,
   createIndispoTemp,
   createUpdateTournee,
+  createDesaffecterTournee,
+  showDesaffecterTournee,
   showCreateTournee,
+  handleCloseDesaffecterTournee,
   handleCloseTournee,
   listePeiTourneePrive,
   listePeiTourneePublic,
@@ -611,8 +626,11 @@ const MapToolbarPei = ({
   listePeiId: string[];
   createIndispoTemp: () => void;
   createUpdateTournee: () => void;
+  createDesaffecterTournee: () => void;
   showCreateTournee: boolean;
+  showDesaffecterTournee: boolean;
   handleCloseTournee: () => void;
+  handleCloseDesaffecterTournee: () => void;
   listePeiTourneePrive: PeiSelect[];
   listePeiTourneePublic: PeiSelect[];
   listePeiTourneeIcpe: PeiSelect[];
@@ -802,13 +820,46 @@ const MapToolbarPei = ({
               <IconTournee />
             </Button>
           </TooltipCustom>
-
+          {hasDroit(user, TYPE_DROIT.TOURNEE_DESAFFECTER_U) && (
+            <TooltipCustom
+              tooltipText={
+                showFormPei ? (
+                  "Un formulaire est en cours d'édition"
+                ) : listePeiTourneePrive.length === 0 &&
+                  listePeiTourneePublic.length === 0 &&
+                  listePeiTourneeIcpe.length === 0 ? (
+                  <>
+                    <b>Désaffecter les PEI de leur tournée</b>
+                    <br />
+                    Sélectionnez au moins un PEI pour désaffecter une tournée.
+                  </>
+                ) : (
+                  "Désaffecter les PEI de leur tournée"
+                )
+              }
+              tooltipId={"desaffecter-pei-tournee-carte"}
+            >
+              <Button
+                variant="outline-primary"
+                onClick={createDesaffecterTournee}
+                className="rounded m-2"
+                disabled={
+                  (listePeiTourneePrive.length === 0 &&
+                    listePeiTourneePublic.length === 0 &&
+                    listePeiTourneeIcpe.length === 0) ||
+                  showFormPei ||
+                  showFormVisite.show
+                }
+              >
+                <IconUnlock />
+              </Button>
+            </TooltipCustom>
+          )}
           {/* documents */}
           <VoletButtonListeDocumentThematique
             codeThematique={THEMATIQUE.POINT_EAU}
             titreVolet="Liste des documents liés aux PEI"
           />
-
           <Volet
             handleClose={handleCloseTournee}
             show={showCreateTournee}
@@ -825,6 +876,20 @@ const MapToolbarPei = ({
               isPrive={listePeiTourneePrive.length !== 0}
               isIcpe={listePeiTourneeIcpe.length !== 0}
               closeVolet={handleCloseTournee}
+            />
+          </Volet>
+          <Volet
+            handleClose={handleCloseDesaffecterTournee}
+            show={showDesaffecterTournee}
+            className="w-auto"
+          >
+            <DesaffecterPeiTourneeMap
+              listePei={[
+                ...listePeiTourneePrive,
+                ...listePeiTourneeIcpe,
+                ...listePeiTourneePublic,
+              ]}
+              closeVolet={handleCloseDesaffecterTournee}
             />
           </Volet>
         </>

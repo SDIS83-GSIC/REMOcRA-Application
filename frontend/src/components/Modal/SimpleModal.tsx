@@ -1,13 +1,17 @@
 import { ReactNode } from "react";
 import { Button, Modal } from "react-bootstrap";
 
-const SimpleModalBody = ({ closeModal, content }: SimpleModalBodyType) => {
+export const SimpleModalBody = ({
+  closeModal,
+  content,
+  confirmButtonText,
+}: SimpleModalBodyType) => {
   return (
     <>
       <Modal.Body>{content}</Modal.Body>
       <Modal.Footer>
         <Button variant="primary" onClick={closeModal}>
-          Fermer
+          {confirmButtonText ?? "Fermer"}
         </Button>
       </Modal.Footer>
     </>
@@ -40,6 +44,7 @@ type SimpleModalType = SimpleModalBodyType & {
 type SimpleModalBodyType = {
   closeModal: () => void;
   content: ReactNode;
+  confirmButtonText?: string;
 };
 
 export default SimpleModal;

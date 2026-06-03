@@ -54,7 +54,25 @@ class TourneeRepository
 @Inject constructor(
     private val dsl: DSLContext,
 ) : AbstractRepository() {
-    fun getAllTourneeComplete(filter: Filter?, isSuperAdmin: Boolean, affiliatedOrganismeIds: Set<UUID>): List<TourneeComplete> {
+
+    fun getTourneesByPeiId(peiId: UUID, userInfo: WrappedUserInfo): List<Tournee> =
+        dsl.select(*TOURNEE.fields())
+            .from(TOURNEE)
+            .join(L_TOURNEE_PEI).on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
+            .where(L_TOURNEE_PEI.PEI_ID.eq(peiId))
+            .and(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    TOURNEE.ORGANISME_ID.`in`(userInfo.affiliatedOrganismeIds?.toMutableSet() ?: emptyList<UUID>()),
+                    userInfo.isSuperAdmin,
+                ),
+            )
+            .fetchInto()
+
+    fun getAllTourneeComplete(
+        filter: Filter?,
+        isSuperAdmin: Boolean,
+        affiliatedOrganismeIds: Set<UUID>,
+    ): List<TourneeComplete> {
         val peiCounterCteName = name("PEI_COUNTER_CTE")
         val peiCounterCte = peiCounterCteName.fields("TOURNEE_ID", "TOURNEE_NB_PEI").`as`(
             select(
@@ -82,7 +100,10 @@ class TourneeRepository
         val ropCounterCte = ropCounterCteName.fields("TOURNEE_ID", "TOURNEE_NB_ROP_REALISEE").`as`(
             select(
                 L_TOURNEE_PEI.TOURNEE_ID,
-                count().filterWhere(DSL.toChar(V_PEI_VISITE_DATE.LAST_ROP, DSL.`val`("YYYY")).eq(DSL.toChar(DSL.currentDate(), DSL.`val`("YYYY")))).`as`("TOURNEE_NB_ROP_REALISEE"),
+                count().filterWhere(
+                    DSL.toChar(V_PEI_VISITE_DATE.LAST_ROP, DSL.`val`("YYYY"))
+                        .eq(DSL.toChar(DSL.currentDate(), DSL.`val`("YYYY"))),
+                ).`as`("TOURNEE_NB_ROP_REALISEE"),
             )
                 .from(L_TOURNEE_PEI)
                 .join(V_PEI_VISITE_DATE)
@@ -172,7 +193,10 @@ class TourneeRepository
      * @param listPeiId liste des PEIs
      * @param userInfo UserInfo
      */
-    fun getListTourneeLibelleByListPeiAndAffiliatedOrganisme(listPeiId: List<UUID>, userInfo: WrappedUserInfo): Map<UUID, String> =
+    fun getListTourneeLibelleByListPeiAndAffiliatedOrganisme(
+        listPeiId: List<UUID>,
+        userInfo: WrappedUserInfo,
+    ): Map<UUID, String> =
         dsl.select(
             L_TOURNEE_PEI.PEI_ID.`as`("PEI_ID"),
             listAgg(TOURNEE.LIBELLE, ", ").withinGroupOrderBy(TOURNEE.LIBELLE).`as`("LIBELLES"),
@@ -214,7 +238,13 @@ class TourneeRepository
         .where(TOURNEE.ID.`in`(idsTournees))
         .execute()
 
-    fun getTournees(isSuperAdmin: Boolean, listeOrganisme: Set<UUID>, isPrive: Boolean?, isIcpe: Boolean?, listePei: Set<UUID>): List<Tournee> {
+    fun getTournees(
+        isSuperAdmin: Boolean,
+        listeOrganisme: Set<UUID>,
+        isPrive: Boolean?,
+        isIcpe: Boolean?,
+        listePei: Set<UUID>,
+    ): List<Tournee> {
         val tourneesToExclude = getTourneeSameOrganisme(listePei)
         return getTourneeByIdOrPei()
             .leftJoin(L_TOURNEE_PEI)
@@ -301,11 +331,22 @@ class TourneeRepository
             .where(L_TOURNEE_PEI.PEI_ID.eq(peiId))
             .fetchInto()
 
-    fun getTourneeIdLibelleByMotif(userInfo: WrappedUserInfo, motifLibelle: String): Collection<GlobalData.IdLibelleData> =
+    fun getTourneeIdLibelleByMotif(
+        userInfo: WrappedUserInfo,
+        motifLibelle: String,
+    ): Collection<GlobalData.IdLibelleData> =
         dsl.select(TOURNEE.ID.`as`("id"), TOURNEE.LIBELLE.`as`("libelle"))
             .from(TOURNEE)
             .where(TOURNEE.LIBELLE.containsIgnoreCaseUnaccent(motifLibelle))
-            .and(userInfo.isSuperAdmin.let { if (it) { DSL.noCondition() } else { TOURNEE.ORGANISME_ID.`in`(userInfo.affiliatedOrganismeIds) } })
+            .and(
+                userInfo.isSuperAdmin.let {
+                    if (it) {
+                        DSL.noCondition()
+                    } else {
+                        TOURNEE.ORGANISME_ID.`in`(userInfo.affiliatedOrganismeIds)
+                    }
+                },
+            )
             .orderBy(TOURNEE.LIBELLE)
             .fetchInto()
 
@@ -341,21 +382,55 @@ class TourneeRepository
          *  @param f3: TableField<Record, String?>
          *  @return Field<String>
          */
-        private fun concatFieldTriple(f1: TableField<Record, String?>, f2: TableField<Record, String?>, f3: TableField<Record, String?>): Field<String> =
-            concat(f1, DSL.`val`(" "), f2, DSL.`val`(" "), f3, DSL.`val`(" "), f1, DSL.`val`(" "), f2, DSL.`val`(" "), f1, DSL.`val`(" "), f3, DSL.`val`(" "), f2, DSL.`val`(" "), f1, DSL.`val`(" "), f3)
+        private fun concatFieldTriple(
+            f1: TableField<Record, String?>,
+            f2: TableField<Record, String?>,
+            f3: TableField<Record, String?>,
+        ): Field<String> =
+            concat(
+                f1,
+                DSL.`val`(" "),
+                f2,
+                DSL.`val`(" "),
+                f3,
+                DSL.`val`(" "),
+                f1,
+                DSL.`val`(" "),
+                f2,
+                DSL.`val`(" "),
+                f1,
+                DSL.`val`(" "),
+                f3,
+                DSL.`val`(" "),
+                f2,
+                DSL.`val`(" "),
+                f1,
+                DSL.`val`(" "),
+                f3,
+            )
 
         fun toCondition(): Condition =
             DSL.and(
                 listOfNotNull(
                     tourneeLibelle?.let { DSL.and(TOURNEE.LIBELLE.containsIgnoreCaseUnaccent(it)) },
                     tourneeOrganismeLibelle?.let { DSL.and(ORGANISME.LIBELLE.containsIgnoreCaseUnaccent(it)) },
-                    tourneeUtilisateurReservationLibelle?.let { DSL.and(concatFieldTriple(UTILISATEUR.PRENOM, UTILISATEUR.NOM, UTILISATEUR.USERNAME).containsIgnoreCase(it)) },
+                    tourneeUtilisateurReservationLibelle?.let {
+                        DSL.and(
+                            concatFieldTriple(
+                                UTILISATEUR.PRENOM,
+                                UTILISATEUR.NOM,
+                                UTILISATEUR.USERNAME,
+                            ).containsIgnoreCase(it),
+                        )
+                    },
                     peiId?.let { DSL.and(L_TOURNEE_PEI.PEI_ID.eq(it)) },
                     tourneeNotifiee?.let {
                         DSL.and(
                             if (tourneeNotifiee) {
                                 TOURNEE.NOTIFIEE.isTrue
-                            } else { TOURNEE.NOTIFIEE.isFalse.or(TOURNEE.NOTIFIEE.isNull) },
+                            } else {
+                                TOURNEE.NOTIFIEE.isFalse.or(TOURNEE.NOTIFIEE.isNull)
+                            },
                         )
                     },
                 ),
@@ -390,10 +465,13 @@ class TourneeRepository
                             )
                         } else {
                             comparator.thenComparing(
-                                Comparator.comparing<TourneeComplete, String> { it.tourneeLibelle.uppercase().unaccent() }.reversed(),
+                                Comparator.comparing<TourneeComplete, String> {
+                                    it.tourneeLibelle.uppercase().unaccent()
+                                }.reversed(),
                             )
                         }
                     }
+
                     "tourneeNbPei" -> {
                         if (pair.second >= 1) {
                             comparator.thenComparing(
@@ -405,6 +483,7 @@ class TourneeRepository
                             )
                         }
                     }
+
                     "organismeLibelle" -> {
                         if (pair.second >= 1) {
                             comparator.thenComparing(
@@ -412,10 +491,12 @@ class TourneeRepository
                             )
                         } else {
                             comparator.thenComparing(
-                                Comparator.comparing<TourneeComplete, String> { it.organismeLibelle.unaccent() }.reversed(),
+                                Comparator.comparing<TourneeComplete, String> { it.organismeLibelle.unaccent() }
+                                    .reversed(),
                             )
                         }
                     }
+
                     "tourneePourcentageAvancement" -> {
                         if (pair.second >= 1) {
                             comparator.thenComparing(
@@ -429,6 +510,7 @@ class TourneeRepository
                             )
                         }
                     }
+
                     "tourneeUtilisateurReservationLibelle" -> {
                         if (pair.second >= 1) {
                             comparator.thenComparing(
@@ -442,6 +524,7 @@ class TourneeRepository
                             )
                         }
                     }
+
                     "tourneeNextRopDate" -> {
                         if (pair.second >= 1) {
                             comparator.thenComparing(
@@ -455,6 +538,7 @@ class TourneeRepository
                             )
                         }
                     }
+
                     else -> comparator
                 }
             }
@@ -582,7 +666,11 @@ class TourneeRepository
         dsl.select(L_TOURNEE_PEI.PEI_ID)
             .from(L_TOURNEE_PEI)
             .join(TOURNEE).on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
-            .where(TOURNEE.ORGANISME_ID.eq(dsl.select(TOURNEE.ORGANISME_ID).from(TOURNEE).where(TOURNEE.ID.eq(tourneeId))))
+            .where(
+                TOURNEE.ORGANISME_ID.eq(
+                    dsl.select(TOURNEE.ORGANISME_ID).from(TOURNEE).where(TOURNEE.ID.eq(tourneeId)),
+                ),
+            )
             .fetchInto()
 
     data class PeiTourneeForDnD(
@@ -635,7 +723,8 @@ class TourneeRepository
         val concatAnomaliesCte = concatAnomaliesCteName.fields("PEI_ID", "LISTE_ANOMALIES").`as`(
             select(
                 L_PEI_ANOMALIE.PEI_ID,
-                listAgg(ANOMALIE.LIBELLE, ", ").withinGroupOrderBy(ANOMALIE_CATEGORIE.LIBELLE, ANOMALIE.LIBELLE).`as`("LISTE_ANOMALIES"),
+                listAgg(ANOMALIE.LIBELLE, ", ").withinGroupOrderBy(ANOMALIE_CATEGORIE.LIBELLE, ANOMALIE.LIBELLE)
+                    .`as`("LISTE_ANOMALIES"),
             )
                 .from(L_PEI_ANOMALIE)
                 .join(ANOMALIE).on(L_PEI_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID))
@@ -820,7 +909,11 @@ class TourneeRepository
             .fetchInto()
     }
 
-    fun getGeometrieTournee(tourneeId: UUID, isSuperAdmin: Boolean, zoneCompetence: UUID?): Collection<GeometrieWithPeiId> =
+    fun getGeometrieTournee(
+        tourneeId: UUID,
+        isSuperAdmin: Boolean,
+        zoneCompetence: UUID?,
+    ): Collection<GeometrieWithPeiId> =
         dsl.select(PEI.GEOMETRIE, PEI.ID)
             .from(PEI)
             .join(L_TOURNEE_PEI).on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
@@ -840,7 +933,10 @@ class TourneeRepository
     /**
      * Retourne une liste d'option pour selectInput basé sur les organismes enfants de l'utilisateur
      */
-    fun getTourneeForSelect(isSuperAdmin: Boolean, affiliatedOrganismeIds: Set<UUID>?): Collection<GlobalData.IdLibelleData> =
+    fun getTourneeForSelect(
+        isSuperAdmin: Boolean,
+        affiliatedOrganismeIds: Set<UUID>?,
+    ): Collection<GlobalData.IdLibelleData> =
         dsl.select(TOURNEE.ID.`as`("id"), TOURNEE.LIBELLE.`as`("libelle"))
             .from(TOURNEE)
             .where(
@@ -881,6 +977,21 @@ class TourneeRepository
             .where(TOURNEE.ID.eq(tourneeId))
             .execute()
     }
+
+    fun getTourneeReservedFromList(listTourneeId: List<UUID>): List<TourneeShortData> =
+        dsl.select(
+            TOURNEE.ID,
+            TOURNEE.LIBELLE,
+        )
+            .from(TOURNEE)
+            .where(TOURNEE.ID.`in`(listTourneeId))
+            .and(TOURNEE.RESERVATION_UTILISATEUR_ID.isNotNull)
+            .fetchInto()
+
+    fun fetchLTourneePeiByTourneeIds(tourneeIds: List<UUID>): List<LTourneePei> =
+        dsl.selectFrom(L_TOURNEE_PEI)
+            .where(L_TOURNEE_PEI.TOURNEE_ID.`in`(tourneeIds))
+            .fetchInto()
 }
 
 data class TourneeShortData(

@@ -90,6 +90,10 @@ const MapPei = () => {
     closeMove,
     peiInfoMove,
     geometrieMove,
+    showDesaffecterTournee,
+    handleCloseDesaffecterTournee,
+    createDesaffecterTournee,
+    deplacePei,
   } = useToolbarPeiContext({
     map,
     workingLayer,
@@ -256,6 +260,10 @@ const MapPei = () => {
                   setShowFormVisite={setShowFormVisite}
                   showFormVisite={showFormVisite}
                   coordonneesPeiCreate={coordonneesPeiCreate}
+                  deplacePei={deplacePei}
+                  createDesaffecterTournee={createDesaffecterTournee}
+                  handleCloseDesaffecterTournee={handleCloseDesaffecterTournee}
+                  showDesaffecterTournee={showDesaffecterTournee}
                 />
               )
             }

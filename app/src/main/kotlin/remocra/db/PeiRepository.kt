@@ -17,6 +17,7 @@ import remocra.auth.WrappedUserInfo
 import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.PeiData
+import remocra.data.PeiTourneeInfoData
 import remocra.data.enums.PeiColonnes
 import remocra.data.enums.TypeAutoriteDeci
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -625,6 +626,15 @@ class PeiRepository
 
     fun getInfoPei(peiId: UUID): PeiData =
         dsl.select(peiData)
+            .from(PEI)
+            .where(PEI.ID.eq(peiId))
+            .fetchSingleInto()
+
+    fun getPeiTourneeInfo(peiId: UUID): PeiTourneeInfoData =
+        dsl.select(
+            PEI.ID,
+            PEI.NUMERO_COMPLET,
+        )
             .from(PEI)
             .where(PEI.ID.eq(peiId))
             .fetchSingleInto()
