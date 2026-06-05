@@ -565,7 +565,7 @@ const MapToolbarCartographiePerso = ({
     } else {
       setFormStyle(featureStyle.clone());
     }
-  }, [selectedFeatures, featureStyle]); // showPanel intentionnellement absent : géré par handleOpenPanel
+  }, [selectedFeatures, featureStyle, showPanel]);
 
   const previewMap = useMemo(
     () =>
