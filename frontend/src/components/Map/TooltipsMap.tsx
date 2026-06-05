@@ -612,13 +612,9 @@ const Tooltip = ({
                         tooltipText={labelSee}
                         tooltipId={"fiche-resume-carte"}
                       >
-                        <CustomLinkButton
-                          variant="primary"
-                          pathname={href!}
-                          onClick={onClickSee}
-                        >
+                        <Button variant="primary" onClick={onClickSee}>
                           <IconSee />
-                        </CustomLinkButton>
+                        </Button>
                       </TooltipCustom>
                     </Col>
                   )}
