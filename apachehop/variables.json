@@ -6,7 +6,7 @@
     { "name": "POSTGRES_DB_HOSTNAME", "value": "#DB_HOSTNAME"},
     { "name": "POSTGRES_DB_PORT", "value": "#DB_PORT"},
     { "name": "SIG_HOSTNAME", "value": "#SIG_HOSTNAME"},
-    { "name": "SIG_SQL_DIALECT", "value": "#SIG_SQL_DIALECT"},
+    { "name": "SIG_DATABASE_VENDOR", "value": "#SIG_DATABASE_VENDOR"},
     { "name": "SIG_DBNAME", "value": "#SIG_DBNAME"},
     { "name": "SIG_USERNAME", "value": "#SIG_USERNAME"},
     { "name": "SIG_PASSWORD", "value": "#SIG_PASSWORD"},

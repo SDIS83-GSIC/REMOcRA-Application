@@ -58,8 +58,11 @@ constructor(private val properties: Properties?) :
 
     companion object {
         fun create(config: Config): SigDatabaseModule {
-            if (config.toProperties().isNotEmpty()) {
-                return SigDatabaseModule(config.toProperties())
+            val properties = config.withoutPath("database-vendor").toProperties()
+            if (properties.isNotEmpty()) {
+                val databaseVendor = config.getString("database-vendor").toDatabaseVendor()
+                properties["dataSourceClassName"] = databaseVendor.toDataSourceClassName()
+                return SigDatabaseModule(properties)
             }
             return SigDatabaseModule(null)
         }
@@ -68,6 +71,15 @@ constructor(private val properties: Properties?) :
             Properties().also {
                 entrySet().forEach { (k, v) -> it.setProperty(k, v.unwrapped().toString()) }
             }
+
+        private fun String.toDatabaseVendor() = when (this.lowercase()) {
+            "postgres" -> DatabaseVendor.POSTGRES
+            else -> throw IllegalArgumentException("Le fournisseur de base de données, pour SIG, n'est pas supporté par REMOcRA (les valeurs possible sont `postgres`).")
+        }
+
+        private fun DatabaseVendor.toDataSourceClassName() = when (this) {
+            DatabaseVendor.POSTGRES -> "org.postgresql.ds.PGSimpleDataSource"
+        }
     }
 }
 
@@ -76,3 +88,7 @@ constructor(private val properties: Properties?) :
  */
 @BindingAnnotation
 annotation class Sig
+
+enum class DatabaseVendor {
+    POSTGRES,
+}
