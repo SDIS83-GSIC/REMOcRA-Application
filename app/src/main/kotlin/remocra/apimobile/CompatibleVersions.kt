@@ -8,7 +8,7 @@ package remocra.apimobile
 class CompatibleVersions {
     // Versions autorisées pour l'appli mobile
     private val mobileCompatibleVersions: MutableList<String?> =
-        mutableListOf(MobileVersion.M3_0.version, MobileVersion.M3_1.version, MobileVersion.M3_2.version, MobileVersion.M3_3.version)
+        mutableListOf(MobileVersion.M3_4.version)
 
     /**
      * Permet de savoir si la version de l'application mobile est compatible avec celle du serveur
@@ -30,5 +30,6 @@ class CompatibleVersions {
         M3_1("3.1"),
         M3_2("3.2"),
         M3_3("3.3"),
+        M3_4("3.4"),
     }
 }
