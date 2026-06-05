@@ -1,5 +1,5 @@
 import { forwardRef, useImperativeHandle, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import { URLS } from "../../routes.tsx";
 import TourneeForm, {
@@ -23,6 +23,8 @@ const CreateTournee = forwardRef(
     const navigate = useNavigate();
     const formikRef = useRef<any>();
 
+    const location = useLocation();
+
     useImperativeHandle(ref, () => ({
       submit: () => {
         if (formikRef.current) {
@@ -41,7 +43,11 @@ const CreateTournee = forwardRef(
         redirectUrl={undefined}
         onSubmit={(e) =>
           !isFromMap
-            ? navigate(URLS.TOURNEE_PEI(e.tourneeId))
+            ? navigate(URLS.TOURNEE_PEI(e.tourneeId), {
+                state: {
+                  ...location.state,
+                },
+              })
             : setTourneeId && setTourneeId(e.tourneeId)
         }
       >
