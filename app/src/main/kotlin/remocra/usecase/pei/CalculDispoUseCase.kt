@@ -243,7 +243,9 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> pei.nature!!.natureCode == GlobalConstants.NATURE_22_PENA_ETUDE // Si PEI en étude, alors indispo
+            CodeSdis.SDIS_22 ->
+                pei.nature!!.natureCode == GlobalConstants.NATURE_22_PENA_ETUDE || // Si PEI en étude, alors indispo
+                    (pei.penaCapacite == null || pei.penaCapacite < 30)
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> {
                 if (pei.penaCapacite != null && pei.penaCapacite < 60) {
@@ -330,7 +332,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_16 -> pei.pression == null || pei.pression < 1.0
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> pei.pression == null || pei.pression < 0.95 || pei.nature!!.natureCode == GlobalConstants.NATURE_22_PIBI_ETUDE // Si PEI en étude, alors indispo
+            CodeSdis.SDIS_22 -> false
             CodeSdis.SDIS_38 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_39 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_42 -> false
@@ -374,7 +376,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> pei.pression != null && pei.pression in 0.95..<1.0
+            CodeSdis.SDIS_22 -> false
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> false
@@ -409,7 +411,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> pei.pression != null && pei.pression > 6
+            CodeSdis.SDIS_22 -> false
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> isPressionTropEleveeDefault(pei)
@@ -439,7 +441,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_09 -> pei.pressionDynamique != null && pei.pressionDynamique < 1
             CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> pei.pressionDynamique == null || pei.pressionDynamique < 0.95 || pei.nature!!.natureCode == GlobalConstants.NATURE_22_PIBI_ETUDE // Si PEI en étude, alors indispo
+            CodeSdis.SDIS_22 -> pei.pressionDynamique == null || pei.pressionDynamique < 1 || pei.nature!!.natureCode == GlobalConstants.NATURE_22_PIBI_ETUDE // Si PEI en étude, alors indispo
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> {
@@ -494,7 +496,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> pei.pressionDynamique != null && pei.pressionDynamique in 0.95..<1.0
+            CodeSdis.SDIS_22 -> false
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> pei.pressionDynamique != null && pei.pressionDynamique >= 0.6 && pei.pressionDynamique < 1
@@ -531,7 +533,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_09 -> pei.pressionDynamique != null && pei.pressionDynamique >= 8
             CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> pei.pressionDynamique != null && pei.pressionDynamique > 6
+            CodeSdis.SDIS_22 -> pei.pressionDynamique != null && pei.pressionDynamique > 8
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> isPressionDynamiqueTropEleveeDefault(pei)
