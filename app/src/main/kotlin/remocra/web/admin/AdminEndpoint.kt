@@ -26,6 +26,7 @@ import remocra.usecase.admin.refreshviews.RefreshViewVisitesUseCase
 import remocra.usecase.admin.relancercalcul.RelancerCalculDispoUseCase
 import remocra.usecase.admin.relancercalcul.RelancerCalculNumerotationUseCase
 import remocra.usecase.importcadastre.ImportCadastreUseCase
+import remocra.usecase.sig.LaunchSigTaskUseCase
 import remocra.utils.forbidden
 import remocra.web.AbstractEndpoint
 
@@ -59,6 +60,9 @@ class AdminEndpoint : AbstractEndpoint() {
 
     @Inject
     private lateinit var refreshViewMesuresUseCase: RefreshViewMesuresUseCase
+
+    @Inject
+    private lateinit var launchSigTaskUseCase: LaunchSigTaskUseCase
 
     @GET
     @Path("/parametres")
@@ -224,6 +228,18 @@ class AdminEndpoint : AbstractEndpoint() {
             return forbidden().build()
         }
         refreshViewMesuresUseCase.execute()
+        return Response.ok().build()
+    }
+
+    @POST
+    @Path("/launch-sig-task")
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun launchSigTask(): Response {
+        if (!securityContext.userInfo.isSuperAdmin) {
+            return forbidden().build()
+        }
+        launchSigTaskUseCase.execute(securityContext.userInfo)
         return Response.ok().build()
     }
 }

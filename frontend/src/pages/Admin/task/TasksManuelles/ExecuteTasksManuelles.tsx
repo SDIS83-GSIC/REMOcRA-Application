@@ -6,6 +6,7 @@ import MyFormik from "../../../../components/Form/MyFormik.tsx";
 import { IconInfo } from "../../../../components/Icon/Icon.tsx";
 import url from "../../../../module/fetch.tsx";
 import ImporterCadastre from "./ImporterCadastre.tsx";
+import LaunchSigTask from "./LaunchSigTask.tsx";
 import RefreshViewMesures from "./RefreshViewMesures.tsx";
 import RefreshViewVisites from "./RefreshViewVisites.tsx";
 import RelancerCalculDispo from "./RelancerCalculDispo.tsx";
@@ -76,6 +77,19 @@ const ExecuteTasksManuelles = () => {
             validationSchema={object({})}
           >
             <RefreshViewMesures />
+          </CardTask>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <CardTask
+            title="Lancer la synchronisation SIG"
+            apiUrl={url`/api/admin/launch-sig-task`}
+            prepareVariables={() => ({})}
+            initialValues={{}}
+            validationSchema={object({})}
+          >
+            <LaunchSigTask />
           </CardTask>
         </Col>
       </Row>
