@@ -16,10 +16,12 @@ import kotlin.streams.asSequence
  * Il est donc nécessaire, à chaque utilisation du contexte, de vérifier qu'il n'est pas nul (dsl!!.select[...]) ;
  * dans le cas contraire, une RuntimeException est justifiée.
 */
-class SigRepository @Inject constructor(@param:Sig @param:Nullable private val dsl: Provider<DSLContext?>) {
+class SigRepository @Inject constructor(
+    @param:Sig @param:Nullable private val dsl: Provider<DSLContext?>,
+    private val databaseVendor: DatabaseVendor?,
+) {
 
     fun getMetaStructureTable(schemaName: String, tableName: String): List<ColumnInfo> {
-        val databaseType = detectDatabaseType()
         return dsl.get()!!.meta().tables
             .first { table ->
                 table.schema!!.name == schemaName && table.name == tableName
@@ -28,7 +30,7 @@ class SigRepository @Inject constructor(@param:Sig @param:Nullable private val d
                 ColumnInfo(
                     schemaName = schemaName,
                     columnName = field.name,
-                    columnType = mapDatabaseTypeToSQL(field.dataType.typeName, databaseType),
+                    columnType = mapDatabaseTypeToSQL(field.dataType.typeName),
                     columnNullable = field.dataType.nullable(),
                 )
             }
@@ -42,28 +44,17 @@ class SigRepository @Inject constructor(@param:Sig @param:Nullable private val d
     )
 
     /**
-     * Détecte le type de base de données utilisée pour la source SIG
-     */
-    private fun detectDatabaseType(): DatabaseType {
-        val conn = dsl.get()!!.configuration().connectionProvider().acquire()
-        val databaseProductName = conn?.metaData?.databaseProductName?.lowercase() ?: "unknown"
-        conn?.close()
-
-        // Pour l'instant, on ne gère que Oracle et Postgresl (à voir si d'autres clients ont d'autres types de base de données)
-        when {
-            databaseProductName.contains("postgres") -> return DatabaseType.POSTGRESQL
-            else -> throw IllegalArgumentException("Le type de la base de données n'est pas supporté par REMOcRA.")
-        }
-    }
-
-    /**
      * Mappe les types internes de la base de données vers les types PostgreSQL
      * Tous les types sont normalisés en PostgreSQL pour la requête CREATE TABLE
      */
-    private fun mapDatabaseTypeToSQL(dbType: String, databaseType: DatabaseType): String =
-        when (databaseType) {
-            DatabaseType.POSTGRESQL -> mapPostgresTypeToSQL(dbType)
+    private fun mapDatabaseTypeToSQL(dbType: String): String {
+        // devrait pas arriver, car le module ne devrait pas être initialisé sans un fournisseur de base de données
+        requireNotNull(databaseVendor) { "Le fournisseur de base de données, pour SIG, n'est pas initialisé." }
+
+        return when (databaseVendor) {
+            DatabaseVendor.POSTGRES -> mapPostgresTypeToSQL(dbType)
         }
+    }
 
     /**
      * Mappe les types PostgreSQL vers les types PostgreSQL (normalisation)
@@ -112,13 +103,6 @@ class SigRepository @Inject constructor(@param:Sig @param:Nullable private val d
 
         // Fallback
         else -> postgresType.uppercase()
-    }
-
-    /**
-     * Énumération des types de base de données supportés
-     */
-    enum class DatabaseType {
-        POSTGRESQL,
     }
 
     /**

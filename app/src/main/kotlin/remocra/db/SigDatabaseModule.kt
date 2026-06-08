@@ -22,7 +22,7 @@ import javax.sql.DataSource
  * Classe permettant une connexion à une autre BDD que REMOcRA, afin d'intégrer, dans la version actuelle, les données du SIG du SDIS dans une zone "connue" de REMOcRA
  */
 class SigDatabaseModule
-constructor(private val properties: Properties?) :
+constructor(private val properties: Properties?, private val databaseVendor: DatabaseVendor?) :
     RemocraModule() {
 
     @Provides
@@ -56,15 +56,20 @@ constructor(private val properties: Properties?) :
     fun provideTransactionProviderSig(@Sig @Nullable connectionProvider: ConnectionProvider?): TransactionProvider? =
         connectionProvider?.let { ThreadLocalTransactionProvider(it) }
 
+    @Provides
+    fun provideDatabaseVendor(): DatabaseVendor? {
+        return databaseVendor
+    }
+
     companion object {
         fun create(config: Config): SigDatabaseModule {
             val properties = config.withoutPath("database-vendor").toProperties()
             if (properties.isNotEmpty()) {
                 val databaseVendor = config.getString("database-vendor").toDatabaseVendor()
                 properties["dataSourceClassName"] = databaseVendor.toDataSourceClassName()
-                return SigDatabaseModule(properties)
+                return SigDatabaseModule(properties, databaseVendor)
             }
-            return SigDatabaseModule(null)
+            return SigDatabaseModule(null, null)
         }
 
         private fun Config.toProperties() =
