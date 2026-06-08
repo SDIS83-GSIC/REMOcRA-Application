@@ -9,11 +9,13 @@ import com.tngtech.archunit.base.DescribedPredicate.describe
 import com.tngtech.archunit.base.DescribedPredicate.empty
 import com.tngtech.archunit.base.DescribedPredicate.not
 import com.tngtech.archunit.core.domain.JavaClass.Predicates.assignableTo
+import com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage
 import com.tngtech.archunit.core.domain.JavaClass.Predicates.type
 import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests
 import com.tngtech.archunit.junit.AnalyzeClasses
 import com.tngtech.archunit.junit.ArchTest
 import com.tngtech.archunit.lang.ArchRule
+import com.tngtech.archunit.lang.conditions.ArchConditions.beAssignableTo
 import com.tngtech.archunit.lang.conditions.ArchConditions.have
 import com.tngtech.archunit.lang.conditions.ArchPredicates.are
 import com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes
@@ -26,9 +28,11 @@ import remocra.auth.ApiMobileAuthenticationFilter
 import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.RequireDroitsApi
+import remocra.cli.Main
 import remocra.db.AbstractRepository
 import remocra.db.TransactionManager
 import remocra.tasks.SimpleTask
+import remocra.tasks.SynchronisationSIGTask
 import remocra.usecase.AbstractCUDGeometrieUseCase
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.AbstractUseCase
@@ -164,6 +168,18 @@ class ArchitectureTest {
             .areDeclaredInClassesThat(assignableTo(AbstractEndpoint::class.java))
             .should()
             .haveRawParameterTypes(empty())
+
+    @ArchTest
+    val `SIG appartient a SIG` =
+        classes()
+            .that()
+            .resideInAPackage("remocra.db.sig..")
+            .should()
+            .onlyHaveDependentClassesThat(
+                resideInAPackage("remocra.db.sig..")
+                    .or(type(SynchronisationSIGTask::class.java))
+                    .or(type(Main::class.java)),
+            )
 }
 
 /**

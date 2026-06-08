@@ -1,4 +1,4 @@
-package remocra.db
+package remocra.db.sig
 
 import jakarta.annotation.Nullable
 import jakarta.inject.Inject

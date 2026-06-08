@@ -12,7 +12,7 @@ import remocra.app.AppModule
 import remocra.auth.AuthModule
 import remocra.csv.CsvModule
 import remocra.db.DatabaseModule
-import remocra.db.SigDatabaseModule
+import remocra.db.sig.SigDatabaseModule
 import remocra.eventbus.EventBusModule
 import remocra.geoserver.GeoserverModule
 import remocra.healthcheck.HealthModule

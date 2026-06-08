@@ -9,11 +9,11 @@ import remocra.data.NotificationMailData
 import remocra.data.enums.ErrorType
 import remocra.db.CommuneRepository
 import remocra.db.EntrepotSigRepository
-import remocra.db.SigRepository
 import remocra.db.VoieRepository
 import remocra.db.jooq.bindings.GeometryBinding
 import remocra.db.jooq.bindings.ZonedDateTimeBinding
 import remocra.db.jooq.remocra.enums.TypeTask
+import remocra.db.sig.SigRepository
 import remocra.exception.RemocraResponseException
 import remocra.utils.RequestUtils
 import kotlin.time.DurationUnit

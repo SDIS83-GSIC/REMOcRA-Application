@@ -1,4 +1,4 @@
-package remocra.db
+package remocra.db.sig
 
 import com.google.inject.BindingAnnotation
 import com.google.inject.Provides
