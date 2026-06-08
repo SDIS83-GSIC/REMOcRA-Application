@@ -5,7 +5,7 @@ import {
   useImperativeHandle,
   useState,
 } from "react";
-import { Button, Card, Col, ListGroup, Row } from "react-bootstrap";
+import { Button, Card, ListGroup } from "react-bootstrap";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
 import DeleteButtonWithModal from "../../../components/Button/DeleteButtonWithModal.tsx";
 import { useGetRun } from "../../../components/Fetch/useFetch.tsx";
@@ -301,46 +301,42 @@ const QueryList = forwardRef(
         {!isAdding && (
           <ListGroup
             variant="flush"
-            style={{ maxHeight: "400px", overflowY: "auto" }}
+            style={{ maxHeight: "65vh", overflowY: "auto" }}
           >
             {openListQuery && openListQuery.length > 0 ? (
               openListQuery.map(({ id, title }) => (
                 <ListGroup.Item
                   key={id}
-                  className="justify-content-between align-items-center"
+                  className="d-flex justify-content-between align-items-center"
                 >
-                  <Row>
-                    <Col sm={8} className="text-truncate d-block">
-                      <TooltipCustom
-                        tooltipId={`query-title-tooltip-${id}`}
-                        tooltipText={title}
-                      >
-                        <span>{title}</span>
-                      </TooltipCustom>
-                    </Col>
-                    <Col sm={2}>
-                      <Button
-                        variant="link"
-                        size="sm"
-                        className="me-2 text-info text-decoration-none"
-                        onClick={() => handleEditQuery(id)}
-                      >
-                        <IconEdit />
-                      </Button>
-                    </Col>
-                    <Col sm={2}>
-                      <DeleteButtonWithModal
-                        path={urlApiDeleteQuery + id}
-                        reload={() => {
-                          fetchData.run();
-                        }}
-                        variant="link"
-                        className="text-danger text-decoration-none"
-                        title={false}
-                        disabled={false}
-                      />
-                    </Col>
-                  </Row>
+                  <div className="text-truncate me-3">
+                    <TooltipCustom
+                      tooltipId={`query-title-tooltip-${id}`}
+                      tooltipText={title}
+                    >
+                      <span>{title}</span>
+                    </TooltipCustom>
+                  </div>
+                  <div className="d-flex flex-nowrap">
+                    <Button
+                      variant="link"
+                      size="sm"
+                      className="me-2 text-info text-decoration-none"
+                      onClick={() => handleEditQuery(id)}
+                    >
+                      <IconEdit />
+                    </Button>
+                    <DeleteButtonWithModal
+                      path={urlApiDeleteQuery + id}
+                      reload={() => {
+                        fetchData.run();
+                      }}
+                      variant="link"
+                      className="text-danger text-decoration-none"
+                      title={false}
+                      disabled={false}
+                    />
+                  </div>
                 </ListGroup.Item>
               ))
             ) : (

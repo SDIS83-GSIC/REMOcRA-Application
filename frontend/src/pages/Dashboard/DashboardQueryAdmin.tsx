@@ -85,8 +85,8 @@ const ComponentBoardQueryAdmin = () => {
         icon={<IconHorizontalChartComponent />}
         title="Édition des requêtes et composants associés"
       />
-      <Row>
-        <Col sm={3}>
+      <Row className={!activeQuery ? "justify-content-center" : ""}>
+        <Col sm={activeQuery ? 3 : 9}>
           <QueryList
             ref={queryListRef}
             setData={setData}

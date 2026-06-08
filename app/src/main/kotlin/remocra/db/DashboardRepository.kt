@@ -37,7 +37,7 @@ class DashboardRepository
         dsl.select(DASHBOARD_QUERY.ID.`as`("queryId"), DASHBOARD_QUERY.QUERY.`as`("query"), DASHBOARD_QUERY.TITLE.`as`("queryTitle")).from(DASHBOARD_QUERY).where(DASHBOARD_QUERY.ID.eq(queryId)).fetchOneInto()
 
     fun getQueryList(): Collection<DashboardQuery> =
-        dsl.select(*DASHBOARD_QUERY.fields()).from(DASHBOARD_QUERY).fetchInto()
+        dsl.select(*DASHBOARD_QUERY.fields()).from(DASHBOARD_QUERY).orderBy(DASHBOARD_QUERY.TITLE).fetchInto()
 
     fun getDashboardList(): Collection<Dashboard> =
         dsl.select(*DASHBOARD.fields()).from(DASHBOARD).fetchInto()
