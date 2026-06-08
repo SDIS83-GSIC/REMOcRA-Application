@@ -302,7 +302,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> false
+            CodeSdis.SDIS_22 -> pei.penaCapacite != null && pei.penaCapacite in 60..<100
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> pei.penaCapacite != null && pei.penaCapacite in 60..119
             CodeSdis.SDIS_42 -> pei.penaCapaciteIncertaine == true || pei.penaCapacite != null && pei.penaCapacite < 30
