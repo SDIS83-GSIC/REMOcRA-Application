@@ -8,6 +8,7 @@ import {
   ComponentDashboard,
   DashboardComponentConfig,
   DashboardItemParam,
+  normalizeComponentConfig,
 } from "./Constants.tsx";
 import DashboardItem from "./DashboardAdminDynamicConfig/DashboardItem.tsx";
 
@@ -57,7 +58,10 @@ const ComponentBoardList = () => {
             id: element.componentId,
             key: element.componentKey,
             title: element.componentTitle,
-            config: element.componentConfig,
+            config: normalizeComponentConfig(
+              element.componentKey,
+              element.componentConfig,
+            ),
             configPosition: {
               x: element.componentConfigPosition
                 ? element.componentConfigPosition.componentX

@@ -79,7 +79,6 @@ const GaugeComponent = ({ data, config }: GaugeComponentProps) => {
     const limits = rawLimits
       .map((l) => ({ color: l.color || "#cccccc", max: Number(l.max) }))
       .filter((l) => !Number.isNaN(l.max))
-      .sort((a, b) => a.max - b.max)
       .map((l) => ({ color: l.color, max: Math.max(0, Math.min(100, l.max)) }));
     const s: Section[] = [];
     let prev = 0;
@@ -104,11 +103,13 @@ const GaugeComponent = ({ data, config }: GaugeComponentProps) => {
     return s;
   })();
 
-  // Préparer les données pour la jauge extérieure (segments colorés)
-  const outerGaugeData = sections.map((sec) => ({
-    value: sec.to - sec.from,
-    color: sec.color,
-  }));
+  // Préparer les données pour la jauge extérieure
+  const outerGaugeData = useThresholdColors
+    ? sections.map((sec) => ({
+        value: sec.to - sec.from,
+        color: sec.color,
+      }))
+    : [{ value: 100, color: barColor }];
 
   // Préparer les données pour la jauge intérieure (segments en fonction de la valeur)
   const innerGaugeData = [
@@ -135,20 +136,18 @@ const GaugeComponent = ({ data, config }: GaugeComponentProps) => {
         initialDimension={{ width: 400, height: 300 }}
       >
         <PieChart className="d-flex flex-column justify-content-center align-items-center">
-          {/* Jauge extérieure (segments colorés) */}
-          {useThresholdColors && (
-            <Pie
-              data={outerGaugeData}
-              cx="50%"
-              cy="100%"
-              innerRadius={120}
-              outerRadius={150}
-              startAngle={180}
-              endAngle={0}
-              dataKey="value"
-              shape={PieCell}
-            />
-          )}
+          {/* Jauge extérieure */}
+          <Pie
+            data={outerGaugeData}
+            cx="50%"
+            cy="100%"
+            innerRadius={120}
+            outerRadius={150}
+            startAngle={180}
+            endAngle={0}
+            dataKey="value"
+            shape={PieCell}
+          />
 
           {/* Jauge intérieure (segments en fonction de la valeur) */}
           <Pie

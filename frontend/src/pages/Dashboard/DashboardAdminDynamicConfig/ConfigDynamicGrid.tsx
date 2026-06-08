@@ -10,6 +10,7 @@ import {
   DashboardComponentConfig,
   DashboardItemParam,
   formatData,
+  normalizeComponentConfig,
   QueryData,
 } from "../Constants.tsx";
 import ConfigFormDashboard from "./ConfigFormDashboard.tsx";
@@ -196,7 +197,10 @@ const ConfigDynamicGrid = ({
           id: element.componentId,
           key: element.componentKey,
           title: element.componentTitle,
-          config: element.componentConfig,
+          config: normalizeComponentConfig(
+            element.componentKey,
+            element.componentConfig,
+          ),
           configPosition: {
             x: element.componentConfigPosition
               ? element.componentConfigPosition.componentX

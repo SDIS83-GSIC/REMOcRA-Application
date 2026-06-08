@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { SelectInput } from "../../../../components/Form/Form.tsx";
 import { IconDelete } from "../../../../components/Icon/Icon.tsx";
@@ -98,17 +98,20 @@ const GaugeConfig = ({ config, setConfig, fieldOptions }: GaugeConfigProps) => {
     { color: "#e67e22", max: 75 },
   ];
 
+  const hasInitializedDefaults = useRef(false);
+
   useEffect(() => {
-    if (isGradient && limits.length === 0) {
+    if (isGradient && limits.length === 0 && !hasInitializedDefaults.current) {
+      hasInitializedDefaults.current = true;
       setLimits(defaultLimits);
-      const updatedConfig = {
+      setConfig({
         ...config,
         limits: defaultLimits,
         highColor: config.highColor || "#e74c3c",
-      };
-      setConfig(updatedConfig);
+        colorMode: "gradient",
+      });
     }
-  }, [isGradient, config.highColor, setConfig, config, limits.length]);
+  }, [isGradient, limits.length, config, setConfig]);
 
   return (
     <>

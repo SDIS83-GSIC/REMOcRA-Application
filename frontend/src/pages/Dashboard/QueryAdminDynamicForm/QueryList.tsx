@@ -18,6 +18,7 @@ import {
   ComponentDashboard,
   FORM_CONFIG,
   formatData,
+  normalizeComponentConfig,
   QueryParam,
 } from "../Constants.tsx";
 
@@ -171,7 +172,10 @@ const QueryList = forwardRef(
                   element.dashboardComponentKey as keyof typeof FORM_CONFIG
                 ],
               title: element.dashboardComponentTitle || componentEntry.label,
-              config: element.dashboardComponentConfig,
+              config: normalizeComponentConfig(
+                element.dashboardComponentKey,
+                element.dashboardComponentConfig,
+              ),
             };
           },
         );

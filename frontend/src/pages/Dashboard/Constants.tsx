@@ -209,3 +209,49 @@ export type DashboardComponentConfig = {
   componentConfig: any;
   componentTitle: string;
 };
+
+/**
+ * Normalise la config d'un composant reçue du backend.
+ * Gère la rétrocompatibilité pour les anciens formats (ex: Gauge sans colorMode/highColor).
+ */
+export const normalizeComponentConfig = (key: string, config: any): any => {
+  if (!config) {
+    return config;
+  }
+
+  if (key === "GAUGE") {
+    return normalizeGaugeConfig(config);
+  }
+
+  return config;
+};
+
+const normalizeGaugeConfig = (config: any): any => {
+  // Si le nouveau format est déjà présent, pas de transformation
+  if (config.colorMode || config.highColor) {
+    return config;
+  }
+
+  // Ancien format : pas de colorMode ni highColor,
+  // les max sont des valeurs relatives (largeur de chaque segment)
+  const limits = config.limits;
+  if (!Array.isArray(limits) || limits.length === 0) {
+    return config;
+  }
+
+  // Convertir les max relatifs en max absolus cumulés, dans l'ordre d'origine
+  let cumulative = 0;
+  const absoluteLimits = limits.map((l: { max: number; color: string }) => {
+    cumulative += l.max;
+    return { max: cumulative, color: l.color };
+  });
+
+  // Extraire le dernier comme highColor
+  const lastLimit = absoluteLimits[absoluteLimits.length - 1];
+  return {
+    ...config,
+    limits: absoluteLimits.slice(0, -1),
+    highColor: lastLimit.color || "#e74c3c",
+    colorMode: "gradient",
+  };
+};

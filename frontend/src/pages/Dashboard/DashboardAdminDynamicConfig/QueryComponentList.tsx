@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { Card, ListGroup, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useGetRun } from "../../../components/Fetch/useFetch.tsx";
 import url from "../../../module/fetch.tsx";
-import { ComponentDashboard, DashboardParam, ICONS } from "../Constants.tsx";
+import {
+  ComponentDashboard,
+  DashboardParam,
+  ICONS,
+  normalizeComponentConfig,
+} from "../Constants.tsx";
 
 type QueryComponentListProps = {
   openListQuery: DashboardParam[] | undefined;
@@ -45,7 +50,10 @@ const QueryComponentList = ({
         queryId: configDataQuerys.dashboardComponentDahsboardQueryId,
         key: configDataQuerys.dashboardComponentKey,
         title: configDataQuerys.dashboardComponentTitle,
-        config: configDataQuerys.dashboardComponentConfig,
+        config: normalizeComponentConfig(
+          configDataQuerys.dashboardComponentKey,
+          configDataQuerys.dashboardComponentConfig,
+        ),
         configPosition: configPosition,
       };
 
