@@ -1,8 +1,6 @@
 package remocra.tasks
 
 import jakarta.inject.Inject
-import org.jooq.impl.DSL
-import org.jooq.impl.SQLDataType
 import remocra.GlobalConstants
 import remocra.auth.WrappedUserInfo
 import remocra.data.NotificationMailData
@@ -10,10 +8,9 @@ import remocra.data.enums.ErrorType
 import remocra.db.CommuneRepository
 import remocra.db.EntrepotSigRepository
 import remocra.db.VoieRepository
-import remocra.db.jooq.bindings.GeometryBinding
-import remocra.db.jooq.bindings.ZonedDateTimeBinding
 import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.db.sig.SigRepository
+import remocra.db.sig.data.joinColumnNames
 import remocra.exception.RemocraResponseException
 import remocra.utils.RequestUtils
 import kotlin.time.DurationUnit
@@ -58,7 +55,7 @@ constructor(
             // Construction de la requête CREATE TABLE
             logManager.info("[REMOcRA] Récupération des champs pour la création de la table")
             val concatColumn = structureTable.joinToString(", ") { columnInfo ->
-                "${columnInfo.columnName} ${columnInfo.columnType} ${if (columnInfo.columnNullable) "NULL" else "NOT NULL"}"
+                "${columnInfo.columnName} ${columnInfo.columnType.sql} ${if (columnInfo.columnNullable) "NULL" else "NOT NULL"}"
             }
             logManager.info("[REMOcRA] Champs à insérer : $concatColumn")
             val nomTableDestination = tableASynchroniser.tableDestination ?: tableASynchroniser.tableSource
@@ -85,16 +82,7 @@ constructor(
             // [SIG] Récupération des données
             // Construction requete Select
             logManager.info("[SIG] Création de la requête 'SELECT ...'")
-            val fieldsToSelect = structureTable.map { columnInfo ->
-                when (columnInfo.columnType.lowercase()) {
-                    // Types spécifiques
-                    "geometry" -> DSL.field(columnInfo.columnName, GeometryBinding())
-                    "timestamp with time zone" -> DSL.field(columnInfo.columnName, ZonedDateTimeBinding())
-                    // Sinon, tout en text et au besoin la vue/le scriptPostSynchro se chargera de cast correctement
-                    else -> DSL.field(columnInfo.columnName, SQLDataType.VARCHAR)
-                }
-            }
-            logManager.info("[SIG] Liste des fields à SELECT : $fieldsToSelect")
+            logManager.info("[SIG] Liste des fields à SELECT : ${structureTable.joinColumnNames()}")
             // Émission de la requête SELECT avec traitement par BATCH
             // Pour les très grandes tables (millions de lignes), on traite par chunk de parameters.batchInsert lignes
             // pour éviter les problèmes de mémoire et les timeouts de connexion
@@ -103,7 +91,7 @@ constructor(
             var batchNumber = 0
 
             sigRepository.selectAllByBatch(
-                fieldsToSelect,
+                structureTable,
                 tableASynchroniser.schemaSource,
                 tableASynchroniser.tableSource,
                 batchSize = parameters.batchInsert ?: BATCH_SIZE,

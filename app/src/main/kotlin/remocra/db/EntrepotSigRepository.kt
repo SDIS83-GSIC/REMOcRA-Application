@@ -2,7 +2,6 @@ package remocra.db
 
 import jakarta.inject.Inject
 import org.jooq.DSLContext
-import org.jooq.Record
 import org.jooq.impl.DSL
 import remocra.GlobalConstants
 
@@ -25,7 +24,7 @@ class EntrepotSigRepository @Inject constructor(private val dsl: DSLContext) {
      * Insertion par BATCH
      * Utilisé avec selectAllByBatch() pour éviter les pb mémoire
      */
-    fun insertBatch(records: List<Record>, nomTableDestination: String) {
+    fun insertBatch(records: List<Map<String, Any?>>, nomTableDestination: String) {
         if (records.isEmpty()) return
 
         dsl.batch(
@@ -34,7 +33,7 @@ class EntrepotSigRepository @Inject constructor(private val dsl: DSLContext) {
                     DSL.table(
                         "${GlobalConstants.SCHEMA_ENTREPOT_SIG}.$nomTableDestination",
                     ),
-                ).set(record.intoMap())
+                ).set(record)
             },
         ).execute()
     }

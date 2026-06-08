@@ -180,6 +180,15 @@ class ArchitectureTest {
                     .or(type(SynchronisationSIGTask::class.java))
                     .or(type(Main::class.java)),
             )
+
+    @ArchTest
+    val `SIG ne doit pas utiliser jOOQ` =
+        classes()
+            .that()
+            .resideInAPackage("remocra.db.sig..")
+            .should()
+            .onlyAccessClassesThat()
+            .resideOutsideOfPackage("org.jooq..")
 }
 
 /**
