@@ -20,8 +20,12 @@ const AccordionCustom = ({
       defaultActiveKey={activesKeys}
       activeKey={activesKeys}
     >
-      {list.map(({ header, content }, key) => (
-        <Accordion.Item eventKey={key.toString()} key={key}>
+      {list.map(({ header, content, noprint }, key) => (
+        <Accordion.Item
+          eventKey={key.toString()}
+          key={key}
+          className={noprint ? "noprint" : ""}
+        >
           <Accordion.Header onClick={() => handleShowClose(key)}>
             {header}
           </Accordion.Header>
@@ -35,7 +39,7 @@ const AccordionCustom = ({
 export default AccordionCustom;
 
 type AccordionType = {
-  list: { header: string; content: ReactNode }[];
+  list: { header: string; content: ReactNode; noprint?: boolean }[];
   handleShowClose: (index: number) => void;
   activesKeys: string[];
   classNameBody?: string;

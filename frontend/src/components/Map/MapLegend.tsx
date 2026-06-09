@@ -36,9 +36,13 @@ const MapLegend = forwardRef(
 
     layers
       ?.filter((g) => g.layers.length > 0)
-      .map((group) =>
+      .map((group) => {
+        const hasActiveLayers = group.layers.some((layer) =>
+          activeLayers.some((l) => getUid(layer.openlayer) === l),
+        );
         listeVoletsAccordion.push({
           header: group.libelle,
+          noprint: !hasActiveLayers,
           content: (
             <ListGroup className="list-group-flush">
               {group.layers
@@ -129,8 +133,8 @@ const MapLegend = forwardRef(
                 ))}
             </ListGroup>
           ),
-        }),
-      );
+        });
+      });
 
     if (listeVoletsAccordion.length === 0) {
       return;
@@ -150,6 +154,7 @@ const AccordionMap = ({
   listeVoletsAccordion: {
     header: string;
     content: ReactNode;
+    noprint?: boolean;
   }[];
 }) => {
   const { handleShowClose, activesKeys } = useAccordionState(
