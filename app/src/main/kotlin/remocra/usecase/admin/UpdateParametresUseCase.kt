@@ -240,10 +240,22 @@ class UpdateParametresUseCase
             )
 
             // RCCI
-            updateParametre(ParametreEnum.LISTE_TYPE_ORGA_DDTM_ONF, objectMapper.writeValueAsString(parametresAdminData.rcci.listeTypeOrganismeDdtmOnf))
-            updateParametre(ParametreEnum.LISTE_TYPE_ORGA_SDIS, objectMapper.writeValueAsString(parametresAdminData.rcci.listeTypeOrganismeSdis))
-            updateParametre(ParametreEnum.LISTE_TYPE_ORGA_GENDARMERIE, objectMapper.writeValueAsString(parametresAdminData.rcci.listeTypeOrganismeGendarmerie))
-            updateParametre(ParametreEnum.LISTE_TYPE_ORGA_POLICE, objectMapper.writeValueAsString(parametresAdminData.rcci.listeTypeOrganismePolice))
+            updateParametre(
+                ParametreEnum.LISTE_TYPE_ORGA_DDTM_ONF,
+                parametresAdminData.rcci.listeTypeOrganismeDdtmOnf?.let { objectMapper.writeValueAsString(it) },
+            )
+            updateParametre(
+                ParametreEnum.LISTE_TYPE_ORGA_SDIS,
+                parametresAdminData.rcci.listeTypeOrganismeSdis?.let { objectMapper.writeValueAsString(it) },
+            )
+            updateParametre(
+                ParametreEnum.LISTE_TYPE_ORGA_GENDARMERIE,
+                parametresAdminData.rcci.listeTypeOrganismeGendarmerie?.let { objectMapper.writeValueAsString(it) },
+            )
+            updateParametre(
+                ParametreEnum.LISTE_TYPE_ORGA_POLICE,
+                parametresAdminData.rcci.listeTypeOrganismePolice?.let { objectMapper.writeValueAsString(it) },
+            )
 
             // Utilisateur
             updateParametre(
