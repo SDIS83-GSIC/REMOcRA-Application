@@ -8,6 +8,8 @@ COPY variables.json /opt/hop/variables.json
 
 COPY remocra.json /files/metadata/rdbms/remocra.json
 
+COPY local.json /files/metadata/pipeline-run-configuration/local.json
+
 RUN mkdir -p /files/tasks
 
 # Copier l'entrypoint personnalisé et le rendre exécutable
