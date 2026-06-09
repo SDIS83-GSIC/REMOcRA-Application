@@ -74,7 +74,11 @@ const MapCartographiePerso = () => {
       cartographiePersoLayer.setStyle(featureStyle.clone());
     }
   }, [cartographiePersoLayer, featureStyle]);
-  const { tools: extraTools, selectedFeatures } = useToolbarPersoContext({
+  const {
+    tools: extraTools,
+    selectedFeatures,
+    setSelectedFeatures,
+  } = useToolbarPersoContext({
     map,
     cartographiePersoLayer,
     featureStyle,
@@ -142,6 +146,7 @@ const MapCartographiePerso = () => {
                 featureStyle={featureStyle}
                 setFeatureStyle={setFeatureStyle}
                 selectedFeatures={selectedFeatures}
+                setSelectedFeatures={setSelectedFeatures}
                 cartographiePersoLayer={cartographiePersoLayer}
                 tools={extraTools}
               />

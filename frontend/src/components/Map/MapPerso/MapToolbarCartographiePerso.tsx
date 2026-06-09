@@ -481,6 +481,7 @@ export const useToolbarPersoContext = ({
     featureStyle,
     SetFeatureStyle,
     selectedFeatures,
+    setSelectedFeatures,
   };
 };
 
@@ -525,6 +526,7 @@ const MapToolbarCartographiePerso = ({
   featureStyle,
   setFeatureStyle,
   selectedFeatures,
+  setSelectedFeatures,
   cartographiePersoLayer,
   tools,
 }: {
@@ -533,6 +535,7 @@ const MapToolbarCartographiePerso = ({
   featureStyle: Style;
   setFeatureStyle: (style: Style) => void;
   selectedFeatures: Feature[];
+  setSelectedFeatures: (features: Feature[]) => void;
   cartographiePersoLayer: VectorLayer;
   tools: Record<
     string,
@@ -676,6 +679,7 @@ const MapToolbarCartographiePerso = ({
     selectedFeatures.forEach((f) => {
       cartographiePersoLayer?.getSource()?.removeFeature(f);
     });
+    setSelectedFeatures([]);
   }
 
   function handleOpenPanel() {
@@ -754,6 +758,7 @@ const MapToolbarCartographiePerso = ({
             toolLabelTooltip={"Dessiner un point"}
             toggleTool={toggleToolCallback}
             activeTool={activeTool}
+            disabled={showPanel}
           />
           <ToolbarButton
             toolName={"draw-line"}
@@ -761,6 +766,7 @@ const MapToolbarCartographiePerso = ({
             toolLabelTooltip={"Dessiner une ligne"}
             toggleTool={toggleToolCallback}
             activeTool={activeTool}
+            disabled={showPanel}
           />
           <ToolbarButton
             toolName={"draw-polygon"}
@@ -768,6 +774,7 @@ const MapToolbarCartographiePerso = ({
             toolLabelTooltip={"Dessiner un polygone"}
             toggleTool={toggleToolCallback}
             activeTool={activeTool}
+            disabled={showPanel}
           />
         </ButtonGroup>
         <ButtonGroup>
@@ -796,6 +803,7 @@ const MapToolbarCartographiePerso = ({
             toolLabelTooltip={"Modifier un élément"}
             toggleTool={toggleToolCallback}
             activeTool={activeTool}
+            disabled={showPanel}
           />
           <ToolbarButton
             toolName={"edit-scale-rotate"}
@@ -805,6 +813,7 @@ const MapToolbarCartographiePerso = ({
             }
             toggleTool={toggleToolCallback}
             activeTool={activeTool}
+            disabled={showPanel}
           />
           <ToolbarButton
             toolName={"edit-translate"}
@@ -812,6 +821,7 @@ const MapToolbarCartographiePerso = ({
             toolLabelTooltip={"Déplacer un élément"}
             toggleTool={toggleToolCallback}
             activeTool={activeTool}
+            disabled={showPanel}
           />
           <TooltipCustom
             tooltipText={"Supprimer un élément"}
@@ -825,6 +835,7 @@ const MapToolbarCartographiePerso = ({
               type={"radio"}
               variant={"outline-primary"}
               className="m-2"
+              disabled={showPanel || selectedFeatures.length === 0}
             >
               <IconDelete />
             </ToggleButton>
