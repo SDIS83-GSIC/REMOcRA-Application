@@ -651,6 +651,8 @@ const MapToolbarCartographiePerso = ({
     } else {
       setFeatureStyle(formStyle.clone());
     }
+    // Clone pour créer une nouvelle référence et déclencher le re-render React
+    setFormStyle(formStyle.clone());
   }
 
   function updateFeatureStyle() {

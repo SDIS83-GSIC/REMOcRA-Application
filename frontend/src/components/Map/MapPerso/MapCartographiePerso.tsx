@@ -22,7 +22,11 @@ import "./MapCartographiePerso.css";
 const createDefaultStyle = () =>
   new Style({
     fill: new Fill({ color: "rgba(5, 176, 255, 1)" }),
-    stroke: new Stroke({ color: "rgba(5, 176, 255, 1)", width: 2 }),
+    stroke: new Stroke({
+      color: "rgba(5, 176, 255, 1)",
+      width: 2,
+      lineDash: [1],
+    }),
     image: new CircleStyle({
       radius: 7,
       fill: new Fill({ color: "#00c3ffff" }),
