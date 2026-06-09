@@ -103,11 +103,11 @@ services:
     image: client-docker-registry.atolcd.com/atolcd/remocra-v3-apache-hop:${DOCKER_REMOCRA_VERSION}
     user: "${REMOCRA_UID}:${REMOCRA_GID}"
     volumes:
-      - /var/lib/apache-hop/tasks:/files/tasks/
-      - /var/lib/apache-hop/config:/files/metadata/async-web-service/
+      - /var/lib/remocra/apache_hop/tasks:/files/tasks/
+      - /var/lib/remocra/apache_hop/config:/files/metadata/async-web-service/
     environment:
-      - HOP_SERVER_USER
-      - HOP_SERVER_PASS
+      - HOP_SERVER_USER=${APACHE_HOP_USERNAME}
+      - HOP_SERVER_PASS=${APACHE_HOP_PASSWORD}
       - POSTGRES_DB_NAME
       - POSTGRES_DB_USERNAME
       - POSTGRES_DB_PASSWORD
