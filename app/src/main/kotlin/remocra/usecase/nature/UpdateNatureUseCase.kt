@@ -22,7 +22,7 @@ class UpdateNatureUseCase @Inject constructor(
     AbstractCUDUseCase<NatureWithDiametres>(TypeOperation.UPDATE) {
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_NOMENCLATURE)) {
-            throw RemocraResponseException(ErrorType.ADMIN_NATURE_FORBIDDEN_INSERT)
+            throw RemocraResponseException(ErrorType.ADMIN_NATURE_FORBIDDEN_UPDATE)
         }
     }
 
