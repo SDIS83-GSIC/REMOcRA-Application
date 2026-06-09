@@ -30,6 +30,7 @@ const GoTopButton = () => {
         <Col xs="auto" className="go-top-wrapper bounce-on-hover">
           <Button
             onClick={scrollToTop}
+            size="lg"
             variant="transparent"
             className={"opacity-75"}
           >
