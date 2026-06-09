@@ -55,19 +55,6 @@ class TourneeRepository
     private val dsl: DSLContext,
 ) : AbstractRepository() {
 
-    fun getTourneesByPeiId(peiId: UUID, userInfo: WrappedUserInfo): List<Tournee> =
-        dsl.select(*TOURNEE.fields())
-            .from(TOURNEE)
-            .join(L_TOURNEE_PEI).on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
-            .where(L_TOURNEE_PEI.PEI_ID.eq(peiId))
-            .and(
-                repositoryUtils.checkIsSuperAdminOrCondition(
-                    TOURNEE.ORGANISME_ID.`in`(userInfo.affiliatedOrganismeIds?.toMutableSet() ?: emptyList<UUID>()),
-                    userInfo.isSuperAdmin,
-                ),
-            )
-            .fetchInto()
-
     fun getAllTourneeComplete(
         filter: Filter?,
         isSuperAdmin: Boolean,
@@ -977,6 +964,36 @@ class TourneeRepository
             .where(TOURNEE.ID.eq(tourneeId))
             .execute()
     }
+
+    fun getPeiAvecTournees(peiIds: Set<UUID>, affiliatedOrganismeIds: Set<UUID>?, isSuperAdmin: Boolean): List<PeiTourneeRow> =
+        dsl.select(
+            PEI.ID,
+            PEI.NUMERO_COMPLET,
+            TOURNEE.ID,
+            TOURNEE.LIBELLE,
+            ORGANISME.LIBELLE,
+        )
+            .from(PEI)
+            .join(L_TOURNEE_PEI).on(L_TOURNEE_PEI.PEI_ID.eq(PEI.ID))
+            .join(TOURNEE).on(TOURNEE.ID.eq(L_TOURNEE_PEI.TOURNEE_ID))
+            .join(ORGANISME).on(ORGANISME.ID.eq(TOURNEE.ORGANISME_ID))
+            .where(PEI.ID.`in`(peiIds))
+            .and(
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    TOURNEE.ORGANISME_ID.`in`(affiliatedOrganismeIds ?: listOf<UUID>()),
+                    isSuperAdmin,
+                ),
+            )
+            .orderBy(PEI.NUMERO_COMPLET)
+            .fetchInto()
+
+    data class PeiTourneeRow(
+        val peiId: UUID,
+        val peiNumeroComplet: String,
+        val tourneeId: UUID,
+        val tourneeLibelle: String,
+        val organismeLibelle: String,
+    )
 
     fun getTourneeReservedFromList(listTourneeId: List<UUID>): List<TourneeShortData> =
         dsl.select(
