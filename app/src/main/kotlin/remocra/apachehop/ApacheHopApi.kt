@@ -8,7 +8,7 @@ import retrofit2.http.Query
 
 interface ApacheHopApi {
 
-    @GET("/hop/asyncRun")
+    @GET("/hop/asyncRun/")
     @Headers("Content-Type: application/json")
     fun run(
         @Query("service") task: String,

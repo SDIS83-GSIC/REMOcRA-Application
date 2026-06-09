@@ -64,8 +64,8 @@ class ApacheHopModule private constructor(
                 ApacheHopModule(
                     ApacheHopSettings(
                         HttpUrl.get(config.getString("url")),
-                        config.getString("password"),
                         config.getString("username"),
+                        config.getString("password"),
                     ),
                 )
             } else {
