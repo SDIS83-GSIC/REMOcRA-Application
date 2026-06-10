@@ -17,7 +17,7 @@ import { ModifyEvent } from "ol/interaction/Modify";
 import VectorLayer from "ol/layer/Vector";
 import OLMap from "ol/Map";
 import VectorSource from "ol/source/Vector";
-import { Fill, Stroke, Style } from "ol/style";
+import { Fill, Stroke, Style, Text } from "ol/style";
 import CircleStyle from "ol/style/Circle";
 import View from "ol/View";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
@@ -731,7 +731,7 @@ const MapToolbarCartographiePerso = ({
   }
 
   const { activesKeys, handleShowClose } = useAccordionState(
-    Array(3).fill(true),
+    Array(selectedFeatures.length > 0 ? 4 : 3).fill(true),
   );
 
   return (
@@ -1189,6 +1189,106 @@ const MapToolbarCartographiePerso = ({
                 </>
               ),
             },
+            ...(selectedFeatures.length > 0
+              ? [
+                  {
+                    header: "Annotation",
+                    content: (
+                      <>
+                        <Form.Group>
+                          <Form.Label>Texte</Form.Label>
+                          <Form.Control
+                            type="text"
+                            placeholder="Texte"
+                            defaultValue={
+                              (formStyle?.getText()?.getText() as string) ?? ""
+                            }
+                            onChange={(evt) => {
+                              const text = evt.target.value;
+                              if (text) {
+                                const existingText = formStyle.getText();
+                                if (existingText) {
+                                  existingText.setText(text);
+                                } else {
+                                  formStyle.setText(
+                                    new Text({
+                                      text: text,
+                                      font: "14px sans-serif",
+                                      fill: new Fill({ color: "#000000" }),
+                                      stroke: new Stroke({
+                                        color: "#ffffff",
+                                        width: 3,
+                                      }),
+                                      overflow: true,
+                                    }),
+                                  );
+                                }
+                              } else {
+                                formStyle.setText(
+                                  new Text({
+                                    text: "",
+                                    font: "14px sans-serif",
+                                    fill: new Fill({ color: "#000000" }),
+                                    stroke: new Stroke({
+                                      color: "#ffffff",
+                                      width: 3,
+                                    }),
+                                  }),
+                                );
+                              }
+                              updatePreview();
+                            }}
+                          />
+                        </Form.Group>
+                        <Form.Group>
+                          <Form.Label>Taille</Form.Label>
+                          <FormRange
+                            min={8}
+                            max={72}
+                            step={1}
+                            defaultValue={(() => {
+                              const font = formStyle?.getText()?.getFont();
+                              if (font) {
+                                const match = font.match(/(\d+)px/);
+                                return match ? parseInt(match[1]) : 14;
+                              }
+                              return 14;
+                            })()}
+                            onChange={(evt) => {
+                              const size = parseInt(evt.target.value);
+                              const existingText = formStyle.getText();
+                              if (existingText) {
+                                existingText.setFont(`${size}px sans-serif`);
+                                updatePreview();
+                              }
+                            }}
+                          />
+                        </Form.Group>
+                        <Form.Group>
+                          <Form.Label>Couleur</Form.Label>
+                          <Form.Control
+                            type="color"
+                            defaultValue={
+                              colorToHex(
+                                formStyle?.getText()?.getFill()?.getColor(),
+                              ) || "#000000"
+                            }
+                            onChange={(evt) => {
+                              const existingText = formStyle.getText();
+                              if (existingText) {
+                                existingText.setFill(
+                                  new Fill({ color: evt.target.value }),
+                                );
+                                updatePreview();
+                              }
+                            }}
+                          />
+                        </Form.Group>
+                      </>
+                    ),
+                  },
+                ]
+              : []),
           ]}
           handleShowClose={handleShowClose}
         />
