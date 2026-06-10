@@ -68,7 +68,7 @@ export const getInitialValues = (
   coucheActive: data?.coucheActive ?? true,
   coucheProxy: data?.coucheProxy ?? false,
   coucheTuilage: data?.coucheTuilage ?? false,
-  coucheFromGeoserver: data?.coucheFromGeoserver ?? false,
+  coucheFromGeoserver: data?.coucheFromGeoserver ?? true,
   groupeFonctionnalitesZcList: data?.groupeFonctionnalitesZcList || [],
   groupeFonctionnalitesHorsZcList: data?.groupeFonctionnalitesHorsZcList || [],
   moduleList: data?.moduleList || [],
