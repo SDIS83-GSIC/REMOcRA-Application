@@ -4,7 +4,6 @@ import { object } from "yup";
 import AccordionCustom, {
   useAccordionState,
 } from "../../../components/Accordion/Accordion.tsx";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
 import {
   FormContainer,
   TextAreaInput,
@@ -14,19 +13,28 @@ import MyFormik from "../../../components/Form/MyFormik.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import { IconInfo } from "../../../components/Icon/Icon.tsx";
 import url from "../../../module/fetch.tsx";
+import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import { formatData, QueryParam } from "../Constants.tsx";
 
 type QueryFormProps = {
   activeQuery: QueryParam;
-  setActiveQuery: any;
-  setQueryData: any;
-  setAvailableOptions: any;
+  setActiveQuery: (query: QueryParam) => void;
+  setQueryData: (data: Record<string, unknown>[] | null) => void;
+  setAvailableOptions: (options: string[]) => void;
+  zoneCompetenceList: IdCodeLibelleType[];
+  utilisateurList: IdCodeLibelleType[];
+  organismeList: IdCodeLibelleType[];
 };
 
 const QueryForm = (props: QueryFormProps) => {
   const urlApiQuery = url`/api/dashboard/validate-query`;
 
-  const updateData = (data: any) => {
+  const updateData = (data: {
+    queryTitle: string;
+    querySql: string;
+    name: string[];
+    values: unknown[];
+  }) => {
     props.setActiveQuery({
       ...props.activeQuery,
       title: data.queryTitle,
@@ -55,18 +63,34 @@ const QueryForm = (props: QueryFormProps) => {
           prepareVariables={(values) => values}
           validationSchema={object({})}
         >
-          <InnerQueryForm />
+          <InnerQueryForm
+            zoneCompetenceList={props.zoneCompetenceList}
+            utilisateurList={props.utilisateurList}
+            organismeList={props.organismeList}
+          />
         </MyFormik>
       </Card.Body>
     </Card>
   );
 };
 
-const InnerQueryForm = () => {
-  const { values, setValues } = useFormikContext();
-  const { data: zoneCompetenceList } = useGet(url`/api/zone-integration/list`);
-  const { data: utilisateurList } = useGet(url`/api/utilisateur/list`);
-  const { data: organismeList } = useGet(url`/api/organisme/get-all`);
+const InnerQueryForm = ({
+  zoneCompetenceList,
+  utilisateurList,
+  organismeList,
+}: {
+  zoneCompetenceList: IdCodeLibelleType[];
+  utilisateurList: IdCodeLibelleType[];
+  organismeList: IdCodeLibelleType[];
+}) => {
+  const { values, setValues } = useFormikContext<{
+    queryId: string | number;
+    query: string;
+    queryTitle: string;
+    zoneCompetenceId?: string | number;
+    utilisateurId?: string | number;
+    organismeId?: string | number;
+  }>();
 
   const { activesKeys, handleShowClose } = useAccordionState(
     Array(2).fill(false),
@@ -122,7 +146,7 @@ const InnerQueryForm = () => {
                   required={false}
                   setValues={setValues}
                   defaultValue={zoneCompetenceList?.find(
-                    (e) => e.id === values.zoneCompetenceId,
+                    (e: IdCodeLibelleType) => e.id === values.zoneCompetenceId,
                   )}
                 />
                 <SelectForm
@@ -132,7 +156,7 @@ const InnerQueryForm = () => {
                   required={false}
                   setValues={setValues}
                   defaultValue={utilisateurList?.find(
-                    (e) => e.id === values.utilisateurId,
+                    (e: IdCodeLibelleType) => e.id === values.utilisateurId,
                   )}
                 />
                 <SelectForm
@@ -142,7 +166,7 @@ const InnerQueryForm = () => {
                   required={false}
                   setValues={setValues}
                   defaultValue={organismeList?.find(
-                    (e) => e.id === values.organismeId,
+                    (e: IdCodeLibelleType) => e.id === values.organismeId,
                   )}
                 />
               </>

@@ -3,6 +3,7 @@ import { Col, Container, Row } from "react-bootstrap";
 import { Outlet } from "react-router-dom";
 import { object } from "yup";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
+import { useGet } from "../../components/Fetch/useFetch.tsx";
 import { FormContainer } from "../../components/Form/Form.tsx";
 import MyFormik from "../../components/Form/MyFormik.tsx";
 import { IconHorizontalChartComponent } from "../../components/Icon/Icon.tsx";
@@ -14,12 +15,18 @@ import ConfigForm from "./QueryAdminDynamicForm/ConfigForm.tsx";
 import QueryForm from "./QueryAdminDynamicForm/QueryForm.tsx";
 import QueryList from "./QueryAdminDynamicForm/QueryList.tsx";
 
+type QueryListRef = {
+  refreshList: () => void;
+};
+
 const ComponentBoardQueryAdmin = () => {
-  const queryListRef = useRef<HTMLDivElement>();
+  const queryListRef = useRef<QueryListRef | null>(null);
 
   const { error: errorToast } = useToastContext();
-  const [queryGlobalData, setQueryGlobalData] = useState<any | null>(null); // Données globales retournées par la requête
-  const [data, setData] = useState<any | null>(); // Données mappées pour le composant à l'écran
+  const [queryGlobalData, setQueryGlobalData] = useState<
+    Record<string, unknown>[] | null
+  >(null); // Données globales retournées par la requête
+  const [data, setData] = useState<Record<string, unknown>[] | null>(null); // Données mappées pour le composant à l'écran
 
   const [activeQuery, setActiveQuery] = useState<QueryParam | null>(null); // Requête actif
 
@@ -34,12 +41,22 @@ const ComponentBoardQueryAdmin = () => {
   const [isAdding, setIsAdding] = useState(false);
   const formikRef = useRef(); // Créer une référence pour Formik
 
+  // Données de référence chargées une seule fois
+  const { data: zoneCompetenceList } = useGet(url`/api/zone-integration/list`);
+  const { data: utilisateurList } = useGet(url`/api/utilisateur/list`);
+  const { data: organismeList } = useGet(url`/api/organisme/get-all`);
+
   const urlApiRegister = url`/api/dashboard/create-query`;
   const urlApiUpdateRegister = url`/api/dashboard/update-query`;
 
   const getPrepareVariables = () => {
     const componentData:
-      | { id: number; key: any; title: any; config: any }[]
+      | {
+          id: number;
+          key: string;
+          title: string;
+          config: Record<string, unknown>;
+        }[]
       | null = openListComponent
       ? openListComponent.map((component) => {
           return {
@@ -72,10 +89,11 @@ const ComponentBoardQueryAdmin = () => {
 
   const toSubmit = () => {
     setIsAdding(false);
-    setIsAdding(false);
     setSelectedComponent(null);
     setActiveQuery(null);
     setOpenListComponent(null);
+    // Rafraîchit la liste après enregistrement réussi
+    queryListRef.current?.refreshList();
   };
 
   return (
@@ -110,6 +128,9 @@ const ComponentBoardQueryAdmin = () => {
               setActiveQuery={setActiveQuery}
               setQueryData={setQueryGlobalData}
               setAvailableOptions={setAvailableOptions}
+              zoneCompetenceList={zoneCompetenceList}
+              utilisateurList={utilisateurList}
+              organismeList={organismeList}
             />
           )}
         </Col>
@@ -134,7 +155,7 @@ const ComponentBoardQueryAdmin = () => {
                     selectedComponent={selectedComponent}
                     setSelectedComponent={setSelectedComponent}
                     availableOptions={availableOptions}
-                    queryGlobalData={queryGlobalData}
+                    queryGlobalData={queryGlobalData ?? []}
                     setData={setData}
                   />
                 </Col>
@@ -145,7 +166,7 @@ const ComponentBoardQueryAdmin = () => {
                     setData={setData}
                     openListComponent={openListComponent}
                     setOpenListComponent={setOpenListComponent}
-                    queryGlobalData={queryGlobalData}
+                    queryGlobalData={queryGlobalData ?? []}
                     selectedComponent={selectedComponent}
                     setSelectedComponent={setSelectedComponent}
                   />

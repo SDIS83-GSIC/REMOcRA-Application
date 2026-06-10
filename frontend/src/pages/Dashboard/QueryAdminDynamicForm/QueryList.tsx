@@ -8,7 +8,7 @@ import {
 import { Button, Card, ListGroup } from "react-bootstrap";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
 import DeleteButtonWithModal from "../../../components/Button/DeleteButtonWithModal.tsx";
-import { useGetRun } from "../../../components/Fetch/useFetch.tsx";
+import Loading from "../../../components/Elements/Loading/Loading.tsx";
 import { IconEdit } from "../../../components/Icon/Icon.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
@@ -37,247 +37,226 @@ type QueryListProps = {
   setIsAdding: (arg0: boolean) => void;
 };
 
-const QueryList = forwardRef(
+export type QueryListRef = {
+  refreshList: () => void;
+};
+
+const QueryList = forwardRef<QueryListRef, QueryListProps>(
   (
     {
       setData,
       activeQuery,
       setActiveQuery,
-      openListComponent,
       setOpenListComponent,
       setSelectedComponent,
-      queryGlobalData,
       setQueryGlobalData,
       setAvailableOptions,
       formikRef,
       isAdding,
       setIsAdding,
-    }: QueryListProps,
+    },
     ref,
   ) => {
     const { error: errorToast } = useToastContext();
 
-    const [openListQuery, setOpenListQuery] = useState<QueryParam[] | null>(); // Liste des requêtes
+    const [openListQuery, setOpenListQuery] = useState<QueryParam[] | null>(
+      null,
+    );
+    const [isLoadingList, setIsLoadingList] = useState(false);
+    const [isLoadingQuery, setIsLoadingQuery] = useState(false);
+    const [isValidatingQuery, setIsValidatingQuery] = useState(false);
 
     const urlApiQueryList = url`/api/dashboard/get-list-query`;
     const urlApiGetQueryComponent = url`/api/dashboard/get-components/`;
     const urlApiDeleteQuery = url`/api/dashboard/delete-query/`;
     const urlApiQuery = url`/api/dashboard/validate-query`;
 
-    useImperativeHandle(ref, () => ({
-      setOpenListQuery(value: any) {
-        setOpenListQuery(value);
-      },
-    }));
+    const loadQueryList = useCallback(async () => {
+      setIsLoadingList(true);
+      try {
+        const response = await fetch(
+          urlApiQueryList,
+          getFetchOptions({ method: "GET" }),
+        );
+        const raw = await response.json();
 
-    // Récupère la liste des requêtes en base
-    const fetchData = useGetRun(urlApiQueryList, {});
+        const queryList: QueryParam[] = Array.isArray(raw)
+          ? raw.map((element: any) => ({
+              id: element.dashboardQueryId,
+              query: element.dashboardQueryQuery,
+              title: element.dashboardQueryTitle,
+            }))
+          : [];
 
-    useEffect(() => {
-      if (fetchData.isResolved && fetchData.data) {
-        const queryList: { id: any; query: any; title: any }[] =
-          fetchData.data.map(
-            (element: {
-              dashboardQueryId: any;
-              dashboardQueryQuery: any;
-              dashboardQueryTitle: any;
-            }) => {
-              return {
-                id: element.dashboardQueryId,
-                query: element.dashboardQueryQuery,
-                title: element.dashboardQueryTitle,
-              };
-            },
-          );
         setOpenListQuery(queryList);
+      } catch (reason: any) {
+        errorToast(String(reason));
+      } finally {
+        setIsLoadingList(false);
       }
-    }, [fetchData.data, fetchData.isResolved]);
+    }, [errorToast, urlApiQueryList]);
 
-    // Définit les propriétés par défaut pour l'ajout d'une nouvelle requête
-    const handleAddQuery = () => {
-      const newQuery = {
-        query: "",
-        title: "Titre nouvelle requête",
-      };
-      setIsAdding(true); // Définit le statut en cours d'édition
-      setOpenListComponent([]);
-      setData(null);
-      setActiveQuery(newQuery);
-    };
+    const loadComponentsForQuery = useCallback(
+      async (queryId: string | number) => {
+        const response = await fetch(
+          `${urlApiGetQueryComponent}${queryId}`,
+          getFetchOptions({ method: "GET" }),
+        );
+        const raw = await response.json();
 
-    // Met à jour la requête en cas d'édition
-    const handleEditQuery = (id: string | undefined) => {
-      // Active la requête dans la liste
-      setIsAdding(true); // Définit le statut en cours d'édition
-      setActiveQuery(
-        openListQuery ? openListQuery.find((query) => query.id === id) : null,
-      );
-    };
+        const componentList: ComponentDashboard[] = Array.isArray(raw)
+          ? raw.map((element: any, index: number) => {
+              const key = element.dashboardComponentKey as string;
+              const componentEntry = COMPONENTS[
+                key as keyof typeof COMPONENTS
+              ] ?? {
+                component: () => null,
+                label: key,
+              };
 
-    // Récupère les composant liés à la requête
-    const fetchQueryComponent = useGetRun(
-      urlApiGetQueryComponent + activeQuery?.id,
-      {},
+              return {
+                id: element.dashboardComponentId,
+                queryId: element.dashboardComponentDahsboardQueryId || "",
+                index,
+                key,
+                component: componentEntry.component,
+                formConfig: FORM_CONFIG[key as keyof typeof FORM_CONFIG],
+                title: element.dashboardComponentTitle || componentEntry.label,
+                config: normalizeComponentConfig(
+                  key,
+                  element.dashboardComponentConfig,
+                ),
+              };
+            })
+          : [];
+
+        setOpenListComponent(componentList);
+      },
+      [setOpenListComponent, urlApiGetQueryComponent],
+    );
+
+    const validateQuery = useCallback(
+      async (query: QueryParam): Promise<boolean> => {
+        setIsValidatingQuery(true);
+        try {
+          const response = await fetch(
+            urlApiQuery,
+            getFetchOptions({
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                query: query.query,
+                queryTitle: query.title,
+              }),
+            }),
+          );
+
+          const res = await response.json();
+          const dataFormatted = formatData(res);
+          const options =
+            dataFormatted && dataFormatted.length > 0
+              ? Object.keys(dataFormatted[0])
+              : [];
+
+          setAvailableOptions(options);
+          setQueryGlobalData(dataFormatted);
+          setData(null);
+          return true;
+        } catch (reason: any) {
+          errorToast(String(reason));
+          return false;
+        } finally {
+          setIsValidatingQuery(false);
+        }
+      },
+      [
+        errorToast,
+        setAvailableOptions,
+        setData,
+        setQueryGlobalData,
+        urlApiQuery,
+      ],
+    );
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        refreshList() {
+          void loadQueryList();
+        },
+      }),
+      [loadQueryList],
     );
 
     useEffect(() => {
-      if (activeQuery && activeQuery.id) {
-        // Si une requête est active, on récupère les composants associés
-        setOpenListComponent(null); // Réinitialise la liste des composants
-        fetchQueryComponent.run();
-      }
-    }, [activeQuery, fetchQueryComponent.run, setOpenListComponent]);
+      void loadQueryList();
+    }, [loadQueryList]);
 
-    useEffect(() => {
-      if (
-        fetchQueryComponent.isResolved &&
-        fetchQueryComponent.data &&
-        !openListComponent
-      ) {
-        // Set les composants de la requête sans datas
-        const componentList: {
-          id: string;
-          queryId: string;
-          index: number;
-          key: string;
-          component: any;
-          formConfig: any;
-          title: string;
-          config: any;
-        }[] = fetchQueryComponent.data.map(
-          (
-            element: {
-              dashboardComponentId: string;
-              dashboardComponentKey: string;
-              dashboardComponentTitle: string;
-              dashboardComponentConfig: any;
-              dashboardComponentDahsboardQueryId: string;
-            },
-            index: number,
-          ) => {
-            const componentEntry = COMPONENTS[
-              element.dashboardComponentKey as keyof typeof COMPONENTS
-            ] ?? {
-              component: () => null,
-              label: element.dashboardComponentKey,
-            };
-            return {
-              id: element.dashboardComponentId,
-              queryId: element.dashboardComponentDahsboardQueryId || "",
-              index: index,
-              key: element.dashboardComponentKey,
-              component: componentEntry.component,
-              formConfig:
-                FORM_CONFIG[
-                  element.dashboardComponentKey as keyof typeof FORM_CONFIG
-                ],
-              title: element.dashboardComponentTitle || componentEntry.label,
-              config: normalizeComponentConfig(
-                element.dashboardComponentKey,
-                element.dashboardComponentConfig,
-              ),
-            };
-          },
-        );
-        setOpenListComponent(componentList);
-      }
-    }, [
-      fetchQueryComponent.data,
-      fetchQueryComponent.isResolved,
-      openListComponent,
-      setOpenListComponent,
-    ]);
+    const handleAddQuery = () => {
+      const newQuery: QueryParam = {
+        query: "",
+        title: "Titre nouvelle requête",
+      };
 
-    // Valide la requête et récupère les datas correspondantes
-    const fetchDataQuery = useCallback(async () => {
-      (
-        await fetch(
-          urlApiQuery,
-          getFetchOptions({
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              query: activeQuery?.query,
-              queryTitle: activeQuery?.title,
-            }),
-          }),
-        )
-      )
-        .json()
-        .then((res) => {
-          // Format les données pour exploitations par les composants
-          const dataFormatted = formatData(res);
-          setAvailableOptions(Object.keys(dataFormatted[0]));
-          setQueryGlobalData(dataFormatted);
-          // Set les datas à afficher dans le premier composant, pour visualisation
-          if (openListComponent && openListComponent.length > 0) {
-            setData(null);
-          }
-        })
-        .catch((reason: string) => {
-          errorToast(reason);
-        });
-    }, [
-      errorToast,
-      activeQuery,
-      setAvailableOptions,
-      setQueryGlobalData,
-      setData,
-      urlApiQuery,
-      openListComponent?.length,
-      openListComponent,
-    ]);
-
-    // Enregistre la config pour la requête
-    const handleSaveQuery = () => {
-      formikRef.current?.submitForm(); // Ref pour l'enregistrement de la requête et composants
-      fetchData.run();
-      setIsAdding(false);
+      setIsAdding(true);
+      setOpenListComponent([]);
+      setData(null);
+      setActiveQuery(newQuery);
       setSelectedComponent(null);
       setAvailableOptions([]);
       setQueryGlobalData(null);
     };
 
-    // Annule l'édition de la requête
+    const handleEditQuery = async (id: string | number | undefined) => {
+      const selected =
+        openListQuery?.find((query) => String(query.id) === String(id)) ?? null;
+      if (!selected || !selected.id) {
+        return;
+      }
+
+      setIsAdding(true);
+      setIsLoadingQuery(true);
+      setActiveQuery(selected);
+      setSelectedComponent(null);
+      setAvailableOptions([]);
+      setQueryGlobalData(null);
+      setData(null);
+      setOpenListComponent(null);
+
+      try {
+        await loadComponentsForQuery(selected.id);
+        await validateQuery(selected);
+      } catch (reason: any) {
+        errorToast(String(reason));
+      } finally {
+        setIsLoadingQuery(false);
+      }
+    };
+
+    const handleSaveQuery = async () => {
+      if (isValidatingQuery) {
+        return;
+      }
+
+      const isValid = activeQuery?.query?.trim()
+        ? await validateQuery(activeQuery)
+        : true;
+
+      if (!isValid) {
+        return;
+      }
+
+      await formikRef.current?.submitForm();
+    };
+
     const handleCancelQuery = () => {
-      setIsAdding(false); // Désactive le mode "Ajout"
+      setIsAdding(false);
       setActiveQuery(null);
       setSelectedComponent(null);
       setOpenListComponent(null);
       setAvailableOptions([]);
       setQueryGlobalData(null);
     };
-
-    // Récupère les requêtes en base lors du premier chargement du composant
-    useEffect(() => {
-      if (!openListQuery && !fetchData.isLoading) {
-        fetchData.run();
-      }
-    }, [fetchData, openListQuery]);
-
-    // Récupère les composant de la requête éditer
-    useEffect(() => {
-      if (
-        activeQuery &&
-        activeQuery.id &&
-        !openListComponent &&
-        !fetchQueryComponent.isLoading
-      ) {
-        fetchQueryComponent.run();
-      }
-    }, [fetchQueryComponent, activeQuery, openListComponent]);
-
-    // Récupères les datas de la requête éditée
-    useEffect(() => {
-      if (
-        activeQuery &&
-        activeQuery.id &&
-        !queryGlobalData &&
-        openListComponent
-      ) {
-        fetchDataQuery();
-      }
-    }, [fetchDataQuery, activeQuery, openListComponent, queryGlobalData]);
 
     return (
       <Card className="m-3">
@@ -292,11 +271,20 @@ const QueryList = forwardRef(
           <Card.Body>
             <h5 className="mb-3">{activeQuery?.title}</h5>
             <div className="d-flex justify-content-between">
-              <Button variant="secondary" onClick={handleCancelQuery}>
+              <Button
+                variant="secondary"
+                onClick={handleCancelQuery}
+                disabled={isValidatingQuery}
+              >
                 Annuler
               </Button>
-              <Button variant="primary" onClick={handleSaveQuery}>
-                Enregistrer
+
+              <Button
+                variant="primary"
+                onClick={handleSaveQuery}
+                disabled={isValidatingQuery}
+              >
+                {isValidatingQuery ? "Validation..." : "Enregistrer"}
               </Button>
             </div>
           </Card.Body>
@@ -307,7 +295,9 @@ const QueryList = forwardRef(
             variant="flush"
             style={{ maxHeight: "65vh", overflowY: "auto" }}
           >
-            {openListQuery && openListQuery.length > 0 ? (
+            {isLoadingList ? (
+              <Loading />
+            ) : openListQuery && openListQuery.length > 0 ? (
               openListQuery.map(({ id, title }) => (
                 <ListGroup.Item
                   key={id}
@@ -327,18 +317,19 @@ const QueryList = forwardRef(
                       size="sm"
                       className="me-2 text-info text-decoration-none"
                       onClick={() => handleEditQuery(id)}
+                      disabled={isLoadingQuery || isValidatingQuery}
                     >
                       <IconEdit />
                     </Button>
                     <DeleteButtonWithModal
                       path={urlApiDeleteQuery + id}
                       reload={() => {
-                        fetchData.run();
+                        loadQueryList();
                       }}
                       variant="link"
                       className="text-danger text-decoration-none"
                       title={false}
-                      disabled={false}
+                      disabled={isLoadingQuery || isValidatingQuery}
                     />
                   </div>
                 </ListGroup.Item>
