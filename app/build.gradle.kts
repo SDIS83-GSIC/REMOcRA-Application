@@ -96,6 +96,9 @@ licensee {
     ignoreDependencies("org.eclipse.emf") {
         because("EPL-1.0 n'est pas compatible avec AGPL-3.0, on ajoute une exception à la licence")
     }
+    ignoreDependencies("com.oracle.database.jdbc") {
+        because("Oracle free license n'est pas compatible avec AGPL-3.0, on ajoute une exception à la licence")
+    }
 }
 
 dependencies {
@@ -129,6 +132,7 @@ dependencies {
     api(libs.hikaricp)
     api(libs.jooq.kotlin)
     runtimeOnly(libs.postgresql)
+    runtimeOnly(libs.oracle)
     api(libs.flyway.core)
 
     // Web

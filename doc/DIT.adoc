@@ -119,13 +119,16 @@ GEOSERVER_PASSWORD=xxxxxxxxxxxxxxxxx
 * PREPRODUCTION
 * PRODUCTION  | PRODUCTION
 
-.5+| *Informations de connexion à la base SIG du SDIS
+.8+| *Informations de connexion à la base SIG du SDIS
 (les valeurs sont optionnelles)*
 | SIG_HOSTNAME | Nom de l'hôte de la base de données SIG |
-| SIG_DATABASE_VENDOR | Fournisseur de la base de données SIG (`postgres`)  |
+| SIG_PORT_NUMBER | Port de la base de données SIG  |
+| SIG_DATABASE_VENDOR | Fournisseur de la base de données SIG (`postgres` ou `oracle`)  |
 | SIG_DBNAME | Nom de la base de données SIG |
 | SIG_USERNAME | Nom de l’utilisateur de la base de données SIG |
 | SIG_PASSWORD | Mot de passe de l'utilisateur de la base de données SIG |
+| SIG_DRIVER_TYPE | Type de driver pour se connecter à la base de données SIG (uniquement pour oracle) |
+| SIG_SERVICE_NAME | Service name de la base de données SIG (uniquement pour oracle) |
 
 .7+| *Keycloak*
 | KC_BOOTSTRAP_ADMIN_USERNAME | Nom de l’utilisateur super-admin pour se connecter à Keycloak |

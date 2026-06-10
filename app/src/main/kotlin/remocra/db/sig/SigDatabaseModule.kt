@@ -8,6 +8,7 @@ import com.zaxxer.hikari.HikariDataSource
 import jakarta.inject.Singleton
 import remocra.RemocraModule
 import remocra.db.sig.strategy.NotConfiguredSigQueries
+import remocra.db.sig.strategy.SigOracleQueries
 import remocra.db.sig.strategy.SigPostgresQueries
 import remocra.db.sig.strategy.SigQueries
 import java.util.Properties
@@ -48,21 +49,25 @@ private constructor(private val properties: Properties?, private val databaseVen
 
         private fun String.toDatabaseVendor() = when (this.lowercase()) {
             "postgres" -> DatabaseVendor.POSTGRES
-            else -> throw IllegalArgumentException("Le fournisseur de base de données, pour SIG, n'est pas supporté par REMOcRA (les valeurs possible sont `postgres`).")
+            "oracle" -> DatabaseVendor.ORACLE
+            else -> throw IllegalArgumentException("Le fournisseur de base de données, pour SIG, n'est pas supporté par REMOcRA (les valeurs possible sont `postgres` ou `oracle`).")
         }
 
         private fun DatabaseVendor.toDataSourceClassName() = when (this) {
             DatabaseVendor.POSTGRES -> "org.postgresql.ds.PGSimpleDataSource"
+            DatabaseVendor.ORACLE -> "oracle.jdbc.pool.OracleDataSource"
         }
 
         private fun DatabaseVendor?.toSigQueries(): Class<out SigQueries>? = when (this) {
             DatabaseVendor.POSTGRES -> SigPostgresQueries::class.java
+            DatabaseVendor.ORACLE -> SigOracleQueries::class.java
             null -> NotConfiguredSigQueries::class.java
         }
     }
 
     private enum class DatabaseVendor {
         POSTGRES,
+        ORACLE,
     }
 }
 
