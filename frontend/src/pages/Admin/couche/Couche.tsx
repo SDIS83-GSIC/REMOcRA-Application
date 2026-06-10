@@ -75,7 +75,7 @@ export const getInitialValues = (
   groupeCoucheId: groupeCoucheId,
   coucheIconeUrl: data?.coucheIconeUrl,
   coucheLegendeUrl: data?.coucheLegendeUrl,
-  coucheOpacite: data?.coucheOpacite,
+  coucheOpacite: data?.coucheOpacite ?? 1,
 });
 
 export const prepareValues = (
