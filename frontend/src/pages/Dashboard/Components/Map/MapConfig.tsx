@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import { useDebouncedCallback } from "use-debounce";
 import { SelectInput } from "../../../../components/Form/Form.tsx";
@@ -27,8 +27,15 @@ const MapConfig = (options: any) => {
       (option: any) => option.value === options.config.libelle,
     ) || "";
 
-  // Gérer les limites dynamiquement
-  const [limits, setLimits] = useState(options.config.limits || []);
+  const nextId = useRef(0);
+
+  // Gérer les limites dynamiquement, chaque limite porte un _id stable
+  const [limits, setLimits] = useState(() =>
+    (options.config.limits || []).map((l: any) => ({
+      ...l,
+      _id: nextId.current++,
+    })),
+  );
 
   // Mettre à jour la config du composant avec la nouvelle valeur
   const handleChange = (fieldName: string, newValue: string) => {
@@ -38,38 +45,54 @@ const MapConfig = (options: any) => {
 
   // Debounce pour le color picker pour limiter le nombre de refraîchissements OpenLayers
   const debounceColorPick = useDebouncedCallback(
-    (index: number, field: string, value: string) =>
-      handleLimitsChange(index, field, value),
+    (id: number, field: string, value: string) =>
+      handleLimitsChange(id, field, value),
     500,
   );
 
-  // Mettre à jour les limites
-  const handleLimitsChange = (index: number, field: string, value: string) => {
-    const updatedLimits = limits.map((limit: any, i: number) =>
-      i === index ? { ...limit, [field]: value } : limit,
+  // Mettre à jour les limites et trier par valeur croissante
+  const handleLimitsChange = (id: number, field: string, value: string) => {
+    const updatedLimits = limits.map(
+      (limit: { color: string; value: string; _id: number }) =>
+        limit._id === id ? { ...limit, [field]: value } : limit,
     );
-    setLimits(updatedLimits);
+    const sortedLimits = [...updatedLimits].sort(
+      (a, b) => parseFloat(a.value || "0") - parseFloat(b.value || "0"),
+    );
+    setLimits(sortedLimits);
 
-    const updatedConfig = { ...options.config, limits: updatedLimits };
+    // Propager sans les _id internes
+    const configLimits = sortedLimits.map(
+      ({ _id, ...rest }: { _id: number; color: string; value: string }) => rest,
+    );
+    const updatedConfig = { ...options.config, limits: configLimits };
     options.setConfig(updatedConfig);
   };
 
   // Ajouter une nouvelle limite
   const addLimit = () => {
-    const newLimit = { color: "#000000", value: "" };
+    const newLimit = { color: "#000000", value: "", _id: nextId.current++ };
     const updatedLimits = [...limits, newLimit];
     setLimits(updatedLimits);
 
-    const updatedConfig = { ...options.config, limits: updatedLimits };
+    const configLimits = updatedLimits.map(
+      ({ _id, ...rest }: { _id: number; color: string; value: string }) => rest,
+    );
+    const updatedConfig = { ...options.config, limits: configLimits };
     options.setConfig(updatedConfig);
   };
 
   // Supprimer une limite
-  const removeLimit = (index: number) => {
-    const updatedLimits = limits.filter((_: any, i: number) => i !== index);
+  const removeLimit = (id: number) => {
+    const updatedLimits = limits.filter(
+      (l: { _id: number; color: string; value: string }) => l._id !== id,
+    );
     setLimits(updatedLimits);
 
-    const updatedConfig = { ...options.config, limits: updatedLimits };
+    const configLimits = updatedLimits.map(
+      ({ _id, ...rest }: { _id: number; color: string; value: string }) => rest,
+    );
+    const updatedConfig = { ...options.config, limits: configLimits };
     options.setConfig(updatedConfig);
   };
 
@@ -129,14 +152,14 @@ const MapConfig = (options: any) => {
           Couleur du pourcentage :
         </Form.Label>
         <br />
-        {limits.map((limit: any, index: number) => (
-          <div key={index} style={{ marginBottom: "10px" }}>
+        {limits.map((limit: { _id: number; color: string; value: string }) => (
+          <div key={limit._id} className="mb-2">
             <Form>
               <Form.Control
                 type="color"
                 value={limit.color}
                 onChange={(e) =>
-                  debounceColorPick(index, "color", e.target.value)
+                  debounceColorPick(limit._id, "color", e.target.value)
                 }
                 style={{ width: "100px", height: "40px", marginRight: "10px" }}
               />
@@ -147,15 +170,15 @@ const MapConfig = (options: any) => {
               step={1}
               max={100}
               required={false}
-              value={limit.value}
-              onChange={(e) =>
-                handleLimitsChange(index, "value", e.target.value)
+              defaultValue={limit.value}
+              onBlur={(e) =>
+                handleLimitsChange(limit._id, "value", e.target.value)
               }
             />
             <Button
               variant={"warning"}
               className="mt-3"
-              onClick={() => removeLimit(index)}
+              onClick={() => removeLimit(limit._id)}
             >
               Supprimer
             </Button>
