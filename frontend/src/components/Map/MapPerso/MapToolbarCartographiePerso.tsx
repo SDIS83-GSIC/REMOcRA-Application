@@ -858,7 +858,13 @@ const MapToolbarCartographiePerso = ({
       <Volet
         show={showPanel}
         handleClose={handleClosePanel}
-        title={"Modifier le style"}
+        title={
+          selectedFeatures.length > 1
+            ? "Modifier le style des objets sélectionnés"
+            : selectedFeatures.length === 1
+              ? "Modifier le style de l'objet sélectionné"
+              : "Modifier le style par défaut"
+        }
       >
         <AccordionCustom
           activesKeys={activesKeys}
