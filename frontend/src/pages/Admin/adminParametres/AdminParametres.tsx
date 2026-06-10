@@ -54,6 +54,7 @@ type ParametresSectionDfci = {
   dfciTravauxDestinataireEmail: string;
   dfciTravauxObjetEmail: string;
   dfciTravauxCorpsEmail: string;
+  dfciToleranceDfciPisteMetres: number;
 };
 
 type ParametresSectionMobile = {
@@ -1197,6 +1198,12 @@ const AdminDfci = ({ values }: { values: ParametresSectionDfci }) => {
             name="dfci.dfciTravauxCorpsEmail"
             label="Contenu du mail de notification lors d'une réception de travaux"
             tooltipText="Vous pouvez utiliser #[ORGANISME_UTILISATEUR]# et #[LIEN_TELECHARGEMENT]# dans votre message. Ces deux valeurs seront remplacées automatiquement."
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="dfci.dfciToleranceDfciPisteMetres"
+            label="Tolérance (en m) de détection des pistes"
           />
         </AdminParametre>
       </>

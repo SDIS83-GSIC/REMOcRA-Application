@@ -1,5 +1,6 @@
 import { Feature, Map as OLMap, Overlay } from "ol";
 import { WKT } from "ol/format";
+import { Geometry } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { ReactNode, Ref, useEffect, useMemo, useRef, useState } from "react";
@@ -7,12 +8,14 @@ import { Button, Col, Popover, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { hasDroit } from "../../droits.tsx";
 import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
+import { DFCI_ELEMENT } from "../../enums/DfciElementEnum.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import TYPE_POINT_CARTE from "../../enums/TypePointCarteEnum.tsx";
 import url from "../../module/fetch.tsx";
 import UpdatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
 import UpdateDebitSimultane from "../../pages/DebitSimultane/UpdateDebitSimultane.tsx";
+import DfciUpdateElement from "../../pages/DFCI/DfciUpdateElement.tsx";
 import ListIndisponibiliteTemporaire from "../../pages/IndisponibiliteTemporaire/ListIndisponibiliteTemporaire.tsx";
 import UpdateEvenement from "../../pages/ModuleCrise/Evenement/UpdateEvenement.tsx";
 import DocumentPei from "../../pages/Pei/DocumentPei.tsx";
@@ -1213,6 +1216,68 @@ export const TooltipMapRisque = ({
             "Fiche Résumé du PEI " +
             featureSelect?.getProperties().peiNumeroComplet
           }
+        />
+      </Volet>
+    </div>
+  );
+};
+
+/**
+ * Tooltip pour les éléments présent sur la carte DFCI
+ * @param map Carte DFCI
+ * @returns Le composant tooltip pour le DFCI
+ */
+export const TooltipMapDFCI = ({
+  map,
+  dataDfciAireLayer,
+}: {
+  map?: OLMap;
+  dataDfciAireLayer:
+    | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
+    | undefined;
+}) => {
+  const ref = useRef(null);
+  const { featureSelect, overlay } = useTooltipMap({
+    ref: ref,
+    map: map,
+  });
+
+  const [showVoletInfo, setShowVoletInfo] = useState(false);
+  const typeElem: DFCI_ELEMENT = featureSelect?.getProperties().dfciTypeElement;
+  const elementId = featureSelect?.getProperties().elementId;
+  const [readOnlyForm, setReadOnlyForm] = useState(true);
+
+  return (
+    <div ref={ref}>
+      <Tooltip
+        featureSelect={featureSelect}
+        overlay={overlay}
+        displayButtonDelete={false}
+        displayButtonEdit={true}
+        displayButtonSee={true}
+        onClickSee={() => {
+          setShowVoletInfo(true), setReadOnlyForm(true);
+        }}
+        disabledEdit={true}
+        labelEdit="En développement"
+      />
+      <Volet
+        handleClose={() => setShowVoletInfo(false)}
+        show={showVoletInfo}
+        className="w-auto"
+      >
+        <DfciUpdateElement
+          typeElem={typeElem}
+          elementId={elementId}
+          readOnly={readOnlyForm}
+          onSubmit={() => {
+            setShowVoletInfo(false);
+            switch (typeElem) {
+              case DFCI_ELEMENT.AIRE:
+                dataDfciAireLayer?.getSource()?.refresh();
+                break;
+            }
+          }}
         />
       </Volet>
     </div>
