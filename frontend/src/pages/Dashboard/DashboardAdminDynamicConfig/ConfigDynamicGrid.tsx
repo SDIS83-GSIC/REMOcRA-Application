@@ -120,11 +120,9 @@ const ConfigDynamicGrid = ({
       componentsListDashboard.length > 0 &&
       componentSelected &&
       componentSelected.configPosition &&
-      newX + (componentSelected.configPosition.largeur ?? 1) <= NB_COL &&
-      newY + (componentSelected.configPosition.hauteur ?? 1) <= NB_COL &&
-      posX <= NB_COL &&
+      posX + (componentSelected.configPosition.largeur ?? 1) <= NB_COL &&
+      posY + (componentSelected.configPosition.hauteur ?? 1) <= numberRowGrid &&
       posX >= 0 &&
-      posY <= componentsListDashboard.length * NB_COL &&
       posY >= 0
     ) {
       // Set les nouvelles coordonnées dans la grille
