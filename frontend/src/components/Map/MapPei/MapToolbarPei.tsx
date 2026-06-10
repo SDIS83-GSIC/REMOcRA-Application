@@ -770,7 +770,7 @@ const MapToolbarPei = ({
           <Volet
             handleClose={handleCloseIndispoTemp}
             show={showCreateIndispoTemp}
-            className="w-auto"
+            className="w-50"
             backdrop={true}
           >
             <CreateIndisponibiliteTemporaire
