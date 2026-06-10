@@ -16,7 +16,12 @@ const UpdateIndisponibiliteTemporaire = () => {
   );
   return (
     <MyFormik
-      initialValues={getInitialValues(indisponibiliteTemporaireState?.data)}
+      initialValues={getInitialValues({
+        ...indisponibiliteTemporaireState?.data,
+        listePeiId:
+          indisponibiliteTemporaireState?.data
+            ?.indisponibiliteTemporaireListePeiId,
+      })}
       validationSchema={validationSchema}
       submitUrl={
         `/api/indisponibilite-temporaire/` + indisponibiliteTemporaireId

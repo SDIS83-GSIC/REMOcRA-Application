@@ -16,7 +16,7 @@ const CreateIndisponibiliteTemporaire = ({
   return (
     <MyFormik
       initialValues={getInitialValues({
-        indisponibiliteTemporaireListePeiId: listePeiId,
+        listePeiId: listePeiId,
       })}
       validationSchema={validationSchema}
       isPost={true}
