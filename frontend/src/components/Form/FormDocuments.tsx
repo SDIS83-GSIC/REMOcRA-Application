@@ -20,6 +20,7 @@ export type Document = {
  */
 const FormDocuments = ({
   documents,
+  multiple = false,
   setFieldValue,
   otherFormParam,
   defaultOtherProperties,
@@ -27,6 +28,7 @@ const FormDocuments = ({
   readOnly = false,
 }: {
   documents: any;
+  multiple?: boolean;
   defaultOtherProperties: any;
   setFieldValue: (champ: string, newValue: any | undefined) => void;
   otherFormParam: (index: number, listeElements: any[]) => ReactNode;
@@ -63,16 +65,26 @@ const FormDocuments = ({
         accept="*.*"
         label="Gérer les documents"
         required={false}
-        onChange={(e) => {
-          documents.push({
-            documentNomFichier: e.target.files[0].name,
-            data: e.target.files[0],
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          const files = Array.from(e.currentTarget.files ?? []);
+          if (files.length === 0) {
+            return;
+          }
+
+          const newDocuments = files.map((file) => ({
+            documentNomFichier: file.name,
+            data: file,
             ...defaultOtherProperties,
-          });
-          setFieldValue("documents", documents);
+          }));
+
+          const nextDocuments = [...(documents ?? []), ...newDocuments];
+          setFieldValue("documents", nextDocuments);
+
+          e.currentTarget.value = "";
         }}
         disabled={disabled}
         readOnly={readOnly}
+        multiple={multiple}
       />
       <AddRemoveComponent
         name="documents"

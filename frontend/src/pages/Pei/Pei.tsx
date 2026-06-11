@@ -533,6 +533,7 @@ const Pei = ({
       content: (
         <FormDocuments
           documents={values.documents}
+          multiple={true}
           setFieldValue={setFieldValue}
           defaultOtherProperties={{
             isPhotoPei: false,
