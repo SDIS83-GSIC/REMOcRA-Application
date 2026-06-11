@@ -1087,25 +1087,31 @@ class PeiRepository
         servicePublicDeciId: UUID?,
         maintenanceDeciId: UUID?,
         serviceEauxId: UUID?,
-    ): Collection<PeiDataForApi> =
-        getListPeiForApiRequete()
-            .where(
-                DSL.and(
-                    listOfNotNull(
-                        codeInsee?.let { DSL.and(COMMUNE.CODE_INSEE.contains(it)) },
-                        type?.let { DSL.and(PEI.TYPE_PEI.eq(it)) },
-                        codeNatureDECI?.let { DSL.and(NATURE_DECI.CODE.eq(it)) },
-                        codeNature?.let { DSL.and(NATURE.CODE.eq(it)) },
-                        servicePublicDeciId?.let { DSL.and(PEI.SERVICE_PUBLIC_DECI_ID.eq(it)) },
-                        maintenanceDeciId?.let { DSL.and(PEI.MAINTENANCE_DECI_ID.eq(it)) },
-                        serviceEauxId?.let { DSL.and(PIBI.SERVICE_EAU_ID.eq(it)) },
-                    ),
+    ): Collection<PeiDataForApi> {
+        val conditionsGenerales = listOfNotNull(
+            codeInsee?.let { COMMUNE.CODE_INSEE.contains(it) },
+            type?.let { PEI.TYPE_PEI.eq(it) },
+            codeNatureDECI?.let { NATURE_DECI.CODE.eq(it) },
+            codeNature?.let { NATURE.CODE.eq(it) },
+        )
 
-                ),
-            )
+        val conditionsOrganisme = listOfNotNull(
+            servicePublicDeciId?.let { PEI.SERVICE_PUBLIC_DECI_ID.eq(it) },
+            maintenanceDeciId?.let { PEI.MAINTENANCE_DECI_ID.eq(it) },
+            serviceEauxId?.let { PIBI.SERVICE_EAU_ID.eq(it) },
+        )
+
+        val whereClause = DSL.and(
+            if (conditionsGenerales.isEmpty()) DSL.noCondition() else DSL.and(conditionsGenerales),
+            if (conditionsOrganisme.isEmpty()) DSL.noCondition() else DSL.or(conditionsOrganisme),
+        )
+
+        return getListPeiForApiRequete()
+            .where(whereClause)
             .limit(limit)
             .offset(offset)
             .fetchInto()
+    }
 
     fun getPeiIdIndisponibles(zoneCompetenceId: UUID?, isSuperAdmin: Boolean): Collection<UUID> =
         dsl.select(PEI.ID)
