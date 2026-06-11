@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react";
 import { Card, Col, Container, Row } from "react-bootstrap";
-import { boolean, object } from "yup";
+import { boolean, object, string } from "yup";
 import PageTitle from "../../../../components/Elements/PageTitle/PageTitle.tsx";
 import MyFormik from "../../../../components/Form/MyFormik.tsx";
 import { IconInfo } from "../../../../components/Icon/Icon.tsx";
@@ -48,9 +48,9 @@ const ExecuteTasksManuelles = () => {
           <CardTask
             title="Import du cadastre"
             apiUrl={url`/api/admin/importer-cadastre`}
-            prepareVariables={() => ({})}
-            initialValues={{}}
-            validationSchema={object({})}
+            prepareVariables={prepareVariablesImporterCadastre}
+            initialValues={initialValuesImporterCadastre}
+            validationSchema={validationSchemaImporterCadastre}
           >
             <ImporterCadastre />
           </CardTask>
@@ -115,6 +115,20 @@ const initialValuesCalculDispoNumero = {
 const validationSchemaCalculDispoNumero = object({
   eventTracabilite: boolean().required(),
   eventNexSis: boolean().required(),
+});
+
+const prepareVariablesImporterCadastre = (values: {
+  millesime: string | null;
+}) => {
+  return values;
+};
+
+const initialValuesImporterCadastre = {
+  millesime: null,
+};
+
+const validationSchemaImporterCadastre = object({
+  millesime: string().nullable(),
 });
 
 const CardTask = ({

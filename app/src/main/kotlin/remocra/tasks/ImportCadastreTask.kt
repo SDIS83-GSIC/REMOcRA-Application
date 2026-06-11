@@ -24,7 +24,9 @@ import java.nio.file.Path
 import java.util.UUID
 import kotlin.collections.mutableMapOf
 
-class ImportCadastreParameters() : TaskParameters(notification = null)
+class ImportCadastreParameters() : TaskParameters(notification = null) {
+    var millesime: String? = null
+}
 
 class ImportCadastreTask @Inject constructor(
     private val appSettings: AppSettings,
@@ -38,7 +40,7 @@ class ImportCadastreTask @Inject constructor(
         private const val BASE_URL_CADASTRE = "https://files.data.gouv.fr/cadastre/etalab-cadastre/"
         private const val FICHIER_PARCELLES_SUFFIX = "-parcelles-shp.zip"
         private const val FICHIER_SECTIONS_SUFFIX = "-sections-shp.zip"
-        private const val MILLESIME = "2023-01-01"
+        private const val DEFAULT_MILLESIME = "2023-01-01"
 
         private const val CODE_SDIS_PREFIX = "SDIS_"
         private const val PROPERTY_GEO = "the_geom"
@@ -109,7 +111,7 @@ class ImportCadastreTask @Inject constructor(
 
         // TODO vérifier, typiquement on n'utilise pas le préfixe...
         // l'id est code insee + préfixe + code (avec le pad sur 2 car), voir si on veut stocker seulement le numéro ou le code complet
-        val numero = extractStringProperty(feature, PROPERTY_CODE)?.padStart(NUMERO_LENGTH, '0') ?: logManager.error("Numéro non trouvé pour la section pour la section $id").let { return }
+        val numero = extractStringProperty(feature, PROPERTY_CODE)?.padStart(NUMERO_LENGTH, '0') ?: logManager.error("Numéro non trouvé pour la section $id").let { return }
 
         val communeId = if (mapCommuneIdByCodeInsee.contains(codeInseeCommune)) {
             mapCommuneIdByCodeInsee[codeInseeCommune]!!
@@ -139,9 +141,9 @@ class ImportCadastreTask @Inject constructor(
         val prefixe = extractStringProperty(feature, PROPERTY_PREFIXE) ?: END_PROPERTY
         val id = extractStringProperty(feature, PROPERTY_ID)
 
-        val numero = extractStringProperty(feature, PROPERTY_NUMERO) ?: logManager.error("Numéro non trouvé pour la section pour la section $id").let { return }
+        val numero = extractStringProperty(feature, PROPERTY_NUMERO) ?: logManager.error("Numéro non trouvé pour la section $id").let { return }
 
-        val sectionNumero = extractStringProperty(feature, PROPERTY_SECTION)?.padStart(NUMERO_LENGTH, '0') ?: logManager.error("Numéro non trouvé pour la section pour la section $id").let { return }
+        val sectionNumero = extractStringProperty(feature, PROPERTY_SECTION)?.padStart(NUMERO_LENGTH, '0') ?: logManager.error("Numéro non trouvé pour la section $id").let { return }
         val sectionId = mapSectionByCode[SectionIdMetier(codeInsee = codeInseeCommune, prefixe = prefixe, numero = sectionNumero)] ?: throw RemocraResponseException(ErrorType.SECTION_NOT_FOUND)
 
         val parcelle = CadastreParcelle(
@@ -154,8 +156,9 @@ class ImportCadastreTask @Inject constructor(
         cadastreRepository.insertParcelle(parcelle)
     }
 
-    private fun downloadAndImportCadastreFiles(departement: String) {
-        val departementUrl = "$BASE_URL_CADASTRE/$MILLESIME/shp/departements/$departement/"
+    private fun downloadAndImportCadastreFiles(millesime: String, departement: String) {
+        val primaryUrl = "$BASE_URL_CADASTRE/$millesime/shp/departements/$departement/"
+        val fallbackUrl = "$BASE_URL_CADASTRE/$DEFAULT_MILLESIME/shp/departements/$departement/"
 
         val fichierSections = "cadastre-$departement$FICHIER_SECTIONS_SUFFIX"
         val fichierParcelles = "cadastre-$departement$FICHIER_PARCELLES_SUFFIX"
@@ -163,13 +166,25 @@ class ImportCadastreTask @Inject constructor(
         val mapCommuneIdByCodeInsee = mutableMapOf<String, UUID>()
         val mapSectionByCode = mutableMapOf<SectionIdMetier, UUID>()
 
-        URI(departementUrl.plus(fichierSections)).toURL().openStream().use {
+        /** Gestion des données Section */
+        try {
+            URI(primaryUrl.plus(fichierSections)).toURL().openStream()
+        } catch (e: Exception) {
+            logManager.warn("Les données demandées sont inaccessible pour $fichierSections ($millesime) [${e::class.simpleName}: ${e.message}], utilisation des données $DEFAULT_MILLESIME")
+            URI(fallbackUrl.plus(fichierSections)).toURL().openStream()
+        }.use {
             processShpFile(it) { feature ->
                 importCadastreSection(feature, mapCommuneIdByCodeInsee, mapSectionByCode)
             }
         }
 
-        URI(departementUrl.plus(fichierParcelles)).toURL().openStream().use {
+        /** Gestion des données Parcelle */
+        try {
+            URI(primaryUrl.plus(fichierParcelles)).toURL().openStream()
+        } catch (e: Exception) {
+            logManager.warn("Les données demandées sont inaccessible pour $fichierParcelles ($millesime) [${e::class.simpleName}: ${e.message}], utilisation des données $DEFAULT_MILLESIME")
+            URI(fallbackUrl.plus(fichierParcelles)).toURL().openStream()
+        }.use {
             processShpFile(it) { feature ->
                 importCadastreParcelle(feature, mapSectionByCode)
             }
@@ -187,12 +202,11 @@ class ImportCadastreTask @Inject constructor(
 
         getDepartementsForSdis().forEach { departement ->
             try {
-                downloadAndImportCadastreFiles(departement)
+                downloadAndImportCadastreFiles(parameters?.millesime ?: DEFAULT_MILLESIME, departement)
             } catch (e: Exception) {
                 logManager.error("Erreur lors du traitement des départements $departement: ${e.message}")
             }
         }
-
         // On ne retourne pas de résultats spécifiques pour cette tâche
         return JobResults()
     }

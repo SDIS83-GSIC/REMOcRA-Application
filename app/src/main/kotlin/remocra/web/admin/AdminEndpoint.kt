@@ -201,12 +201,19 @@ class AdminEndpoint : AbstractEndpoint() {
     @Path("/importer-cadastre")
     @RequireDroits([Droit.ADMIN_PARAM_APPLI])
     @Produces(MediaType.APPLICATION_JSON)
-    fun importerCadastre(): Response {
+    fun importerCadastre(parametres: ParametreTaskImportCadastreInput): Response {
         if (!securityContext.userInfo.isSuperAdmin) {
             return forbidden().build()
         }
-        importCadastreUseCase.execute(securityContext.userInfo)
+        importCadastreUseCase.execute(
+            securityContext.userInfo,
+            millesime = parametres.millesime,
+        )
         return Response.ok().build()
+    }
+
+    class ParametreTaskImportCadastreInput {
+        var millesime: String? = null
     }
 
     @POST
