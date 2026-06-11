@@ -32,7 +32,21 @@
       ],
       "attributes": {
         "post.logout.redirect.uris": "fr.sdis83.remocra.mobile:/logout"
-      }
+      },
+      "protocolMappers": [
+        {
+          "name": "audience-remocra",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "userinfo.token.claim": "false",
+            "included.client.audience": "remocra"
+          }
+        }
+      ]
     },
     {
       "clientId": "remocra-apache-hop",
