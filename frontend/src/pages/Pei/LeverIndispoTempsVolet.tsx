@@ -145,7 +145,7 @@ const LeverIndispoTempForm = ({
               <th>
                 <FormCheck
                   type="checkbox"
-                  label="Sélectionner"
+                  label=""
                   onChange={onSelectAll}
                   checked={
                     values?.data?.length === tableData?.length &&

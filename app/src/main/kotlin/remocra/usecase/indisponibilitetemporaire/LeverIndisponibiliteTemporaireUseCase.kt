@@ -13,7 +13,7 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
-class CloreIndisponibiliteTemporaireUseCase
+class LeverIndisponibiliteTemporaireUseCase
 @Inject constructor(
     private val indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository,
 ) : AbstractCUDUseCase<IndisponibiliteTemporaireData>(TypeOperation.UPDATE) {

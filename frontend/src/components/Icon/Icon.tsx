@@ -195,8 +195,6 @@ export const IconPrint = createIconComponent(PrintIcon);
 export const IconRotate = createIconComponent(GroupArrowsRotateIcon);
 export const IconRotateLeft = createIconComponent(RotateLeftIcon);
 
-export const IconCloseIndisponibiliteTemporaire =
-  createIconComponent(HourglassEndIcon);
 export const IconLeverIndisponibiliteTemporaire =
   createIconComponent(LeverIndispoTempIcon);
 

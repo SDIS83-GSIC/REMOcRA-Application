@@ -46,12 +46,6 @@ const ListIndisponibiliteTemporaire = ({
   const [idIndisponibiliteTemporaire, setIdIndisponibiliteTemporaire] =
     useState(null); // Variable à mettre à jour
 
-  // Fonction qui sera appelée quand le bouton dans la cellule est cliqué
-  const handleButtonClick = (value) => {
-    setIdIndisponibiliteTemporaire(value); // Met à jour la valeur
-    setShowTable(false); // Cache le tableau actuel
-  };
-
   return (
     <>
       <Container>
@@ -75,7 +69,6 @@ const ListIndisponibiliteTemporaire = ({
           column={GetColumnIndisponibiliteTemporaireByStringArray({
             user: user,
             parametres: column,
-            handleButtonClick: handleButtonClick,
             fetchGeometry: fetchGeometry,
           })}
           query={url`/api/indisponibilite-temporaire`}

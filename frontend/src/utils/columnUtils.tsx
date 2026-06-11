@@ -10,7 +10,6 @@ import SelectEnumOption from "../components/Form/SelectEnumOption.tsx";
 import SelectIdLibelleDataFromList from "../components/Form/SelectIdLibelleFromList.tsx";
 import {
   IconAireAspiration,
-  IconCloseIndisponibiliteTemporaire,
   IconDocument,
   IconLeverIndisponibiliteTemporaire,
   IconList,
@@ -754,12 +753,10 @@ export function getStatutIndispo(
 export function GetColumnIndisponibiliteTemporaireByStringArray({
   user,
   parametres,
-  handleButtonClick,
   fetchGeometry,
 }: {
   user: UtilisateurEntity;
   parametres: Array<COLUMN_INDISPONIBILITE_TEMPORAIRE>;
-  handleButtonClick: (value: string) => any;
   fetchGeometry: (typeGeometrie: string, idInsiponibiliteTemp: string) => void;
 }): Array<columnType> {
   const listePeiState = useGet(url`/api/pei/get-id-numero`);
@@ -1002,14 +999,14 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
           );
         },
         confirmModal: {
-          header: "Clore l'indisponibilité temporaire ?",
+          header: "Lever l'indisponibilité temporaire ?",
           content: "Voulez-vous continuer ? ",
         },
         textDisable:
-          "Impossible de clore une indisponibilité temporaire qui n'est pas en cours",
-        textEnable: "Clore l'indisponibilité temporaire",
-        pathname: url`/api/indisponibilite-temporaire/clore/`,
-        icon: <IconCloseIndisponibiliteTemporaire />,
+          "Impossible de lever une indisponibilité temporaire qui n'est pas en cours",
+        textEnable: "Lever l'indisponibilité temporaire",
+        pathname: url`/api/indisponibilite-temporaire/lever/`,
+        icon: <IconLeverIndisponibiliteTemporaire />,
         classEnable: "warning",
       });
     }

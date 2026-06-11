@@ -8,7 +8,7 @@ import java.util.UUID
 
 class LeverIndispoTempPeiUseCase
 @Inject constructor(
-    private val cloreIndisponibiliteTemporaireUseCase: CloreIndisponibiliteTemporaireUseCase,
+    private val leverIndisponibiliteTemporaireUseCase: LeverIndisponibiliteTemporaireUseCase,
     private val indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository,
 ) : AbstractUseCase() {
 
@@ -17,7 +17,7 @@ class LeverIndispoTempPeiUseCase
         element: List<UUID>,
     ): Result {
         element.forEach {
-            val result = cloreIndisponibiliteTemporaireUseCase.execute(
+            val result = leverIndisponibiliteTemporaireUseCase.execute(
                 userInfo = userInfo,
                 element = indisponibiliteTemporaireRepository.getWithListPeiById(it),
             )

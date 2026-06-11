@@ -21,10 +21,10 @@ import remocra.data.IndisponibiliteTemporaireData
 import remocra.data.Params
 import remocra.db.IndisponibiliteTemporaireRepository
 import remocra.db.jooq.remocra.enums.Droit
-import remocra.usecase.indisponibilitetemporaire.CloreIndisponibiliteTemporaireUseCase
 import remocra.usecase.indisponibilitetemporaire.CreateIndisponibiliteTemporaireUseCase
 import remocra.usecase.indisponibilitetemporaire.DeleteIndisponibiliteTemporaireUseCase
 import remocra.usecase.indisponibilitetemporaire.LeverIndispoTempPeiUseCase
+import remocra.usecase.indisponibilitetemporaire.LeverIndisponibiliteTemporaireUseCase
 import remocra.usecase.indisponibilitetemporaire.UpdateIndisponibiliteTemporaireUseCase
 import remocra.web.AbstractEndpoint
 import java.time.ZonedDateTime
@@ -44,7 +44,7 @@ class IndisponibiliteTemporaireEndPoint() : AbstractEndpoint() {
     lateinit var updateIndisponibiliteTemporaireUseCase: UpdateIndisponibiliteTemporaireUseCase
 
     @Inject
-    lateinit var cloreIndisponibiliteTemporaireUseCase: CloreIndisponibiliteTemporaireUseCase
+    lateinit var leverIndisponibiliteTemporaireUseCase: LeverIndisponibiliteTemporaireUseCase
 
     @Inject
     lateinit var leverIndispoTempPeiUseCase: LeverIndispoTempPeiUseCase
@@ -117,14 +117,14 @@ class IndisponibiliteTemporaireEndPoint() : AbstractEndpoint() {
     ).wrap()
 
     @PUT
-    @Path("clore/{indisponibiliteTemporaireId}")
+    @Path("lever/{indisponibiliteTemporaireId}")
     @RequireDroits(
         [Droit.INDISPO_TEMP_U],
     )
     @Produces(MediaType.APPLICATION_JSON)
     fun cloreIndisponibiliteTemporaire(
         @PathParam("indisponibiliteTemporaireId") indisponibiliteTemporaireId: UUID,
-    ): Response = cloreIndisponibiliteTemporaireUseCase.execute(
+    ): Response = leverIndisponibiliteTemporaireUseCase.execute(
         userInfo = securityContext.userInfo,
         indisponibiliteTemporaireRepository.getWithListPeiById(indisponibiliteTemporaireId),
     ).wrap()
