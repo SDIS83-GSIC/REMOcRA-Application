@@ -21,6 +21,7 @@ type QueryListRef = {
 
 const ComponentBoardQueryAdmin = () => {
   const queryListRef = useRef<QueryListRef | null>(null);
+  const validateAbortRef = useRef<AbortController | null>(null);
 
   const { error: errorToast } = useToastContext();
   const [queryGlobalData, setQueryGlobalData] = useState<
@@ -37,6 +38,7 @@ const ComponentBoardQueryAdmin = () => {
   >(); // Liste composants de la requête
 
   const [availableOptions, setAvailableOptions] = useState([]); // liste des options disponibles pour les champs
+  const [sqlErrorMessage, setSqlErrorMessage] = useState<string | null>(null);
 
   const [isAdding, setIsAdding] = useState(false);
   const formikRef = useRef(); // Créer une référence pour Formik
@@ -92,6 +94,7 @@ const ComponentBoardQueryAdmin = () => {
     setSelectedComponent(null);
     setActiveQuery(null);
     setOpenListComponent(null);
+    setSqlErrorMessage(null);
     // Rafraîchit la liste après enregistrement réussi
     queryListRef.current?.refreshList();
   };
@@ -107,6 +110,7 @@ const ComponentBoardQueryAdmin = () => {
         <Col sm={activeQuery ? 3 : 9}>
           <QueryList
             ref={queryListRef}
+            validateAbortRef={validateAbortRef}
             setData={setData}
             activeQuery={activeQuery}
             setActiveQuery={setActiveQuery}
@@ -119,11 +123,13 @@ const ComponentBoardQueryAdmin = () => {
             formikRef={formikRef}
             isAdding={isAdding}
             setIsAdding={setIsAdding}
+            setSqlErrorMessage={setSqlErrorMessage}
           />
         </Col>
         <Col sm={9}>
           {activeQuery && (
             <QueryForm
+              validateAbortRef={validateAbortRef}
               activeQuery={activeQuery}
               setActiveQuery={setActiveQuery}
               setQueryData={setQueryGlobalData}
@@ -131,6 +137,8 @@ const ComponentBoardQueryAdmin = () => {
               zoneCompetenceList={zoneCompetenceList}
               utilisateurList={utilisateurList}
               organismeList={organismeList}
+              sqlErrorMessage={sqlErrorMessage}
+              setSqlErrorMessage={setSqlErrorMessage}
             />
           )}
         </Col>

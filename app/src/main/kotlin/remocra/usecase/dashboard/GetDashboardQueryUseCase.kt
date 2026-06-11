@@ -32,17 +32,29 @@ constructor(
             ),
         )
 
-        requestUtils.validateReadOnlyQuery(replacedDashboardQueryRequestData.query) // Vérifie que la requête SQL soit valide
+        requestUtils.validateReadOnlyQuery(replacedDashboardQueryRequestData.query)
+
         if (saveQuery && replacedDashboardQueryRequestData.queryId != null) {
+            val queryWithoutRuntimeParams = requestUtils.replaceGlobalParameters(
+                sqlQuery.query,
+                zoneCompetenceId = null,
+                organismeId = null,
+                utilisateurId = null,
+            )
+            requestUtils.validateReadOnlyQuery(queryWithoutRuntimeParams)
+            // Exécute aussi la version template pour remonter les erreurs SQL runtime avant sauvegarde.
+            dashboardRepository.getQuery(queryWithoutRuntimeParams)
+
             dashboardRepository.updateQuery(
                 DashboardQuery(
                     dashboardQueryId = replacedDashboardQueryRequestData.queryId,
                     dashboardQueryTitle = replacedDashboardQueryRequestData.queryTitle,
-                    // on prend la version originale, avec les placeholders non remplacés !
+                    // On stocke la version originale, avec les placeholders non remplacés.
                     dashboardQueryQuery = sqlQuery.query,
                 ),
             )
         }
+
         val dataSqlQuery = dashboardRepository.getQuery(replacedDashboardQueryRequestData.query)
         return requestUtils.mapQueryToFieldData(dataSqlQuery, sqlQuery)
     }

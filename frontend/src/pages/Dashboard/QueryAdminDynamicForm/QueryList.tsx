@@ -3,6 +3,7 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useRef,
   useState,
 } from "react";
 import { Button, Card, ListGroup } from "react-bootstrap";
@@ -23,6 +24,7 @@ import {
 } from "../Constants.tsx";
 
 type QueryListProps = {
+  validateAbortRef?: React.MutableRefObject<AbortController | null>;
   setData: (arg0: any) => void;
   activeQuery: QueryParam | undefined | null;
   setActiveQuery: (arg0: any) => void;
@@ -35,6 +37,7 @@ type QueryListProps = {
   formikRef: any;
   isAdding: boolean;
   setIsAdding: (arg0: boolean) => void;
+  setSqlErrorMessage: (message: string | null) => void;
 };
 
 export type QueryListRef = {
@@ -44,6 +47,7 @@ export type QueryListRef = {
 const QueryList = forwardRef<QueryListRef, QueryListProps>(
   (
     {
+      validateAbortRef,
       setData,
       activeQuery,
       setActiveQuery,
@@ -54,6 +58,7 @@ const QueryList = forwardRef<QueryListRef, QueryListProps>(
       formikRef,
       isAdding,
       setIsAdding,
+      setSqlErrorMessage,
     },
     ref,
   ) => {
@@ -70,6 +75,8 @@ const QueryList = forwardRef<QueryListRef, QueryListProps>(
     const urlApiGetQueryComponent = url`/api/dashboard/get-components/`;
     const urlApiDeleteQuery = url`/api/dashboard/delete-query/`;
     const urlApiQuery = url`/api/dashboard/validate-query`;
+
+    const validateRequestIdRef = useRef(0);
 
     const loadQueryList = useCallback(async () => {
       setIsLoadingList(true);
@@ -137,11 +144,18 @@ const QueryList = forwardRef<QueryListRef, QueryListProps>(
 
     const validateQuery = useCallback(
       async (query: QueryParam): Promise<boolean> => {
+        validateAbortRef?.current?.abort();
+
+        const controller = new AbortController();
+        if (validateAbortRef) {
+          validateAbortRef.current = controller;
+        }
+        const requestId = ++validateRequestIdRef.current;
+
         setIsValidatingQuery(true);
         try {
-          const response = await fetch(
-            urlApiQuery,
-            getFetchOptions({
+          const response = await fetch(urlApiQuery, {
+            ...getFetchOptions({
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -149,24 +163,50 @@ const QueryList = forwardRef<QueryListRef, QueryListProps>(
                 queryTitle: query.title,
               }),
             }),
+            signal: controller.signal,
+          });
+
+          if (requestId !== validateRequestIdRef.current) {
+            return false;
+          }
+
+          const raw = await response.text();
+          let parsed: unknown = raw;
+
+          try {
+            parsed = raw ? JSON.parse(raw) : null;
+          } catch {
+            //continuer
+          }
+
+          if (typeof parsed === "string") {
+            setSqlErrorMessage(parsed);
+            return false;
+          }
+
+          if (!response.ok) {
+            setSqlErrorMessage("Erreur SQL");
+            return false;
+          }
+
+          const dataFormatted = formatData(parsed as any);
+          setAvailableOptions(
+            dataFormatted?.[0] ? Object.keys(dataFormatted[0]) : [],
           );
-
-          const res = await response.json();
-          const dataFormatted = formatData(res);
-          const options =
-            dataFormatted && dataFormatted.length > 0
-              ? Object.keys(dataFormatted[0])
-              : [];
-
-          setAvailableOptions(options);
           setQueryGlobalData(dataFormatted);
+          setSqlErrorMessage(null);
           setData(null);
           return true;
-        } catch (reason: any) {
+        } catch (reason: unknown) {
+          if (reason instanceof DOMException && reason.name === "AbortError") {
+            return false;
+          }
           errorToast(String(reason));
           return false;
         } finally {
-          setIsValidatingQuery(false);
+          if (requestId === validateRequestIdRef.current) {
+            setIsValidatingQuery(false);
+          }
         }
       },
       [
@@ -174,7 +214,9 @@ const QueryList = forwardRef<QueryListRef, QueryListProps>(
         setAvailableOptions,
         setData,
         setQueryGlobalData,
+        setSqlErrorMessage,
         urlApiQuery,
+        validateAbortRef,
       ],
     );
 
@@ -201,6 +243,7 @@ const QueryList = forwardRef<QueryListRef, QueryListProps>(
       setIsAdding(true);
       setOpenListComponent([]);
       setData(null);
+      setSqlErrorMessage(null);
       setActiveQuery(newQuery);
       setSelectedComponent(null);
       setAvailableOptions([]);
@@ -216,6 +259,7 @@ const QueryList = forwardRef<QueryListRef, QueryListProps>(
 
       setIsAdding(true);
       setIsLoadingQuery(true);
+      setSqlErrorMessage(null);
       setActiveQuery(selected);
       setSelectedComponent(null);
       setAvailableOptions([]);
@@ -235,14 +279,6 @@ const QueryList = forwardRef<QueryListRef, QueryListProps>(
 
     const handleSaveQuery = async () => {
       if (isValidatingQuery) {
-        return;
-      }
-
-      const isValid = activeQuery?.query?.trim()
-        ? await validateQuery(activeQuery)
-        : true;
-
-      if (!isValid) {
         return;
       }
 

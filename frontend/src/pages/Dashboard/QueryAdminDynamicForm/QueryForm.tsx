@@ -12,11 +12,12 @@ import {
 import MyFormik from "../../../components/Form/MyFormik.tsx";
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import { IconInfo } from "../../../components/Icon/Icon.tsx";
-import url from "../../../module/fetch.tsx";
+import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import { formatData, QueryParam } from "../Constants.tsx";
 
 type QueryFormProps = {
+  validateAbortRef?: React.MutableRefObject<AbortController | null>;
   activeQuery: QueryParam;
   setActiveQuery: (query: QueryParam) => void;
   setQueryData: (data: Record<string, unknown>[] | null) => void;
@@ -24,10 +25,78 @@ type QueryFormProps = {
   zoneCompetenceList: IdCodeLibelleType[];
   utilisateurList: IdCodeLibelleType[];
   organismeList: IdCodeLibelleType[];
+  sqlErrorMessage: string | null;
+  setSqlErrorMessage: (message: string | null) => void;
 };
 
 const QueryForm = (props: QueryFormProps) => {
   const urlApiQuery = url`/api/dashboard/validate-query`;
+
+  const handleTestQuery = async (values: {
+    query: string;
+    queryTitle: string;
+  }) => {
+    props.validateAbortRef?.current?.abort();
+
+    const controller = new AbortController();
+    if (props.validateAbortRef) {
+      props.validateAbortRef.current = controller;
+    }
+
+    try {
+      const response = await fetch(urlApiQuery, {
+        ...getFetchOptions({
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query: values.query,
+            queryTitle: values.queryTitle,
+          }),
+        }),
+        signal: controller.signal,
+      });
+
+      const raw = await response.text();
+      let parsed: unknown = raw;
+
+      try {
+        parsed = raw ? JSON.parse(raw) : null;
+      } catch {
+        // réponse non JSON => erreur SQL brute
+      }
+
+      if (typeof parsed === "string") {
+        props.setSqlErrorMessage(parsed);
+        return;
+      }
+
+      if (!response.ok) {
+        const message =
+          parsed && typeof parsed === "object" && "message" in parsed
+            ? String((parsed as { message?: unknown }).message ?? "Erreur SQL")
+            : "Erreur SQL";
+        props.setSqlErrorMessage(message);
+        return;
+      }
+
+      props.setSqlErrorMessage(null);
+      updateData(
+        parsed as {
+          queryTitle: string;
+          querySql: string;
+          name: string[];
+          values: unknown[];
+        },
+      );
+    } catch (error: unknown) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        return;
+      }
+      props.setSqlErrorMessage(
+        error instanceof Error ? error.message : String(error),
+      );
+    }
+  };
 
   const updateData = (data: {
     queryTitle: string;
@@ -42,7 +111,10 @@ const QueryForm = (props: QueryFormProps) => {
     });
     const dataFormatted = formatData(data);
     props.setQueryData(dataFormatted);
-    props.setAvailableOptions(Object.keys(dataFormatted[0]));
+    props.setAvailableOptions(
+      dataFormatted?.[0] ? Object.keys(dataFormatted[0]) : [],
+    );
+    props.setSqlErrorMessage(null);
   };
 
   const getInitialValues = (activeQuery: QueryParam) => ({
@@ -67,6 +139,8 @@ const QueryForm = (props: QueryFormProps) => {
             zoneCompetenceList={props.zoneCompetenceList}
             utilisateurList={props.utilisateurList}
             organismeList={props.organismeList}
+            sqlErrorMessage={props.sqlErrorMessage}
+            onTest={handleTestQuery}
           />
         </MyFormik>
       </Card.Body>
@@ -78,10 +152,14 @@ const InnerQueryForm = ({
   zoneCompetenceList,
   utilisateurList,
   organismeList,
+  sqlErrorMessage,
+  onTest,
 }: {
   zoneCompetenceList: IdCodeLibelleType[];
   utilisateurList: IdCodeLibelleType[];
   organismeList: IdCodeLibelleType[];
+  sqlErrorMessage: string | null;
+  onTest: (values: { query: string; queryTitle: string }) => void;
 }) => {
   const { values, setValues } = useFormikContext<{
     queryId: string | number;
@@ -98,6 +176,10 @@ const InnerQueryForm = ({
 
   return (
     <FormContainer>
+      {sqlErrorMessage && (
+        <span className="text-danger">{sqlErrorMessage}</span>
+      )}
+
       <AccordionCustom
         activesKeys={activesKeys}
         list={[
@@ -194,7 +276,17 @@ const InnerQueryForm = ({
           </span>
         </Alert>
 
-        <Button type="submit" variant={"info"} className="mt-3">
+        <Button
+          type="button"
+          variant="info"
+          className="mt-3"
+          onClick={() =>
+            onTest({
+              query: values.query,
+              queryTitle: values.queryTitle,
+            })
+          }
+        >
           Tester la requête
         </Button>
       </Col>
