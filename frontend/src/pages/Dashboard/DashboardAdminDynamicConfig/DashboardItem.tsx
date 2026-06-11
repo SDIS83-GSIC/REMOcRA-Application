@@ -1,8 +1,7 @@
 import { useDraggable } from "@dnd-kit/core";
 import { Card } from "react-bootstrap";
 import Loading from "../../../components/Elements/Loading/Loading.tsx";
-import { useGet } from "../../../components/Fetch/useFetch.tsx";
-import { COMPONENTS, formatData } from "../Constants.tsx";
+import { COMPONENTS } from "../Constants.tsx";
 
 type DashboardItemProps = {
   component: any;
@@ -30,11 +29,7 @@ const DashboardItem = (props: DashboardItemProps) => {
     COMPONENTS[props.component.key as keyof typeof COMPONENTS];
   const Component = componentEntry?.component;
 
-  const { data } = useGet(
-    `/api/dashboard/get-list-data-query/${props.component.queryId}`,
-  );
-
-  const formattedData = formatData(data?.[0]);
+  const formattedData = props.component.data;
   return (
     <div
       ref={setNodeRef}
@@ -56,7 +51,7 @@ const DashboardItem = (props: DashboardItemProps) => {
         <Card.Body className="p-0">
           <Card.Header>{props.component.title}</Card.Header>
           <div style={{ height: `calc(${style.height} - 2rem)` }}>
-            {data ? (
+            {formattedData ? (
               Component ? (
                 <Component
                   data={formattedData}

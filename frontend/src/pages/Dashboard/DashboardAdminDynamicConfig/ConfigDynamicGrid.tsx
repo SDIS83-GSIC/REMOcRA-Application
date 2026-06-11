@@ -1,5 +1,5 @@
 import { DndContext } from "@dnd-kit/core";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import { object } from "yup";
 import { useGetRun, usePost } from "../../../components/Fetch/useFetch.tsx";
@@ -22,6 +22,10 @@ type ConfigDynamicGridProps = {
   setComponentsListDashboard: (arg0: any) => void;
   activeDashboard: DashboardItemParam;
   setActiveDashboard: (arg0: DashboardItemParam) => void;
+  // Cache partagé depuis le parent
+  dashboardCacheRef: React.MutableRefObject<
+    Map<string, { components: ComponentDashboard[]; profils: any }>
+  >;
 };
 
 const HEIGHT_ROW = 200;
@@ -70,24 +74,38 @@ const getPrepareVariables = (
   };
 };
 
+// Référence stable pour éviter de recréer `run` à chaque render
+const EMPTY_OPTIONS = {};
+
 const ConfigDynamicGrid = ({
   editTabIndex,
   componentsListDashboard,
   setComponentsListDashboard,
   activeDashboard,
   setActiveDashboard,
+  dashboardCacheRef,
 }: ConfigDynamicGridProps) => {
-  const [dashboardProfil, setDashboardProfil] = useState<any | null>();
+  // Initialiser le profil depuis le cache si disponible
+  const [dashboardProfil, setDashboardProfil] = useState<any | null>(() => {
+    const cached = activeDashboard.id
+      ? dashboardCacheRef.current.get(activeDashboard.id)
+      : null;
+    return cached?.profils ?? undefined;
+  });
   const [dashboardTitle, setDashboardtitle] = useState<string | null>(
     "Nouveau Dashboard",
   );
 
   const [numberRowGrid, setNumberRowGrid] = useState(
     componentsListDashboard ? componentsListDashboard.length * NB_COL : 0,
-  ); // Nombre de ligne dans grille
+  );
 
   const [componentSelected, setComponentSelected] =
-    useState<ComponentDashboard | null>(); // Composant sélectionner dans la grid
+    useState<ComponentDashboard | null>();
+
+  // Refs pour éviter les boucles : on suit le dernier id chargé
+  const lastLoadedConfigId = useRef<string | null>(null);
+  const lastLoadedProfilId = useRef<string | null>(null);
 
   const handleDragStart = (event: any) => {
     // Set le composant sélectionné
@@ -178,75 +196,139 @@ const ConfigDynamicGrid = ({
 
   const { run: runListComponents, data: listComponents } = useGetRun(
     urlApiDashboard + activeDashboard.id,
-    {},
+    EMPTY_OPTIONS,
   );
 
-  useEffect(() => {
-    runListComponents();
-  }, [runListComponents]);
+  // Ref toujours à jour vers run, mais hors des deps de useEffect
+  const runListComponentsRef = useRef(runListComponents);
+  runListComponentsRef.current = runListComponents;
 
-  // On initialise la liste des composants du dashbord
+  // On initialise la liste des composants du dashboard
   useEffect(() => {
     if (listComponents) {
-      const newComponentList: ComponentDashboard[] = [];
-      listComponents?.forEach((element: DashboardComponentConfig) => {
-        // Set les composants à affiché dans la grille
-        newComponentList.push({
-          id: element.componentId,
-          key: element.componentKey,
-          title: element.componentTitle,
-          config: normalizeComponentConfig(
-            element.componentKey,
-            element.componentConfig,
-          ),
-          configPosition: {
-            x: element.componentConfigPosition
-              ? element.componentConfigPosition.componentX
-              : 0,
-            y: element.componentConfigPosition
-              ? element.componentConfigPosition.componentY
-              : 0,
-            largeur: element.componentConfigPosition
-              ? element.componentConfigPosition.componentLargeur
-              : 2,
-            hauteur: element.componentConfigPosition
-              ? element.componentConfigPosition.componentHauteur
-              : 2,
-          },
-          queryId: element.componentQueryId,
+      // si on a déjà des composants AVEC leurs data
+      // on n'écrase pas avec une version "fraîche" sans data
+      setComponentsListDashboard((prev: ComponentDashboard[] | null) => {
+        if (prev && prev.length > 0 && prev.every((c) => "data" in c)) {
+          return prev;
+        }
+
+        const newComponentList: ComponentDashboard[] = [];
+        listComponents?.forEach((element: DashboardComponentConfig) => {
+          newComponentList.push({
+            id: element.componentId,
+            key: element.componentKey,
+            title: element.componentTitle,
+            config: normalizeComponentConfig(
+              element.componentKey,
+              element.componentConfig,
+            ),
+            configPosition: {
+              x: element.componentConfigPosition
+                ? element.componentConfigPosition.componentX
+                : 0,
+              y: element.componentConfigPosition
+                ? element.componentConfigPosition.componentY
+                : 0,
+              largeur: element.componentConfigPosition
+                ? element.componentConfigPosition.componentLargeur
+                : 2,
+              hauteur: element.componentConfigPosition
+                ? element.componentConfigPosition.componentHauteur
+                : 2,
+            },
+            queryId: element.componentQueryId,
+          });
         });
+        return newComponentList;
       });
-      setComponentsListDashboard(newComponentList);
     }
   }, [listComponents, setComponentsListDashboard]);
 
   // Récupère en base les profils liés à un dashboard
   const fetchDashboardProfils = useGetRun(
     url`/api/dashboard/get-dashboard-list-profil/` + activeDashboard.id,
-    {},
+    EMPTY_OPTIONS,
   );
-  useEffect(() => {
-    if (fetchDashboardProfils.isResolved) {
-      setDashboardProfil(fetchDashboardProfils.data);
-    }
-  }, [fetchDashboardProfils.data, fetchDashboardProfils.isResolved]);
 
-  // Récupère les dashboard déjà en base
+  // Extraction de valeurs
+  const profilsResolved = fetchDashboardProfils.isResolved;
+  const profilsData = fetchDashboardProfils.data;
+  const runProfilsRef = useRef(fetchDashboardProfils.run);
+  runProfilsRef.current = fetchDashboardProfils.run;
+
+  useEffect(() => {
+    if (profilsResolved) {
+      setDashboardProfil(profilsData);
+    }
+  }, [profilsData, profilsResolved]);
+
   useEffect(() => {
     if (activeDashboard && !componentsListDashboard) {
       setComponentsListDashboard([]);
       setDashboardProfil(null);
       setDashboardtitle(activeDashboard.title);
-      if (activeDashboard.id) {
-        fetchDashboardProfils.run();
+      if (
+        activeDashboard.id &&
+        lastLoadedProfilId.current !== activeDashboard.id
+      ) {
+        lastLoadedProfilId.current = activeDashboard.id;
+        runProfilsRef.current();
       }
     }
+  }, [activeDashboard, componentsListDashboard, setComponentsListDashboard]);
+
+  // Au changement de dashboard : check le cache AVANT de fetch
+  useEffect(() => {
+    if (!activeDashboard.id) {
+      return;
+    }
+    if (lastLoadedConfigId.current === activeDashboard.id) {
+      return;
+    }
+
+    const cached = dashboardCacheRef.current.get(activeDashboard.id);
+    if (cached) {
+      // on bloque tout fetch et on restaure le profil
+      lastLoadedConfigId.current = activeDashboard.id;
+      lastLoadedProfilId.current = activeDashboard.id;
+      setDashboardProfil(cached.profils);
+      // Les composants sont déjà setté par le parent (handleDashboardClick)
+    } else {
+      //  on lance le fetch normalement
+      lastLoadedConfigId.current = activeDashboard.id;
+      runListComponentsRef.current();
+    }
+  }, [activeDashboard.id, dashboardCacheRef]);
+
+  // Alimenter le cache dès que les données sont complètes
+  useEffect(() => {
+    if (
+      activeDashboard.id &&
+      componentsListDashboard &&
+      componentsListDashboard.length > 0 &&
+      componentsListDashboard.every((c) => "data" in c)
+    ) {
+      dashboardCacheRef.current.set(activeDashboard.id, {
+        components: componentsListDashboard,
+        profils: dashboardProfil,
+      });
+    }
   }, [
-    activeDashboard,
+    activeDashboard.id,
     componentsListDashboard,
-    setComponentsListDashboard,
-    fetchDashboardProfils,
+    dashboardProfil,
+    dashboardCacheRef,
   ]);
+
+  // Reset quand on change de dashboard pour autoriser un nouveau fetch
+  useEffect(() => {
+    return () => {
+      // Au démontage
+      lastLoadedConfigId.current = null;
+      lastLoadedProfilId.current = null;
+    };
+  }, []);
 
   const urlApiSaveDashboard = url`/api/dashboard/create-dashboard/`;
   const urlApiUpdateDashboard = url`/api/dashboard/update-dashboard/`;
@@ -355,8 +437,14 @@ const ListComponents = ({
 }) => {
   const { data: dataQuerys, run: runDataQuerys } = usePost(
     url`/api/dashboard/get-list-data-query/`,
-    {},
+    EMPTY_OPTIONS,
   );
+
+  // Ref vers run pour ne pas le mettre en dépendances
+  const runDataQuerysRef = useRef(runDataQuerys);
+  runDataQuerysRef.current = runDataQuerys;
+
+  const lastFetchedKey = useRef<string>("");
 
   useEffect(() => {
     if (
@@ -364,14 +452,18 @@ const ListComponents = ({
       componentsListDashboard.length > 0 &&
       componentsListDashboard.some((c) => !("data" in c))
     ) {
-      const queryIds = componentsListDashboard.map(
-        (component) => component.queryId,
-      );
-      runDataQuerys({
-        dashboardQueryIds: queryIds,
-      });
+      const missingQueryIds = componentsListDashboard
+        .filter((c) => !("data" in c))
+        .map((c) => c.queryId);
+
+      // clé pour éviter des re-fetch inutile
+      const key = [...missingQueryIds].sort().join("|");
+      if (key && key !== lastFetchedKey.current) {
+        lastFetchedKey.current = key;
+        runDataQuerysRef.current({ dashboardQueryIds: missingQueryIds });
+      }
     }
-  }, [componentsListDashboard, runDataQuerys]);
+  }, [componentsListDashboard]);
 
   useEffect(() => {
     if (dataQuerys) {

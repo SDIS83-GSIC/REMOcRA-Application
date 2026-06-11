@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Nav } from "react-bootstrap";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
@@ -10,33 +10,62 @@ import {
 import ConfirmModal from "../../../components/Modal/ConfirmModal.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
-import { DashboardItemParam } from "../Constants.tsx";
+import { ComponentDashboard, DashboardItemParam } from "../Constants.tsx";
 import ConfigDynamicGrid from "./ConfigDynamicGrid.tsx";
+
+// cache : tout ce qui est nécessaire pour réafficher sans fetch
+export type DashboardCacheEntry = {
+  components: ComponentDashboard[];
+  profils: string[];
+};
 
 type ConfigDynamicDashboardProps = {
   openListDashboard: DashboardItemParam[] | undefined;
-  setOpenListDashboard: any;
+  setOpenListDashboard: (arg0: DashboardItemParam[] | undefined) => void;
   activeDashboard: DashboardItemParam | null;
-  setActiveDashboard: (arg0: any) => void;
+  setActiveDashboard: (arg0: DashboardItemParam | null) => void;
   editTabIndex: number | null | undefined;
-  setEditTabIndex: any;
-  componentsListDashboard: any;
-  setComponentsListDashboard: any;
+  setEditTabIndex: (arg0: number | null | undefined) => void;
+  componentsListDashboard: ComponentDashboard[] | null;
+  setComponentsListDashboard: (arg0: ComponentDashboard[] | null) => void;
 };
 
 const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
   const { error: errorToast, success: successToast } = useToastContext();
 
-  const [disabledModal, setDisabledModal] = useState(false); // Affiche la modal de confirmation
+  const [disabledModal, setDisabledModal] = useState(false);
   const [indexToRemove, setIdtoremove] = useState<number | null>();
+
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Cache mémoire
+  // Survit aux changements d'onglet, perdu uniquement au démontage / reload
+  const dashboardCacheRef = useRef<Map<string, DashboardCacheEntry>>(new Map());
+
+  useEffect(() => {
+    return () => {
+      abortControllerRef.current?.abort();
+    };
+  }, []);
 
   const urlApiDeleteDashboard = url`/api/dashboard/delete-dashboard/`;
 
   // Sélectionne l'onglet du dashboard cliqué
   const handleDashboardClick = (indexKey: number) => {
     if (props.openListDashboard && props.editTabIndex === null) {
-      props.setComponentsListDashboard(null);
-      props.setActiveDashboard(props.openListDashboard[indexKey]);
+      const target = props.openListDashboard[indexKey];
+      const cached = target?.id
+        ? dashboardCacheRef.current.get(target.id)
+        : null;
+
+      if (cached) {
+        //  on restaure instantanément, aucun fetch
+        props.setComponentsListDashboard(cached.components);
+      } else {
+        // on déclenche le chargement normal
+        props.setComponentsListDashboard(null);
+      }
+      props.setActiveDashboard(target);
     }
   };
 
@@ -86,23 +115,32 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
     dashboard: DashboardItemParam,
     indexKey: number,
   ) => {
-    (
-      await fetch(
+    // Annuler une éventuelle requête précédente
+    abortControllerRef.current?.abort();
+    abortControllerRef.current = new AbortController();
+
+    try {
+      const response = await fetch(
         urlApiDeleteDashboard + dashboard.id,
         getFetchOptions({
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
-        }),
-      )
-    )
-      .json()
-      .then(() => {
-        updateDashboardList(indexKey);
-        successToast("Le tableau de bord a correctement été supprimé");
-      })
-      .catch((reason: string) => {
-        errorToast(reason);
-      });
+          signal: abortControllerRef.current.signal,
+        } as any),
+      );
+      await response.json();
+      // le dashboard n'existe plus
+      if (dashboard.id) {
+        dashboardCacheRef.current.delete(dashboard.id);
+      }
+      updateDashboardList(indexKey);
+      successToast("Le tableau de bord a correctement été supprimé");
+    } catch (e: any) {
+      // Ne pas afficher d'erreur si c'est une annulation volontaire
+      if (e?.name !== "AbortError") {
+        errorToast(String(e));
+      }
+    }
   };
 
   // Ajoute un nouvel onglet pour un nouveau dashoard
@@ -134,6 +172,8 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
 
   // Annule l'édition du dashboard
   const handleCancelEdit = () => {
+    //  Annuler les requêtes en cours AVANT de recharger
+    abortControllerRef.current?.abort();
     props.setComponentsListDashboard(null);
     props.setActiveDashboard(null);
     props.setEditTabIndex(null);
@@ -236,6 +276,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
             setComponentsListDashboard={props.setComponentsListDashboard}
             activeDashboard={props.activeDashboard}
             setActiveDashboard={props.setActiveDashboard}
+            dashboardCacheRef={dashboardCacheRef}
           />
         ) : (
           <div className="alert alert-primary" role="alert">
