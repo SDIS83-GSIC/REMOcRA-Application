@@ -18,6 +18,7 @@ import {
   IconRotateLeft,
   IconSortList,
   IconTournee,
+  IconVisite,
   IconZeroPourcent,
 } from "../../components/Icon/Icon.tsx";
 import QueryTableWithListingPei from "../../components/ListePeiTable/QueryTableWithListingPei.tsx";
@@ -255,7 +256,7 @@ const ListTournee = ({
       },
       route: (idTournee) => URLS.TOURNEE_VISITE(idTournee),
       type: TYPE_BUTTON.LINK,
-      icon: <IconTournee />,
+      icon: <IconVisite />,
       textEnable: "Saisir toutes les visites de la tournée",
       textDisable: textDisable,
       classEnable: "warning",
