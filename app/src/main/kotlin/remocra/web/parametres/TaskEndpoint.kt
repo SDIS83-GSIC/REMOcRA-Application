@@ -33,6 +33,7 @@ import remocra.utils.badRequest
 import remocra.utils.getTextPart
 import remocra.web.AbstractEndpoint
 import java.util.UUID
+import kotlin.collections.find
 
 @Path("/task")
 @Produces(MediaType.APPLICATION_JSON)
@@ -101,7 +102,7 @@ class TaskEndpoint : AbstractEndpoint() {
                 taskActif = httpRequest.getTextPart("taskActif").toBoolean(),
                 taskPlanification = httpRequest.getTextPart("taskPlanification"),
                 taskParametres = JSONB.jsonb(httpRequest.getTextPart("taskParametres")),
-                zip = httpRequest.getPart("zipFile")?.inputStream,
+                zip = httpRequest.parts.find { it.name == "zipFile" && it.submittedFileName != null }?.inputStream,
             ),
         ).wrap()
 

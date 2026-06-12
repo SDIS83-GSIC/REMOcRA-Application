@@ -44,7 +44,7 @@ class DeleteTaskPersonnaliseeUseCase @Inject constructor(
     ): TaskPersonnaliseeInputData {
         // On supprime les documents physiques
         val task = objectMapper.readValue(element.taskParametres.toString(), ApacheHopParametre::class.java)
-        documentUtils.deleteDirectory(GlobalConstants.DOSSIER_APACHE_HOP_TASK.resolve("${element.taskId}"))
+        documentUtils.deleteDirectory(GlobalConstants.DOSSIER_APACHE_HOP_TASK.resolve(task.taskCode))
         documentUtils.deleteFileIfExists("${task.taskCode}.json", GlobalConstants.DOSSIER_APACHE_HOP_CONFIG)
 
         // Puis on delete en base les log_ligne et les jobs

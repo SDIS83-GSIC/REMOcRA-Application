@@ -1,5 +1,6 @@
 package remocra.usecase.admin.task
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
 import org.apache.logging.log4j.core.util.CronExpression
 import remocra.auth.WrappedUserInfo
@@ -16,11 +17,13 @@ import remocra.db.jooq.remocra.tables.pojos.Task
 import remocra.eventbus.parametres.ParametresModifiedEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
+import remocra.tasks.ApacheHopTask.ApacheHopParametre
 import remocra.usecase.AbstractCUDUseCase
 
 class UpdateTaskPersonnaliseeUseCase @Inject constructor(
     private val taskRepository: TaskRepository,
     private val taskPersonnaliseeUtils: TaskPersonnaliseeUtils,
+    private val objectMapper: ObjectMapper,
 ) : AbstractCUDUseCase<TaskPersonnaliseeInputData>(typeOperation = TypeOperation.UPDATE) {
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(Droit.ADMIN_PARAM_TRAITEMENTS)) {
@@ -32,7 +35,15 @@ class UpdateTaskPersonnaliseeUseCase @Inject constructor(
         // La méthode isValidExpression retourne un booléan indiquant si l'expression est conforme ou non
         // Donc si false, l'expression est invalide, on remonte l'info dans le Front
         if (!CronExpression.isValidExpression(element.taskPlanification)) {
-            throw(IllegalArgumentException("La CronExpression fournie est invalide : ${element.taskPlanification}"))
+            throw RemocraResponseException(ErrorType.ADMIN_TASK_SYNCHRO_CRON_INVALIDE, "${element.taskPlanification}")
+        }
+        val parametre = objectMapper.readValue(element.taskParametres.toString(), ApacheHopParametre::class.java)
+        if (taskRepository.getAllTaskApacheHop(element.taskId).map {
+                objectMapper.readValue(it.taskParametres.toString(), ApacheHopParametre::class.java)
+            }
+                .any { it.taskCode == parametre.taskCode }
+        ) {
+            throw RemocraResponseException(ErrorType.ADMIN_TASK_APACHE_HOP_CODE_EXISTANT, parametre.taskCode)
         }
     }
 

@@ -2,6 +2,7 @@ package remocra.db
 
 import jakarta.inject.Inject
 import org.jooq.DSLContext
+import org.jooq.impl.DSL
 import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.db.jooq.remocra.tables.pojos.Task
 import remocra.db.jooq.remocra.tables.references.TASK
@@ -12,6 +13,10 @@ class TaskRepository @Inject constructor(private val dsl: DSLContext) : Abstract
     fun getMapTasks() = dsl.selectFrom(TASK).fetchInto<Task>().associateBy { it.taskType }
 
     fun getAllTaskInfoToAdmin(): List<Task> = dsl.selectFrom(TASK).fetchInto()
+    fun getAllTaskApacheHop(taskId: UUID? = null): List<Task> =
+        dsl.selectFrom(TASK)
+            .where(TASK.TYPE.eq(TypeTask.PERSONNALISE))
+            .and(taskId?.let { TASK.ID.ne(it) } ?: DSL.noCondition()).fetchInto()
 
     fun update(task: Task): Int =
         dsl.update(TASK)

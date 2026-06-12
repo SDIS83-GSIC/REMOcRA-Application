@@ -22,7 +22,9 @@ constructor(
 ) {
 
     fun saveTask(element: TaskPersonnaliseeInputData) {
-        val directory = GlobalConstants.DOSSIER_APACHE_HOP_TASK.resolve(element.taskId.toString())
+        val parametre = objectMapper.readValue(element.taskParametres.toString(), ApacheHopParametre::class.java)
+
+        val directory = GlobalConstants.DOSSIER_APACHE_HOP_TASK.resolve(parametre.taskCode)
         var nameHwf: String? = null
         // On supprime le contenu du répertoire
         documentUtils.deleteDirectory(directory)
@@ -48,10 +50,9 @@ constructor(
         }
 
         // puis on crée un json qui devra avoir la configuration du job avec son name, enabled et sa position
-        val parametre = objectMapper.readValue(element.taskParametres.toString(), ApacheHopParametre::class.java)
         val config = ConfigApacheHop(
             name = parametre.taskCode,
-            filename = "\${PROJECT_HOME}/${element.taskId}/$nameHwf",
+            filename = "\${PROJECT_HOME}/${parametre.taskCode}/$nameHwf",
         )
 
         documentUtils.ensureDirectory(GlobalConstants.DOSSIER_APACHE_HOP_CONFIG)
