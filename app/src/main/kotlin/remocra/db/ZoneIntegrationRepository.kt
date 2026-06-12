@@ -7,6 +7,7 @@ import org.jooq.Field
 import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.locationtech.jts.geom.Geometry
+import remocra.app.AppSettings
 import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.ZoneIntegrationData
@@ -20,7 +21,10 @@ import remocra.utils.ST_Within
 import java.util.UUID
 import kotlin.math.absoluteValue
 
-class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
+class ZoneIntegrationRepository @Inject constructor(
+    private val dsl: DSLContext,
+    private val appSettings: AppSettings,
+) : AbstractRepository() {
 
     fun getById(id: UUID): ZoneIntegration = dsl.selectFrom(ZONE_INTEGRATION)
         .where(ZONE_INTEGRATION.ID.eq(id)).fetchSingleInto()
@@ -39,7 +43,7 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
     }
 
     fun checkByOrganismeId(geometry: Field<Geometry?>, organismeId: UUID): Boolean? =
-        dsl.select(ST_Within(ST_Transform(geometry, SRID), ZONE_INTEGRATION.GEOMETRIE))
+        dsl.select(ST_Within(ST_Transform(geometry, appSettings.srid), ZONE_INTEGRATION.GEOMETRIE))
             .from(ZONE_INTEGRATION)
             .join(ORGANISME).on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))
             .where(ORGANISME.ID.eq(organismeId))
@@ -158,7 +162,7 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
     fun checkContains(zoneIntegrationId: UUID, geometry: Field<Geometry?>): Boolean {
         return dsl.select(
             ST_Within(
-                ST_Transform(geometry, SRID),
+                ST_Transform(geometry, appSettings.srid),
                 ZONE_INTEGRATION.GEOMETRIE,
             ),
         )
@@ -176,7 +180,7 @@ class ZoneIntegrationRepository @Inject constructor(private val dsl: DSLContext)
     fun getZSIdsByGeometrie(geometry: Field<Geometry?>): Collection<UUID?> =
         dsl.select(ZONE_INTEGRATION.ID)
             .from(ZONE_INTEGRATION)
-            .where(ST_Within(ST_Transform(geometry, SRID), ZONE_INTEGRATION.GEOMETRIE))
+            .where(ST_Within(ST_Transform(geometry, appSettings.srid), ZONE_INTEGRATION.GEOMETRIE))
             .and(ZONE_INTEGRATION.TYPE.eq(TypeZoneIntegration.ZONE_SPECIALE))
             .fetchInto()
 }

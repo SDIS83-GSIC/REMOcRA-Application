@@ -4,6 +4,7 @@ import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.jooq.Field
 import org.locationtech.jts.geom.Geometry
+import remocra.app.AppSettings
 import remocra.data.GlobalData
 import remocra.db.jooq.remocra.tables.pojos.CadastreParcelle
 import remocra.db.jooq.remocra.tables.pojos.CadastreSection
@@ -17,7 +18,10 @@ import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 import java.util.UUID
 
-class CadastreRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
+class CadastreRepository @Inject constructor(
+    private val dsl: DSLContext,
+    private val appSettings: AppSettings,
+) : AbstractRepository() {
 
     fun getSectionByCommuneId(communeId: UUID, zoneIntegrationId: UUID?, isSuperAdmin: Boolean): List<CadastreSection> =
         dsl.select(*CADASTRE_SECTION.fields())
@@ -86,7 +90,7 @@ class CadastreRepository @Inject constructor(private val dsl: DSLContext) : Abst
             .orderBy(
                 ST_Distance(
                     CADASTRE_PARCELLE.GEOMETRIE,
-                    ST_Transform(geometry, SRID),
+                    ST_Transform(geometry, appSettings.srid),
                 ),
             )
             .limit(limit)

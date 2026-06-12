@@ -5,17 +5,21 @@ import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.impl.DSL
 import org.locationtech.jts.geom.Geometry
+import remocra.app.AppSettings
 import remocra.db.jooq.remocra.tables.pojos.CarroyageDfci
 import remocra.db.jooq.remocra.tables.references.CARROYAGE_DFCI
 import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 
-class DfciRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
+class DfciRepository @Inject constructor(
+    private val dsl: DSLContext,
+    private val appSettings: AppSettings,
+) : AbstractRepository() {
     fun getCarroyage(geometry: Field<Geometry?>): CarroyageDfci? =
         dsl.selectFrom(CARROYAGE_DFCI)
             .where(
                 ST_Within(
-                    ST_Transform(geometry, SRID),
+                    ST_Transform(geometry, appSettings.srid),
                     CARROYAGE_DFCI.GEOMETRIE,
                 ),
             )

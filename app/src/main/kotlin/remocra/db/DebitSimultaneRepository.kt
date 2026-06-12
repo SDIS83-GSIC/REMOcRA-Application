@@ -8,6 +8,7 @@ import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.Point
 import remocra.GlobalConstants
+import remocra.app.AppSettings
 import remocra.data.GlobalData
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.pojos.DebitSimultaneMesure
@@ -29,7 +30,10 @@ import remocra.utils.toGeomFromText
 import java.time.ZonedDateTime
 import java.util.UUID
 
-class DebitSimultaneRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
+class DebitSimultaneRepository @Inject constructor(
+    private val dsl: DSLContext,
+    private val appSettings: AppSettings,
+) : AbstractRepository() {
 
     companion object {
         private const val DISTANCE_PEI_DEBIT_SIMULTANE = 500
@@ -211,7 +215,7 @@ class DebitSimultaneRepository @Inject constructor(private val dsl: DSLContext) 
             .and(
                 ST_DWithin(
                     PEI.GEOMETRIE,
-                    ST_Transform(geometry.toGeomFromText(), SRID),
+                    ST_Transform(geometry.toGeomFromText(), appSettings.srid),
                     DISTANCE_PEI_DEBIT_SIMULTANE.toDouble(),
                 ),
             )
@@ -232,7 +236,7 @@ class DebitSimultaneRepository @Inject constructor(private val dsl: DSLContext) 
         dsl.select(
             ST_DWithin(
                 PEI.GEOMETRIE,
-                ST_Transform(geometry.toGeomFromText(), SRID),
+                ST_Transform(geometry.toGeomFromText(), appSettings.srid),
                 DISTANCE_PEI_DEBIT_SIMULTANE.toDouble(),
             ),
         )

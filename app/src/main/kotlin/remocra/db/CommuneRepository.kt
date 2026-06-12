@@ -8,6 +8,7 @@ import org.jooq.Record3
 import org.jooq.SelectConnectByStep
 import org.jooq.impl.DSL
 import org.locationtech.jts.geom.Geometry
+import remocra.app.AppSettings
 import remocra.auth.WrappedUserInfo
 import remocra.data.GlobalData
 import remocra.db.jooq.entrepotsig.tables.references.V_COMMUNE_SIG
@@ -21,7 +22,10 @@ import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 import java.util.UUID
 
-class CommuneRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
+class CommuneRepository @Inject constructor(
+    private val dsl: DSLContext,
+    private val appSettings: AppSettings,
+) : AbstractRepository() {
     fun getMapById(): Map<UUID, Commune> = dsl.selectFrom(COMMUNE).fetchInto<Commune>().associateBy { it.communeId }
 
     fun getAll(codeInsee: String?, libelle: String?, limit: Int?, offset: Int?): Collection<Commune> =
@@ -70,14 +74,14 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             .from(COMMUNE)
             .where(
                 ST_DWithin(
-                    ST_Transform(geometry, SRID),
+                    ST_Transform(geometry, appSettings.srid),
                     COMMUNE.GEOMETRIE,
                     toleranceCommuneMetres.toDouble(),
                 ),
             )
             .orderBy(
                 ST_Distance(
-                    ST_Transform(geometry, SRID),
+                    ST_Transform(geometry, appSettings.srid),
                     COMMUNE.GEOMETRIE,
                 ),
             )
@@ -88,7 +92,7 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             .from(COMMUNE)
             .where(
                 ST_Within(
-                    ST_Transform(geometry, SRID),
+                    ST_Transform(geometry, appSettings.srid),
                     COMMUNE.GEOMETRIE,
                 ),
             )
@@ -101,7 +105,7 @@ class CommuneRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             .from(COMMUNE)
             .where(
                 ST_Within(
-                    ST_Transform(geometry, SRID),
+                    ST_Transform(geometry, appSettings.srid),
                     COMMUNE.GEOMETRIE,
                 ),
             )

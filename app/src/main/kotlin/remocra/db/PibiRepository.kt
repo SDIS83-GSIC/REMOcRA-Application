@@ -8,6 +8,7 @@ import org.jooq.Record
 import org.jooq.impl.DSL
 import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
+import remocra.app.AppSettings
 import remocra.data.GlobalData
 import remocra.data.PibiData
 import remocra.db.PeiRepository.Companion.peiData
@@ -27,6 +28,7 @@ import java.util.UUID
 
 class PibiRepository @Inject constructor(
     private val dsl: DSLContext,
+    private val appSettings: AppSettings,
 ) : AbstractRepository() {
 
     fun getInfoPibi(pibiId: UUID): PibiData =
@@ -112,7 +114,7 @@ class PibiRepository @Inject constructor(
             .and(
                 ST_DWithin(
                     PEI.GEOMETRIE,
-                    ST_Transform(geometry, SRID),
+                    ST_Transform(geometry, appSettings.srid),
                     GlobalConstants.DISTANCE_MAXIMALE_JUMELAGE.toDouble(),
                 ),
             )

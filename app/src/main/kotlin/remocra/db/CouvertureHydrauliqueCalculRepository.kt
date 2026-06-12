@@ -10,6 +10,7 @@ import org.jooq.impl.DSL.select
 import org.jooq.impl.DSL.selectFrom
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.Point
+import remocra.app.AppSettings
 import remocra.data.enums.CodeSdis
 import remocra.db.jooq.couverturehydraulique.tables.references.COUVERTURE_TRACEE
 import remocra.db.jooq.couverturehydraulique.tables.references.COUVERTURE_TRACEE_PEI
@@ -20,6 +21,7 @@ import java.util.UUID
 
 class CouvertureHydrauliqueCalculRepository @Inject constructor(
     private val dsl: DSLContext,
+    private val appSettings: AppSettings,
 ) : AbstractRepository() {
 
     fun executeInsererJoinctionPei(

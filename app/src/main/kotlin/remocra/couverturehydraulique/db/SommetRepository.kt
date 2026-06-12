@@ -3,6 +3,7 @@ package remocra.couverturehydraulique.db
 import jakarta.inject.Inject
 import org.jooq.DSLContext
 import org.locationtech.jts.geom.Point
+import remocra.app.AppSettings
 import remocra.db.AbstractRepository
 import remocra.db.fetchOneInto
 import remocra.db.jooq.couverturehydraulique.tables.pojos.Sommet
@@ -14,7 +15,10 @@ import java.util.UUID
 /**
  * Repository pour les données de sommet
  */
-class SommetRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
+class SommetRepository @Inject constructor(
+    private val dsl: DSLContext,
+    private val appSettings: AppSettings,
+) : AbstractRepository() {
 
     companion object {
         const val TOLERANCE_TOPOLOGIE = 0.2

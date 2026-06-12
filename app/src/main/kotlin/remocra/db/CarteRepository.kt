@@ -8,6 +8,7 @@ import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.Point
+import remocra.app.AppSettings
 import remocra.data.enums.TypeElementCarte
 import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
 import remocra.db.jooq.remocra.enums.EtatSignalement
@@ -46,7 +47,10 @@ import java.util.Date
 import java.util.Locale
 import java.util.UUID
 
-class CarteRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
+class CarteRepository @Inject constructor(
+    private val dsl: DSLContext,
+    private val appSettings: AppSettings,
+) : AbstractRepository() {
 
     companion object {
         fun hasIndispoTemp(dateUtils: DateUtils) = DSL.exists(
@@ -250,7 +254,7 @@ class CarteRepository @Inject constructor(private val dsl: DSLContext) : Abstrac
                     }
                 },
             ).and(
-                ST_Within(EVENEMENT.GEOMETRIE, ST_Transform(bbox, SRID)),
+                ST_Within(EVENEMENT.GEOMETRIE, ST_Transform(bbox, appSettings.srid)),
             )
             .fetchInto()
     }

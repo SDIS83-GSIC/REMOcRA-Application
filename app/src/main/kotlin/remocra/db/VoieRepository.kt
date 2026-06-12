@@ -6,6 +6,7 @@ import org.jooq.DSLContext
 import org.jooq.Field
 import org.jooq.impl.DSL
 import org.locationtech.jts.geom.Geometry
+import remocra.app.AppSettings
 import remocra.auth.WrappedUserInfo
 import remocra.data.GlobalData
 import remocra.db.jooq.entrepotsig.tables.references.V_VOIE_SIG
@@ -19,7 +20,10 @@ import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 import java.util.UUID
 
-class VoieRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
+class VoieRepository @Inject constructor(
+    private val dsl: DSLContext,
+    private val appSettings: AppSettings,
+) : AbstractRepository() {
     fun getAll(codeInsee: String?, libelle: String?, limit: Int?, offset: Int?): Collection<Voie> =
         dsl.select(*VOIE.fields())
             .from(VOIE).innerJoin(COMMUNE).on(VOIE.COMMUNE_ID.eq(COMMUNE.ID))
@@ -47,7 +51,7 @@ class VoieRepository @Inject constructor(private val dsl: DSLContext) : Abstract
         toleranceVoiesMetres: Int,
         listeIdCommune: List<UUID>,
     ): List<VoieWithCommune> {
-        val transformedGeometry = ST_Transform(geometry, SRID)
+        val transformedGeometry = ST_Transform(geometry, appSettings.srid)
         return dsl.select(
             VOIE.ID.`as`("id"),
             VOIE.LIBELLE.`as`("code"),
