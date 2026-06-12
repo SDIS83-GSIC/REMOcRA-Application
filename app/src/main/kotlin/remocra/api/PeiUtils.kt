@@ -2,10 +2,10 @@ package remocra.api
 
 import remocra.GlobalConstants
 import remocra.auth.WrappedUserInfo
+import remocra.data.enums.TypeMaintenanceDeci
 import remocra.data.enums.TypeServicePublicDeci
 import remocra.db.jooq.remocra.enums.DroitApi
 import java.util.UUID
-import java.util.stream.Stream
 
 /**
  * Classe regroupant les utilitaires ayant attrait aux cas d'utilisation des PEI
@@ -26,13 +26,7 @@ object PeiUtils {
     }
 
     fun isMaintenanceDECI(organisme: OrganismeIdType): Boolean {
-        return Stream.of(
-            GlobalConstants.TYPE_ORGANISME_SERVICE_EAUX,
-            GlobalConstants.TYPE_ORGANISME_PRESTATAIRE_TECHNIQUE,
-            GlobalConstants.TYPE_ORGANISME_COMMUNE,
-            GlobalConstants.TYPE_ORGANISME_EPCI,
-        )
-            .anyMatch { it.equals(organisme.typeOrganisme, true) }
+        return TypeMaintenanceDeci.entries.any { it.name == organisme.typeOrganisme }
     }
 
     /**
