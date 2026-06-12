@@ -127,14 +127,22 @@ constructor(
                             peiData.grosDebit.let { grosDebit ->
                                 if (grosDebit) {
                                     "$it\n Gros débit"
+                                } else {
+                                    it
                                 }
-                                it
                             }
                         }
                     } else {
                         """
-                           Capacité : ${
-                            peiData.penaCapacite.toString().takeIfNotNullElseNonRenseigne()}${peiData.penaCapacite?.let { " m³" } ?: ""}
+                            Capacité : ${ peiData.penaCapaciteIllimitee.let { illimitee ->
+                            if (illimitee == true) {
+                                "Illimitée"
+                            } else {
+                                "${
+                                    peiData.penaCapacite.toString().takeIfNotNullElseNonRenseigne()
+                                } ${peiData.penaCapacite?.let { " m³" } ?: ""}"
+                            }
+                        }}
                         """.trimIndent()
                     }
 
@@ -252,6 +260,13 @@ constructor(
         val gestionnaireLibelle: String?,
         val siteLibelle: String?,
     )
+
+    private fun String?.takeIfNotNullElseIllimiteeElseNonRenseigne(illimite: Boolean): String =
+        if (illimite) {
+            "Illimitée"
+        } else {
+            takeIfNotNullElseNonRenseigne()
+        }
 
     private fun String?.takeIfNotNullElseNonRenseigne() =
         this.takeIf { !it.isNullOrBlank() && it != "null" } ?: "Non renseigné"

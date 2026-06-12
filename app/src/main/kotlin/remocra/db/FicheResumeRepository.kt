@@ -108,6 +108,7 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
                 )
                 .otherwise(false).`as`("grosDebit"),
             PENA.CAPACITE,
+            PENA.CAPACITE_ILLIMITEE,
             V_PEI_VISITE_DATE.LAST_ROP,
             V_PEI_VISITE_DATE.LAST_CTP,
             DIAMETRE.LIBELLE,
@@ -165,6 +166,7 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
         val diametreLibelle: String?,
         val pibiDiametreCanalisation: Int?,
         val penaCapacite: Int?,
+        val penaCapaciteIllimitee: Boolean?,
         val gestionnaireId: UUID?,
         val gestionnaireLibelle: String?,
         val siteLibelle: String?,
