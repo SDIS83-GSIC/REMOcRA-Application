@@ -42,6 +42,7 @@ services:
       - SIG_USERNAME
       - SIG_PASSWORD
       - CLIENT_SECRET_APACHE_HOP
+      - APACHE_HOP_ENABLE
     healthcheck:
       test: curl --fail -s http://localhost:8881/ || exit 1
       interval: 1m30s
