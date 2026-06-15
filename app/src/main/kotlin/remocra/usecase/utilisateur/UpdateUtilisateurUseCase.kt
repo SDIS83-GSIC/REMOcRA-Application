@@ -1,11 +1,11 @@
 package remocra.usecase.utilisateur
 
 import jakarta.inject.Inject
+import remocra.app.UsernameLengthConstraints
 import remocra.auth.AuthModule
 import remocra.auth.WrappedUserInfo
 import remocra.data.UtilisateurData
 import remocra.data.enums.ErrorType
-import remocra.db.OrganismeRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -24,7 +24,7 @@ constructor(
     private val keycloakClient: AuthModule.KeycloakClient,
     private val keycloakApi: KeycloakApi,
     private val utilisateurRepository: UtilisateurRepository,
-    private val organismeRepository: OrganismeRepository,
+    private val usernameLengthConstraints: UsernameLengthConstraints,
 ) :
     AbstractCUDUseCase<UtilisateurData>(TypeOperation.UPDATE) {
 
@@ -84,8 +84,8 @@ constructor(
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: UtilisateurData) {
-        if (element.utilisateurUsername.trim().length < 3) {
-            throw RemocraResponseException(ErrorType.UTILISATEUR_USERNAME_LENGTH)
+        if (element.utilisateurUsername.trim().length !in usernameLengthConstraints.min..usernameLengthConstraints.max) {
+            throw RemocraResponseException(ErrorType.UTILISATEUR_USERNAME_LENGTH, "${usernameLengthConstraints.min} et maximum ${usernameLengthConstraints.max}")
         }
 
         if (utilisateurRepository.checkExistsUsername(element.utilisateurUsername, element.utilisateurId)) {

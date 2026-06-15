@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets
 import java.time.Clock
 import java.time.ZoneId
 
-class AppModule(private val settings: AppSettings) : RemocraModule() {
+class AppModule(private val settings: AppSettings, private val usernameLengthConstraints: UsernameLengthConstraints) : RemocraModule() {
     @Provides
     @Singleton
     fun provideClock() = Clock.system(ZoneId.systemDefault())
@@ -30,6 +30,7 @@ class AppModule(private val settings: AppSettings) : RemocraModule() {
         bind(ParametresData::class.java).toProvider(ParametresProvider::class.java)
         bind(DataCache::class.java).toProvider(DataCacheProvider::class.java)
         bind(AppSettings::class.java).toInstance(settings)
+        bind(UsernameLengthConstraints::class.java).toInstance(usernameLengthConstraints)
         HealthModule.addHealthCheck(binder(), "version").toInstance(object : HealthChecker() {
             override fun check() = Health.Success(settings.version)
         })
@@ -41,7 +42,7 @@ class AppModule(private val settings: AppSettings) : RemocraModule() {
     companion object {
         fun create(config: Config) =
             AppModule(
-                AppSettings(
+                settings = AppSettings(
                     environment = config.getEnum(Environment::class.java, "environment"),
                     codeSdis = config.getEnum(CodeSdis::class.java, "codeSdis"),
                     epsg = config.getConfig("epsg").let {
@@ -59,6 +60,10 @@ class AppModule(private val settings: AppSettings) : RemocraModule() {
                         tokenBody = "grant_type=client_credentials&client_id=${URLEncoder.encode(config.getStringOrNull("nexsis.user").orEmpty(), StandardCharsets.UTF_8)}" +
                             "&client_secret=${URLEncoder.encode(config.getStringOrNull("nexsis.password").orEmpty(), StandardCharsets.UTF_8)}",
                     ),
+                ),
+                usernameLengthConstraints = UsernameLengthConstraints(
+                    min = config.getInt("username-length.min"),
+                    max = config.getInt("username-length.max"),
                 ),
             )
     }

@@ -67,6 +67,9 @@ CLIENT_ID=remocra
 CLIENT_SECRET=remocra
 REALM=remocra
 
+REMOCRA_USERNAME_LENGTH_MIN=3
+REMOCRA_USERNAME_LENGTH_MAX=255
+
 # URL de l’application remocra
 REMOCRA_URL=https://xxxxxxxxxxxxxxxxxxx
 
@@ -106,7 +109,7 @@ GEOSERVER_PASSWORD=xxxxxxxxxxxxxxxxx
 | POSTGRES_DB_USERNAME | Nom de l’utilisateur PostgreSQL (par défaut _remocra_)  | remocra
 | POSTGRES_DB_PASSWORD | Mot de passe de l’utilisateur PostgreSQL  |
 | POSTGRES_DB_PORT | Port de la base de données PostgreSQL | 5432
-.5+| *Informations pour l’application REMOcRA*
+.7+| *Informations pour l’application REMOcRA*
 | REMOCRA_URL | L’adresse https permettant à accéder à l’interface REMOcRA sans “/” à la fin.  |
 | CODE_SDIS | Code du SDIS, doit correspondre à une valeur de l’énumération présente dans le fichier : https://github.com/SDIS83-GSIC/REMOcRA-Application/blob/master/app/src/main/kotlin/remocra/data/enums/CodeSdis.kt[] |
 | EPSG_NAME | Nom de la projection (par exemple _EPSG:2154_) |
@@ -118,6 +121,8 @@ GEOSERVER_PASSWORD=xxxxxxxxxxxxxxxxx
 * RECETTE
 * PREPRODUCTION
 * PRODUCTION  | PRODUCTION
+| REMOCRA_USERNAME_LENGTH_MIN | Longueur minimale d'un username pour la création d'un compte dans l'application | 3
+| REMOCRA_USERNAME_LENGTH_MAX | Longueur maximale d'un username pour la création d'un compte dans l'application | 255
 
 .8+| *Informations de connexion à la base SIG du SDIS
 (les valeurs sont optionnelles)*
@@ -318,6 +323,8 @@ docker compose run --rm \
     -e KEYCLOAK_USER=<super_username> \
     -e KEYCLOAK_PASSWORD=<super_password> \
     -e CLIENT_SECRET_APACHE_HOP=<client_secret_apache_hop> \
+    -e REMOCRA_USERNAME_LENGTH_MIN=<remocra_username_length_min> \
+    -e REMOCRA_USERNAME_LENGTH_MAX=<remocra_username_length_max> \
     keycloak keycloak-config-cli
 ----
 

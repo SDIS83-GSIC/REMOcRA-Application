@@ -447,7 +447,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     // ********************************************************************************
     //
     UTILISATEUR_FORBIDDEN(10101, "Vous n'avez pas les droits de gestion des utilisateurs.", Status.FORBIDDEN),
-    UTILISATEUR_USERNAME_LENGTH(10102, "L'identifiant doit avoir au minimum 3 caractères."),
+    UTILISATEUR_USERNAME_LENGTH(10102, "L'identifiant doit avoir au minimum $PLACEHOLDER_ERROR_TYPE caractères."),
     UTILISATEUR_ERROR_INSERT(
         10103,
         "Erreur lors de l'insertion de l'identifiant : $PLACEHOLDER_ERROR_TYPE. Vérifier que l'identifiant ne contient pas des caractères spéciaux.",

@@ -22,3 +22,11 @@ data class Nexsis(
     val tokenEndpoint: URI,
     val tokenBody: String,
 )
+
+data class UsernameLengthConstraints(val min: Int, val max: Int) {
+    init {
+        require(min > 0) { "min doit être > 0" }
+        require(max > 0) { "max doit être > 0" }
+        require(min < max) { "min doit être < max" }
+    }
+}
