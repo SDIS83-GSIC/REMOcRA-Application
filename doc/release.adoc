@@ -1,5 +1,51 @@
 = Release Notes
 
+== 3.0.8
+
+* https://redmine.atolcd.com/issues/252223[#252223]: [CARTO PERSONNALISEE] Partie dessin
+* https://redmine.atolcd.com/issues/252677[#252677]: [ADMINISTRATION] COUCHES CARTOGRAPHIQUES - Pouvoir gerer l'opacite par defaut des couches
+* https://redmine.atolcd.com/issues/253184[#253184]: [FICHE POINT D'EAU] TRI DES CHAMPS A LISTE - Trier les listes par ordre alphabetique
+* https://redmine.atolcd.com/issues/282579[#282579]: module gestion des points d'eau - liste des points d'eau vide lors d'une modification d'un debit simultane
+* https://redmine.atolcd.com/issues/283190[#283190]: Carte - desaffectation des tournees
+* https://redmine.atolcd.com/issues/283198[#283198]: Carte - Lever une indisponibilite temporaire d'un PEI
+* https://redmine.atolcd.com/issues/284141[#284141]: Import CTP : Empêcher plusieurs enregistrements
+* https://redmine.atolcd.com/issues/285044[#285044]: Carto : Creer un debit simultane
+* https://redmine.atolcd.com/issues/288724[#288724]: Fiche resume - ajouter une unite
+* https://redmine.atolcd.com/issues/288731[#288731]: Indisponibilite temporaire - bouton retour sur la carte
+* https://redmine.atolcd.com/issues/288854[#288854]: Bouton retour apres creation d'une visite
+* https://redmine.atolcd.com/issues/289149[#289149]: Rapports personnalises : prendre en compte le parametrage du PEI "Non conforme"
+* https://redmine.atolcd.com/issues/289258[#289258]: RCCI : couche carto non habilitee
+* https://redmine.atolcd.com/issues/289296[#289296]: Rapports personnalises : Champ commune
+* https://redmine.atolcd.com/issues/289310[#289310]: Executer des rapports personnalises : page gardee en memoire
+* https://redmine.atolcd.com/issues/289386[#289386]: Rapport personnalise : PEI sans tournee
+* https://redmine.atolcd.com/issues/289653[#289653]: Colonnes affichees dans la liste des PEI
+* https://redmine.atolcd.com/issues/289912[#289912]: [PEI] TOURNEE - Coquille sur une infobulle
+* https://redmine.atolcd.com/issues/290080[#290080]: Documents - à griser si aucun document n'est associé à un PEI
+* https://redmine.atolcd.com/issues/290113[#290113]: [GESTION DES COUCHES CARTO] CREATION D'UNE COUCHE - Icone et Legende affichenr quelque chose alors que je n'ai rien renseigne
+* https://redmine.atolcd.com/issues/290188[#290188]: Mise a jour disponibilite HBE
+* https://redmine.atolcd.com/issues/290191[#290191]: Gestion de crise - modification geometrie d'un evenement
+* https://redmine.atolcd.com/issues/290200[#290200]: RCCI - affichage des departs de feux plus haut
+* https://redmine.atolcd.com/issues/290202[#290202]: Module RCCI - Amelioration affichage erreur
+* https://redmine.atolcd.com/issues/290203[#290203]: OLDEB - Surbrillance selection
+* https://redmine.atolcd.com/issues/290244[#290244]: Import utilisateurs : Verification de donnees
+* https://redmine.atolcd.com/issues/290252[#290252]: [COUCHES CARTO] GESTION DES METADONNEES - Nom de la couche / Code de la couche
+* https://redmine.atolcd.com/issues/290253[#290253]: [COUCHES CARTO] METADONNEES - Tri par ordre alphabetique ou ordre de la liste Couche
+* https://redmine.atolcd.com/issues/290596[#290596]: Droit : Accéder à la liste des points d'eau depuis l'onglet tournees
+* https://redmine.atolcd.com/issues/290685[#290685]: Synchronisation Keycloak
+* https://redmine.atolcd.com/issues/290702[#290702]: zoomer sur - coorodnnees DFCI
+* https://redmine.atolcd.com/issues/290862[#290862]: [SIG] - Connexion a la base de donnees SIG
+* https://redmine.atolcd.com/issues/290905[#290905]: Creation d'une nature de PEI
+* https://redmine.atolcd.com/issues/290946[#290946]: Tournees : Modale ajout de PEI
+* https://redmine.atolcd.com/issues/291119[#291119]: Administration : ajouter un message d'erreur
+* https://redmine.atolcd.com/issues/291849[#291849]: Administration / Couches cartographiques / Groupes de couches / Voir les couches / Modification d'une couche
+* https://redmine.atolcd.com/issues/292516[#292516]: Rapport PEI avec anomalies
+* https://redmine.atolcd.com/issues/293180[#293180]: Suppression de la table l_commune_cis
+* https://redmine.atolcd.com/issues/293539[#293539]: Synchronisation utilisateurs : Adresse mail par defaut
+* https://redmine.atolcd.com/issues/294111[#294111]: version 3.0.8-a1 [ADMINISTRATION] PARAMATRES APPLICATIFS - Parametres disparus
+
+Pour plus d'informations, consultez les tickets REDMINE associes.
+
+
 == 3.0.7
 
 * https://redmine.atolcd.com/issues/247025[#247025]: PEI PRESCRITS - prescription de PEI
