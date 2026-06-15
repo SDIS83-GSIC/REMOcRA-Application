@@ -168,6 +168,14 @@ constructor(
                     carteRepository.getDfciPistesWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
                 }
             }
+            TypeElementCarte.DFCI_DEB -> bbox.let {
+                if (it.isEmpty()) {
+                    carteRepository.getDfciDebWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, null, srid, userInfo.isSuperAdmin)
+                } else {
+                    val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
+                    carteRepository.getDfciDebWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
+                }
+            }
         }
 
         if (typeElementCarte == TypeElementCarte.PEI) {

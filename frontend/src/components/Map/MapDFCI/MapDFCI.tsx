@@ -61,6 +61,23 @@ const MapDFCI = () => {
     );
   }, [map, projection]);
 
+  const dataDfciDebLayer:
+    | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
+    | undefined = useMemo(() => {
+    if (!map) {
+      return;
+    }
+    return createPointLayer(
+      map,
+      (extent, projection) =>
+        `/api/dfci-deb/layer?bbox=` +
+        extent.join(",") +
+        "&srid=" +
+        projection.getCode(),
+      projection,
+    );
+  }, [map, projection]);
+
   const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
     useToolbarContext({
       availableLayers: availableLayers,
@@ -93,6 +110,7 @@ const MapDFCI = () => {
               map={map}
               dataDfciAireLayer={dataDfciAireLayer}
               dataDfciPisteLayer={dataDfciPisteLayer}
+              dataDfciDebLayer={dataDfciDebLayer}
             />
           )
         }

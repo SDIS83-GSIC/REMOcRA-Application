@@ -1231,12 +1231,16 @@ export const TooltipMapDFCI = ({
   map,
   dataDfciAireLayer,
   dataDfciPisteLayer,
+  dataDfciDebLayer,
 }: {
   map?: OLMap;
   dataDfciAireLayer:
     | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
     | undefined;
   dataDfciPisteLayer:
+    | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
+    | undefined;
+  dataDfciDebLayer:
     | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
     | undefined;
 }) => {
@@ -1282,6 +1286,9 @@ export const TooltipMapDFCI = ({
                 break;
               case DFCI_ELEMENT.PISTE:
                 dataDfciPisteLayer?.getSource()?.refresh();
+                break;
+              case DFCI_ELEMENT.DEBROUSSAILLEMENT:
+                dataDfciDebLayer?.getSource()?.refresh();
                 break;
             }
           }}
