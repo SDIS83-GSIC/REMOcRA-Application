@@ -1,6 +1,7 @@
 import { DFCI_ELEMENT } from "../../enums/DfciElementEnum.tsx";
 import { UpdateDfciAire } from "./UpdateDfciAire.tsx";
 import { UpdateDfciDeb } from "./UpdateDfciDeb.tsx";
+import { UpdateDfciPanneau } from "./UpdateDfciPanneau.tsx";
 import { UpdateDfciPiste } from "./UpdateDfciPiste.tsx";
 
 /**
@@ -40,6 +41,14 @@ const DfciUpdateElement = ({
       return (
         <UpdateDfciDeb
           debId={elementId}
+          onSubmit={onSubmit}
+          readOnly={readOnly}
+        />
+      );
+    case DFCI_ELEMENT.PANNEAU:
+      return (
+        <UpdateDfciPanneau
+          panneauId={elementId}
           onSubmit={onSubmit}
           readOnly={readOnly}
         />

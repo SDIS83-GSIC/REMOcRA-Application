@@ -78,6 +78,21 @@ const MapDFCI = () => {
     );
   }, [map, projection]);
 
+  const dataDfciPanneauLayer = useMemo(() => {
+    if (!map) {
+      return;
+    }
+    return createPointLayer(
+      map,
+      (extent, projection) =>
+        `/api/dfci-panneau/layer?bbox=` +
+        extent.join(",") +
+        "&srid=" +
+        projection.getCode(),
+      projection,
+    );
+  }, [map, projection]);
+
   const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
     useToolbarContext({
       availableLayers: availableLayers,
@@ -111,6 +126,7 @@ const MapDFCI = () => {
               dataDfciAireLayer={dataDfciAireLayer}
               dataDfciPisteLayer={dataDfciPisteLayer}
               dataDfciDebLayer={dataDfciDebLayer}
+              dataDfciPanneauLayer={dataDfciPanneauLayer}
             />
           )
         }

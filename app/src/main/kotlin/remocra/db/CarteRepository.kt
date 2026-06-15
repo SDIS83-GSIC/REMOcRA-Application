@@ -17,6 +17,7 @@ import remocra.db.jooq.remocra.enums.EtatSignalement
 import remocra.db.jooq.remocra.enums.EvenementStatutMode
 import remocra.db.jooq.remocra.enums.TypeAire
 import remocra.db.jooq.remocra.enums.TypeDebroussaillement
+import remocra.db.jooq.remocra.enums.TypePanneau
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.references.CADASTRE_PARCELLE
 import remocra.db.jooq.remocra.tables.references.CADASTRE_SECTION
@@ -26,6 +27,7 @@ import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE_MESURE
 import remocra.db.jooq.remocra.tables.references.DFCI_AIRE
 import remocra.db.jooq.remocra.tables.references.DFCI_DEB
 import remocra.db.jooq.remocra.tables.references.DFCI_MASSIF
+import remocra.db.jooq.remocra.tables.references.DFCI_PANNEAU
 import remocra.db.jooq.remocra.tables.references.DFCI_PISTE
 import remocra.db.jooq.remocra.tables.references.EVENEMENT
 import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
@@ -500,6 +502,37 @@ class CarteRepository @Inject constructor(
             .and(bbox?.let { ST_Within(ST_Transform(DFCI_DEB.GEOMETRIE, srid), bbox) })
             .fetchInto()
 
+    /**
+     * Récupère les panneaux se trouvant sur la carte
+     */
+    fun getDfciPanneauWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<DfciPanneauCarte> =
+        dsl.select(
+            ST_Transform(DFCI_PANNEAU.GEOMETRIE, srid).`as`("elementGeometrie"),
+            DFCI_PANNEAU.ID.`as`("elementId"),
+            DFCI_PANNEAU.TYPE,
+            DFCI_PANNEAU.NUM_PISTE,
+            DFCI_PANNEAU.LIBELLE_PISTE,
+            DFCI_PISTE.LIBELLE,
+        )
+            .from(DFCI_PANNEAU)
+            .join(DFCI_PISTE).on(DFCI_PISTE.ID.eq(DFCI_PANNEAU.DFCI_PISTE_ID))
+            .where(
+                zoneId?.let {
+                    repositoryUtils.checkIsSuperAdminOrCondition(
+                        ST_Within(
+                            DFCI_PANNEAU.GEOMETRIE,
+                            DSL.field(
+                                DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
+                                    .where(ZONE_INTEGRATION.ID.eq(zoneId)),
+                            ),
+                        ).isTrue,
+                        isSuperAdmin,
+                    )
+                },
+            )
+            .and(bbox?.let { ST_Within(ST_Transform(DFCI_PANNEAU.GEOMETRIE, srid), bbox) })
+            .fetchInto()
+
     abstract class ElementCarte {
         abstract val elementGeometrie: Geometry
         abstract val elementId: UUID
@@ -720,6 +753,36 @@ class CarteRepository @Inject constructor(
                 TypeDebroussaillement.DFCI -> "DFCI"
                 TypeDebroussaillement.ARCHIVE -> "Archive"
                 TypeDebroussaillement.AUTRE -> "Autre"
+            }
+    }
+
+    data class DfciPanneauCarte(
+        override val elementGeometrie: Point,
+        override val elementId: UUID,
+        val dfciPanneauType: TypePanneau,
+        val dfciPanneauNumPiste: Boolean,
+        val dfciPanneauLibellePiste: Boolean,
+        val dfciPisteLibelle: String,
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.DFCI_PANNEAU
+        override var propertiesToDisplay: String? = "<b>Type :</b> ${decorateTypePanneau(dfciPanneauType)} </br>" +
+            "<b>Piste :</b> $dfciPisteLibelle</br>"
+        val dfciTypeElement: TypeDfciElement get() = TypeDfciElement.PANNEAU
+
+        init {
+            var donneesNumPiste = "Non"
+            var donneesLibellePiste = "Non"
+            if (dfciPanneauNumPiste) donneesNumPiste = "Oui"
+            if (dfciPanneauLibellePiste) donneesLibellePiste = "Oui"
+            propertiesToDisplay += "<b>Présence du numéro de piste :</b> $donneesNumPiste </br>" +
+                "<b>Présence du libelle de piste :</b> $donneesLibellePiste </br>"
+        }
+
+        private fun decorateTypePanneau(typePanneau: TypePanneau): String =
+            when (typePanneau) {
+                TypePanneau.SIGNAL_PRINCIPAL -> "Signal principal"
+                TypePanneau.SIGNAL_COMPLEMENT -> "Signal complémentaire"
             }
     }
 }

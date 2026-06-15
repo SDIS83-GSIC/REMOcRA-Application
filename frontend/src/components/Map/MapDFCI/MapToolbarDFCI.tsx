@@ -13,6 +13,7 @@ const MapToolbarDFCI = ({
   dataDfciAireLayer,
   dataDfciPisteLayer,
   dataDfciDebLayer,
+  dataDfciPanneauLayer,
 }: {
   map?: OLMap;
   dataDfciAireLayer:
@@ -22,6 +23,9 @@ const MapToolbarDFCI = ({
     | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
     | undefined;
   dataDfciDebLayer:
+    | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
+    | undefined;
+  dataDfciPanneauLayer:
     | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
     | undefined;
 }) => {
@@ -38,6 +42,7 @@ const MapToolbarDFCI = ({
         dataDfciAireLayer={dataDfciAireLayer}
         dataDfciPisteLayer={dataDfciPisteLayer}
         dataDfciDebLayer={dataDfciDebLayer}
+        dataDfciPanneauLayer={dataDfciPanneauLayer}
       />
     </>
   );

@@ -14,4 +14,5 @@ enum class TypeElementCarte {
     DFCI_AIRE,
     DFCI_PISTE,
     DFCI_DEB,
+    DFCI_PANNEAU,
 }
