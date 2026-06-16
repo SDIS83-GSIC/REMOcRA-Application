@@ -612,11 +612,11 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     DROIT_API_DEJA_CLIENT_KEYCLOAK(26005, "L'organisme a déjà un accès API."),
     DROIT_API_INSERT_CLIENT_KEYCLOAK(
         26006,
-        "Erreur lors de l'insertion dans keyclaok : $PLACEHOLDER_ERROR_TYPE.",
+        "Erreur lors de l'insertion dans keycloak : $PLACEHOLDER_ERROR_TYPE.",
     ),
     DROIT_API_UPDATE_CLIENT_KEYCLOAK(
         26007,
-        "Erreur lors de la mise à jour dans keyclaok : $PLACEHOLDER_ERROR_TYPE.",
+        "Erreur lors de la mise à jour dans keycloak : $PLACEHOLDER_ERROR_TYPE.",
     ),
     DROIT_API_REGENERE_CLIENT_KEYCLOAK(
         26008,

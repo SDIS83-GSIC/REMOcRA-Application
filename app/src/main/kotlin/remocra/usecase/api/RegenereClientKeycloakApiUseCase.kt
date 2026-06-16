@@ -22,8 +22,10 @@ class RegenereClientKeycloakApiUseCase @Inject constructor(
     private val organismeRepository: OrganismeRepository,
     private val keycloakToken: KeycloakToken,
     private val keycloakClient: AuthModule.KeycloakClient,
+    private val keycloakAudienceScopeUseCase: KeycloakAudienceScopeUseCase,
 ) :
     AbstractCUDUseCase<Organisme>(TypeOperation.UPDATE) {
+
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.ADMIN_API)) {
             throw RemocraResponseException(ErrorType.DROIT_API_CLIENT_FORBIDDEN)
@@ -46,6 +48,12 @@ class RegenereClientKeycloakApiUseCase @Inject constructor(
         val tokenResponse = keycloakToken.getToken(keycloakClient.clientId, keycloakClient.clientSecret).execute().body()!!
         try {
             val token = "${tokenResponse.tokenType} ${tokenResponse.accessToken}"
+
+            keycloakAudienceScopeUseCase.associateAudienceScope(
+                token,
+                element.organismeKeycloakId!!,
+                ErrorType.DROIT_API_REGENERE_CLIENT_KEYCLOAK,
+            )
 
             val response = keycloakApi.regenereSecret(
                 token,
