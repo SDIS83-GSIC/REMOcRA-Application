@@ -410,6 +410,7 @@ Objet `ModeleMinimalPei` mis à jour (voir structure ci-dessus)
 
 ==== `GET /diff`
 Liste des PEI ayant subi une modification (ajout, modification ou suppression) postérieure au moment passé en paramètre.
+Les changements liées aux visites remonteront aussi afin d'avoir tout l'historique des PEI.
 
 *Paramètres de requête :*
 
