@@ -40,6 +40,21 @@ const MapDashboardComponent = (data: any) => {
     data.config ? data.config : [],
   );
 
+  const toNumber = useCallback((v: unknown): number => {
+    const n = Number(v);
+    return Number.isFinite(n) ? n : 0;
+  }, []);
+
+  const computePercentage = useCallback(
+    (value: number, max: number): number => {
+      if (max <= 0) {
+        return 0;
+      }
+      return (value / max) * 100;
+    },
+    [],
+  );
+
   // Fonction pour déterminer la couleur en fonction du pourcentage
   const getColorForPercentage = useCallback(
     (percentage: number, limits: any[]) => {
@@ -47,12 +62,15 @@ const MapDashboardComponent = (data: any) => {
         return "#000000";
       }
 
-      // Trier les limites par valeur croissante
-      const sortedLimits = limits.sort(
+      const sortedLimits = [...limits].sort(
         (a, b) => parseFloat(a.value) - parseFloat(b.value),
       );
 
-      // Trouver la couleur correspondante
+      // Si NaN/Infinity, on force le palier 0%
+      if (!Number.isFinite(percentage)) {
+        percentage = 0;
+      }
+
       for (const limit of sortedLimits) {
         if (percentage <= parseFloat(limit.value)) {
           return limit.color;
@@ -64,6 +82,7 @@ const MapDashboardComponent = (data: any) => {
     },
     [],
   );
+
   const [map, setMap] = useState<OLMap | null>(null);
   const [, setTooltip] = useState<Overlay | null>(null);
 
@@ -108,12 +127,10 @@ const MapDashboardComponent = (data: any) => {
         const properties = feature.getProperties();
         const coordinate = evt.coordinate;
 
-        // Calculer le pourcentage
-        const value = parseFloat(properties.value) || 0;
-        const max = parseFloat(properties.max) || 1;
-        const percentage = ((value / max) * 100).toFixed(1);
+        const value = toNumber(properties.value);
+        const max = toNumber(properties.max);
+        const percentage = computePercentage(value, max).toFixed(1);
 
-        // Contenu de la tooltip
         tooltipElement.innerHTML = `
           <div style="
             background: rgba(0, 0, 0, 0.8);
@@ -167,6 +184,8 @@ const MapDashboardComponent = (data: any) => {
     defaultExtent,
     extentSRID,
     data.config,
+    computePercentage,
+    toNumber,
   ]);
 
   useEffect(() => {
@@ -222,9 +241,9 @@ const MapDashboardComponent = (data: any) => {
           const properties = feature.getProperties();
 
           // Calculer le pourcentage
-          const value = parseFloat(properties.value);
-          const max = parseFloat(properties.max);
-          const percentage = (value / max) * 100;
+          const value = toNumber(properties.value);
+          const max = toNumber(properties.max);
+          const percentage = computePercentage(value, max);
 
           // Obtenir la couleur en fonction du pourcentage
           const color = getColorForPercentage(
@@ -264,6 +283,8 @@ const MapDashboardComponent = (data: any) => {
     warningToast,
     data.data,
     getColorForPercentage,
+    computePercentage,
+    toNumber,
   ]);
 
   return (
