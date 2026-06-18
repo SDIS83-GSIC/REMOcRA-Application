@@ -24,7 +24,7 @@ class RelanceNumerotationTask @Inject constructor(
         val listePenaData = penaRepository.getListPenaData()
 
         listePibiData.plus(listePenaData).forEach {
-            val pairNumeros = getNumerotationPeiUseCase.execute(it)
+            val pairNumeros = getNumerotationPeiUseCase.execute(it, true, true)
             if (pairNumeros.first != it.peiNumeroComplet || pairNumeros.second != it.peiNumeroInterne) {
                 logManager.info("Le PEI d'id '${it.peiId}' [${it.peiNumeroComplet}] a été mis à jour avec une nouvelle numérotation : ${pairNumeros.first} | ${pairNumeros.second}")
                 peiRepository.updateNumeros(

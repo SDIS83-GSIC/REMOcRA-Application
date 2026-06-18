@@ -24,6 +24,8 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
 import remocra.usecase.zoneintegration.ComputeZoneSpecialeUseCase
+import kotlin.text.get
+import kotlin.text.isNullOrBlank
 
 /**
  * Classe mère des useCases des opérations C, U, D des PEI.
@@ -80,15 +82,87 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
      */
     fun needComputeNumero(element: PeiData): Boolean {
         return element.peiNumeroInterne != element.peiNumeroInterneInitial ||
-            calculNumerotationUseCase.needComputeNumeroInterneCommune(element.peiCommuneId, element.peiCommuneIdInitial, element.peiZoneSpecialeId, element.peiZoneSpecialeIdInitial) ||
-            calculNumerotationUseCase.needComputeNumeroInterneNatureDeci(element.peiNatureDeciId, element.peiNatureDeciIdInitial) ||
-            calculNumerotationUseCase.needComputeNumeroInterneDomaine(element.peiDomaineId, element.peiDomaineIdInitial) ||
-            calculNumerotationUseCase.needComputeNumeroInterneGestionnaire(element.peiGestionnaireId, element.peiGestionnaireIdInitial) ||
+            calculNumerotationUseCase.needComputeNumeroInterneCommune(
+                element.peiCommuneId,
+                element.peiCommuneIdInitial,
+                element.peiZoneSpecialeId,
+                element.peiZoneSpecialeIdInitial,
+            ) ||
+            calculNumerotationUseCase.needComputeNumeroInterneNature(
+                element.peiNatureId,
+                element.peiNatureIdInitial,
+            ) ||
+            calculNumerotationUseCase.needComputeNumeroInterneNatureDeci(
+                element.peiNatureDeciId,
+                element.peiNatureDeciIdInitial,
+            ) ||
+            calculNumerotationUseCase.needComputeNumeroInterneDomaine(
+                element.peiDomaineId,
+                element.peiDomaineIdInitial,
+            ) ||
+            calculNumerotationUseCase.needComputeNumeroInterneGestionnaire(
+                element.peiGestionnaireId,
+                element.peiGestionnaireIdInitial,
+            ) ||
             if (element is PibiData) {
-                calculNumerotationUseCase.needComputeNumeroInternePibiIdentifiantGestionnaire(element.pibiIdentifiantGestionnaire, element.pibiIdentifiantGestionnaireInitial)
+                calculNumerotationUseCase.needComputeNumeroInternePibiIdentifiantGestionnaire(
+                    element.pibiIdentifiantGestionnaire,
+                    element.pibiIdentifiantGestionnaireInitial,
+                )
             } else {
                 false
             }
+    }
+
+    private fun applyNumerotationRules(element: PeiData) {
+        val autoRenum = parametresProvider.get()
+            .getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true
+
+        val isInsert = typeOperation == TypeOperation.INSERT
+        val isUpdate = typeOperation == TypeOperation.UPDATE
+        val needCompute = needComputeNumero(element)
+
+        val manualInterneOnInsert = isInsert && !autoRenum && element.peiNumeroInterne != null
+        if (manualInterneOnInsert) {
+            val pair = getNumerotationPeiUseCase.execute(
+                element = element,
+                mustComputeComplet = true,
+                mustComputeInterne = false,
+            )
+            element.peiNumeroComplet = pair.first
+
+            val existing = peiRepository.getPeiFromNumero(element.peiNumeroComplet!!)
+            if (existing != null) {
+                throw RemocraResponseException(ErrorType.PEI_NUMERO_COMPLET_EXISTS)
+            }
+            return
+        }
+
+        val mustComputeComplet = element.peiNumeroComplet == null || (isInsert || isUpdate) && needCompute
+        val mustComputeInterne =
+            element.peiNumeroInterne == null ||
+                isInsert ||
+                (isUpdate && needCompute && autoRenum)
+
+        if (mustComputeComplet || mustComputeInterne) {
+            val pair = getNumerotationPeiUseCase.execute(
+                element = element,
+                mustComputeComplet = mustComputeComplet,
+                mustComputeInterne = mustComputeInterne,
+            )
+
+            if (mustComputeInterne) {
+                element.peiNumeroInterne = pair.second
+            }
+            if (mustComputeComplet) {
+                element.peiNumeroComplet = pair.first
+            }
+        }
+
+        val existing = peiRepository.getPeiFromNumero(element.peiNumeroComplet!!)
+        if (existing != null && (isInsert || existing.peiId != element.peiId)) {
+            throw RemocraResponseException(ErrorType.PEI_NUMERO_COMPLET_EXISTS)
+        }
     }
 
     override fun getListGeometrie(element: PeiData): Collection<Geometry> {
@@ -110,30 +184,18 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
     override fun execute(userInfo: WrappedUserInfo, element: PeiData): PeiData {
         if (typeOperation != TypeOperation.DELETE) {
             // Calcul de la zone spéciale
-            val computedPeiZoneSpecialeId = computeZoneSpecialeUseCase.computeZoneSpeciale(element.peiGeometrie)
-            element.peiZoneSpecialeId = computedPeiZoneSpecialeId
-            // Si on est en création OU si on autorise la renumérotation, et qu'elle est nécessaire
-            if (element.peiNumeroInterne == null || element.peiNumeroComplet == null ||
-                parametresProvider.get().getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true &&
-                needComputeNumero(element)
+            element.peiZoneSpecialeId = computeZoneSpecialeUseCase.computeZoneSpeciale(element.peiGeometrie)
+
+            // Numérotation (création / modification selon les règles métier)
+            applyNumerotationRules(element)
+
+            // Règle métier création avec reco init obligatoire
+            if (typeOperation == TypeOperation.INSERT &&
+                parametresProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name) == true
             ) {
-                val pair = getNumerotationPeiUseCase.execute(element)
-
-                element.peiNumeroInterne = pair.second
-                element.peiNumeroComplet = pair.first
-            }
-
-            // Vérification unicité du numéro complet
-            val existingPei = peiRepository.getPeiFromNumero(element.peiNumeroComplet!!)
-            if (existingPei != null && (typeOperation == TypeOperation.INSERT || existingPei.peiId != element.peiId)) {
-                throw RemocraResponseException(ErrorType.PEI_NUMERO_COMPLET_EXISTS)
-            }
-
-            // Si c'est une insertion, on met directement le PEI indisponible si les visite reception et reco init sont obligatoires
-            // (Il n'est pas encore présent en base et n'a pas de visites)
-            if (typeOperation == TypeOperation.INSERT && parametresProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name) == true) {
                 element.peiDisponibiliteTerrestre = Disponibilite.INDISPONIBLE
             } else if (typeOperation != TypeOperation.INSERT) {
+                // En modification, la disponibilité est recalculée à partir des visites/état courant
                 val result = getDisponibilitePeiUseCase.execute(element)
                 element.peiDisponibiliteTerrestre = result.terrestre
                 if (element is PenaData && result.hbe != null) {
@@ -142,14 +204,18 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
             }
         }
 
+        // Date de changement de dispo
         if (element.peiDisponibiliteTerrestre != element.peiDisponibiliteTerrestreInitiale) {
             element.peiDateChangementDispo = dateUtils.now()
         }
 
-        // Tout est à jour, on peut enregistrer l'élément :
+        // Traitements spécifiques insert/update/delete
         executeSpecific(userInfo, element)
 
-        if (typeOperation == TypeOperation.INSERT && parametresProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name) == false) {
+        // Cas particulier INSERT sans reco init obligatoire
+        if (typeOperation == TypeOperation.INSERT &&
+            parametresProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name) == false
+        ) {
             val result = getDisponibilitePeiUseCase.execute(element)
             element.peiDisponibiliteTerrestre = result.terrestre
             if (element is PenaData && result.hbe != null) {
@@ -157,7 +223,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
             }
             peiRepository.upsert(element)
         }
-        // On rend la main au parent pour la logique d'événements
+
         return element
     }
 

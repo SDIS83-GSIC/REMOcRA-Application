@@ -1021,6 +1021,29 @@ constructor(
     }
 
     /**
+     * Retourne TRUE si on a besoin de recalculer le numéro interne à cause d'un changement de nature. <br />
+     *
+     *
+     * @param netureId id de la nature courante
+     * @param natureIdInitial id de la nature en BDD
+     *
+     * @return Boolean : doit-on recalculer le numéro interne ?
+     */
+    fun needComputeNumeroInterneNature(natureId: UUID, natureIdInitial: UUID?): Boolean {
+        return when (appSettings.codeSdis) {
+            CodeSdis.SDIS_39,
+            CodeSdis.SDIS_53,
+            CodeSdis.SDIS_58,
+            CodeSdis.SDIS_71,
+            CodeSdis.SDIS_83,
+            CodeSdis.SDIS_973,
+            ->
+                natureId != natureIdInitial
+            else -> false
+        }
+    }
+
+    /**
      * Retourne TRUE si on a besoin de recalculer le numéro interne à cause d'un changement de commune. <br />
      *
      * Pour certaines méthodes de numérotation, on prend en compte la zone spéciale, on doit donc la passer aussi

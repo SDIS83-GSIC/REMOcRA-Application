@@ -52,6 +52,7 @@ open class PeiData(
     open val peiCommuneIdInitial: UUID? = peiCommuneId,
     open val peiZoneSpecialeIdInitial: UUID? = peiZoneSpecialeId,
     open val peiNatureDeciIdInitial: UUID? = peiNatureDeciId,
+    open val peiNatureIdInitial: UUID? = peiNatureId,
     open val peiDomaineIdInitial: UUID? = peiDomaineId,
     open val peiGestionnaireIdInitial: UUID? = peiGestionnaireId,
     open val peiDisponibiliteTerrestreInitiale: Disponibilite? = peiDisponibiliteTerrestre,
@@ -103,6 +104,7 @@ data class PibiData(
     override val peiCommuneIdInitial: UUID? = peiCommuneId,
     override val peiZoneSpecialeIdInitial: UUID? = peiZoneSpecialeId,
     override val peiNatureDeciIdInitial: UUID? = peiNatureDeciId,
+    override val peiNatureIdInitial: UUID? = peiNatureId,
     override val peiDomaineIdInitial: UUID? = peiDomaineId,
     override var peiDateChangementDispo: ZonedDateTime?,
 
@@ -159,6 +161,7 @@ data class PibiData(
     peiCommuneIdInitial,
     peiZoneSpecialeIdInitial,
     peiNatureDeciIdInitial,
+    peiNatureIdInitial,
     peiDomaineIdInitial,
 )
 
@@ -201,6 +204,7 @@ data class PenaData(
     override val peiCommuneIdInitial: UUID? = peiCommuneId,
     override val peiZoneSpecialeIdInitial: UUID? = peiZoneSpecialeId,
     override val peiNatureDeciIdInitial: UUID? = peiNatureDeciId,
+    override val peiNatureIdInitial: UUID? = peiNatureId,
     override val peiDomaineIdInitial: UUID? = peiDomaineId,
     override var peiDateChangementDispo: ZonedDateTime?,
 
@@ -248,5 +252,6 @@ data class PenaData(
     peiCommuneIdInitial,
     peiZoneSpecialeIdInitial,
     peiNatureDeciIdInitial,
+    peiNatureIdInitial,
     peiDomaineIdInitial,
 )

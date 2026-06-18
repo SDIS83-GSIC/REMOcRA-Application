@@ -193,6 +193,7 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
     peiCommuneIdInitial: data?.peiCommuneId ?? null,
     peiZoneSpecialeIdInitial: data?.peiZoneSpecialeId ?? null,
     peiNatureDeciIdInitial: data?.peiNatureDeciId ?? null,
+    peiNatureIdInitial: data?.peiNatureId ?? null,
     peiDomaineIdInitial: data?.peiDomaineId ?? null,
     peiGestionnaireIdInitial: data?.peiGestionnaireId ?? null,
     peiDisponibiliteTerrestreInitiale: data?.peiDisponibiliteTerrestre ?? null,
@@ -311,6 +312,8 @@ const Pei = ({
   const parametrePeiDisplayIdentifiantGestionnaire =
     PARAMETRE.PEI_DISPLAY_IDENTIFIANT_GESTIONNAIRE;
   const parametrePeiDisplayTypeEngin = PARAMETRE.PEI_DISPLAY_TYPE_ENGIN;
+  const parametrePeiRenumerotationInterneAuto =
+    PARAMETRE.PEI_RENUMEROTATION_INTERNE_AUTO;
 
   const listeParametre = useGet(
     url`/api/parametres?${{
@@ -318,6 +321,7 @@ const Pei = ({
         parametreVoieSaisieLibre,
         parametrePeiDisplayTypeEngin,
         parametrePeiDisplayIdentifiantGestionnaire,
+        parametrePeiRenumerotationInterneAuto,
       ]),
     }}`,
   );
@@ -348,6 +352,17 @@ const Pei = ({
     // Le résultat est une String, on le parse pour récupérer le tableau
     return JSON.parse(
       listeParametre?.data[parametrePeiDisplayIdentifiantGestionnaire]
+        .parametreValeur,
+    );
+  }, [listeParametre]);
+
+  const renumerotationInterneAuto = useMemo<boolean>(() => {
+    if (!listeParametre.isResolved) {
+      return false;
+    }
+    // Le résultat est une String, on le parse pour récupérer le tableau
+    return JSON.parse(
+      listeParametre?.data[parametrePeiRenumerotationInterneAuto]
         .parametreValeur,
     );
   }, [listeParametre]);
@@ -484,6 +499,7 @@ const Pei = ({
           setValues={setValues}
           setFieldValue={setFieldValue}
           isNew={isNew}
+          renumerotationInterneAuto={renumerotationInterneAuto}
           displayIdentifiantGestionnaire={displayIdentifiantGestionnaire}
           user={user}
         />
@@ -701,6 +717,7 @@ const FormEntetePei = ({
   setValues,
   setFieldValue,
   isNew,
+  renumerotationInterneAuto,
   displayIdentifiantGestionnaire = false,
   user,
 }: {
@@ -709,6 +726,7 @@ const FormEntetePei = ({
   setValues: (e: any) => void;
   setFieldValue: (champ: string, newValue: any | undefined) => void;
   isNew: boolean;
+  renumerotationInterneAuto: boolean;
   displayIdentifiantGestionnaire: boolean;
   user: UtilisateurEntity;
 }) => {
@@ -756,7 +774,9 @@ const FormEntetePei = ({
               label="Numéro interne"
               required={false}
               disabled={
-                !isNew && !hasDroit(user, TYPE_DROIT.PEI_NUMERO_INTERNE_U)
+                !isNew &&
+                !hasDroit(user, TYPE_DROIT.PEI_NUMERO_INTERNE_U) &&
+                !renumerotationInterneAuto
               }
             />
           </Col>
