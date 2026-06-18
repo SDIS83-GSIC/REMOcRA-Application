@@ -177,4 +177,7 @@ object GlobalConstants {
 
     // Rapports personnalisés
     const val RAPPORT_PERSO_PEI_HISTORIQUE = "PEI_HISTORIQUE"
+
+    // DFCI
+    const val DFCI_TOLERANCE_DFCI_PISTE_METRES = "DFCI_TOLERANCE_DFCI_PISTE_METRES"
 }

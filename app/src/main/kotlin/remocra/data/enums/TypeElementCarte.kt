@@ -11,4 +11,5 @@ enum class TypeElementCarte {
     SIGNALEMENT,
     CRISE,
     PEI_HIGHLIGHT,
+    DFCI_AIRE,
 }

@@ -152,6 +152,14 @@ constructor(
                     srid,
                     listePeiId,
                 )
+            TypeElementCarte.DFCI_AIRE -> bbox.let {
+                if (it.isEmpty()) {
+                    carteRepository.getDfciAiresWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, null, srid, userInfo.isSuperAdmin)
+                } else {
+                    val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
+                    carteRepository.getDfciAiresWithinZoneAndBbox(userInfo.zoneCompetence?.zoneIntegrationId, geom.toGeomFromText(), srid, userInfo.isSuperAdmin)
+                }
+            }
         }
 
         if (typeElementCarte == TypeElementCarte.PEI) {

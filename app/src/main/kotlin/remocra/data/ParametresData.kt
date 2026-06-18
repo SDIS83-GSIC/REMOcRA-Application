@@ -67,6 +67,7 @@ data class ParametresSectionDfci(
     val dfciTravauxDestinataireEmail: String?,
     val dfciTravauxObjetEmail: String?,
     val dfciTravauxCorpsEmail: String?,
+    val dfciToleranceDfciPisteMetres: Int?,
 )
 
 data class ParametresSectionMobile(

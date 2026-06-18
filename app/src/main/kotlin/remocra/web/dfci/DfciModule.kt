@@ -6,6 +6,6 @@ import remocra.web.registerResources
 
 object DfciModule : Module {
     override fun configure(binder: Binder) {
-        binder.registerResources(DfciEndpoint::class)
+        binder.registerResources(DfciEndpoint::class, DfciAiresEndpoint::class, DfciPistesEndpoint::class)
     }
 }

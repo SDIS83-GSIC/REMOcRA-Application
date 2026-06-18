@@ -9,16 +9,20 @@ import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.Point
 import remocra.app.AppSettings
+import remocra.data.enums.TypeDfciElement
 import remocra.data.enums.TypeElementCarte
 import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
 import remocra.db.jooq.remocra.enums.EtatSignalement
 import remocra.db.jooq.remocra.enums.EvenementStatutMode
+import remocra.db.jooq.remocra.enums.TypeAire
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.references.CADASTRE_PARCELLE
 import remocra.db.jooq.remocra.tables.references.CADASTRE_SECTION
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE_MESURE
+import remocra.db.jooq.remocra.tables.references.DFCI_AIRE
+import remocra.db.jooq.remocra.tables.references.DFCI_PISTE
 import remocra.db.jooq.remocra.tables.references.EVENEMENT
 import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
 import remocra.db.jooq.remocra.tables.references.L_DEBIT_SIMULTANE_MESURE_PEI
@@ -403,6 +407,36 @@ class CarteRepository @Inject constructor(
             .and(bbox?.let { ST_Within(ST_Transform(RCCI.GEOMETRIE, srid), bbox) })
             .fetchInto()
 
+    /**
+     * Récupère les aires se trouvant sur la carte
+     */
+    fun getDfciAiresWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<DfciAireCarte> =
+        dsl.select(
+            ST_Transform(DFCI_AIRE.GEOMETRIE, srid).`as`("elementGeometrie"),
+            DFCI_AIRE.ID.`as`("elementId"),
+            DFCI_AIRE.TYPE,
+            DFCI_PISTE.LIBELLE,
+        )
+            .from(DFCI_AIRE)
+            .join(DFCI_PISTE)
+            .on(DFCI_PISTE.ID.eq(DFCI_AIRE.DFCI_PISTE_ID))
+            .where(
+                zoneId?.let {
+                    repositoryUtils.checkIsSuperAdminOrCondition(
+                        ST_Within(
+                            DFCI_AIRE.GEOMETRIE,
+                            DSL.field(
+                                DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
+                                    .where(ZONE_INTEGRATION.ID.eq(zoneId)),
+                            ),
+                        ).isTrue,
+                        isSuperAdmin,
+                    )
+                },
+            )
+            .and(bbox?.let { ST_Within(ST_Transform(DFCI_AIRE.GEOMETRIE, srid), bbox) })
+            .fetchInto()
+
     abstract class ElementCarte {
         abstract val elementGeometrie: Geometry
         abstract val elementId: UUID
@@ -570,5 +604,24 @@ class CarteRepository @Inject constructor(
             get() = TypeElementCarte.RCCI
 
         override var propertiesToDisplay: String? = "$rcciDateIncendie"
+    }
+
+    data class DfciAireCarte(
+        override val elementGeometrie: Point,
+        override val elementId: UUID,
+        val dfciAireType: TypeAire,
+        val dfciPisteLibelle: String,
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.DFCI_AIRE
+        override var propertiesToDisplay: String? = "<b>Type d'aire :</b> ${decorateTypeAire(dfciAireType)} </br>" +
+            "<b>Piste :</b> $dfciPisteLibelle </br>"
+        val dfciTypeElement: TypeDfciElement get() = TypeDfciElement.AIRE
+
+        private fun decorateTypeAire(type: TypeAire): String =
+            when (type) {
+                TypeAire.RETOURNEMENT -> "Retournement"
+                TypeAire.CROISEMENT -> "Croisement"
+            }
     }
 }
