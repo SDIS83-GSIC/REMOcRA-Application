@@ -110,3 +110,12 @@ fun ST_Union(geometry: Field<Geometry?>): Field<Geometry?> =
  */
 fun ST_Multi(geometry: Field<Geometry?>): Field<Geometry?> =
     DSL.field("ST_Multi({0})", Geometry::class.java, geometry)
+
+/**
+ * Renvoie une géométrie à partir d'un string wkt et d'un srid.
+ * @param wktString String: la chaine wkt de la géométrie.
+ * @param srid Int: le srid
+ * @return La géométrie obtenu à partie du string wkt et du srid.
+ */
+fun ST_GeomFromWkt(wktString: String, srid: Int): Field<Geometry?> =
+    DSL.field("ST_GeomFromText({0},{1})", Geometry::class.java, wktString, srid)
