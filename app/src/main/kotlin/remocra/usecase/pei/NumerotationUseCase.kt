@@ -5,7 +5,10 @@ import remocra.GlobalConstants
 import remocra.GlobalConstants.NATURE_DECI_ICPE
 import remocra.GlobalConstants.NATURE_DECI_ICPE_CONVENTIONNE
 import remocra.app.AppSettings
+import remocra.app.ParametresProvider
+import remocra.data.PeiData
 import remocra.data.PeiForNumerotationData
+import remocra.data.PibiData
 import remocra.data.enums.CodeSdis
 import remocra.db.CommuneRepository
 import remocra.db.DomaineRepository
@@ -82,6 +85,7 @@ constructor(
     private val zoneIntegrationRepository: ZoneIntegrationRepository,
     private val gestionnaireRepository: GestionnaireRepository,
     private val domaineRepository: DomaineRepository,
+    private val parametresProvider: ParametresProvider,
 ) :
     AbstractUseCase() {
 
@@ -1085,6 +1089,63 @@ constructor(
             -> communeId != communeIdInitial || zoneSpecialeId != zoneSpecialeIdInitial
             CodeSdis.SDIS_49 -> false
         }
+    }
+
+    fun getMustComputeFlags(
+        element: PeiData,
+        isInsert: Boolean = false,
+        isUpdate: Boolean = false,
+    ): Pair<Boolean, Boolean> {
+        val autoRenum = parametresProvider.getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true
+
+        val needCompute = needComputeNumero(element)
+
+        val mustComputeComplet = element.peiNumeroComplet == null || (isInsert || isUpdate) && needCompute
+        val mustComputeInterne =
+            element.peiNumeroInterne == null ||
+                isInsert ||
+                (isUpdate && needCompute && autoRenum)
+
+        return Pair(mustComputeComplet, mustComputeInterne)
+    }
+
+    /**
+     * Fonction permettant de savoir s'il faut recalculer le numéro interne du PEI car un de ses attributs structurants a été modifié. <br />
+     *
+     * Cela ne veut pas dire que le numéro interne sera différent, c'est le calcul qui le déterminera.
+     */
+    fun needComputeNumero(element: PeiData): Boolean {
+        return element.peiNumeroInterne != element.peiNumeroInterneInitial ||
+            needComputeNumeroInterneCommune(
+                element.peiCommuneId,
+                element.peiCommuneIdInitial,
+                element.peiZoneSpecialeId,
+                element.peiZoneSpecialeIdInitial,
+            ) ||
+            needComputeNumeroInterneNature(
+                element.peiNatureId,
+                element.peiNatureIdInitial,
+            ) ||
+            needComputeNumeroInterneNatureDeci(
+                element.peiNatureDeciId,
+                element.peiNatureDeciIdInitial,
+            ) ||
+            needComputeNumeroInterneDomaine(
+                element.peiDomaineId,
+                element.peiDomaineIdInitial,
+            ) ||
+            needComputeNumeroInterneGestionnaire(
+                element.peiGestionnaireId,
+                element.peiGestionnaireIdInitial,
+            ) ||
+            if (element is PibiData) {
+                needComputeNumeroInternePibiIdentifiantGestionnaire(
+                    element.pibiIdentifiantGestionnaire,
+                    element.pibiIdentifiantGestionnaireInitial,
+                )
+            } else {
+                false
+            }
     }
 }
 

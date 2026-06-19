@@ -11,11 +11,13 @@ import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.eventbus.pei.PeiModifiedEvent
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.usecase.pei.GetNumerotationPeiUseCase
+import remocra.usecase.pei.NumerotationUseCase
 
 class RelanceNumerotationTask @Inject constructor(
     private val pibiRepository: PibiRepository,
     private val penaRepository: PenaRepository,
     private val getNumerotationPeiUseCase: GetNumerotationPeiUseCase,
+    private val numerotationUseCase: NumerotationUseCase,
     private val peiRepository: PeiRepository,
 ) : SimpleTask<RelanceNumerotationParameters, JobResults>() {
 
@@ -24,31 +26,42 @@ class RelanceNumerotationTask @Inject constructor(
         val listePenaData = penaRepository.getListPenaData()
 
         listePibiData.plus(listePenaData).forEach {
-            val pairNumeros = getNumerotationPeiUseCase.execute(it, true, true)
-            if (pairNumeros.first != it.peiNumeroComplet || pairNumeros.second != it.peiNumeroInterne) {
-                logManager.info("Le PEI d'id '${it.peiId}' [${it.peiNumeroComplet}] a été mis à jour avec une nouvelle numérotation : ${pairNumeros.first} | ${pairNumeros.second}")
-                peiRepository.updateNumeros(
-                    peiId = it.peiId,
-                    numeroComplet = pairNumeros.first,
-                    numeroInterne = pairNumeros.second,
+            try {
+                val (mustComputeComplet, mustComputeInterne) = numerotationUseCase.getMustComputeFlags(
+                    it,
+                    false,
+                    true,
                 )
-
-                if (parameters?.eventTracabilite == true) {
-                    eventBus.post(
-                        TracabiliteEvent(
-                            pojo = it.apply { peiNumeroInterne = pairNumeros.second; peiNumeroComplet = pairNumeros.first },
-                            pojoId = it.peiId,
-                            typeOperation = TypeOperation.UPDATE,
-                            typeObjet = TypeObjet.PEI,
-                            auteurTracabilite = userInfo.getInfosTracabilite(),
-                            date = dateUtils.now(),
-                        ),
+                val pairNumeros = getNumerotationPeiUseCase.execute(it, mustComputeComplet, mustComputeInterne)
+                if (pairNumeros.first != it.peiNumeroComplet || pairNumeros.second != it.peiNumeroInterne) {
+                    logManager.info("Le PEI d'id '${it.peiId}' [${it.peiNumeroComplet}] a été mis à jour avec une nouvelle numérotation : ${pairNumeros.first} | ${pairNumeros.second}")
+                    peiRepository.updateNumeros(
+                        peiId = it.peiId,
+                        numeroComplet = pairNumeros.first,
+                        numeroInterne = pairNumeros.second,
                     )
-                }
 
-                if (parameters?.eventNexSis == true) {
-                    eventBus.post(PeiModifiedEvent(it.peiId, TypeOperation.UPDATE))
+                    if (parameters?.eventTracabilite == true) {
+                        eventBus.post(
+                            TracabiliteEvent(
+                                pojo = it.apply {
+                                    peiNumeroInterne = pairNumeros.second; peiNumeroComplet = pairNumeros.first
+                                },
+                                pojoId = it.peiId,
+                                typeOperation = TypeOperation.UPDATE,
+                                typeObjet = TypeObjet.PEI,
+                                auteurTracabilite = userInfo.getInfosTracabilite(),
+                                date = dateUtils.now(),
+                            ),
+                        )
+                    }
+
+                    if (parameters?.eventNexSis == true) {
+                        eventBus.post(PeiModifiedEvent(it.peiId, TypeOperation.UPDATE))
+                    }
                 }
+            } catch (e: Exception) {
+                logManager.error("Erreur lors de la relance du calcul de numérotation pour le PEI d'id '${it.peiId}' [${it.peiNumeroComplet}] : ${e.message}")
             }
         }
 

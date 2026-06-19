@@ -24,7 +24,6 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
 import remocra.usecase.zoneintegration.ComputeZoneSpecialeUseCase
-import kotlin.text.get
 import kotlin.text.isNullOrBlank
 
 /**
@@ -75,52 +74,12 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
         eventBus.post(PeiModifiedEvent(element.peiId, typeOperation))
     }
 
-    /**
-     * Fonction permettant de savoir s'il faut recalculer le numéro interne du PEI car un de ses attributs structurants a été modifié. <br />
-     *
-     * Cela ne veut pas dire que le numéro interne sera différent, c'est le calcul qui le déterminera.
-     */
-    fun needComputeNumero(element: PeiData): Boolean {
-        return element.peiNumeroInterne != element.peiNumeroInterneInitial ||
-            calculNumerotationUseCase.needComputeNumeroInterneCommune(
-                element.peiCommuneId,
-                element.peiCommuneIdInitial,
-                element.peiZoneSpecialeId,
-                element.peiZoneSpecialeIdInitial,
-            ) ||
-            calculNumerotationUseCase.needComputeNumeroInterneNature(
-                element.peiNatureId,
-                element.peiNatureIdInitial,
-            ) ||
-            calculNumerotationUseCase.needComputeNumeroInterneNatureDeci(
-                element.peiNatureDeciId,
-                element.peiNatureDeciIdInitial,
-            ) ||
-            calculNumerotationUseCase.needComputeNumeroInterneDomaine(
-                element.peiDomaineId,
-                element.peiDomaineIdInitial,
-            ) ||
-            calculNumerotationUseCase.needComputeNumeroInterneGestionnaire(
-                element.peiGestionnaireId,
-                element.peiGestionnaireIdInitial,
-            ) ||
-            if (element is PibiData) {
-                calculNumerotationUseCase.needComputeNumeroInternePibiIdentifiantGestionnaire(
-                    element.pibiIdentifiantGestionnaire,
-                    element.pibiIdentifiantGestionnaireInitial,
-                )
-            } else {
-                false
-            }
-    }
-
     private fun applyNumerotationRules(element: PeiData) {
         val autoRenum = parametresProvider.get()
             .getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true
 
         val isInsert = typeOperation == TypeOperation.INSERT
         val isUpdate = typeOperation == TypeOperation.UPDATE
-        val needCompute = needComputeNumero(element)
 
         val manualInterneOnInsert = isInsert && !autoRenum && element.peiNumeroInterne != null
         if (manualInterneOnInsert) {
@@ -138,11 +97,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
             return
         }
 
-        val mustComputeComplet = element.peiNumeroComplet == null || (isInsert || isUpdate) && needCompute
-        val mustComputeInterne =
-            element.peiNumeroInterne == null ||
-                isInsert ||
-                (isUpdate && needCompute && autoRenum)
+        val (mustComputeComplet, mustComputeInterne) = calculNumerotationUseCase.getMustComputeFlags(element, isInsert, isUpdate)
 
         if (mustComputeComplet || mustComputeInterne) {
             val pair = getNumerotationPeiUseCase.execute(
