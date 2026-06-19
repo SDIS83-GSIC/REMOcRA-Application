@@ -963,7 +963,7 @@ const RcciForm = () => {
                       <Col>
                         <NumberInput
                           label={"Superficie arrivée secours (m²)"}
-                          name={"rcci.recciSuperficieSecours"}
+                          name={"rcci.rcciSuperficieSecours"}
                           required={false}
                           step={0.01}
                           min={0}
@@ -981,7 +981,7 @@ const RcciForm = () => {
                       <Col>
                         <NumberInput
                           label={"Superficie arrivée référent (m²)"}
-                          name={"rcci.recciSuperficieReferent"}
+                          name={"rcci.rcciSuperficieReferent"}
                           required={false}
                           step={0.01}
                           min={0}
@@ -990,7 +990,7 @@ const RcciForm = () => {
                       <Col>
                         <TextInput
                           label={"Premier COS"}
-                          name={"rcci.rcciPremierEngin"}
+                          name={"rcci.rcciPremierCos"}
                           required={false}
                         />
                       </Col>
@@ -999,7 +999,7 @@ const RcciForm = () => {
                       <Col>
                         <NumberInput
                           label={"Superficie finale (m²)"}
-                          name={"rcci.recciSuperficieFinale"}
+                          name={"rcci.rcciSuperficieFinale"}
                           required={false}
                           step={0.01}
                           min={0}
@@ -1008,7 +1008,7 @@ const RcciForm = () => {
                       <Col>
                         <TextInput
                           label={"Forces de l'ordre présentes"}
-                          name={"rcci.rcciForcesOrddre"}
+                          name={"rcci.rcciForcesOrdre"}
                           required={false}
                         />
                       </Col>
