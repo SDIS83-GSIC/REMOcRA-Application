@@ -57,12 +57,10 @@ class ImportPeiEndpoint : AbstractEndpoint() {
     @RequireDroits([Droit.PEI_DEPLACEMENT_U])
     @Consumes(MediaType.APPLICATION_JSON)
     fun importPeiEnregistrement(importPeiData: ImportPeiData): Response =
-        Response.ok(
-            majPositionPeiUseCase.execute(
-                importPeiData,
-                securityContext.userInfo,
-            ),
-        ).build()
+        majPositionPeiUseCase.execute(
+            importPeiData,
+            securityContext.userInfo,
+        ).wrap()
 
     @POST
     @Path("/download-template")

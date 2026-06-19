@@ -45,6 +45,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ERR_COORD_MANQUANTE(1014, "Les coordonnées du PEI doivent être renseignées"),
     ERR_EPSG_MANQUANT(1015, "L'EPSG du PEI doit être renseigné"),
     ERR_PEI_TYPE(1016, "Type PEI non supporté"),
+    ERR_PEI_VOIE(1017, "Aucune voie trouvée pour le pei après son déplacement."),
 
     /*
         Erreur si on essaie de supprimer une IT en cascade de la suppression d'un PEI mais qu'on n'a pas les droits de suppresion
