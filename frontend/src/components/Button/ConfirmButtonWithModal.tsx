@@ -17,6 +17,8 @@ const ConfirmButtonWithModal = ({
   isPost = true,
   header,
   content,
+  variant = "link",
+  className = "p-0 m-0",
 }: {
   path: string;
   reload?: () => void;
@@ -29,6 +31,8 @@ const ConfirmButtonWithModal = ({
   isPost: boolean;
   header: string;
   content: string;
+  variant?: string;
+  className?: string;
 }) => {
   const { visible, show, close, ref } = useModal();
   return (
@@ -38,9 +42,9 @@ const ConfirmButtonWithModal = ({
         tooltipId={tooltipId}
       >
         <Button
-          variant={"link"}
+          variant={variant}
           className={classnames(
-            "p-0 m-0",
+            className,
             disabled
               ? "text-decoration-none text-muted"
               : "text-decoration-none text-" + classEnable,

@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import { useAppContext } from "../../components/App/AppProvider.tsx";
+import ConfirmButtonWithModal from "../../components/Button/ConfirmButtonWithModal.tsx";
 import CreateButton from "../../components/Button/CreateButton.tsx";
 import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
@@ -34,14 +35,13 @@ import {
   ButtonType,
   TYPE_BUTTON,
 } from "../../components/Table/TableActionColumn.tsx";
-import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
 import { hasDroit, isAuthorized } from "../../droits.tsx";
 import DELTA_DATE from "../../enums/DeltaDateEnum.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import FILTER_PAGE from "../../enums/FilterPageEnum.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import VRAI_FAUX from "../../enums/VraiFauxEnum.tsx";
-import url, { getFetchOptions } from "../../module/fetch.tsx";
+import url from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
 import { formatDateWithFallback } from "../../utils/formatDateUtils.tsx";
@@ -57,7 +57,6 @@ const ListTournee = ({
   const { user } = useAppContext();
   const { fetchGeometry } = useLocalisation();
   const {
-    success: successToast,
     error: errorToast,
     persistent: persistentToast,
     removeToast,
@@ -515,40 +514,24 @@ const ListTournee = ({
               {user?.isSuperAdmin !== true &&
                 hasDroit(user, TYPE_DROIT.RAZ_MES_ROP_E) && (
                   <Col>
-                    <TooltipCustom
-                      tooltipText={
-                        "Remettre à zéro l’avancement de mes tournées de ROP"
+                    <ConfirmButtonWithModal
+                      path={url`/api/tournee/raz-mes-rop`}
+                      icon={<IconRotateLeft />}
+                      disabled={false}
+                      variant={"primary"}
+                      className={"p-auto"}
+                      classEnable={"white"}
+                      textDisable={undefined}
+                      textEnable={
+                        "Remettre à zéro l'avancement de mes tournées de ROP"
                       }
                       tooltipId={"resetTourneeProgress"}
-                    >
-                      <Button
-                        name={"tool"}
-                        disabled={false}
-                        onClick={async () => {
-                          (
-                            await fetch(
-                              url`/api/tournee/raz-mes-rop`,
-                              getFetchOptions({
-                                method: "POST",
-                              }),
-                            )
-                          )
-                            .text()
-                            .then(() => {
-                              successToast("Opération effectuée avec succès");
-                            })
-                            .catch((reason: string) => {
-                              errorToast(reason);
-                            });
-                        }}
-                        id={"resetTourneeProgress"}
-                        value={"resetTourneeProgress"}
-                        variant={"outline-primary"}
-                        className="m-0"
-                      >
-                        <IconRotateLeft />
-                      </Button>
-                    </TooltipCustom>
+                      isPost={true}
+                      header={"Remettre à zéro l'avancement de mes tournées ?"}
+                      content={
+                        "Voulez-vous vraiment remettre à zéro les tournées ? Cette opération effacera leur avancement."
+                      }
+                    />
                   </Col>
                 )}
               {hasDroit(user, TYPE_DROIT.TOURNEE_A) && (
