@@ -46,7 +46,7 @@ class CommuneEndpoint : AbstractEndpoint() {
     fun getCommuneForAccesRapide(
         @QueryParam("motifLibelle") motifLibelle: String,
     ): Response =
-        Response.ok().entity(communeRepository.getCommuneIdLibelleByMotif(securityContext.userInfo, motifLibelle)).build()
+        Response.ok().entity(communeRepository.getCommuneIdLibelleByMotif(motifLibelle)).build()
 
     @GET
     @Path("/get-libelle-commune")
