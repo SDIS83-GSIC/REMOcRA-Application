@@ -125,7 +125,7 @@ class TourneeRepository
             .on(TOURNEE.ID.eq(field(name("NEXT_ROP_CTE", "TOURNEE_ID"), SQLDataType.UUID)))
             .leftJoin(L_TOURNEE_PEI)
             .on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
-            .join(table(ropCounterCteName))
+            .leftJoin(table(ropCounterCteName))
             .on(TOURNEE.ID.eq(field(name("ROP_COUNTER_CTE", "TOURNEE_ID"), SQLDataType.UUID)))
             .where(
                 repositoryUtils.checkIsSuperAdminOrCondition(
