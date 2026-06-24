@@ -458,4 +458,20 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             .orderBy(ORGANISME.LIBELLE)
             .fetchInto()
     }
+
+    fun getAllOrganismesByZoneCompetence(zoneIntegrationId: UUID): List<UUID> =
+        dsl.select(ORGANISME.ID)
+            .from(ORGANISME)
+            .join(ZONE_INTEGRATION)
+            .on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))
+            .where(
+                ST_Within(
+                    ZONE_INTEGRATION.GEOMETRIE,
+                    field(
+                        DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
+                            .where(ZONE_INTEGRATION.ID.eq(zoneIntegrationId)),
+                    ),
+                ),
+            )
+            .fetchInto()
 }

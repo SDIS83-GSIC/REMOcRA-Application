@@ -4,7 +4,9 @@ import jakarta.inject.Inject
 import org.jooq.CommonTableExpression
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.Record
 import org.jooq.Record3
+import org.jooq.SelectForUpdateStep
 import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.impl.DSL
@@ -284,6 +286,21 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
     )
 
     fun getAllDestinataires(filterBy: FilterDestinataire?, sortBy: SortDestinataire?, limit: Int?, offset: Int?): Collection<DestinataireData> {
+        return getAllDestinatairesRecord(
+            filterBy = filterBy,
+            sortBy = sortBy,
+            limit = limit,
+            offset = offset,
+        )
+            .fetchInto()
+    }
+
+    private fun getAllDestinatairesRecord(
+        filterBy: FilterDestinataire?,
+        sortBy: SortDestinataire?,
+        limit: Int?,
+        offset: Int?,
+    ): SelectForUpdateStep<Record?> {
         val nomCte = name("LISTE_DESTINATAIRE")
         val cte = nomCte.fields(
             "destinataireId",
@@ -292,7 +309,7 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
             "fonctionDestinataire",
             "typeDestinataire",
         )
-            .`as`(getRequestDestinataire())
+            .`as`(getRequestDestinataire(filterBy?.listeIdOrganismeByZC))
 
         return dsl.with(cte).selectFrom(table(nomCte))
             .where(filterBy?.toCondition() ?: DSL.noCondition())
@@ -305,13 +322,19 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
             )
             .limit(limit)
             .offset(offset)
-            .fetchInto()
     }
 
-    fun countDestinataire(): Int =
-        dsl.fetchCount(getRequestDestinataire())
+    fun countDestinataire(filterDestinataire: FilterDestinataire?): Int =
+        dsl.fetchCount(
+            getAllDestinatairesRecord(
+                filterDestinataire,
+                sortBy = null,
+                limit = null,
+                offset = null,
+            ),
+        )
 
-    private fun getRequestDestinataire() =
+    private fun getRequestDestinataire(listeIdOrganismeByZC: List<UUID>?) =
         dsl.select(
             UTILISATEUR.ID.`as`("destinataireId"),
             DSL.concat(UTILISATEUR.NOM, DSL.value(" "), UTILISATEUR.PRENOM)
@@ -321,11 +344,12 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
             DSL.value(TypeDestinataire.UTILISATEUR.libelle).`as`("typeDestinataire"),
         )
             .from(UTILISATEUR)
-            .join(PROFIL_UTILISATEUR)
+            .leftJoin(PROFIL_UTILISATEUR)
             .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(PROFIL_UTILISATEUR.ID))
             .where(UTILISATEUR.ACTIF.isTrue)
             .and(UTILISATEUR.CAN_BE_NOTIFIED.isTrue)
             .and(UTILISATEUR.EMAIL.isNotNull)
+            .and(listeIdOrganismeByZC?.let { DSL.and(UTILISATEUR.ORGANISME_ID.`in`(it)) } ?: DSL.noCondition())
             .union(
                 dsl.select(
                     ORGANISME.ID.`as`("destinataireId"),
@@ -338,7 +362,8 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
                     .join(PROFIL_ORGANISME)
                     .on(ORGANISME.PROFIL_ORGANISME_ID.eq(PROFIL_ORGANISME.ID))
                     .where(ORGANISME.ACTIF.isTrue)
-                    .and(ORGANISME.EMAIL_CONTACT.isNotNull),
+                    .and(ORGANISME.EMAIL_CONTACT.isNotNull)
+                    .and(listeIdOrganismeByZC?.let { DSL.and(ORGANISME.ID.`in`(it)) } ?: DSL.noCondition()),
             )
             .union(
                 dsl.select(
@@ -355,7 +380,8 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
                     .join(L_CONTACT_ORGANISME)
                     .on(L_CONTACT_ORGANISME.CONTACT_ID.eq(CONTACT.ID))
                     .where(CONTACT.ACTIF.isTrue)
-                    .and(CONTACT.EMAIL.isNotNull),
+                    .and(CONTACT.EMAIL.isNotNull)
+                    .and(listeIdOrganismeByZC?.let { DSL.and(L_CONTACT_ORGANISME.ORGANISME_ID.`in`(it)) } ?: DSL.noCondition()),
             )
             .union(
                 dsl.select(
@@ -389,6 +415,8 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
         val emailDestinataire: String?,
         val fonctionDestinataire: String?,
         val listeTypeDestinataire: List<TypeDestinataire>?,
+        val listeIdOrganismeByZC: List<UUID>?, // est utilisé directement dans la requête car dépend du type de destinataire
+        val useZoneCompetence: Boolean = false,
     ) {
         fun toCondition(): Condition =
             DSL.and(

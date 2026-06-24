@@ -38,6 +38,7 @@ import remocra.security.NoCsrf
 import remocra.usecase.courrier.BuildFormCourrierUseCase
 import remocra.usecase.courrier.CourrierGeneratorUseCase
 import remocra.usecase.courrier.CreateCourrierUseCase
+import remocra.usecase.courrier.DestinataireUseCase
 import remocra.usecase.document.DocumentUtils
 import remocra.usecase.modelecourrier.CreateModeleCourrierUseCase
 import remocra.usecase.modelecourrier.DeleteModeleCourrierUseCase
@@ -69,6 +70,8 @@ class CourrierEndPoint : AbstractEndpoint() {
     @Inject lateinit var deleteModeleCourrierUseCase: DeleteModeleCourrierUseCase
 
     @Inject lateinit var createCourrierUseCase: CreateCourrierUseCase
+
+    @Inject lateinit var destinataireUseCase: DestinataireUseCase
 
     @Inject lateinit var objectMapper: ObjectMapper
 
@@ -108,9 +111,13 @@ class CourrierEndPoint : AbstractEndpoint() {
     ): Response {
         return Response.ok()
             .entity(
-                DataTableau(
-                    list = courrierRepository.getAllDestinataires(params.filterBy, params.sortBy, params.limit, params.offset),
-                    count = courrierRepository.countDestinataire(),
+                destinataireUseCase.getDestinataires(
+                    filterDestinataire = params.filterBy,
+                    sortBy = params.sortBy,
+                    limit = params.limit,
+                    offset = params.offset,
+                    useZoneCompetence = params.filterBy?.useZoneCompetence ?: false,
+                    userInfo = securityContext.userInfo,
                 ),
             )
             .build()
