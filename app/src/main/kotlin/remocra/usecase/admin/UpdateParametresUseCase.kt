@@ -54,6 +54,7 @@ class UpdateParametresUseCase
             peiLongueIndispo = element.peiLongueIndispo,
             utilisateur = element.utilisateur,
             rcci = element.rcci,
+            courrier = element.courrier,
         )
 
         if (userInfo.hasDroit(droitWeb = Droit.ADMIN_PARAM_APPLI)) {
@@ -319,6 +320,10 @@ class UpdateParametresUseCase
             updateParametre(
                 ParametreEnum.BRIDAGE_PHOTO,
                 parametresAdminData.mobile.bridagePhoto.toString(),
+            )
+            updateParametre(
+                ParametreEnum.COURRIER_RESTRICTION_ZC,
+                parametresAdminData.courrier.courrierRestrictionZC.toString(),
             )
         }
         return element

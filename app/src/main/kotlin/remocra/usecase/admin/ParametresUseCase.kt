@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
 import remocra.data.ParametresAdminData
 import remocra.data.ParametresSectionCartographie
+import remocra.data.ParametresSectionCourrier
 import remocra.data.ParametresSectionCouvertureHydraulique
 import remocra.data.ParametresSectionDfci
 import remocra.data.ParametresSectionGeneral
@@ -161,6 +162,10 @@ constructor(
             profilUtilisateurDefaut = mapParametres.getStringOrNull(ParametreEnum.PROFIL_UTILISATEUR_DEFAUT.name),
         )
 
+        val courrier = ParametresSectionCourrier(
+            courrierRestrictionZC = mapParametres.getBoolean(ParametreEnum.COURRIER_RESTRICTION_ZC.name),
+        )
+
         return ParametresAdminData(
             general = general,
             signalement = signalement,
@@ -173,6 +178,7 @@ constructor(
             peiLongueIndispo = peiLongueIndispo,
             utilisateur = utilisateur,
             rcci = rcci,
+            courrier = courrier,
         )
     }
 }

@@ -22,7 +22,7 @@ data class ParametresAdminData(
     val peiLongueIndispo: ParametresSectionPeiLongueIndispo,
     val rcci: ParametresSectionRcci,
     val utilisateur: ParametresSectionUtilisateur,
-
+    val courrier: ParametresSectionCourrier,
 )
 
 data class ParametresAdminDataInput(
@@ -37,6 +37,7 @@ data class ParametresAdminDataInput(
     val peiLongueIndispo: ParametresSectionPeiLongueIndispo,
     val rcci: ParametresSectionRcci,
     val utilisateur: ParametresSectionUtilisateur,
+    val courrier: ParametresSectionCourrier,
 )
 
 fun mapToParametresSectionCouvertureHydraulique(
@@ -168,4 +169,8 @@ data class ParametresSectionPei(
 data class ParametresSectionUtilisateur(
     val organismeDefaut: String?,
     val profilUtilisateurDefaut: String?,
+)
+
+data class ParametresSectionCourrier(
+    val courrierRestrictionZC: Boolean,
 )

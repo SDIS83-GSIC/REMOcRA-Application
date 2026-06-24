@@ -32,7 +32,11 @@ import typeAffichageCoordonnees from "../../../enums/TypeAffichageCoordonnees.ts
 import typeRouteHistoriquePei from "../../../enums/TypeRouteHistoriquePei.tsx";
 import TYPE_PARAMETRE from "../../../enums/TypesParametres.tsx";
 import url from "../../../module/fetch.tsx";
-import { requiredNumber, requiredString } from "../../../module/validators.tsx";
+import {
+  requiredBoolean,
+  requiredNumber,
+  requiredString,
+} from "../../../module/validators.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import TypeOrganismeMultiSelectParam from "./TypeOrganismeMultiSelectParam.tsx";
 
@@ -131,6 +135,10 @@ type ParametresSectionUtilisateur = {
   profilUtilisateurDefaut: string;
 };
 
+type ParametresSectionCourrier = {
+  courrierRestrictionZC: boolean;
+};
+
 type AdminParametresValue = {
   general: ParametresSectionGeneral;
   signalement: ParametresSectionSignalement;
@@ -143,6 +151,7 @@ type AdminParametresValue = {
   peiLongueIndispo: ParametresSectionPeiLongueIndispo;
   rcci: ParametresSectionRcci;
   utilisateur: ParametresSectionUtilisateur;
+  courrier: ParametresSectionCourrier;
 };
 
 export const getInitialValues = (
@@ -159,6 +168,7 @@ export const getInitialValues = (
   peiLongueIndispo: ParametresSectionPeiLongueIndispo;
   rcci: ParametresSectionRcci;
   utilisateur: ParametresSectionUtilisateur;
+  courrier: ParametresSectionCourrier;
 } => ({
   general: data?.general,
   signalement: data?.signalement,
@@ -201,6 +211,7 @@ export const getInitialValues = (
   peiLongueIndispo: data?.peiLongueIndispo,
   rcci: data?.rcci,
   utilisateur: data?.utilisateur,
+  courrier: data?.courrier,
 });
 
 export const validationSchema = object({
@@ -265,6 +276,9 @@ export const validationSchema = object({
   mobile: object({
     dureeValiditeToken: requiredNumber,
   }),
+  courrier: object({
+    courrierRestrictionZC: requiredBoolean,
+  }),
 });
 
 export const prepareVariables = (values: AdminParametresValue) => {
@@ -297,6 +311,7 @@ export const prepareVariables = (values: AdminParametresValue) => {
     peiLongueIndispo: values?.peiLongueIndispo,
     rcci: values?.rcci,
     utilisateur: values?.utilisateur,
+    courrier: values?.courrier,
   };
 };
 
@@ -535,6 +550,17 @@ export const AdminParametresInterne = () => {
                     },
                   ]
                 : []),
+              ...[
+                {
+                  header: "Courrier",
+                  content: (
+                    <AdminCourrier
+                      values={values.courrier}
+                      setFieldValue={setFieldValue}
+                    />
+                  ),
+                },
+              ],
             ]}
             handleShowClose={handleShowClose}
           />
@@ -1919,6 +1945,25 @@ const AdminUtilisateur = ({
             "Aucun groupe de fonctionnalités trouvé."
           )}
         </div>
+      </>
+    )
+  );
+};
+
+const AdminCourrier = ({ values }: { values: ParametresSectionCourrier }) => {
+  return (
+    values && (
+      <>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="courrier.courrierRestrictionZC"
+            label="Permettre à l'utilisateur de restreindre la recherche des destinataires sur sa zone de compétence"
+            checked={values?.courrierRestrictionZC}
+            tooltipText={
+              "Si ce paramètre est activé, la notification d’un courrier affichera une case à cocher permettant de limiter la recherche des destinataires à la zone de compétence de l’utilisateur connecté."
+            }
+          />
+        </AdminParametre>
       </>
     )
   );
