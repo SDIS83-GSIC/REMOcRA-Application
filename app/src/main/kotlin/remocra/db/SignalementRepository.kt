@@ -55,7 +55,7 @@ class SignalementRepository @Inject constructor(private val dsl: DSLContext) : A
         )
             .from(
                 SIGNALEMENT_TYPE_ELEMENT,
-            )
+            ).orderBy(SIGNALEMENT_TYPE_ELEMENT.LIBELLE)
             .fetchInto()
 
     fun getType(): Collection<GlobalData.IdCodeLibelleData> =
