@@ -115,11 +115,11 @@ constructor(
 
             TypeElementCarte.SIGNALEMENT -> bbox.let {
                 if (it.isEmpty()) {
-                    carteRepository.getSignalement(null, srid, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
+                    carteRepository.getSignalement(null, srid)
                 } else {
                     val geom =
                         geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
-                    carteRepository.getSignalement(geom.toGeomFromText(), srid, userInfo.zoneCompetence?.zoneIntegrationId, userInfo.isSuperAdmin)
+                    carteRepository.getSignalement(geom.toGeomFromText(), srid)
                 }
             }
             TypeElementCarte.OLDEB -> bbox.let {

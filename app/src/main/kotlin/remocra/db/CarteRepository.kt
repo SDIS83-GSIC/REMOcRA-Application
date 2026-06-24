@@ -259,7 +259,7 @@ class CarteRepository @Inject constructor(
             .fetchInto()
     }
 
-    fun getSignalement(bbox: Field<Geometry?>?, srid: Int, zoneId: UUID?, isSuperAdmin: Boolean): Collection<SignalementCarte> {
+    fun getSignalement(bbox: Field<Geometry?>?, srid: Int): Collection<SignalementCarte> {
         return dsl.select(
             ST_Transform(SIGNALEMENT.GEOMETRIE, srid).`as`("elementGeometrie"),
             SIGNALEMENT.ID.`as`("elementId"),
@@ -295,21 +295,7 @@ class CarteRepository @Inject constructor(
             }.`as`("listSousElementAvecAnomalie"),
         )
             .from(SIGNALEMENT)
-            .where(
-                zoneId?.let {
-                    repositoryUtils.checkIsSuperAdminOrCondition(
-                        ST_Within(
-                            SIGNALEMENT.GEOMETRIE,
-                            DSL.field(
-                                DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
-                                    .where(ZONE_INTEGRATION.ID.eq(zoneId)),
-                            ),
-                        ).isTrue,
-                        isSuperAdmin,
-                    )
-                },
-            )
-            .and(bbox?.let { ST_Within(ST_Transform(SIGNALEMENT.GEOMETRIE, srid), bbox) })
+            .where(bbox?.let { ST_Within(ST_Transform(SIGNALEMENT.GEOMETRIE, srid), bbox) })
             .fetchInto()
     }
 

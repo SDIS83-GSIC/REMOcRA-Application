@@ -6,6 +6,7 @@ import org.geotools.referencing.CRS
 import org.locationtech.jts.geom.Geometry
 import remocra.app.AppSettings
 import remocra.auth.WrappedUserInfo
+import remocra.data.SignalementData
 import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.usecase.zoneintegration.CheckZoneCompetenceContainsUseCase
@@ -38,9 +39,12 @@ abstract class AbstractCUDGeometrieUseCase<T : Any>(override val typeOperation: 
 
     override fun execute(userInfo: WrappedUserInfo, element: T, mainTransactionManager: TransactionManager?): Result {
         val safeElement = ensureSrid(element)
-        val geometrie = getListGeometrie(safeElement)
-        if (geometrie.isNotEmpty()) {
-            checkZoneCompetenceContainsUseCase.checkContains(userInfo, geometrie)
+        val isSignalement = safeElement is SignalementData
+        if (!isSignalement) {
+            val geometries = getListGeometrie(safeElement)
+            if (geometries.isNotEmpty()) {
+                checkZoneCompetenceContainsUseCase.checkContains(userInfo, geometries)
+            }
         }
         return super.execute(userInfo, safeElement, mainTransactionManager)
     }
