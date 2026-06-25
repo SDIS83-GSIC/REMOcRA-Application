@@ -27,8 +27,8 @@ const Signalement = ({
 
   return (
     <>
-      <h3>Récap des éléments du signalement</h3>
-      <Accordion>
+      <h3>Récapitulatif des éléments du signalement</h3>
+      <Accordion alwaysOpen>
         {listeElement.map((e, index) => {
           return (
             <>
