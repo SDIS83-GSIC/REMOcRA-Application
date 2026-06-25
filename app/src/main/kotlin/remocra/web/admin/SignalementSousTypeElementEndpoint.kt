@@ -109,12 +109,22 @@ class SignalementSousTypeElementEndpoint : AbstractEndpoint() {
             ),
         ).wrap()
 
+    class SousTypeElementWithUsed(
+        val signalementSousTypeElement: SignalementSousTypeElement,
+        val isUsed: Boolean,
+    )
+
     @GET
     @Path("/get/{signalementSousTypeElementId}")
     @Produces(MediaType.APPLICATION_JSON)
     @RequireDroits([Droit.ADMIN_NOMENCLATURE])
     fun getSousTypeById(@PathParam("signalementSousTypeElementId") signalementSousTypeElementId: UUID) =
-        Response.ok(signalementRepository.getById(signalementSousTypeElementId)).build()
+        Response.ok(
+            SousTypeElementWithUsed(
+                signalementRepository.getById(signalementSousTypeElementId),
+                signalementRepository.isUsed(signalementSousTypeElementId),
+            ),
+        ).build()
 
     @DELETE
     @Path("/delete/{signalementSousTypeElementId}")

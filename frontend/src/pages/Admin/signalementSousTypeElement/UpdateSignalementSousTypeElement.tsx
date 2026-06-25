@@ -25,7 +25,7 @@ const UpdateSignalementSousTypeElement = () => {
         icon={<IconCreate />}
       />
       <MyFormik
-        initialValues={getInitialValue(data)}
+        initialValues={getInitialValue(data?.signalementSousTypeElement)}
         prepareVariables={(values) => prepareValues(values)}
         validationSchema={validationSchema}
         submitUrl={`/api/signalement-sous-type-element/update/${signalementSousTypeElementId}`}
@@ -33,7 +33,7 @@ const UpdateSignalementSousTypeElement = () => {
         redirectUrl={URLS.LIST_SIGNALEMENT_SOUS_TYPE_ELEMENT}
         onSubmit={() => true}
       >
-        <SignalementSousTypeElement />
+        <SignalementSousTypeElement isUsed={data?.isUsed} />
       </MyFormik>
     </Container>
   );

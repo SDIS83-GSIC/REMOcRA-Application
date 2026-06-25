@@ -99,8 +99,6 @@ const ListSignalementSousTypeElement = () => {
 
   if (hasDroit(user, TYPE_DROIT.ADMIN_PARAM_APPLI)) {
     listeButton.push({
-      disable: (v) => v.original.isUsed,
-      textDisable: `Impossible de modifier l'élément car il est utilisé dans une alerte déjà déclarée.`,
       row: (row) => {
         return row;
       },
@@ -111,7 +109,7 @@ const ListSignalementSousTypeElement = () => {
 
     listeButton.push({
       disable: (v) => v.original.isUsed,
-      textDisable: `Impossible de supprimer l'élément car il est utilisé dans une alerte déjà déclarée.`,
+      textDisable: `Impossible de supprimer l'élément car il est utilisé dans un signalement déjà déclaré.`,
       row: (row) => {
         return row;
       },

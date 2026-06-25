@@ -16,7 +16,11 @@ import {
 } from "../../../module/validators.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 
-const SignalementSousTypeElement = () => {
+const SignalementSousTypeElement = ({
+  isUsed = false,
+}: {
+  isUsed?: boolean;
+}) => {
   const { values, setValues } =
     useFormikContext<SignalementSousTypeElementType>();
   const listeTypeElement: IdCodeLibelleType[] = useGet(
@@ -41,6 +45,7 @@ const SignalementSousTypeElement = () => {
         label="Type élément parent"
         listIdCodeLibelle={listeTypeElement}
         setValues={setValues}
+        disabled={isUsed}
         defaultValue={listeTypeElement?.find(
           (e) => e.id === values.signalementSousTypeElementTypeElement,
         )}
@@ -51,6 +56,7 @@ const SignalementSousTypeElement = () => {
         label="Type de géométrie"
         listIdCodeLibelle={referenceTypeGeometrie}
         setValues={setValues}
+        disabled={isUsed}
         defaultValue={referenceTypeGeometrie?.find(
           (e) => e.id === values.signalementSousTypeElementTypeGeometrie,
         )}
