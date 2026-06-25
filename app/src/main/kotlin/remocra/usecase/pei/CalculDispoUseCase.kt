@@ -456,7 +456,7 @@ class CalculDispoUseCase @Inject constructor(
 
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
-            CodeSdis.SDIS_58 -> pei.pressionDynamique == null || pei.pressionDynamique < 1
+            CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> false
             CodeSdis.SDIS_62 -> {
@@ -539,7 +539,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_42 -> isPressionDynamiqueTropEleveeDefault(pei)
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
-            CodeSdis.SDIS_58 -> pei.pressionDynamique != null && pei.pressionDynamique > 8
+            CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 ->
                 pei.pression != null && pei.pressionDynamique != null &&
