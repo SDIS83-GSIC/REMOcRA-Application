@@ -482,7 +482,9 @@ export const prepareVariables = (values: any) => {
 
   setDocumentInFormData(values?.documents ?? [], [], formData);
 
-  formData.append("description", values.description);
+  if (values.description !== undefined) {
+    formData.append("description", values.description);
+  }
 
   formData.append(
     "listSignalementElement",

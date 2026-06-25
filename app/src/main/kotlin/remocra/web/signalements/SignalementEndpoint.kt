@@ -114,7 +114,7 @@ class SignalementEndpoint : AbstractEndpoint() {
                 listeDocsToRemove = emptyList(),
                 listDocumentParts = httpRequest.parts.filter { it.name.contains("document_") },
             ),
-            description = httpRequest.getTextPart("description"),
+            description = httpRequest.getTextPartOrNull("description"),
             listSignalementElement = rawElements.map { raw ->
                 val geometry = WKTReader().read(raw.geometry.wkt)
                 geometry.srid = raw.geometry.srid
