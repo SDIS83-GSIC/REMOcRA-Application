@@ -527,7 +527,7 @@ class CarteRepository @Inject constructor(
             "<br /><b>Date constat :</b> ${signalementDateConstat?.format(DateTimeFormatter.ofPattern(DateUtils.PATTERN_NATUREL, Locale.getDefault()))} " +
             "<br/><b>Liste des élements :</b> ${
                 listSousElementAvecAnomalie.joinToString {
-                    "${it.sousElement} (anomalies constatées : ${
+                    "${it.sousElement} (anomalie(s) constatée(s) : ${
                         it.listeAnomalie.takeIf { !it.isNullOrBlank() }.apply { it } ?: "aucune anomalie"
                     })"
                 }
