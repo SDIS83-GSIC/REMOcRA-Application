@@ -651,16 +651,25 @@ const Tooltip = ({
                           }
                           title={false}
                           reload={onClickDelete}
-                          header={`Suppression du PEI ${featureSelect?.getProperties().peiNumeroComplet}`}
+                          header={`Suppression du PEI ${
+                            featureSelect?.getProperties().peiNumeroComplet
+                              ? featureSelect?.getProperties().peiNumeroComplet
+                              : ""
+                          }`}
                           content={
                             <div>
                               Êtes-vous sûr de vouloir supprimer le PEI{" "}
-                              <b>
-                                {
-                                  featureSelect?.getProperties()
-                                    .peiNumeroComplet
-                                }
-                              </b>{" "}
+                              {featureSelect?.getProperties()
+                                .peiNumeroComplet ? (
+                                <b>
+                                  {
+                                    featureSelect?.getProperties()
+                                      .peiNumeroComplet
+                                  }
+                                </b>
+                              ) : (
+                                "sélectionné"
+                              )}{" "}
                               ? Cette action est irréversible.
                             </div>
                           }
