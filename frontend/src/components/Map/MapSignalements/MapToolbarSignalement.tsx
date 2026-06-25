@@ -16,12 +16,11 @@ import THEMATIQUE from "../../../enums/ThematiqueEnum.tsx";
 import url from "../../../module/fetch.tsx";
 import CreatElementSignalement from "../../../pages/Signalement/CreateElementSignalement.tsx";
 import Signalement from "../../../pages/Signalement/Signalement.tsx";
-import { URLS } from "../../../routes.tsx";
-import CreateButton from "../../Button/CreateButton.tsx";
 import { useGet } from "../../Fetch/useFetch.tsx";
 import { setDocumentInFormData } from "../../Form/FormDocuments.tsx";
 import MyFormik from "../../Form/MyFormik.tsx";
 import {
+  IconCreate,
   IconDelete,
   IconLine,
   IconPoint,
@@ -316,7 +315,7 @@ const MapToolbarSignalement = ({
 
   return (
     typeWithSousType && (
-      <Row>
+      <>
         <Row xs={"auto"}>
           <VoletButtonListeDocumentThematique
             codeThematique={THEMATIQUE.SIGNALEMENT}
@@ -405,15 +404,13 @@ const MapToolbarSignalement = ({
               );
             },
           )}
-
-          <CreateButton
-            classnames={"m-2"}
-            onClick={() => {
-              setShowCreateSignalement(true);
-            }}
-            title={"Ajouter un signalement"}
+          <Button
+            className={"m-2"}
+            onClick={() => setShowCreateSignalement(true)}
             disabled={listSignalementElement?.length <= 0}
-          />
+          >
+            <IconCreate /> Ajouter un signalement
+          </Button>
         </Row>
 
         <Volet
@@ -453,7 +450,6 @@ const MapToolbarSignalement = ({
             isMultipartFormData={true}
             submitUrl={`/api/signalements/create`}
             prepareVariables={(values) => prepareVariables(values)}
-            redirectUrl={URLS.SIGNALEMENTS}
             onSubmit={() => {
               dataSignalementLayer.getSource().refresh();
               refreshLayerGeoserver(map);
@@ -470,7 +466,7 @@ const MapToolbarSignalement = ({
           </MyFormik>
         </Volet>
         <TooltipMapSignalement map={map!} />
-      </Row>
+      </>
     )
   );
 };

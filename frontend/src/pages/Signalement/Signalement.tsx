@@ -103,7 +103,7 @@ const Signalement = ({
 
         <Row>
           <Col>
-            <SubmitFormButtons />
+            <SubmitFormButtons returnLink={false} />
           </Col>
         </Row>
       </FormContainer>
