@@ -14,6 +14,7 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.enums.TypeElementCarte
+import remocra.db.DfciAiresRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.DfciAire
 import remocra.usecase.carte.GetPointCarteUseCase
@@ -37,6 +38,9 @@ class DfciAiresEndpoint : AbstractEndpoint() {
 
     @Inject
     private lateinit var getPointCarteUseCase: GetPointCarteUseCase
+
+    @Inject
+    private lateinit var dfciAireRepository: DfciAiresRepository
 
     @Context
     private lateinit var securityContext: SecurityContext
@@ -94,5 +98,13 @@ class DfciAiresEndpoint : AbstractEndpoint() {
                     dfciAireVersion = dfciAire.dfciAireVersion + 1, // On incrémente la version de la ligne à chaque update
                 ),
             ),
+        ).build()
+
+    @GET
+    @RequireDroits([Droit.DFCI_R])
+    @Path("/{dfciAireId}/geometrie")
+    fun getDfciAireGeometrie(@PathParam("dfciAireId") dfciAireId: UUID): Response =
+        Response.ok(
+            dfciAireRepository.getGeometrieDfciAire(dfciAireId),
         ).build()
 }

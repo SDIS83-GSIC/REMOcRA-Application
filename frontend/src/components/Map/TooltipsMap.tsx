@@ -38,6 +38,7 @@ import {
   IconEdit,
   IconIndisponibiliteTemporaire,
   IconLeverIndisponibiliteTemporaire,
+  IconMerge,
   IconOeil,
   IconSee,
   IconTournee,
@@ -1273,6 +1274,11 @@ export const TooltipMapDFCI = ({
     }
   }
 
+  const elementHasConflit: boolean = featureSelect?.getProperties().hasConflit;
+
+  const hasDroitResolveConflit =
+    hasDroit(user, TYPE_DROIT.DFCI_GESTION_CONFLITS_A) && elementHasConflit;
+
   return (
     <div ref={ref}>
       <Tooltip
@@ -1288,16 +1294,45 @@ export const TooltipMapDFCI = ({
         onClickEdit={() => {
           setShowVoletInfo(true), setReadOnlyForm(false);
         }}
+        autreActionBouton={
+          <>
+            {hasDroitResolveConflit && (
+              <Col className="p-1" xs={"auto"}>
+                <TooltipCustom
+                  tooltipText={"Résoudre le conflit"}
+                  tooltipId={"resolveDfciConflit"}
+                >
+                  <CustomLinkButton
+                    pathname={URLS.DFCI_GESTION_CONFLITS}
+                    variant="danger"
+                    search={new URLSearchParams({
+                      filterBy: JSON.stringify({
+                        dfciConflitElementId: elementId,
+                      }),
+                    }).toString()}
+                  >
+                    <IconMerge />
+                  </CustomLinkButton>
+                </TooltipCustom>
+              </Col>
+            )}
+          </>
+        }
       />
       <Volet
         handleClose={() => setShowVoletInfo(false)}
         show={showVoletInfo}
         className="w-auto"
       >
+        {elementHasConflit && (
+          <p className="fade alert alert-danger show text-center">
+            Un conflit est en cours sur cet élément, veuillez le corriger.
+          </p>
+        )}
         <DfciUpdateElement
           typeElem={typeElem}
           elementId={elementId}
-          readOnly={readOnlyForm}
+          readOnly={readOnlyForm || elementHasConflit}
           onSubmit={() => {
             setShowVoletInfo(false);
             switch (typeElem) {

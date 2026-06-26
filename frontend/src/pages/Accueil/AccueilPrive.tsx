@@ -179,6 +179,11 @@ function getLinks(
           label: "Recevoir des travaux",
           link: URLS.DFCI_RECEPTION_TRAVAUX,
         },
+        {
+          aLeDroit: hasDroit(user, TYPE_DROIT.DFCI_GESTION_CONFLITS_R),
+          label: "Gestion des conflits",
+          link: URLS.DFCI_GESTION_CONFLITS,
+        },
       ];
     case TypeModuleRemocra.OLDEBS:
       return [

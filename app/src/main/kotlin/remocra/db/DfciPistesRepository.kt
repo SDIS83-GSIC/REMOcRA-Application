@@ -284,4 +284,15 @@ class DfciPistesRepository @Inject constructor(
      */
     fun insertDfciPisteFromData(dfciPisteData: DfciPisteData): Int =
         dsl.insertInto(DFCI_PISTE).set(dsl.newRecord(DFCI_PISTE, dfciPisteData.convertPisteDataToPojo())).execute()
+
+    fun getGeometrieDfciPiste(dfciPisteId: UUID): DfciPisteGeometrie =
+        dsl
+            .select(DFCI_PISTE.GEOMETRIE)
+            .from(DFCI_PISTE)
+            .where(DFCI_PISTE.ID.eq(dfciPisteId))
+            .fetchSingleInto()
+
+    data class DfciPisteGeometrie(
+        val geometrie: Geometry,
+    )
 }

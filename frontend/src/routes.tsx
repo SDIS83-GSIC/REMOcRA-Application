@@ -178,8 +178,10 @@ import ComponentBoardDashboardAdmin from "./pages/Dashboard/DashboardDashboardAd
 import ComponentBoardQueryAdmin from "./pages/Dashboard/DashboardQueryAdmin.tsx";
 import ComponentBoardList from "./pages/Dashboard/DashboardUser.tsx";
 import UpdateDebitSimultane from "./pages/DebitSimultane/UpdateDebitSimultane.tsx";
+import DfciGestionConflits from "./pages/DFCI/DfciGestionConflits.tsx";
 import ModuleDfci from "./pages/DFCI/ModuleDfci.tsx";
 import ReceptionTravaux from "./pages/DFCI/ReceptionTravaux.tsx";
+import { ResolveDfciConflit } from "./pages/DFCI/ResolveDfciConflit.tsx";
 import ExportCTP from "./pages/ImportCTP/ExportCTP.tsx";
 import ImportCTP from "./pages/ImportCTP/ImportCTP.tsx";
 import VerificationImportCTP from "./pages/ImportCTP/TableVerificationImportCTP.tsx";
@@ -579,6 +581,9 @@ export const URLS = {
   // Module DFCI
   CARTE_DFCI: url`/dfci/carte`,
   DFCI_RECEPTION_TRAVAUX: url`/dfci/reception-travaux`,
+  DFCI_GESTION_CONFLITS: url`/dfci/gestion-conflits`,
+  RESOLVE_DFCI_CONFLIT: (dfciConflitId: string) =>
+    url`/dfci/gestion-conflits/resolve/` + dfciConflitId,
 
   // Module Signalements
   SIGNALEMENTS: url`/signalements/carte`,
@@ -627,6 +632,24 @@ export default [
           <Authorization
             Component={ReceptionTravaux}
             droits={[TYPE_DROIT.DFCI_RECEPTRAVAUX_C]}
+          />
+        ),
+      },
+      {
+        path: "gestion-conflits",
+        element: (
+          <Authorization
+            Component={DfciGestionConflits}
+            droits={[TYPE_DROIT.DFCI_GESTION_CONFLITS_R]}
+          />
+        ),
+      },
+      {
+        path: "gestion-conflits/resolve/:dfciConflitId",
+        element: (
+          <Authorization
+            Component={ResolveDfciConflit}
+            droits={[TYPE_DROIT.DFCI_GESTION_CONFLITS_A]}
           />
         ),
       },

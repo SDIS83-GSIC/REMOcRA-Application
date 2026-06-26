@@ -703,6 +703,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     DFCI_PISTE_U_FORBIDDEN(34002, "Vous n'avez le droit de modification des pistes DFCI."),
     DFCI_DEB_U_FORBIDDEN(34003, "Vous n'avez le droit de modification des débroussaillements DFCI."),
     DFCI_PANNEAU_U_FORBIDDEN(34004, "Vous n'avez le droit de modification des panneaux DFCI."),
+    DFCI_GESTION_CONFLIT_A_FORBIDDEN(34005, "Vous n'avez pas la permission pour résoudre les conflits"),
+    DFCI_RESOLVE_CONFLIT_NOT_SAME_VALUE(34006, "Les valeurs du SIG et de REMOcRA ne sont pas les mêmes."),
     ;
 
     override fun toString(): String {

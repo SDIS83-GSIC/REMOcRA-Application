@@ -15,6 +15,7 @@ import org.locationtech.jts.geom.Geometry
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.enums.TypeElementCarte
+import remocra.db.DfciPistesRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.DfciPiste
 import remocra.usecase.carte.GetPointCarteUseCase
@@ -43,6 +44,9 @@ class DfciPistesEndpoint : AbstractEndpoint() {
 
     @Inject
     private lateinit var getPointCarteUseCase: GetPointCarteUseCase
+
+    @Inject
+    private lateinit var dfciPistesRepository: DfciPistesRepository
 
     @Context
     private lateinit var securityContext: SecurityContext
@@ -123,5 +127,13 @@ class DfciPistesEndpoint : AbstractEndpoint() {
                     dfciPisteVersion = dfciPiste.dfciPisteVersion + 1, // On incrémente la version de la ligne à chaque update
                 ),
             ),
+        ).build()
+
+    @GET
+    @Path("/{dfciPisteId}/geometrie")
+    @RequireDroits([Droit.DFCI_R])
+    fun getDfciPisteGeometrieById(@PathParam("dfciPisteId") dfciPisteId: UUID): Response =
+        Response.ok(
+            dfciPistesRepository.getGeometrieDfciPiste(dfciPisteId),
         ).build()
 }

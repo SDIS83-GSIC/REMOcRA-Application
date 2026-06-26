@@ -16,6 +16,10 @@ export enum GET_TYPE_GEOMETRY {
   VOIE = "/api/voie",
   INDISPONIBILITE_TEMP = "/api/indisponibilite-temporaire",
   OLDEB = "/api/oldeb",
+  DFCI_AIRE = "/api/dfci-aires",
+  DFCI_PISTE = "/api/dfci-pistes",
+  DFCI_DEB = "/api/dfci-deb",
+  DFCI_PANNEAU = "/api/dfci-panneau",
 }
 
 export type ItemSearch = {
@@ -107,7 +111,6 @@ const useLocalisation = () => {
         .json()
         .then((resData) => {
           let extent, srid;
-
           switch (typeGeometry) {
             case GET_TYPE_GEOMETRY.PEI: {
               const { geometry, srid: parsedSrid } = parseGeometry(resData);
@@ -159,6 +162,38 @@ const useLocalisation = () => {
               break;
             }
             case GET_TYPE_GEOMETRY.OLDEB: {
+              const { geometry, srid: parsedSrid } = parseGeometry(
+                resData.geometrie,
+              );
+              extent = bufferExtent(geometry.getExtent(), BUFFER_LOCALISATION);
+              srid = parsedSrid;
+              break;
+            }
+            case GET_TYPE_GEOMETRY.DFCI_AIRE: {
+              const { geometry, srid: parsedSrid } = parseGeometry(
+                resData.geometrie,
+              );
+              extent = bufferExtent(geometry.getExtent(), BUFFER_LOCALISATION);
+              srid = parsedSrid;
+              break;
+            }
+            case GET_TYPE_GEOMETRY.DFCI_PISTE: {
+              const { geometry, srid: parsedSrid } = parseGeometry(
+                resData.geometrie,
+              );
+              extent = bufferExtent(geometry.getExtent(), BUFFER_LOCALISATION);
+              srid = parsedSrid;
+              break;
+            }
+            case GET_TYPE_GEOMETRY.DFCI_DEB: {
+              const { geometry, srid: parsedSrid } = parseGeometry(
+                resData.geometrie,
+              );
+              extent = bufferExtent(geometry.getExtent(), BUFFER_LOCALISATION);
+              srid = parsedSrid;
+              break;
+            }
+            case GET_TYPE_GEOMETRY.DFCI_PANNEAU: {
               const { geometry, srid: parsedSrid } = parseGeometry(
                 resData.geometrie,
               );

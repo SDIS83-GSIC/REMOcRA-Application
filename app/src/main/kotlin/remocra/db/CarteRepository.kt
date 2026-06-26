@@ -25,6 +25,7 @@ import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE_MESURE
 import remocra.db.jooq.remocra.tables.references.DFCI_AIRE
+import remocra.db.jooq.remocra.tables.references.DFCI_CONFLIT
 import remocra.db.jooq.remocra.tables.references.DFCI_DEB
 import remocra.db.jooq.remocra.tables.references.DFCI_MASSIF
 import remocra.db.jooq.remocra.tables.references.DFCI_PANNEAU
@@ -422,6 +423,12 @@ class CarteRepository @Inject constructor(
             DFCI_AIRE.ID.`as`("elementId"),
             DFCI_AIRE.TYPE,
             DFCI_PISTE.LIBELLE,
+            DSL.exists(
+                dsl
+                    .selectOne()
+                    .from(DFCI_CONFLIT)
+                    .where(DFCI_CONFLIT.ELEMENT_ID.eq(DFCI_AIRE.ID)),
+            ).`as`("hasConflit"),
         )
             .from(DFCI_AIRE)
             .join(DFCI_PISTE)
@@ -453,6 +460,12 @@ class CarteRepository @Inject constructor(
             DFCI_PISTE.LIBELLE,
             DFCI_PISTE.NUMERO,
             DFCI_PISTE.ADRESSE,
+            DSL.exists(
+                dsl
+                    .selectOne()
+                    .from(DFCI_CONFLIT)
+                    .where(DFCI_CONFLIT.ELEMENT_ID.eq(DFCI_PISTE.ID)),
+            ).`as`("hasConflit"),
         )
             .from(DFCI_PISTE)
             .where(
@@ -481,6 +494,12 @@ class CarteRepository @Inject constructor(
             DFCI_DEB.ID.`as`("elementId"),
             DFCI_DEB.TYPE,
             DFCI_MASSIF.LIBELLE,
+            DSL.exists(
+                dsl
+                    .selectOne()
+                    .from(DFCI_CONFLIT)
+                    .where(DFCI_CONFLIT.ELEMENT_ID.eq(DFCI_DEB.ID)),
+            ).`as`("hasConflit"),
         )
             .from(DFCI_DEB)
             .join(DFCI_MASSIF)
@@ -513,6 +532,12 @@ class CarteRepository @Inject constructor(
             DFCI_PANNEAU.NUM_PISTE,
             DFCI_PANNEAU.LIBELLE_PISTE,
             DFCI_PISTE.LIBELLE,
+            DSL.exists(
+                dsl
+                    .selectOne()
+                    .from(DFCI_CONFLIT)
+                    .where(DFCI_CONFLIT.ELEMENT_ID.eq(DFCI_PANNEAU.ID)),
+            ).`as`("hasConflit"),
         )
             .from(DFCI_PANNEAU)
             .join(DFCI_PISTE).on(DFCI_PISTE.ID.eq(DFCI_PANNEAU.DFCI_PISTE_ID))
@@ -707,6 +732,7 @@ class CarteRepository @Inject constructor(
         override val elementId: UUID,
         val dfciAireType: TypeAire,
         val dfciPisteLibelle: String,
+        val hasConflit: Boolean,
     ) : ElementCarte() {
         override val typeElementCarte: TypeElementCarte
             get() = TypeElementCarte.DFCI_AIRE
@@ -727,6 +753,7 @@ class CarteRepository @Inject constructor(
         val dfciPisteLibelle: String,
         val dfciPisteNumero: String,
         var dfciPisteAdresse: String?,
+        val hasConflit: Boolean,
     ) : ElementCarte() {
         override val typeElementCarte: TypeElementCarte
             get() = TypeElementCarte.DFCI_PISTE
@@ -741,6 +768,7 @@ class CarteRepository @Inject constructor(
         override val elementId: UUID,
         val dfciDebType: TypeDebroussaillement,
         val dfciMassifLibelle: String,
+        val hasConflit: Boolean,
     ) : ElementCarte() {
         override val typeElementCarte: TypeElementCarte
             get() = TypeElementCarte.DFCI_DEB
@@ -763,6 +791,7 @@ class CarteRepository @Inject constructor(
         val dfciPanneauNumPiste: Boolean,
         val dfciPanneauLibellePiste: Boolean,
         val dfciPisteLibelle: String,
+        val hasConflit: Boolean,
     ) : ElementCarte() {
         override val typeElementCarte: TypeElementCarte
             get() = TypeElementCarte.DFCI_PANNEAU

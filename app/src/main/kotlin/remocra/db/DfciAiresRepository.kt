@@ -2,6 +2,7 @@ package remocra.db
 
 import jakarta.inject.Inject
 import org.jooq.DSLContext
+import org.locationtech.jts.geom.Geometry
 import remocra.app.AppSettings
 import remocra.data.DfciAireData
 import remocra.data.enums.DfciAireColonne
@@ -159,4 +160,15 @@ class DfciAiresRepository @Inject constructor(
      */
     fun insertDfciAireFromData(dfciAireData: DfciAireData): Int =
         dsl.insertInto(DFCI_AIRE).set(dsl.newRecord(DFCI_AIRE, dfciAireData.convertAireDataToPojo())).execute()
+
+    fun getGeometrieDfciAire(dfciAireId: UUID): DfciAireGeometrie =
+        dsl
+            .select(DFCI_AIRE.GEOMETRIE)
+            .from(DFCI_AIRE)
+            .where(DFCI_AIRE.ID.eq(dfciAireId))
+            .fetchSingleInto()
+
+    data class DfciAireGeometrie(
+        val geometrie: Geometry,
+    )
 }

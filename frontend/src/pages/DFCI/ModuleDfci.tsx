@@ -19,6 +19,11 @@ const ModuleDfci = () => {
       label: "Recevoir des travaux",
       aLeDroit: hasDroit(user, TYPE_DROIT.DFCI_RECEPTRAVAUX_C),
     },
+    {
+      path: URLS.DFCI_GESTION_CONFLITS,
+      label: "Gestion des conflits",
+      aLeDroit: hasDroit(user, TYPE_DROIT.DFCI_GESTION_CONFLITS_R),
+    },
   ];
 
   return (

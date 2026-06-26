@@ -12,6 +12,7 @@ object DfciModule : Module {
             DfciPistesEndpoint::class,
             DfciDebEndpoint::class,
             DfciPanneauxEndpoint::class,
+            DfciConflitEndpoint::class,
         )
     }
 }

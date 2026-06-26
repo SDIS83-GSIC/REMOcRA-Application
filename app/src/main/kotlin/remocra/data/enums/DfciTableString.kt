@@ -1,5 +1,12 @@
 package remocra.data.enums
 
+enum class DfciTableString(val nomTable: String) {
+    DFCI_PISTE("dfci_piste"),
+    DFCI_DEB("dfci_deb"),
+    DFCI_AIRE("dfci_aire"),
+    DFCI_PANNEAU("dfci_panneau"),
+}
+
 enum class DfciPisteColonne(val nomColonne: String) {
     DFCI_PISTE_ID("dfciPisteId"),
     DFCI_PISTE_ADRESSE("dfciPisteAdresse"),
