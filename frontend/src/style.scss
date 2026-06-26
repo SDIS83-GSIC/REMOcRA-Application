@@ -173,3 +173,6 @@ h3 {
     transparent 24px
   );
 }
+
+/* Permet de conserver les sauts de ligne */
+.text-pre-line { white-space: pre-line; }

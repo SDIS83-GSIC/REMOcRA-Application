@@ -269,7 +269,7 @@ const GenererForm = ({
       )}
       {rapportPersonnaliseCourrierCourant?.description && (
         <Row className="mt-3">
-          <Col>
+          <Col className="text-pre-line">
             <b>Description : </b>
             {rapportPersonnaliseCourrierCourant.description}
           </Col>
