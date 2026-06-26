@@ -63,7 +63,7 @@ class SignalementRepository @Inject constructor(private val dsl: DSLContext) : A
             SIGNALEMENT_TYPE_ELEMENT.ID.`as`("id"),
             SIGNALEMENT_TYPE_ELEMENT.CODE.`as`("code"),
             SIGNALEMENT_TYPE_ELEMENT.LIBELLE.`as`("libelle"),
-        ).from(SIGNALEMENT_TYPE_ELEMENT).fetchInto()
+        ).from(SIGNALEMENT_TYPE_ELEMENT).orderBy(SIGNALEMENT_TYPE_ELEMENT.LIBELLE).fetchInto()
 
     fun getTypeAnomalie(): List<SignalementTypeAnomalie> = dsl.selectFrom(SIGNALEMENT_TYPE_ANOMALIE).fetchInto()
 
