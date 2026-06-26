@@ -2,11 +2,14 @@ package remocra.usecase.dfci
 
 import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
+import remocra.data.enums.ErrorType
 import remocra.db.DfciPanneauRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.DfciPanneau
 import remocra.eventbus.tracabilite.TracabiliteEvent
+import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
 /**
@@ -16,7 +19,9 @@ class UpdateDfciPanneauUseCase @Inject constructor(private val dfciPanneauReposi
     TypeOperation.UPDATE,
 ) {
     override fun checkDroits(userInfo: WrappedUserInfo) {
-        // Attente du tableau de droits
+        if (!userInfo.hasDroit(droitWeb = Droit.DFCI_PANNEAU_U)) {
+            throw RemocraResponseException(ErrorType.DFCI_PANNEAU_U_FORBIDDEN)
+        }
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: DfciPanneau) {

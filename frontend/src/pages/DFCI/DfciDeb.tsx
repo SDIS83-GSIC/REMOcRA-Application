@@ -1,6 +1,7 @@
 import { useFormikContext } from "formik";
 import { Row } from "react-bootstrap";
 import { number, object, string } from "yup";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import PositiveNumberInput, {
   FormContainer,
@@ -10,12 +11,14 @@ import PositiveNumberInput, {
 } from "../../components/Form/Form.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
+import { hasDroit } from "../../droits.tsx";
 import {
   DfciDebEntity,
   listTypeDebroussaillement,
   listTypeProgramme,
   listTypeTravaux,
 } from "../../Entities/DfciDebEntity.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { numberPositif, requiredString } from "../../module/validators.tsx";
 import { IdCodeLibelleType } from "../../utils/typeUtils.tsx";
@@ -79,6 +82,7 @@ export const validationSchemaDeb = object({
 });
 
 const DfciDeb = ({ readOnly }: { readOnly: boolean }) => {
+  const { user } = useAppContext();
   const { values, setFieldValue } = useFormikContext<DfciDebEntity>();
 
   const listMassif: IdCodeLibelleType[] = useGet(url`/api/dfci/massif`).data;
@@ -87,15 +91,23 @@ const DfciDeb = ({ readOnly }: { readOnly: boolean }) => {
   ).data;
   const listOuvrage: IdCodeLibelleType[] = useGet(url`/api/dfci/ouvrage`).data;
 
+  const hasDroitUpdateDfciDeb = hasDroit(user, TYPE_DROIT.DFCI_DEB_U);
+  const isDisabled = readOnly || !hasDroitUpdateDfciDeb;
+
   return (
     <>
       {listMassif && listPrestataire && listOuvrage && (
         <FormContainer>
+          {!hasDroitUpdateDfciDeb && !readOnly && (
+            <p className="fade alert alert-danger show">
+              Vous n'avez pas le droit de modification
+            </p>
+          )}
           <Row>
             <TextInput
               name="dfciDebLibelle"
               label="Libellé"
-              disabled={readOnly}
+              disabled={isDisabled}
               value={values.dfciDebLibelle}
               required={true}
             />
@@ -128,7 +140,7 @@ const DfciDeb = ({ readOnly }: { readOnly: boolean }) => {
             <NumberInput
               name="dfciDebSurface"
               label="Surface (au dixième d'hectare)"
-              disabled={readOnly}
+              disabled={isDisabled}
               value={values.dfciDebSurface}
               required={true}
               min={0}
@@ -147,7 +159,7 @@ const DfciDeb = ({ readOnly }: { readOnly: boolean }) => {
                     )
                   : undefined
               }
-              disabled={readOnly}
+              disabled={isDisabled}
               required={true}
               setFieldValue={setFieldValue}
             />
@@ -156,7 +168,7 @@ const DfciDeb = ({ readOnly }: { readOnly: boolean }) => {
             <PositiveNumberInput
               name="dfciDebMoisTravaux"
               label="Mois des travaux"
-              disabled={readOnly}
+              disabled={isDisabled}
               value={values.dfciDebMoisTravaux}
               required={false}
             />
@@ -165,7 +177,7 @@ const DfciDeb = ({ readOnly }: { readOnly: boolean }) => {
             <PositiveNumberInput
               name="dfciDebAnneeTravaux"
               label="Année des travaux"
-              disabled={readOnly}
+              disabled={isDisabled}
               value={values.dfciDebAnneeTravaux}
               required={false}
             />
@@ -180,7 +192,7 @@ const DfciDeb = ({ readOnly }: { readOnly: boolean }) => {
                   ? listTypeTravaux.find((e) => e.id === values.dfciDebTravaux)
                   : undefined
               }
-              disabled={readOnly}
+              disabled={isDisabled}
               required={false}
               setFieldValue={setFieldValue}
             />
@@ -198,7 +210,7 @@ const DfciDeb = ({ readOnly }: { readOnly: boolean }) => {
             <PositiveNumberInput
               name="dfciDebAnneeProgramme"
               label="Année de programmation"
-              disabled={readOnly}
+              disabled={isDisabled}
               value={values.dfciDebAnneeProgramme}
               required={false}
             />
@@ -215,7 +227,7 @@ const DfciDeb = ({ readOnly }: { readOnly: boolean }) => {
                     )
                   : undefined
               }
-              disabled={readOnly}
+              disabled={isDisabled}
               required={false}
               setFieldValue={setFieldValue}
             />
@@ -232,7 +244,7 @@ const DfciDeb = ({ readOnly }: { readOnly: boolean }) => {
                     )
                   : undefined
               }
-              disabled={readOnly}
+              disabled={isDisabled}
               required={false}
               setFieldValue={setFieldValue}
             />
@@ -259,10 +271,10 @@ const DfciDeb = ({ readOnly }: { readOnly: boolean }) => {
               label="Remarque"
               value={values.dfciDebRemarque}
               required={false}
-              disabled={readOnly}
+              disabled={isDisabled}
             />
           </Row>
-          {!readOnly && <SubmitFormButtons />}
+          {!readOnly && hasDroitUpdateDfciDeb && <SubmitFormButtons />}
         </FormContainer>
       )}
     </>

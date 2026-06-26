@@ -11,9 +11,10 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
-import remocra.auth.Public
+import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.enums.TypeElementCarte
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.DfciDeb
 import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.dfci.GetDfciDebUseCase
@@ -43,7 +44,7 @@ class DfciDebEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/{dfciDebId}")
-    @Public("En attente du tableau de droit")
+    @RequireDroits([Droit.DFCI_R])
     fun getDebById(@PathParam("dfciDebId") debId: UUID): Response =
         Response.ok(
             getDfciDebUseCase.execute(debId),
@@ -51,7 +52,7 @@ class DfciDebEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/layer")
-    @Public("En attente du tableau de droit")
+    @RequireDroits([Droit.DFCI_R])
     fun layer(@QueryParam("bbox") bbox: String, @QueryParam("srid") srid: String): Response =
         Response.ok(
             getPointCarteUseCase.execute(
@@ -65,7 +66,7 @@ class DfciDebEndpoint : AbstractEndpoint() {
 
     @PUT
     @Path("/update")
-    @Public("En attente du tableau de droit")
+    @RequireDroits([Droit.DFCI_DEB_U])
     fun updateDeb(dfciDeb: DfciDeb): Response =
         Response.ok(
             updateDfciDebUseCase.execute(

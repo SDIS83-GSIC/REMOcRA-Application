@@ -11,9 +11,10 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
-import remocra.auth.Public
+import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.enums.TypeElementCarte
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.DfciAire
 import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.dfci.GetDfciAiresUseCase
@@ -47,7 +48,7 @@ class DfciAiresEndpoint : AbstractEndpoint() {
      */
     @GET
     @Path("/{dfciAireId}")
-    @Public("En attente du tableau de droit")
+    @RequireDroits([Droit.DFCI_R])
     fun getDfciAireById(
         @PathParam("dfciAireId") aireId: UUID,
     ): Response =
@@ -57,7 +58,7 @@ class DfciAiresEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/layer")
-    @Public("En attente du tableau de droit")
+    @RequireDroits([Droit.DFCI_R])
     fun layer(@QueryParam("bbox") bbox: String, @QueryParam("srid") srid: String): Response =
         Response.ok(
             getPointCarteUseCase.execute(
@@ -74,7 +75,7 @@ class DfciAiresEndpoint : AbstractEndpoint() {
      */
     @PUT
     @Path("/update")
-    @Public("En attente du tableau de droit")
+    @RequireDroits([Droit.DFCI_AIRE_U])
     fun updateAireById(dfciAire: DfciAire): Response =
         Response.ok(
             this.updateAireUseCase.execute(

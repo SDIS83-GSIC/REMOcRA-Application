@@ -12,9 +12,10 @@ import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
 import org.locationtech.jts.geom.Geometry
-import remocra.auth.Public
+import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.enums.TypeElementCarte
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.DfciPiste
 import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.dfci.GetDfciPisteUseCase
@@ -48,7 +49,7 @@ class DfciPistesEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/piste-id-code-libelle")
-    @Public("En attente du tableau de droit")
+    @RequireDroits([Droit.DFCI_R])
     fun getPisteIdCodeLibelle(
         @QueryParam("geometrie") geometrie: Geometry,
     ): Response =
@@ -59,7 +60,7 @@ class DfciPistesEndpoint : AbstractEndpoint() {
      */
     @GET
     @Path("/{pisteId}")
-    @Public("En attente du tableau de droit")
+    @RequireDroits([Droit.DFCI_R])
     fun getDfciPisteById(@PathParam("pisteId") pisteId: UUID): Response =
         Response.ok(
             getDfciPisteUseCase.execute(pisteId),
@@ -70,7 +71,7 @@ class DfciPistesEndpoint : AbstractEndpoint() {
      */
     @GET
     @Path("/layer")
-    @Public("En attente du tableau de droit")
+    @RequireDroits([Droit.DFCI_R])
     fun layer(@QueryParam("bbox") bbox: String, @QueryParam("srid") srid: String): Response =
         Response.ok(
             getPointCarteUseCase.execute(
@@ -84,7 +85,7 @@ class DfciPistesEndpoint : AbstractEndpoint() {
 
     @PUT
     @Path("/update")
-    @Public("En attente du tableau de droit")
+    @RequireDroits([Droit.DFCI_PISTE_U])
     fun update(dfciPiste: DfciPiste): Response =
         Response.ok(
             updatePisteUseCase.execute(

@@ -1258,6 +1258,20 @@ export const TooltipMapDFCI = ({
   const typeElem: DFCI_ELEMENT = featureSelect?.getProperties().dfciTypeElement;
   const elementId = featureSelect?.getProperties().elementId;
   const [readOnlyForm, setReadOnlyForm] = useState(true);
+  const { user } = useAppContext();
+
+  function hasDroitUpdateElem() {
+    switch (typeElem) {
+      case DFCI_ELEMENT.AIRE:
+        return hasDroit(user, TYPE_DROIT.DFCI_AIRE_U);
+      case DFCI_ELEMENT.PISTE:
+        return hasDroit(user, TYPE_DROIT.DFCI_PISTE_U);
+      case DFCI_ELEMENT.DEBROUSSAILLEMENT:
+        return hasDroit(user, TYPE_DROIT.DFCI_DEB_U);
+      case DFCI_ELEMENT.PANNEAU:
+        return hasDroit(user, TYPE_DROIT.DFCI_PANNEAU_U);
+    }
+  }
 
   return (
     <div ref={ref}>
@@ -1265,8 +1279,9 @@ export const TooltipMapDFCI = ({
         featureSelect={featureSelect}
         overlay={overlay}
         displayButtonDelete={false}
-        displayButtonEdit={true}
+        displayButtonEdit={hasDroitUpdateElem()}
         displayButtonSee={true}
+        disabledEdit={!hasDroitUpdateElem()}
         onClickSee={() => {
           setShowVoletInfo(true), setReadOnlyForm(true);
         }}

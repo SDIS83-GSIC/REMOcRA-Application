@@ -1,6 +1,7 @@
 import { useFormikContext } from "formik";
 import { Row } from "react-bootstrap";
 import { object, string } from "yup";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
@@ -10,6 +11,7 @@ import {
 } from "../../components/Form/Form.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
+import { hasDroit } from "../../droits.tsx";
 import {
   DfciPanneauEntity,
   listTypeBzero,
@@ -17,6 +19,7 @@ import {
   listTypePanneau,
   listTypePostion,
 } from "../../Entities/DfciPanneauEntity.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { requiredBoolean, requiredDate } from "../../module/validators.tsx";
 import { formatForDateInput } from "../../utils/formatDateUtils.tsx";
@@ -74,16 +77,25 @@ export const validationSchemaPanneau = object({
 });
 
 const DfciPanneau = ({ readOnly }: { readOnly: boolean }) => {
+  const { user } = useAppContext();
   const { values, setFieldValue } = useFormikContext<DfciPanneauEntity>();
 
   const listPiste: IdCodeLibelleType[] = useGet(
     url`/api/dfci-pistes/piste-id-code-libelle?${{ geometrie: values.dfciPanneauGeometrie }}`,
   ).data;
 
+  const hasDroitUpdateDfciPanneau = hasDroit(user, TYPE_DROIT.DFCI_PANNEAU_U);
+  const isDisabled = readOnly || !hasDroitUpdateDfciPanneau;
+
   return (
     <>
       {listPiste && (
         <FormContainer>
+          {!hasDroitUpdateDfciPanneau && !readOnly && (
+            <p className="fade alert alert-danger show">
+              Vous n'avez pas le droit de modification
+            </p>
+          )}
           <Row>
             <SelectForm
               name="dfciPanneauType"
@@ -94,7 +106,7 @@ const DfciPanneau = ({ readOnly }: { readOnly: boolean }) => {
                   ? listTypePanneau.find((e) => e.id === values.dfciPanneauType)
                   : undefined
               }
-              disabled={readOnly}
+              disabled={isDisabled}
               required={true}
               setFieldValue={setFieldValue}
             />
@@ -103,7 +115,7 @@ const DfciPanneau = ({ readOnly }: { readOnly: boolean }) => {
             <CheckBoxInput
               name="dfciPanneauEtat"
               label="En bon état"
-              disabled={readOnly}
+              disabled={isDisabled}
               checked={values.dfciPanneauEtat}
               required={true}
             />
@@ -118,7 +130,7 @@ const DfciPanneau = ({ readOnly }: { readOnly: boolean }) => {
                   ? listTypeBzero.find((e) => e.id === values.dfciPanneauBzero)
                   : undefined
               }
-              disabled={readOnly}
+              disabled={isDisabled}
               required={true}
               setFieldValue={setFieldValue}
             />
@@ -144,7 +156,7 @@ const DfciPanneau = ({ readOnly }: { readOnly: boolean }) => {
                     )
                   : undefined
               }
-              disabled={readOnly}
+              disabled={isDisabled}
               required={true}
               setFieldValue={setFieldValue}
             />
@@ -161,7 +173,7 @@ const DfciPanneau = ({ readOnly }: { readOnly: boolean }) => {
                     )
                   : undefined
               }
-              disabled={readOnly}
+              disabled={isDisabled}
               required={true}
               setFieldValue={setFieldValue}
             />
@@ -186,7 +198,7 @@ const DfciPanneau = ({ readOnly }: { readOnly: boolean }) => {
             <CheckBoxInput
               name="dfciPanneauNumPiste"
               label="Présence du n° de piste"
-              disabled={readOnly}
+              disabled={isDisabled}
               checked={values.dfciPanneauNumPiste}
               required={true}
             />
@@ -195,7 +207,7 @@ const DfciPanneau = ({ readOnly }: { readOnly: boolean }) => {
             <CheckBoxInput
               name="dfciPanneauLibellePiste"
               label="Présence du libellé de piste"
-              disabled={readOnly}
+              disabled={isDisabled}
               checked={values.dfciPanneauLibellePiste}
               required={true}
             />
@@ -204,12 +216,12 @@ const DfciPanneau = ({ readOnly }: { readOnly: boolean }) => {
             <TextAreaInput
               name="dfciPanneauRemarque"
               label="Remarque"
-              disabled={readOnly}
+              disabled={isDisabled}
               value={values.dfciPanneauRemarque}
               required={false}
             />
           </Row>
-          {!readOnly && <SubmitFormButtons />}
+          {!readOnly && hasDroitUpdateDfciPanneau && <SubmitFormButtons />}
         </FormContainer>
       )}
     </>

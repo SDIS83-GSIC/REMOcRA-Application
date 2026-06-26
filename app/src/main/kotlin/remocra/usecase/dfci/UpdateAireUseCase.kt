@@ -2,11 +2,14 @@ package remocra.usecase.dfci
 
 import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
+import remocra.data.enums.ErrorType
 import remocra.db.DfciAiresRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.DfciAire
 import remocra.eventbus.tracabilite.TracabiliteEvent
+import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 
 /**
@@ -15,7 +18,9 @@ import remocra.usecase.AbstractCUDUseCase
 class UpdateAireUseCase @Inject constructor(private val dfciAiresRepository: DfciAiresRepository) : AbstractCUDUseCase<DfciAire>(TypeOperation.UPDATE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
-        // Attendre le tableau de droit
+        if (!userInfo.hasDroit(droitWeb = Droit.DFCI_AIRE_U)) {
+            throw RemocraResponseException(ErrorType.DFCI_AIRE_U_FORBIDDEN)
+        }
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: DfciAire) {

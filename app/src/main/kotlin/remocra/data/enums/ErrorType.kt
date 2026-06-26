@@ -693,6 +693,16 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     // ********************************************************************************
     //
     REQUETE_SQL_CREATION_INVALIDE(33001, "La requête de création est invalide"),
+
+    //
+    // ********************************************************************************
+    // DFCI
+    // ********************************************************************************
+    //
+    DFCI_AIRE_U_FORBIDDEN(34001, "Vous n'avez le droit de modification des aires DFCI."),
+    DFCI_PISTE_U_FORBIDDEN(34002, "Vous n'avez le droit de modification des pistes DFCI."),
+    DFCI_DEB_U_FORBIDDEN(34003, "Vous n'avez le droit de modification des débroussaillements DFCI."),
+    DFCI_PANNEAU_U_FORBIDDEN(34004, "Vous n'avez le droit de modification des panneaux DFCI."),
     ;
 
     override fun toString(): String {

@@ -11,9 +11,10 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
-import remocra.auth.Public
+import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.enums.TypeElementCarte
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.DfciPanneau
 import remocra.usecase.carte.GetPointCarteUseCase
 import remocra.usecase.dfci.GetDfciPanneauUseCase
@@ -45,7 +46,7 @@ class DfciPanneauxEndpoint : AbstractEndpoint() {
      */
     @GET
     @Path("/{dfciPanneauId}")
-    @Public("En attente du tableau de droit")
+    @RequireDroits([Droit.DFCI_R])
     fun getPanneauById(@PathParam("dfciPanneauId") dfciPanneauId: UUID): Response =
         Response.ok(
             this.getDfciPanneauUseCase.execute(dfciPanneauId),
@@ -56,7 +57,7 @@ class DfciPanneauxEndpoint : AbstractEndpoint() {
      */
     @GET
     @Path("/layer")
-    @Public("En attente du tableau de droit")
+    @RequireDroits([Droit.DFCI_R])
     fun layer(@QueryParam("bbox") bbox: String, @QueryParam("srid") srid: String): Response =
         Response.ok(
             getPointCarteUseCase.execute(
@@ -73,7 +74,7 @@ class DfciPanneauxEndpoint : AbstractEndpoint() {
      */
     @PUT
     @Path("/update")
-    @Public("En attente du tableau de droit")
+    @RequireDroits([Droit.DFCI_PANNEAU_U])
     fun updatePanneau(dfciPanneau: DfciPanneau): Response =
         Response.ok(
             updateDfciPanneauUseCase.execute(

@@ -1,6 +1,7 @@
 import { useFormikContext } from "formik";
 import { Row } from "react-bootstrap";
 import { number, object, string } from "yup";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import PositiveNumberInput, {
   CheckBoxInput,
@@ -11,6 +12,7 @@ import PositiveNumberInput, {
 } from "../../components/Form/Form.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
+import { hasDroit } from "../../droits.tsx";
 import {
   DfciPisteEntity,
   listTypeCroisement,
@@ -21,6 +23,7 @@ import {
   listTypeTravaux,
   listTypeVoie,
 } from "../../Entities/DfciPisteEntity.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import url from "../../module/fetch.tsx";
 import {
   requiredBoolean,
@@ -138,15 +141,24 @@ const DfciPiste = ({ readOnly }: { readOnly: boolean }) => {
   ).data;
   const listOuvrage: IdCodeLibelleType[] = useGet(url`/api/dfci/ouvrage`).data;
 
+  const { user } = useAppContext();
+  const hasDroitUpdateDfciPiste = hasDroit(user, TYPE_DROIT.DFCI_PISTE_U);
+  const isDisabled = readOnly || !hasDroitUpdateDfciPiste;
+
   return (
     <>
       {listCategoPiste && listMassif && listPrestataire && listOuvrage && (
         <FormContainer>
+          {!hasDroitUpdateDfciPiste && !readOnly && (
+            <p className="fade alert alert-danger show">
+              Vous n'avez pas le droit de modification
+            </p>
+          )}
           <Row>
             <TextInput
               name="dfciPisteLibelle"
               label="Piste"
-              disabled={readOnly}
+              disabled={isDisabled}
               value={values.dfciPisteLibelle}
               required={true}
             />
@@ -180,7 +192,7 @@ const DfciPiste = ({ readOnly }: { readOnly: boolean }) => {
             <TextInput
               name="dfciPisteAdresse"
               label="Adresse"
-              disabled={readOnly}
+              disabled={isDisabled}
               value={values.dfciPisteAdresse}
               required={false}
             />
@@ -232,7 +244,7 @@ const DfciPiste = ({ readOnly }: { readOnly: boolean }) => {
             <CheckBoxInput
               name="dfciPistePraticabilite"
               label="Praticabilité"
-              disabled={readOnly}
+              disabled={isDisabled}
               checked={values.dfciPistePraticabilite}
               required={true}
             />
@@ -249,7 +261,7 @@ const DfciPiste = ({ readOnly }: { readOnly: boolean }) => {
                     )
                   : undefined
               }
-              disabled={readOnly}
+              disabled={isDisabled}
               required={false}
               setFieldValue={setFieldValue}
             />
@@ -303,7 +315,7 @@ const DfciPiste = ({ readOnly }: { readOnly: boolean }) => {
             <PositiveNumberInput
               name="dfciPisteAnneeTravaux"
               label="Année des travaux"
-              disabled={readOnly}
+              disabled={isDisabled}
               value={values.dfciPisteAnneeTravaux}
               required={false}
             />
@@ -320,7 +332,7 @@ const DfciPiste = ({ readOnly }: { readOnly: boolean }) => {
                     )
                   : undefined
               }
-              disabled={readOnly}
+              disabled={isDisabled}
               required={false}
               setFieldValue={setFieldValue}
             />
@@ -376,7 +388,7 @@ const DfciPiste = ({ readOnly }: { readOnly: boolean }) => {
             <PositiveNumberInput
               name="dfciPisteAnneeProgramme"
               label="Année de programmation"
-              disabled={readOnly}
+              disabled={isDisabled}
               value={values.dfciPisteAnneeProgramme}
               required={false}
             />
@@ -393,7 +405,7 @@ const DfciPiste = ({ readOnly }: { readOnly: boolean }) => {
                     )
                   : undefined
               }
-              disabled={readOnly}
+              disabled={isDisabled}
               required={false}
               setFieldValue={setFieldValue}
             />
@@ -410,7 +422,7 @@ const DfciPiste = ({ readOnly }: { readOnly: boolean }) => {
                     )
                   : undefined
               }
-              disabled={readOnly}
+              disabled={isDisabled}
               required={false}
               setFieldValue={setFieldValue}
             />
@@ -428,7 +440,7 @@ const DfciPiste = ({ readOnly }: { readOnly: boolean }) => {
                   : undefined
               }
               required={false}
-              disabled={readOnly}
+              disabled={isDisabled}
               setFieldValue={setFieldValue}
             />
           </Row>
@@ -453,11 +465,11 @@ const DfciPiste = ({ readOnly }: { readOnly: boolean }) => {
               name="dfciPisteRemarque"
               label="Remarque"
               value={values.dfciPisteRemarque}
-              disabled={readOnly}
+              disabled={isDisabled}
               required={false}
             />
           </Row>
-          {!readOnly && <SubmitFormButtons />}
+          {!readOnly && hasDroitUpdateDfciPiste && <SubmitFormButtons />}
         </FormContainer>
       )}
     </>

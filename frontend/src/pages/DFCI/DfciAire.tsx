@@ -1,6 +1,7 @@
 import { useFormikContext } from "formik";
 import { Row } from "react-bootstrap";
 import { object, string } from "yup";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
 import {
   CheckBoxInput,
@@ -11,10 +12,12 @@ import {
 } from "../../components/Form/Form.tsx";
 import SelectForm from "../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
+import { hasDroit } from "../../droits.tsx";
 import {
   DfciAireEntity,
   listTypeAire,
 } from "../../Entities/DfciAireEntity.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import url from "../../module/fetch.tsx";
 import {
   requiredBoolean,
@@ -62,21 +65,30 @@ export const validationSchemaDfciAire = object({
 });
 
 const DfciAire = ({ readOnly }: { readOnly: boolean }) => {
+  const { user } = useAppContext();
   const { values, setFieldValue } = useFormikContext<DfciAireEntity>();
 
   const listPiste: IdCodeLibelleType[] = useGet(
     url`/api/dfci-pistes/piste-id-code-libelle?${{ geometrie: values.dfciAireGeometrie }}`,
   ).data;
 
+  const hasDroitUpdateDfciAire = hasDroit(user, TYPE_DROIT.DFCI_AIRE_U);
+  const isDisabled = readOnly || !hasDroitUpdateDfciAire;
+
   return (
     <>
       {listPiste && (
         <FormContainer>
+          {!hasDroitUpdateDfciAire && !readOnly && (
+            <p className="fade alert alert-danger show">
+              Vous n'avez pas le droit de modification
+            </p>
+          )}
           <Row>
             <CheckBoxInput
               name="dfciAireAmenagement"
               label="Aménagement"
-              disabled={readOnly}
+              disabled={isDisabled}
               checked={values.dfciAireAmenagement}
               required={true}
             />
@@ -94,7 +106,7 @@ const DfciAire = ({ readOnly }: { readOnly: boolean }) => {
             <NumberInput
               name="dfciAireGrandeDimension"
               label="Plus grande dimension (en mètres)"
-              disabled={readOnly}
+              disabled={isDisabled}
               value={values.dfciAireGrandeDimension}
               min={0}
               step={0.1}
@@ -105,7 +117,7 @@ const DfciAire = ({ readOnly }: { readOnly: boolean }) => {
             <NumberInput
               name="dfciAirePetiteDimension"
               label="Plus petite dimension (en mètres)"
-              disabled={readOnly}
+              disabled={isDisabled}
               value={values.dfciAirePetiteDimension}
               min={0}
               step={0.1}
@@ -120,7 +132,7 @@ const DfciAire = ({ readOnly }: { readOnly: boolean }) => {
               defaultValue={listTypeAire?.find(
                 (e) => e.code === values.dfciAireType,
               )}
-              disabled={readOnly}
+              disabled={isDisabled}
               setFieldValue={setFieldValue}
               required={true}
             />
@@ -144,10 +156,10 @@ const DfciAire = ({ readOnly }: { readOnly: boolean }) => {
               label="Remarque"
               value={values.dfciAireRemarque}
               required={false}
-              disabled={readOnly}
+              disabled={isDisabled}
             />
           </Row>
-          {!readOnly && <SubmitFormButtons />}
+          {!readOnly && hasDroitUpdateDfciAire && <SubmitFormButtons />}
         </FormContainer>
       )}
     </>
