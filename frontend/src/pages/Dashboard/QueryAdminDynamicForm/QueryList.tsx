@@ -366,6 +366,8 @@ const QueryList = forwardRef<QueryListRef, QueryListProps>(
                       className="text-danger text-decoration-none"
                       title={false}
                       disabled={isLoadingQuery || isValidatingQuery}
+                      header="Supprimer la requête"
+                      content="Êtes-vous sûr de vouloir supprimer cette requête ?"
                     />
                   </div>
                 </ListGroup.Item>
