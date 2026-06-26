@@ -269,10 +269,12 @@ const Pei = ({
   isNew = false,
   close,
   returnBouton = true,
+  isFromMap = true,
 }: {
   isNew?: boolean;
   close: () => void;
   returnBouton: boolean;
+  isFromMap?: boolean;
 }) => {
   // On récupère l'utilisateur pour prendre en compte les droits
   const { user, srid }: { user: UtilisateurEntity; srid: number } =
@@ -500,6 +502,7 @@ const Pei = ({
           setFieldValue={setFieldValue}
           isNew={isNew}
           renumerotationInterneAuto={renumerotationInterneAuto}
+          isFromMap={isFromMap}
           displayIdentifiantGestionnaire={displayIdentifiantGestionnaire}
           user={user}
         />
@@ -718,6 +721,7 @@ const FormEntetePei = ({
   setFieldValue,
   isNew,
   renumerotationInterneAuto,
+  isFromMap,
   displayIdentifiantGestionnaire = false,
   user,
 }: {
@@ -727,6 +731,7 @@ const FormEntetePei = ({
   setFieldValue: (champ: string, newValue: any | undefined) => void;
   isNew: boolean;
   renumerotationInterneAuto: boolean;
+  isFromMap: boolean;
   displayIdentifiantGestionnaire: boolean;
   user: UtilisateurEntity;
 }) => {
@@ -768,7 +773,7 @@ const FormEntetePei = ({
     listNatureDeci && (
       <>
         <Row>
-          <Col xs={12} sm={5} lg={2}>
+          <Col xs={12} sm={isFromMap ? 12 : 5} lg={isFromMap ? 12 : 2}>
             <PositiveNumberInput
               name="peiNumeroInterne"
               label="Numéro interne"
@@ -780,7 +785,11 @@ const FormEntetePei = ({
               }
             />
           </Col>
-          <Col>
+          <Col
+            xs={12}
+            lg={isFromMap ? 6 : 5}
+            className={isFromMap ? "mt-3 mt-lg-0" : ""}
+          >
             <SelectForm
               name={"peiTypePei"}
               listIdCodeLibelle={listTypePei}
@@ -797,7 +806,11 @@ const FormEntetePei = ({
               }}
             />
           </Col>
-          <Col>
+          <Col
+            xs={12}
+            lg={isFromMap ? 6 : 5}
+            className={isFromMap ? "mt-3 mt-lg-0" : ""}
+          >
             {values.peiTypePei && (
               <SelectNomenclaturesForm
                 name={"peiNatureId"}
