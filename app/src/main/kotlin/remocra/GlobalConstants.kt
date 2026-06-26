@@ -180,4 +180,5 @@ object GlobalConstants {
 
     // DFCI
     const val DFCI_TOLERANCE_DFCI_PISTE_METRES = "DFCI_TOLERANCE_DFCI_PISTE_METRES"
+    const val DFCI_LISTE_COUCHE = "DFCI_LISTE_COUCHE"
 }

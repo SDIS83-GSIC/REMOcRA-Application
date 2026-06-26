@@ -110,6 +110,10 @@ class UpdateParametresUseCase
             updateParametre(ParametreEnum.DFCI_TRAVAUX_OBJET_EMAIL, parametresAdminData.dfci.dfciTravauxObjetEmail)
             updateParametre(ParametreEnum.DFCI_TRAVAUX_CORPS_EMAIL, parametresAdminData.dfci.dfciTravauxCorpsEmail)
             updateParametre(ParametreEnum.DFCI_TOLERANCE_DFCI_PISTE_METRES, parametresAdminData.dfci.dfciToleranceDfciPisteMetres?.toString())
+            updateParametre(
+                ParametreEnum.DFCI_LISTE_COUCHE,
+                objectMapper.writeValueAsString(parametresAdminData.dfci.dfciListeCouche),
+            )
 
             // Permis
             updateParametre(

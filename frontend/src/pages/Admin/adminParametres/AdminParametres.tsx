@@ -27,6 +27,9 @@ import { IconParametre } from "../../../components/Icon/Icon.tsx";
 import { hasDroit } from "../../../droits.tsx";
 import typeAgent from "../../../Entities/TypeAgentEntity.tsx";
 import { referenceColumnPei } from "../../../enums/ColumnPeiEnum.tsx";
+import referenceDfciListeCouche, {
+  DFCI_LISTE_COUCHE,
+} from "../../../enums/DfciListeCoucheEnum.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import typeAffichageCoordonnees from "../../../enums/TypeAffichageCoordonnees.tsx";
 import typeRouteHistoriquePei from "../../../enums/TypeRouteHistoriquePei.tsx";
@@ -55,6 +58,7 @@ type ParametresSectionDfci = {
   dfciTravauxObjetEmail: string;
   dfciTravauxCorpsEmail: string;
   dfciToleranceDfciPisteMetres: number;
+  dfciListeCouche: DFCI_LISTE_COUCHE[];
 };
 
 type ParametresSectionMobile = {
@@ -1178,6 +1182,16 @@ const AdminCouvertureHydraulique = ({
 };
 
 const AdminDfci = ({ values }: { values: ParametresSectionDfci }) => {
+  const { setFieldValue } = useFormikContext();
+
+  const listeCoucheDfci: IdCodeLibelleType[] = referenceDfciListeCouche.map(
+    (e) => ({
+      id: e.code,
+      code: e.code,
+      libelle: e.libelle,
+    }),
+  );
+
   return (
     values && (
       <>
@@ -1204,6 +1218,29 @@ const AdminDfci = ({ values }: { values: ParametresSectionDfci }) => {
           <PositiveNumberInput
             name="dfci.dfciToleranceDfciPisteMetres"
             label="Tolérance (en m) de détection des pistes"
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
+          <Multiselect
+            name={"dfci.dfciListeCouche"}
+            label="Liste des couches DFCI à afficher"
+            options={listeCoucheDfci}
+            getOptionValue={(e) => e.id}
+            getOptionLabel={(e) => e.libelle}
+            value={
+              values?.dfciListeCouche?.map((e) =>
+                listeCoucheDfci?.find((r: IdCodeLibelleType) => r.id === e),
+              ) ?? undefined
+            }
+            onChange={(coucheDfci) => {
+              const coucheDfciListe: DFCI_LISTE_COUCHE[] = coucheDfci.map(
+                (e) => e.id,
+              );
+              coucheDfciListe.length > 0
+                ? setFieldValue("dfci.dfciListeCouche", coucheDfciListe)
+                : setFieldValue("dfci.dfciListeCouche", []);
+            }}
+            required={false}
           />
         </AdminParametre>
       </>
