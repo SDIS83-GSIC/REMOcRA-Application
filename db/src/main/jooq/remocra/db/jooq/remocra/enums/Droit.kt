@@ -129,6 +129,12 @@ enum class Droit(@get:JvmName("literal") public val literal: String) : EnumType 
     ADMIN_ORGANISME_R("ADMIN_ORGANISME_R"),
     MOBILE_DEPLACER_PEI_U("MOBILE_DEPLACER_PEI_U"),
     TOURNEE_DESAFFECTER_U("TOURNEE_DESAFFECTER_U"),
+    DFCI_AIRE_U("DFCI_AIRE_U"),
+    DFCI_PISTE_U("DFCI_PISTE_U"),
+    DFCI_DEB_U("DFCI_DEB_U"),
+    DFCI_PANNEAU_U("DFCI_PANNEAU_U"),
+    DFCI_GESTION_CONFLITS_R("DFCI_GESTION_CONFLITS_R"),
+    DFCI_GESTION_CONFLITS_A("DFCI_GESTION_CONFLITS_A"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA
