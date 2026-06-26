@@ -893,6 +893,20 @@ class PeiRepository
             .orderBy(PEI.NUMERO_COMPLET)
             .fetchInto()
 
+    fun getListIdNumeroCompletInZoneCompetenceIndisposTemp(userInfo: WrappedUserInfo): Collection<IdNumeroComplet> =
+        dsl.selectDistinct(PEI.ID, PEI.NUMERO_COMPLET)
+            .from(
+                userInfo.isSuperAdmin.let {
+                    if (it) {
+                        PEI
+                    } else PEI.join(ZONE_INTEGRATION)
+                        .on(ZONE_INTEGRATION.ID.eq(userInfo.zoneCompetence!!.zoneIntegrationId))
+                        .where(ST_Within(PEI.GEOMETRIE, ZONE_INTEGRATION.GEOMETRIE))
+                },
+            ).join(L_INDISPONIBILITE_TEMPORAIRE_PEI).on(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
+            .orderBy(PEI.NUMERO_COMPLET)
+            .fetchInto()
+
     fun deleteById(peiId: UUID) = dsl.deleteFrom(PEI).where(PEI.ID.eq(peiId)).execute()
 
     fun getGeometriePei(peiId: UUID): Point =

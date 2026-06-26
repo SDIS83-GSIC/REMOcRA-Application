@@ -759,7 +759,7 @@ export function GetColumnIndisponibiliteTemporaireByStringArray({
   parametres: Array<COLUMN_INDISPONIBILITE_TEMPORAIRE>;
   fetchGeometry: (typeGeometrie: string, idInsiponibiliteTemp: string) => void;
 }): Array<columnType> {
-  const listePeiState = useGet(url`/api/pei/get-id-numero`);
+  const listePeiState = useGet(url`/api/pei/get-id-numero-indispos-temp`);
   const communeListState = useGet(url`/api/commune/get-libelle-commune`);
   const column: Array<columnType> = [];
   parametres.forEach((_parametre: COLUMN_INDISPONIBILITE_TEMPORAIRE) => {
