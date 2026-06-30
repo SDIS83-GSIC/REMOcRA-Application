@@ -10,6 +10,7 @@ import remocra.db.TaskRepository
 import remocra.db.jooq.remocra.tables.pojos.Parametre
 import remocra.eventbus.EventListener
 import remocra.eventbus.parametres.ParametresModifiedEvent
+import remocra.schedule.ApacheTasksExecutor
 import remocra.schedule.SchedulableTasksExecutor
 import remocra.utils.getBooleanOrNull
 import remocra.utils.getDoubleOrNull
@@ -24,6 +25,7 @@ constructor(
     private val parametreRepository: ParametreRepository,
     private val taskRepository: TaskRepository,
     private val schedulableTasksExecutor: SchedulableTasksExecutor,
+    private val apacheTasksExecutor: ApacheTasksExecutor,
 ) : Provider<ParametresData>, EventListener<ParametresModifiedEvent> {
     private lateinit var parametres: ParametresData
     override fun get(): ParametresData {
@@ -39,6 +41,7 @@ constructor(
     private fun reloadParametres() {
         parametres = getData()
         schedulableTasksExecutor.start()
+        apacheTasksExecutor.start()
     }
 
     private fun getData(): ParametresData {
