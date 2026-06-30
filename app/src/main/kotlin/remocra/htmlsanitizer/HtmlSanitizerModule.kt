@@ -33,7 +33,8 @@ object HtmlSanitizerModule : RemocraModule() {
                     null
                 }
             }.onElements("iframe")
-            .allowAttributes("style").onElements("div", "section", "a", "span", "p", "img", "h1", "h2", "h3", "h4")
+            .allowAttributes("style").onElements("div", "section", "a", "span", "p", "img", "h1", "h2", "h3", "h4", "table", "tbody", "tr", "td", "th", "thead", "tfoot")
+            .allowElements("table", "tbody", "tr", "td", "th", "thead", "tfoot")
             .requireRelNofollowOnLinks()
             .toFactory()
     }
