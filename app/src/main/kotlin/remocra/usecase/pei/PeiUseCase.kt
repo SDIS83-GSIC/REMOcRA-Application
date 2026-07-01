@@ -26,8 +26,8 @@ import remocra.db.SiteRepository
 import remocra.db.VoieRepository
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.usecase.AbstractUseCase
+import remocra.usecase.commune.GetCommuneVoieUseCase
 import remocra.usecase.messagelongueindispo.GetMessagePeiLongueIndispoUseCase
-import remocra.utils.GetCommuneVoieUseCase
 import remocra.utils.toGeomFromText
 import remocra.utils.transform
 import java.util.UUID

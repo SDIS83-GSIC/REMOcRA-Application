@@ -9,7 +9,7 @@ import remocra.data.enums.ParametreEnum
 import remocra.db.UtilisateurRepository
 import remocra.db.VoieRepository
 import remocra.usecase.AbstractUseCase
-import remocra.utils.GetCommuneVoieUseCase
+import remocra.usecase.commune.GetCommuneVoieUseCase
 import remocra.utils.getListOfString
 import kotlin.text.get
 

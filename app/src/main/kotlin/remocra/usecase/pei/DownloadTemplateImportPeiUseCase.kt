@@ -1,10 +1,9 @@
-package remocra.web.pei
+package remocra.usecase.pei
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.inject.Inject
 import remocra.csv.CsvWriter
 import remocra.usecase.AbstractUseCase
-import remocra.web.pei.import.ImportPeiUseCase.Companion.CSV_DELIMITER
 import java.io.ByteArrayOutputStream
 
 class DownloadTemplateImportPeiUseCase @Inject constructor(
@@ -35,6 +34,6 @@ class DownloadTemplateImportPeiUseCase @Inject constructor(
     fun execute(): ByteArrayOutputStream =
         csvWriter.writeCsvStream<MajPositionsPeiTemplateCsv>(
             emptyList(),
-            CSV_DELIMITER,
+            ImportPeiUseCase.Companion.CSV_DELIMITER,
         )
 }

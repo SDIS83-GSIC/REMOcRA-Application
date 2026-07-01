@@ -1,4 +1,4 @@
-package remocra.web.pei.import
+package remocra.usecase.pei
 
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Coordinate
@@ -13,8 +13,8 @@ import remocra.data.enums.ErrorType
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
-import remocra.usecase.pei.PeiUseCase
-import remocra.usecase.pei.UpdatePeiUseCase
+import remocra.web.pei.import.ImportPeiData
+import remocra.web.pei.import.LigneImportPeiData
 
 class MajPositionPeiUseCase @Inject constructor(
     private val peiUseCase: PeiUseCase,

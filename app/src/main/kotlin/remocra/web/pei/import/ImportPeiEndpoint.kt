@@ -13,9 +13,11 @@ import jakarta.ws.rs.core.SecurityContext
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.usecase.pei.DownloadTemplateImportPeiUseCase
+import remocra.usecase.pei.ImportPeiUseCase
+import remocra.usecase.pei.MajPositionPeiUseCase
 import remocra.utils.DateUtils
 import remocra.web.AbstractEndpoint
-import remocra.web.pei.DownloadTemplateImportPeiUseCase
 import java.nio.charset.StandardCharsets
 
 @Path("/maj-positions-pei")
