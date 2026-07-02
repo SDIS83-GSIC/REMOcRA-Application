@@ -12,4 +12,8 @@ fieldset legend {
 
 .checkbox-custom {
   transform: scale(1.5);
+  margin-top: 0.75rem;
+  margin-right: 0.5rem;
+  padding-bottom: 0;
+  margin-bottom: 0;
 }

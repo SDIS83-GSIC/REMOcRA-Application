@@ -257,7 +257,7 @@ export const CheckBoxInput = ({
       />
       <label
         htmlFor={id ?? name}
-        className={classNames("mx-2 mt-2", disabled ? "text-muted" : "")}
+        className={classNames("mx-0 mt-0 p-0", disabled ? "text-muted" : "")}
       >
         {label}
         {tooltipText && (
