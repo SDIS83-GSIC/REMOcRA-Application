@@ -119,16 +119,22 @@ const validationSchemaCalculDispoNumero = object({
 
 const prepareVariablesImporterCadastre = (values: {
   millesime: string | null;
+  supprimerDonneesCadastreNonUtilisees: boolean;
+  remplacerDonneesCadastre: boolean;
 }) => {
   return values;
 };
 
 const initialValuesImporterCadastre = {
   millesime: null,
+  supprimerDonneesCadastreNonUtilisees: false,
+  remplacerDonneesCadastre: false,
 };
 
 const validationSchemaImporterCadastre = object({
   millesime: string().nullable(),
+  supprimerDonneesCadastreNonUtilisees: boolean().required(),
+  remplacerDonneesCadastre: boolean().required(),
 });
 
 const CardTask = ({

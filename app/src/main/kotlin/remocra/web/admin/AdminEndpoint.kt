@@ -208,12 +208,16 @@ class AdminEndpoint : AbstractEndpoint() {
         importCadastreUseCase.execute(
             securityContext.userInfo,
             millesime = parametres.millesime,
+            supprimerDonneesCadastreNonUtilisees = parametres.supprimerDonneesCadastreNonUtilisees,
+            remplacerDonneesCadastre = parametres.remplacerDonneesCadastre,
         )
         return Response.ok().build()
     }
 
     class ParametreTaskImportCadastreInput {
         var millesime: String? = null
+        var supprimerDonneesCadastreNonUtilisees: Boolean = false
+        var remplacerDonneesCadastre: Boolean = false
     }
 
     @POST

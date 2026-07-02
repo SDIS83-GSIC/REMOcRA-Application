@@ -11,6 +11,7 @@ import remocra.db.jooq.remocra.tables.pojos.CadastreSection
 import remocra.db.jooq.remocra.tables.references.CADASTRE_PARCELLE
 import remocra.db.jooq.remocra.tables.references.CADASTRE_SECTION
 import remocra.db.jooq.remocra.tables.references.COMMUNE
+import remocra.db.jooq.remocra.tables.references.L_PERMIS_CADASTRE_PARCELLE
 import remocra.db.jooq.remocra.tables.references.OLDEB
 import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
 import remocra.utils.ST_Distance
@@ -96,6 +97,16 @@ class CadastreRepository @Inject constructor(
             .limit(limit)
             .fetchInto()
 
+    fun getAllSections(): Set<Pair<UUID, String>> =
+        dsl.select(CADASTRE_SECTION.COMMUNE_ID, CADASTRE_SECTION.NUMERO)
+            .from(CADASTRE_SECTION)
+            .fetch {
+                val communeId = it.get<UUID>(CADASTRE_SECTION.COMMUNE_ID)
+                val numero = it.get<String>(CADASTRE_SECTION.NUMERO)
+                communeId to numero
+            }
+            .toSet()
+
     fun insertSection(cadastreSection: CadastreSection) =
         dsl.insertInto(
             CADASTRE_SECTION,
@@ -111,6 +122,23 @@ class CadastreRepository @Inject constructor(
                 cadastreSection.cadastreSectionCommuneId,
             ).onConflictDoNothing()
             .execute()
+
+    fun updateGeometrieSection(cadastreSection: CadastreSection) =
+        dsl.update(CADASTRE_SECTION)
+            .set(CADASTRE_SECTION.GEOMETRIE, cadastreSection.cadastreSectionGeometrie)
+            .where(CADASTRE_SECTION.NUMERO.eq(cadastreSection.cadastreSectionNumero))
+            .and(CADASTRE_SECTION.COMMUNE_ID.eq(cadastreSection.cadastreSectionCommuneId))
+            .execute()
+
+    fun getAllParcelles(): Set<Pair<UUID, String>> =
+        dsl.select(CADASTRE_PARCELLE.CADASTRE_SECTION_ID, CADASTRE_PARCELLE.NUMERO)
+            .from(CADASTRE_PARCELLE)
+            .fetch {
+                val sectionId = it.get<UUID>(CADASTRE_PARCELLE.CADASTRE_SECTION_ID)
+                val numero = it.get<String>(CADASTRE_PARCELLE.NUMERO)
+                sectionId to numero
+            }
+            .toSet()
 
     fun insertParcelle(cadastreParcelle: CadastreParcelle) =
         dsl.insertInto(
@@ -128,4 +156,37 @@ class CadastreRepository @Inject constructor(
             )
             .onConflictDoNothing()
             .execute()
+
+    fun updateGeometrieParcelle(cadastreParcelle: CadastreParcelle) =
+        dsl.update(CADASTRE_PARCELLE)
+            .set(CADASTRE_PARCELLE.GEOMETRIE, cadastreParcelle.cadastreParcelleGeometrie)
+            .where(CADASTRE_PARCELLE.NUMERO.eq(cadastreParcelle.cadastreParcelleNumero))
+            .and(CADASTRE_PARCELLE.CADASTRE_SECTION_ID.eq(cadastreParcelle.cadastreParcelleCadastreSectionId))
+            .execute()
+
+    fun deleteUnusedParcelles() =
+        dsl.deleteFrom(CADASTRE_PARCELLE)
+            .where(
+                CADASTRE_PARCELLE.ID.notIn(
+                    dsl.select(OLDEB.CADASTRE_PARCELLE_ID)
+                        .from(OLDEB),
+                ),
+            ).and(
+                CADASTRE_PARCELLE.ID.notIn(
+                    dsl.select(L_PERMIS_CADASTRE_PARCELLE.CADASTRE_PARCELLE_ID).from(L_PERMIS_CADASTRE_PARCELLE),
+                ),
+            )
+
+    fun deleteUnusedSections() =
+        dsl.deleteFrom(CADASTRE_SECTION)
+            .where(
+                CADASTRE_SECTION.ID.notIn(
+                    dsl.select(CADASTRE_PARCELLE.CADASTRE_SECTION_ID)
+                        .from(CADASTRE_PARCELLE),
+                ),
+            ).and(
+                CADASTRE_SECTION.ID.notIn(
+                    dsl.select(OLDEB.CADASTRE_SECTION_ID).from(OLDEB),
+                ),
+            )
 }

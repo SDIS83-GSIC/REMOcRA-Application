@@ -1,5 +1,9 @@
 import { useFormikContext } from "formik";
-import { FormContainer, TextInput } from "../../../../components/Form/Form.tsx";
+import {
+  CheckBoxInput,
+  FormContainer,
+  TextInput,
+} from "../../../../components/Form/Form.tsx";
 import SubmitFormButtons from "../../../../components/Form/SubmitFormButtons.tsx";
 
 const ImporterCadastre = () => {
@@ -20,7 +24,20 @@ const ImporterCadastre = () => {
         required={false}
         value={values?.millesime}
       />
-
+      <CheckBoxInput
+        label="Nettoyer les données du cadastre avant l'import"
+        tooltipText="Supprime toutes les données du cadastre non utilisées avant de réintégrer les nouvelles données. Permet une réintégration propre sans données obsolètes."
+        name="supprimerDonneesCadastreNonUtilisees"
+        required={false}
+        checked={values?.supprimerDonneesCadastreNonUtilisees}
+      />
+      <CheckBoxInput
+        label="Remplacer les géométries existantes en cas de doublon"
+        tooltipText="En cas de doublon (même parcelle/section dans la même commune), remplace la géométrie existante par celle du nouveau cadastre. Si non sélectionné, conserve la géométrie d'origine."
+        name="remplacerDonneesCadastre"
+        required={false}
+        checked={values?.remplacerDonneesCadastre}
+      />
       <SubmitFormButtons returnLink={false} submitTitle="Exécuter" />
     </FormContainer>
   );
@@ -30,4 +47,6 @@ export default ImporterCadastre;
 
 type ImporterCadastreType = {
   millesime: string;
+  supprimerDonneesCadastreNonUtilisees: boolean;
+  remplacerDonneesCadastre: boolean;
 };
