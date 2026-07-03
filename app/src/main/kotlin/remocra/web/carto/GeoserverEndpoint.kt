@@ -21,10 +21,14 @@ import remocra.auth.userInfo
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypeModule
 import remocra.exception.RemocraResponseException
+import remocra.geoserver.GeoserverModule
 import remocra.security.NoCsrf
+import remocra.usecase.AbstractUseCase
+import remocra.usecase.GeoserverUseCase
 import remocra.usecase.carto.CheckCoucheDispoGeoserverUseCase
 import remocra.usecase.carto.GetFeaturesTypeUseCase
 import remocra.utils.addQueryParameters
+import remocra.utils.badGateway
 import remocra.utils.forbidden
 import remocra.utils.notFound
 import remocra.web.AbstractEndpoint
@@ -37,6 +41,12 @@ class GeoserverEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var httpClient: OkHttpClient
+
+    @Inject
+    lateinit var geoserverUseCase: GeoserverUseCase
+
+    @Inject
+    lateinit var geoserverSettings: GeoserverModule.GeoserverSettings
 
     @Inject lateinit var getFeaturesTypeUseCase: GetFeaturesTypeUseCase
 
@@ -74,6 +84,49 @@ class GeoserverEndpoint : AbstractEndpoint() {
         @PathParam("coucheNom") coucheNom: String,
     ): Response {
         return Response.ok(checkCoucheDispoGeoserverUseCase.execute(coucheNom)).build()
+    }
+
+    @Public("Les couches peuvent etre accessibles publiquement")
+    @NoCsrf("OpenLayers utilise un <img src=> qui ne permet pas l'entete CSRF")
+    @Path("/wms")
+    @GET
+    fun proxyWms(
+        @Context uriInfo: UriInfo,
+        @Context securityContext: SecurityContext,
+    ): Response = proxyWmsInternal(uriInfo, securityContext, null)
+
+    @Public("Les couches peuvent etre accessibles publiquement")
+    @NoCsrf("OpenLayers utilise un <img src=> qui ne permet pas l'entete CSRF")
+    @Path("/wms/{suffix: .*}")
+    @GET
+    fun proxyWms(
+        @PathParam("suffix") suffix: String,
+        @Context uriInfo: UriInfo,
+        @Context securityContext: SecurityContext,
+    ): Response = proxyWmsInternal(uriInfo, securityContext, suffix)
+
+    private fun proxyWmsInternal(
+        uriInfo: UriInfo,
+        securityContext: SecurityContext,
+        suffix: String?,
+    ): Response {
+        val result = geoserverUseCase.proxyWms(securityContext.userInfo, uriInfo, suffix)
+
+        if (result !is AbstractUseCase.Result.Success) {
+            return result.wrap()
+        }
+
+        // Si c'est un GetCapabilities, il faut qu'on transforme les url geoserver en url REMOcRA, sinon,
+        //  comme Geoserver est privé, les partenaires externes des SDIS ne pourront pas accéder aux ressources
+        if (uriInfo.queryParameters["REQUEST"]?.firstOrNull()?.lowercase() == "getcapabilities") {
+            return proxyCapabilitiesWithRemocraUrls(
+                result.entity as Request,
+                uriInfo.requestUri.toString().substringBefore("?"),
+                geoserverSettings.url.toString(),
+            )
+        }
+
+        return doProxyRequest(httpClient, result.entity as Request)
     }
 
     @Public("Les couches peuvent être accessibles publiquement")
@@ -131,5 +184,27 @@ class GeoserverEndpoint : AbstractEndpoint() {
             .url(url)
             .build()
         return doProxyRequest(httpClient, request)
+    }
+
+    private fun proxyCapabilitiesWithRemocraUrls(request: Request, remocraWmsUrl: String, geoserverWmsUrl: String): Response {
+        httpClient.newCall(request).execute().use { response ->
+            if (response.isRedirect) {
+                return badGateway().build()
+            }
+            val body = response.body()
+            val contentType = body?.contentType()?.toString()
+            val payload = body?.bytes() ?: ByteArray(0)
+            val rewrittenPayload = if (contentType?.contains("xml", ignoreCase = true) == true) {
+                String(payload)
+                    .replace(geoserverWmsUrl, remocraWmsUrl)
+                    .toByteArray()
+            } else {
+                payload
+            }
+            return Response.status(response.code())
+                .type(contentType)
+                .entity(rewrittenPayload)
+                .build()
+        }
     }
 }
