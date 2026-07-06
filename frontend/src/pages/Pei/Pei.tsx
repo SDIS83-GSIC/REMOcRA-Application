@@ -125,11 +125,15 @@ export const validationSchema = object({
   peiNatureDeciId: requiredString,
 
   peiCommuneId: requiredString,
-  //peiVoieId: requiredString,
-  // TODO ici un XOR entre voie et voieText ?
   peiDomaineId: requiredString,
   coordonneeX: requiredNumber,
   coordonneeY: requiredNumber,
+}).test("voie-xor", "", function (values) {
+  const { voieSaisieLibre, peiVoieId, peiVoieTexte } = values;
+  if (voieSaisieLibre) {
+    return peiVoieTexte != null && peiVoieTexte.trim() !== "";
+  }
+  return peiVoieId != null;
 });
 
 export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
@@ -285,12 +289,7 @@ const Pei = ({
     setValues,
     setFieldValue,
   }: {
-    values: PeiEntity & {
-      typeSystemeSrid: { srid: number; nomSystem: string };
-      coordonneeXToDisplay: string;
-      coordonneeYToDisplay: string;
-      voieSaisieLibre: boolean;
-    };
+    values: PeiFormValues;
   } = useFormikContext();
   const selectDataState = useGet(
     url`/api/pei/referentiel-for-upsert-pei?${{
@@ -456,7 +455,10 @@ const Pei = ({
       accordionIndex: index + 1,
     },
     {
-      name: "peiVoieId",
+      name: "voie-xor",
+      constraint: values.voieSaisieLibre
+        ? values.peiVoieTexte == null || values.peiVoieTexte.trim() === ""
+        : values.peiVoieId == null || values.peiVoieId === "",
       accordionIndex: index + 1,
     },
     {
@@ -688,30 +690,43 @@ const Pei = ({
  * @param show : fonction d'ouverture d'une section
  * @param listValuesWithConstraints : liste des valeurs qui ont des contraintes avec l'index de l'accordion
  */
+type PeiFormValues = PeiEntity & {
+  typeSystemeSrid: { srid: number; nomSystem: string };
+  coordonneeXToDisplay: string;
+  coordonneeYToDisplay: string;
+  voieSaisieLibre: boolean;
+};
+
 function checkValidity(
-  values: any,
+  values: PeiFormValues,
   show: (e: number) => void,
   listValuesWithConstraints: ValuesWithConstraints[],
 ) {
-  listValuesWithConstraints.map((e: ValuesWithConstraints) => {
-    if (
-      (validationSchema.fields[e.name] != null &&
-        (values[e.name] === null ||
-          values[e.name] === "" ||
-          values[e.name] === undefined)) ||
-      e.constraint === true
-    ) {
+  const schemaFieldNames = new Set(Object.keys(validationSchema.fields));
+  const isFormField = (fieldName: string): fieldName is keyof PeiFormValues =>
+    fieldName in values;
+
+  for (const e of listValuesWithConstraints) {
+    const hasFieldValidationError =
+      schemaFieldNames.has(e.name) &&
+      isFormField(e.name) &&
+      (values[e.name] === null ||
+        values[e.name] === "" ||
+        values[e.name] === undefined);
+
+    const hasConstraintError = e.constraint === true;
+    if (hasFieldValidationError || hasConstraintError) {
       show(e.accordionIndex);
+      break;
     }
-  });
+  }
 }
 
 type ValuesWithConstraints = {
-  name: string;
+  name: keyof PeiFormValues | "voie-xor";
   constraint?: boolean;
   accordionIndex: number;
 };
-
 export default Pei;
 
 const FormEntetePei = ({
