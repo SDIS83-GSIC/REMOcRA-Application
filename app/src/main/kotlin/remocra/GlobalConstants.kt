@@ -177,7 +177,4 @@ object GlobalConstants {
 
     // Rapports personnalisés
     const val RAPPORT_PERSO_PEI_HISTORIQUE = "PEI_HISTORIQUE"
-
-    // API client scope par défaut lors de la création d'un organisme client
-    const val CLIENT_SCOPE_AUDIENCE_REMOCRA = "audience-remocra"
 }

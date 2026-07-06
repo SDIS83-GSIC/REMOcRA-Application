@@ -1,7 +1,7 @@
 package remocra.usecase.api
 
 import jakarta.inject.Inject
-import remocra.GlobalConstants
+import remocra.auth.AuthModule
 import remocra.data.enums.ErrorType
 import remocra.exception.RemocraResponseException
 import remocra.keycloak.KeycloakApi
@@ -9,24 +9,25 @@ import remocra.usecase.AbstractUseCase
 
 class KeycloakAudienceScopeUseCase @Inject constructor(
     private val keycloakApi: KeycloakApi,
+    private val authnSettings: AuthModule.AuthnSettings,
 ) : AbstractUseCase() {
     fun associateAudienceScope(token: String, techniqueClientId: String, errorType: ErrorType) {
-        val clientScopesResponse = keycloakApi.getClientScopes(token, GlobalConstants.CLIENT_SCOPE_AUDIENCE_REMOCRA).execute()
+        val clientScopesResponse = keycloakApi.getClientScopes(token, authnSettings.clientScopeApiAudience).execute()
         if (!clientScopesResponse.isSuccessful) {
             val replacement = "${clientScopesResponse.message()} - (${clientScopesResponse.errorBody()?.source()}"
             throw RemocraResponseException(errorType, replacement)
         }
 
-        val audienceScope = clientScopesResponse.body().orEmpty().firstOrNull { it.name == GlobalConstants.CLIENT_SCOPE_AUDIENCE_REMOCRA }
+        val audienceScope = clientScopesResponse.body().orEmpty().firstOrNull { it.name == authnSettings.clientScopeApiAudience }
             ?: throw RemocraResponseException(
                 errorType,
-                "Client scope '${GlobalConstants.CLIENT_SCOPE_AUDIENCE_REMOCRA}' introuvable dans Keycloak",
+                "Client scope '${authnSettings.clientScopeApiAudience}' introuvable dans Keycloak",
             )
 
         val audienceScopeId = audienceScope.id
             ?: throw RemocraResponseException(
                 errorType,
-                "Client scope '${GlobalConstants.CLIENT_SCOPE_AUDIENCE_REMOCRA}' sans identifiant technique",
+                "Client scope '${authnSettings.clientScopeApiAudience}' sans identifiant technique",
             )
 
         val defaultScopesResponse = keycloakApi.getDefaultClientScopes(token, techniqueClientId).execute()
