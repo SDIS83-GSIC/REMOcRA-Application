@@ -403,7 +403,13 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
             PeiCaracteristique.MAINTENANCE_CTP -> (mapAlias[PeiCaracteristique.MAINTENANCE_CTP] as Organisme).LIBELLE
             PeiCaracteristique.COMPLEMENT -> PEI.COMPLEMENT_ADRESSE
             PeiCaracteristique.DIAMETRE_NOMINAL -> DIAMETRE.LIBELLE
-            PeiCaracteristique.CAPACITE -> PENA.CAPACITE
+            PeiCaracteristique.CAPACITE ->
+                DSL.case_()
+                    .`when`(PENA.CAPACITE_ILLIMITEE.isTrue, DSL.`val`("Illimitée"))
+                    .`when`(
+                        PENA.CAPACITE.isNotNull,
+                        DSL.concat(PENA.CAPACITE.cast(String::class.java), DSL.`val`(" m³")),
+                    )
             PeiCaracteristique.DATE_RECEPTION -> V_PEI_VISITE_DATE.LAST_RECEPTION
             PeiCaracteristique.DEBIT -> V_PEI_LAST_MESURES.DEBIT
             PeiCaracteristique.NUMERO_COMPLET -> PEI.NUMERO_COMPLET
