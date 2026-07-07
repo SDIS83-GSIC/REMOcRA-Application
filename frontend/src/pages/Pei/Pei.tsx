@@ -779,9 +779,8 @@ const FormEntetePei = ({
               label="Numéro interne"
               required={false}
               disabled={
-                !isNew &&
-                !hasDroit(user, TYPE_DROIT.PEI_NUMERO_INTERNE_U) &&
-                !renumerotationInterneAuto
+                renumerotationInterneAuto ||
+                (!isNew && !hasDroit(user, TYPE_DROIT.PEI_NUMERO_INTERNE_U))
               }
             />
           </Col>
