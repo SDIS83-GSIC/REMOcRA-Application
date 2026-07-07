@@ -64,7 +64,7 @@ const GaugeComponent = ({ data, config }: GaugeComponentProps) => {
 
   const rawLimits: Limit[] = Array.isArray(config?.limits) ? config.limits : [];
   const highColor = config?.highColor || "#e74c3c";
-  const barColor = config?.barColor || "#8884d8";
+  const barColor = config?.barColor || "#00293e";
 
   interface Section {
     from: number;

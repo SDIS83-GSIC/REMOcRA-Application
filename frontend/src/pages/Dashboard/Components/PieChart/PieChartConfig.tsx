@@ -44,7 +44,7 @@ const PieChartConfig = (options: {
     const intervals = options.config.colorIntervals || [];
     handleChange("colorIntervals", [
       ...intervals,
-      { value: "", color: "#8884d8" },
+      { value: "", color: "#00293e" },
     ]);
   };
 

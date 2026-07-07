@@ -10,7 +10,7 @@ import {
 import { setSimpleValueMapped } from "../../MappedValueComponent.tsx";
 
 const COLORS = [
-  "#8884d8",
+  "#00293e",
   "#82ca9d",
   "#ffc658",
   "#ff8042",
@@ -87,7 +87,7 @@ const PieChartComponent = (data: { data: any[] | undefined; config: any }) => {
           nameKey="name"
           outerRadius="80%" // Rayon externe du pie
           innerRadius="30%" // Rayon interne (pour un graphique en donut, par exemple)
-          fill="#8884d8"
+          fill="#00293e"
           label={renderCustomizedLabel}
           shape={PieCell}
         />

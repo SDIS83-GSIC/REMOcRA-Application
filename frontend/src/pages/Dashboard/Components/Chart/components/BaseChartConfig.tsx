@@ -79,7 +79,7 @@ const BaseChartConfig = ({
           <Form.Label className="fw-bold mt-3">Couleur des barres :</Form.Label>
           <Form.Control
             type="color"
-            defaultValue={config.barColor || "#8884d8"}
+            defaultValue={config.barColor || "#00293e"}
             onBlur={(e) => updateConfig("barColor", e.target.value)}
             style={{ width: "100px", height: "40px" }}
           />
