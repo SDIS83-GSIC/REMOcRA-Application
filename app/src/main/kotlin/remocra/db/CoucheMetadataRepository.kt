@@ -239,10 +239,9 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
                 DSL.select(
                     GROUPE_FONCTIONNALITES.ID.`as`("groupeFonctionnaliteId"),
                 )
-                    .from(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA)
-                    .join(GROUPE_FONCTIONNALITES)
-                    .on(GROUPE_FONCTIONNALITES.ID.eq(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID))
+                    .from(GROUPE_FONCTIONNALITES)
                     .where(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID.eq(COUCHE_METADATA.ID))
+                    .and(GROUPE_FONCTIONNALITES.ID.eq(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID))
                     .and(GROUPE_FONCTIONNALITES.ID.eq(groupeFonctionnaliteId)),
             ).convertFrom { records ->
                 records.map { (id) -> id as UUID }
@@ -250,6 +249,7 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
         )
             .from(COUCHE_METADATA)
             .join(COUCHE).on(COUCHE.ID.eq(COUCHE_METADATA.COUCHE_ID))
+            .join(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA).on(COUCHE_METADATA.ID.eq(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.COUCHE_METADATA_ID))
             .where(COUCHE_METADATA.ACTIF.isTrue)
             .and(COUCHE_METADATA.COUCHE_ID.`in`(couchesIds))
             .and(L_GROUPE_FONCTIONNALITES_COUCHE_METADATA.GROUPE_FONCTIONNALITES_ID.eq(groupeFonctionnaliteId))
