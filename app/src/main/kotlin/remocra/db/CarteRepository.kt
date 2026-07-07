@@ -525,7 +525,7 @@ class CarteRepository @Inject constructor(
         override var propertiesToDisplay: String? = "<b>Etat :</b> ${getEtatSignalementLibelle(signalementType)} <br/>" +
             "<b>Description :</b> ${signalementDescription.orEmpty()} " +
             "<br /><b>Date constat :</b> ${signalementDateConstat?.format(DateTimeFormatter.ofPattern(DateUtils.PATTERN_NATUREL, Locale.getDefault()))} " +
-            "<br/><b>Liste des élements :</b> ${
+            "<br/><b>Liste des éléments :</b> ${
                 listSousElementAvecAnomalie.joinToString {
                     "${it.sousElement} (anomalie(s) constatée(s) : ${
                         it.listeAnomalie.takeIf { !it.isNullOrBlank() }.apply { it } ?: "aucune anomalie"
