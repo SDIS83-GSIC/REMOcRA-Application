@@ -11,6 +11,7 @@ import { IconInfo, IconUtilisateurs } from "../../../components/Icon/Icon.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import {
   SECTION_DROIT,
+  TypeDroitInfobulle,
   TypeDroitLabel,
   TypeDroitSection,
 } from "../../../enums/DroitEnum.tsx";
@@ -125,10 +126,25 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                         tooltipText={typeDroit}
                                         nowrap={false}
                                       >
-                                        {TypeDroitLabel.get(typeDroit)
-                                          ? TypeDroitLabel.get(typeDroit)
-                                          : ""}{" "}
+                                        <>
+                                          {TypeDroitLabel.get(typeDroit)
+                                            ? TypeDroitLabel.get(typeDroit)
+                                            : ""}{" "}
+                                        </>
                                       </TooltipCustom>
+                                      {TypeDroitInfobulle.get(typeDroit) && (
+                                        <TooltipCustom
+                                          tooltipId={`infobulle-${idxTD}`}
+                                          tooltipText={TypeDroitInfobulle.get(
+                                            typeDroit,
+                                          )}
+                                          nowrap={false}
+                                        >
+                                          <span className="ps-1">
+                                            <IconInfo />
+                                          </span>
+                                        </TooltipCustom>
+                                      )}
                                     </td>
                                     {values.map(
                                       (groupeFonctionnalites, idxPD) => (

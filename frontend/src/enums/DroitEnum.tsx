@@ -405,6 +405,14 @@ export const TypeDroitLabel = new Map<string, string>([
   [TYPE_DROIT.ZOOM_LIEU_R, "Zoomer sur un lieu"],
 ]);
 
+// Map des infobulles pour les droits (à compléter si nécessaire)
+export const TypeDroitInfobulle = new Map<string, string>([
+  [
+    TYPE_DROIT.PEI_NUMERO_INTERNE_U,
+    "Si le paramètre 'Activer la renumérotation interne automatique des PEI' est activé, l'utilisateur ne pourra pas modifier le numéro interne d'un PEI même si le droit est coché.",
+  ],
+]);
+
 export enum TYPE_DROIT_API {
   ADMINISTRER = "ADMINISTRER",
   RECEVOIR = "RECEVOIR",

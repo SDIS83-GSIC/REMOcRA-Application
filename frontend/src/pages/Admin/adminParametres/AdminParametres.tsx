@@ -1482,6 +1482,9 @@ const AdminPei = ({
             name="pei.peiRenumerotationInterneAuto"
             label="Activer la renumérotation interne automatique des PEI"
             checked={values?.peiRenumerotationInterneAuto}
+            tooltipText={
+              "Si le paramètre est activé, la saisie du numéro interne d'un PEI sera impossible même si l'utilisateur a le droit 'Saisir le numéro interne d'un PEI' (PEI_NUMERO_INTERNE_U)."
+            }
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
