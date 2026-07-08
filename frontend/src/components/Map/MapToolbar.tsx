@@ -563,19 +563,19 @@ const MapToolbar = forwardRef(
               activeTool={activeTool}
               variant={variant}
             />
-            {showOutilI &&
-              ((metadata && metadata.length > 0) || user?.isSuperAdmin) && (
-                <ToolbarButton
-                  toolName={"info-outil-i"}
-                  toolIcon={<IconInfo />}
-                  toolLabelTooltip={
-                    "Obtenir des informations sur un point de la carte"
-                  }
-                  toggleTool={toggleTool}
-                  activeTool={activeTool}
-                  variant={variant}
-                />
-              )}
+            {(user?.isSuperAdmin ||
+              (showOutilI && metadata && metadata.length > 0)) && (
+              <ToolbarButton
+                toolName={"info-outil-i"}
+                toolIcon={<IconInfo />}
+                toolLabelTooltip={
+                  "Obtenir des informations sur un point de la carte"
+                }
+                toggleTool={toggleTool}
+                activeTool={activeTool}
+                variant={variant}
+              />
+            )}
           </ButtonGroup>
         </ButtonToolbar>
 
