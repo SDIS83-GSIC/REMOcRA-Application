@@ -826,7 +826,7 @@ class TourneeRepository
                 VISITE_CTRL_DEBIT_PRESSION.PRESSION,
                 VISITE_CTRL_DEBIT_PRESSION.PRESSION_DYN,
             )
-            .distinctOn(PEI.ID)
+            .distinctOn(L_TOURNEE_PEI.ORDRE, PEI.ID)
             .from(PEI)
             .leftJoin(table(lastCDPCteName)).on(PEI.ID.eq(field(name("LAST_CDP_CTE", "PEI_ID"), SQLDataType.UUID)))
             .leftJoin(VISITE).on(PEI.ID.eq(VISITE.PEI_ID)).and(
@@ -837,7 +837,7 @@ class TourneeRepository
             .leftJoin(VISITE_CTRL_DEBIT_PRESSION).on(VISITE.ID.eq(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID))
             .join(L_TOURNEE_PEI).on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
             .where(L_TOURNEE_PEI.TOURNEE_ID.eq(tourneeId))
-            .orderBy(PEI.ID)
+            .orderBy(L_TOURNEE_PEI.ORDRE, PEI.ID)
             .fetchInto()
     }
 
