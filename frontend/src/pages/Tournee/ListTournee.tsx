@@ -215,7 +215,12 @@ const ListTournee = ({
       type: TYPE_BUTTON.DELETE,
       pathname: url`/api/tournee/`,
     });
+  }
 
+  if (
+    hasDroit(user, TYPE_DROIT.TOURNEE_ORDRE_PEIS_U) ||
+    hasDroit(user, TYPE_DROIT.TOURNEE_A)
+  ) {
     listeButton.push({
       row: (row: RowTournee) => {
         return row;
@@ -223,7 +228,9 @@ const ListTournee = ({
       route: (idTournee) => URLS.TOURNEE_PEI(idTournee),
       type: TYPE_BUTTON.LINK,
       icon: <IconSortList />,
-      textEnable: "Gérer les PEI et leur ordre dans une tournée",
+      textEnable: hasDroit(user, TYPE_DROIT.TOURNEE_A)
+        ? "Gérer les PEI et leur ordre dans la tournée"
+        : "Gérer l'ordre des PEI dans la tournée",
       textDisable: textDisable,
       classEnable: "warning",
       disable: (v) => {

@@ -748,7 +748,7 @@ export default [
         element: (
           <Authorization
             Component={TourneePei}
-            droits={[TYPE_DROIT.TOURNEE_A]}
+            droits={[TYPE_DROIT.TOURNEE_A, TYPE_DROIT.TOURNEE_ORDRE_PEIS_U]}
           />
         ),
       },

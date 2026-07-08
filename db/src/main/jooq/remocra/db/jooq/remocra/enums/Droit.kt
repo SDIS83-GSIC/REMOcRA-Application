@@ -135,6 +135,7 @@ enum class Droit(@get:JvmName("literal") public val literal: String) : EnumType 
     DFCI_PANNEAU_U("DFCI_PANNEAU_U"),
     DFCI_GESTION_CONFLITS_R("DFCI_GESTION_CONFLITS_R"),
     DFCI_GESTION_CONFLITS_A("DFCI_GESTION_CONFLITS_A"),
+    TOURNEE_ORDRE_PEIS_U("TOURNEE_ORDRE_PEIS_U"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA
