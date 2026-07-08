@@ -50,6 +50,7 @@ const TourneeForm = ({
               ? "Création d'une tournée"
               : "Modification de la tournée " + tourneeLibelle
           }
+          displayReturnButton={!hideSubmit}
         />
         <Col>
           <TextInput name="tourneeLibelle" label="Nom de la tournée :" />
