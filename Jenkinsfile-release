@@ -94,25 +94,49 @@ pipeline {
       steps {
         dockerBuildAndPublish(imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3:${REMOCRA_VERSION}",
           dockerfile: 'docker/Dockerfile', buildArgs: [ REMOCRA_VERSION: params.REMOCRA_VERSION ]) { imageId ->
-               dockerSbom image: imageId, file: 'docker-sbom.json', exclude: '/opt/remocra/'
-             }
-        dockerBuildAndPublish imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3-keycloak:${REMOCRA_VERSION}",
-            buildDir: 'keycloak'
-        dockerBuildAndPublish imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3-geoserver:${REMOCRA_VERSION}",
-            buildDir: 'geoserver', buildArgs: [ REMOCRA_VERSION: params.REMOCRA_VERSION ]
-        dockerBuildAndPublish imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3-apache-hop:${REMOCRA_VERSION}",
-            buildDir: 'apachehop'
+            dockerSbom image: imageId, file: 'docker-sbom.json', exclude: '/opt/remocra/'
+          }
+        dockerBuildAndPublish(imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3-keycloak:${REMOCRA_VERSION}",
+          buildDir: 'keycloak') { imageId ->
+            dockerSbom image: imageId, file: 'docker-keycloak-sbom.json'
+          }
+        dockerBuildAndPublish(imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3-geoserver:${REMOCRA_VERSION}",
+          buildDir: 'geoserver', buildArgs: [ REMOCRA_VERSION: params.REMOCRA_VERSION ]) { imageId ->
+            dockerSbom image: imageId, file: 'docker-geoserver-sbom.json'
+          }
+        dockerBuildAndPublish(imageName: "client-docker-registry.atolcd.com/atolcd/remocra-v3-apache-hop:${REMOCRA_VERSION}",
+          buildDir: 'apachehop') { imageId ->
+            dockerSbom image: imageId, file: 'docker-apachehop-sbom.json'
+          }
       }
     }
     stage ('Publish SBOM') {
       steps {
-          smartDependencyTrackPublisher name: 'remocra-v3',
-            version: versionMajorMinor(params.REMOCRA_VERSION),
-            bomFiles: ['docker-sbom.json', 'frontend/npm-sbom.json', 'app/build/reports/cyclonedx-direct/bom.json'],
-            classifier: 'APPLICATION',
-            hierarchical: true
+        script {
+          version = versionMajorMinor(params.REMOCRA_VERSION)
         }
+        smartDependencyTrackPublisher name: 'remocra-v3',
+          version: version,
+          bomFiles: ['docker-sbom.json', 'frontend/npm-sbom.json', 'app/build/reports/cyclonedx-direct/bom.json'],
+          classifier: 'APPLICATION',
+          hierarchical: true
+        smartDependencyTrackPublisher name: 'remocra-v3',
+          version: "keycloak-${version}",
+          bomFiles: ['docker-keycloak-sbom.json'],
+          classifier: 'CONTAINER',
+          hierarchical: true
+        smartDependencyTrackPublisher name: 'remocra-v3',
+          version: "geoserver-${version}",
+          bomFiles: ['docker-geoserver-sbom.json'],
+          classifier: 'CONTAINER',
+          hierarchical: true
+        smartDependencyTrackPublisher name: 'remocra-v3',
+          version: "apachehop-${version}",
+          bomFiles: ['docker-apachehop-sbom.json'],
+          classifier: 'CONTAINER',
+          hierarchical: true
       }
+    }
   }
   post {
     always {
