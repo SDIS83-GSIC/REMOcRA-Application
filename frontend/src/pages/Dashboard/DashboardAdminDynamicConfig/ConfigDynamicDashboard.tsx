@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Button, Nav } from "react-bootstrap";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
@@ -27,7 +27,9 @@ type ConfigDynamicDashboardProps = {
   editTabIndex: number | null | undefined;
   setEditTabIndex: (arg0: number | null | undefined) => void;
   componentsListDashboard: ComponentDashboard[] | null;
-  setComponentsListDashboard: (arg0: ComponentDashboard[] | null) => void;
+  setComponentsListDashboard: Dispatch<
+    SetStateAction<ComponentDashboard[] | null>
+  >;
 };
 
 const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
@@ -100,7 +102,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
       );
       // Réinitialisation des indexKey pour chaque onglet
       const resetOpenListDashboard = updatedDashboard.map(
-        (dashboard: any, index: any) => ({
+        (dashboard: DashboardItemParam, index: number) => ({
           ...dashboard,
           index: index,
         }),
@@ -126,7 +128,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           signal: abortControllerRef.current.signal,
-        } as any),
+        }),
       );
       await response.json();
       // le dashboard n'existe plus
@@ -135,9 +137,10 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
       }
       updateDashboardList(indexKey);
       successToast("Le tableau de bord a correctement été supprimé");
-    } catch (e: any) {
+    } catch (e: unknown) {
+      const errorName = e instanceof Error ? e.name : undefined;
       // Ne pas afficher d'erreur si c'est une annulation volontaire
-      if (e?.name !== "AbortError") {
+      if (errorName !== "AbortError") {
         errorToast(String(e));
       }
     }
