@@ -532,6 +532,52 @@ const DropdownButtonPrivate = ({ row, _button }: DropdownButtonType) => {
               );
             }
 
+            if (child.type === TYPE_BUTTON.CONFIRM) {
+              const confirmHeader =
+                typeof child.confirmModal?.header === "function"
+                  ? child.confirmModal.header(row)
+                  : (child.confirmModal?.header ?? "Confirmer ?");
+              const confirmContent =
+                typeof child.confirmModal?.content === "function"
+                  ? child.confirmModal.content(row.value, row)
+                  : (child.confirmModal?.content ?? "");
+
+              const pathname =
+                typeof child.pathname === "function"
+                  ? child.pathname(row)
+                  : `${child.pathname ?? ""}${row.value ?? ""}`;
+
+              return (
+                <Dropdown.Item as="span" key={key} className="p-0">
+                  <ConfirmButtonWithModal
+                    path={pathname}
+                    reload={child.reload}
+                    icon={
+                      <span className="d-flex align-items-center">
+                        {icon}
+                        <span className="ms-2">{label}</span>
+                      </span>
+                    }
+                    disabled={disabled}
+                    classEnable={child.classEnable ?? "primary"}
+                    textDisable={
+                      child.textDisable ?? child.conditionnalTextDisable?.(row)
+                    }
+                    textEnable={label}
+                    tooltipId={key}
+                    isPost={child.isPost ?? true}
+                    header={confirmHeader}
+                    content={confirmContent as string}
+                    variant="link"
+                    className={classnames(
+                      "dropdown-item d-flex align-items-center w-100 px-3 py-1 text-start",
+                      disabled && "disabled",
+                    )}
+                  />
+                </Dropdown.Item>
+              );
+            }
+
             return (
               <Dropdown.Item
                 key={key}
