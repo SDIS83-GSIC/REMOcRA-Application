@@ -298,6 +298,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
         var onClause = onClause
         var jointureNature = false
         var jointureDiametre = false
+        var jointureVisiteDate = false
         fun buildJoinNature() {
             if (!jointureNature) {
                 onClause =
@@ -345,11 +346,14 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                 PeiCaracteristique.TYPE_PEI -> Unit
 
                 PeiCaracteristique.COMPLEMENT -> Unit
-                PeiCaracteristique.DATE_RECEPTION -> {
-                    onClause =
-                        onClause
-                            .leftJoin(V_PEI_VISITE_DATE)
-                            .on(V_PEI_VISITE_DATE.PEI_ID.eq(PEI.ID))
+                PeiCaracteristique.DATE_RECEPTION, PeiCaracteristique.DATE_ROI, PeiCaracteristique.DATE_ROP, PeiCaracteristique.DATE_CTP -> {
+                    if (!jointureVisiteDate) {
+                        onClause =
+                            onClause
+                                .leftJoin(V_PEI_VISITE_DATE)
+                                .on(V_PEI_VISITE_DATE.PEI_ID.eq(PEI.ID))
+                        jointureVisiteDate = true
+                    }
                 }
 
                 PeiCaracteristique.DEBIT -> {
@@ -411,6 +415,9 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                         DSL.concat(PENA.CAPACITE.cast(String::class.java), DSL.`val`(" m³")),
                     )
             PeiCaracteristique.DATE_RECEPTION -> V_PEI_VISITE_DATE.LAST_RECEPTION
+            PeiCaracteristique.DATE_ROI -> V_PEI_VISITE_DATE.LAST_RECO_INIT
+            PeiCaracteristique.DATE_ROP -> V_PEI_VISITE_DATE.LAST_ROP
+            PeiCaracteristique.DATE_CTP -> V_PEI_VISITE_DATE.LAST_CTP
             PeiCaracteristique.DEBIT -> V_PEI_LAST_MESURES.DEBIT
             PeiCaracteristique.NUMERO_COMPLET -> PEI.NUMERO_COMPLET
             PeiCaracteristique.JUMELE -> pibiJumeleTable.NUMERO_COMPLET

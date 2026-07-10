@@ -15,6 +15,9 @@ enum class PeiCaracteristique(val libelle: String, val typeCaracteristique: Type
     MAINTENANCE_CTP("Maintenance et CTP", TypeCaracteristique.GENERAL), // Localisation
     COMPLEMENT("Complément d'adresse", TypeCaracteristique.GENERAL),
     DATE_RECEPTION("Date de réception", TypeCaracteristique.GENERAL),
+    DATE_ROI("Date de reconnaissance initiale", TypeCaracteristique.GENERAL),
+    DATE_ROP("Date de la dernière ROP", TypeCaracteristique.GENERAL),
+    DATE_CTP("Date du dernier CTP", TypeCaracteristique.GENERAL),
     ADRESSE("Adresse", TypeCaracteristique.GENERAL),
 
     // PIBI
