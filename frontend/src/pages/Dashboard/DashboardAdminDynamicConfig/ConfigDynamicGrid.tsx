@@ -31,7 +31,10 @@ type ConfigDynamicGridProps = {
   setActiveDashboard: (arg0: DashboardItemParam) => void;
   // Cache partagé depuis le parent
   dashboardCacheRef: MutableRefObject<
-    Map<string, { components: ComponentDashboard[]; profils: string[] }>
+    Map<
+      string,
+      { components: ComponentDashboard[]; profils: DashboardProfilApiEntry[] }
+    >
   >;
 };
 
@@ -40,7 +43,33 @@ const NB_COL = 4; // Nombre de colonnes dans la grille
 
 type DashboardProfilApiEntry =
   | string
-  | { profilUtilisateurId: string | number };
+  | { profilUtilisateurId?: string | number; [key: string]: unknown };
+
+const normalizeDashboardProfilIds = (
+  dashboardProfil: Array<
+    string | { profilUtilisateurId?: string | number }
+  > | null,
+) => {
+  if (!dashboardProfil) {
+    return null;
+  }
+
+  const normalized = dashboardProfil
+    .map((profilEntry) => {
+      if (typeof profilEntry === "string") {
+        return profilEntry;
+      }
+
+      if (profilEntry && profilEntry.profilUtilisateurId !== undefined) {
+        return String(profilEntry.profilUtilisateurId);
+      }
+
+      return null;
+    })
+    .filter((profilId): profilId is string => Boolean(profilId));
+
+  return normalized;
+};
 
 const getInitialValues = (
   componentSelected: ComponentDashboard | null | undefined,
@@ -60,7 +89,9 @@ const getPrepareVariables = (
   activeDashboard: DashboardItemParam,
   componentsListDashboard: ComponentDashboard[] | null,
   dashboardTitle: string | null,
-  dashboardProfil: string[] | null,
+  dashboardProfil: Array<
+    string | { profilUtilisateurId?: string | number }
+  > | null,
 ) => {
   // Configure les données à envoyés au service
   return {
@@ -79,7 +110,7 @@ const getPrepareVariables = (
           }),
         }))
       : null,
-    dashboardProfilsId: dashboardProfil ? dashboardProfil : null,
+    dashboardProfilsId: normalizeDashboardProfilIds(dashboardProfil),
   };
 };
 
@@ -95,14 +126,14 @@ const ConfigDynamicGrid = ({
   dashboardCacheRef,
 }: ConfigDynamicGridProps) => {
   // Initialiser le profil depuis le cache si disponible
-  const [dashboardProfil, setDashboardProfil] = useState<string[] | null>(
-    () => {
-      const cached = activeDashboard.id
-        ? dashboardCacheRef.current.get(activeDashboard.id)
-        : null;
-      return cached?.profils ?? null;
-    },
-  );
+  const [dashboardProfil, setDashboardProfil] = useState<
+    DashboardProfilApiEntry[] | null
+  >(() => {
+    const cached = activeDashboard.id
+      ? dashboardCacheRef.current.get(activeDashboard.id)
+      : null;
+    return cached?.profils ?? null;
+  });
   const [dashboardTitle, setDashboardtitle] = useState<string | null>(
     "Nouveau Dashboard",
   );
@@ -115,7 +146,6 @@ const ConfigDynamicGrid = ({
     useState<ComponentDashboard | null>();
 
   const loadedConfigIdsRef = useRef<Set<string>>(new Set());
-  const loadedProfilIdsRef = useRef<Set<string>>(new Set());
   const configRequestInProgressIdRef = useRef<string | null>(null);
   const profilRequestInProgressIdRef = useRef<string | null>(null);
 
@@ -274,16 +304,11 @@ const ConfigDynamicGrid = ({
   useEffect(() => {
     if (profilsResolved) {
       const normalizedProfils = Array.isArray(profilsData)
-        ? (profilsData as DashboardProfilApiEntry[]).map((profilEntry) =>
-            typeof profilEntry === "string"
-              ? profilEntry
-              : String(profilEntry.profilUtilisateurId),
-          )
+        ? (profilsData as DashboardProfilApiEntry[])
         : null;
 
       setDashboardProfil(normalizedProfils);
       if (activeDashboard.id) {
-        loadedProfilIdsRef.current.add(activeDashboard.id);
         if (profilRequestInProgressIdRef.current === activeDashboard.id) {
           profilRequestInProgressIdRef.current = null;
         }
@@ -292,28 +317,23 @@ const ConfigDynamicGrid = ({
   }, [profilsData, profilsResolved, activeDashboard.id]);
 
   useEffect(() => {
-    if (!activeDashboard) {
-      return;
-    }
-
-    const cached = activeDashboard.id
-      ? dashboardCacheRef.current.get(activeDashboard.id)
+    const dashboardId = activeDashboard.id;
+    const cached = dashboardId
+      ? dashboardCacheRef.current.get(dashboardId)
       : null;
 
     setDashboardtitle(activeDashboard.title);
-
-    if (componentsListDashboard === null) {
-      setComponentsListDashboard([]);
-    }
+    setComponentsListDashboard((prev) => (prev === null ? [] : prev));
 
     if (cached) {
       setDashboardProfil(cached.profils);
-    } else {
-      setDashboardProfil(null);
+      return;
     }
+
+    setDashboardProfil(null);
   }, [
-    activeDashboard,
-    componentsListDashboard,
+    activeDashboard.id,
+    activeDashboard.title,
     setComponentsListDashboard,
     dashboardCacheRef,
   ]);
@@ -328,9 +348,6 @@ const ConfigDynamicGrid = ({
     const cached = dashboardCacheRef.current.get(dashboardId);
     if (cached) {
       loadedConfigIdsRef.current.add(dashboardId);
-      if (cached.profils !== undefined) {
-        loadedProfilIdsRef.current.add(dashboardId);
-      }
     }
 
     if (
@@ -341,39 +358,26 @@ const ConfigDynamicGrid = ({
       runListComponentsRef.current();
     }
 
-    if (
-      !loadedProfilIdsRef.current.has(dashboardId) &&
-      profilRequestInProgressIdRef.current !== dashboardId
-    ) {
+    if (profilRequestInProgressIdRef.current !== dashboardId) {
       profilRequestInProgressIdRef.current = dashboardId;
       runProfilsRef.current();
     }
   }, [activeDashboard.id, dashboardCacheRef]);
 
-  // Alimenter le cache dès que les données sont complètes
-  useEffect(() => {
-    if (activeDashboard.id && componentsListDashboard) {
-      dashboardCacheRef.current.set(activeDashboard.id, {
-        components: componentsListDashboard,
-        profils: dashboardProfil ?? [],
-      });
-    }
-  }, [
-    activeDashboard.id,
-    componentsListDashboard,
-    dashboardProfil,
-    dashboardCacheRef,
-  ]);
-
   // Reset à la fermeture
   useEffect(() => {
     return () => {
       loadedConfigIdsRef.current = new Set();
-      loadedProfilIdsRef.current = new Set();
       configRequestInProgressIdRef.current = null;
       profilRequestInProgressIdRef.current = null;
     };
   }, []);
+
+  const handleDashboardProfilChange = (
+    profilsIds: DashboardProfilApiEntry[] | null,
+  ) => {
+    setDashboardProfil(profilsIds);
+  };
 
   const urlApiSaveDashboard = url`/api/dashboard/create-dashboard/`;
   const urlApiUpdateDashboard = url`/api/dashboard/update-dashboard/`;
@@ -383,9 +387,21 @@ const ConfigDynamicGrid = ({
       <MyFormik
         validationSchema={object({})}
         onSubmit={(dashboard) => {
+          const savedDashboardId = dashboard.dashboardId ?? activeDashboard.id;
+          const savedDashboardTitle =
+            dashboard.dashboardTitle ?? dashboardTitle ?? activeDashboard.title;
+
+          if (savedDashboardId) {
+            dashboardCacheRef.current.set(savedDashboardId, {
+              components: componentsListDashboard ?? [],
+              profils: dashboardProfil ?? [],
+            });
+          }
+
           setActiveDashboard({
-            id: dashboard.dashboardId,
-            title: dashboard.dashboardTitle,
+            id: savedDashboardId,
+            title: savedDashboardTitle,
+            index: activeDashboard.index,
           });
         }}
         initialValues={getInitialValues(componentSelected)}
@@ -414,7 +430,7 @@ const ConfigDynamicGrid = ({
           setNumberRowGrid={setNumberRowGrid}
           removeRowUnused={removeRowUnused}
           dashboardProfilsUtilisateur={dashboardProfil}
-          setDashboardProfil={setDashboardProfil}
+          setDashboardProfil={handleDashboardProfilChange}
           dashboardTitle={activeDashboard.title}
           setDashboardTitle={setDashboardtitle}
         />

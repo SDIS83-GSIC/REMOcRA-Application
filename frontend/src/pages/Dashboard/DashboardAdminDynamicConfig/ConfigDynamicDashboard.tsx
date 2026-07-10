@@ -14,9 +14,13 @@ import { ComponentDashboard, DashboardItemParam } from "../Constants.tsx";
 import ConfigDynamicGrid from "./ConfigDynamicGrid.tsx";
 
 // cache : tout ce qui est nécessaire pour réafficher sans fetch
+type DashboardProfilApiEntry =
+  | string
+  | { profilUtilisateurId?: string | number; [key: string]: unknown };
+
 export type DashboardCacheEntry = {
   components: ComponentDashboard[];
-  profils: string[];
+  profils: DashboardProfilApiEntry[];
 };
 
 type ConfigDynamicDashboardProps = {
@@ -37,6 +41,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
 
   const [disabledModal, setDisabledModal] = useState(false);
   const [indexToRemove, setIdtoremove] = useState<number | null>();
+  const [gridReloadVersion, setGridReloadVersion] = useState(0);
 
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -175,12 +180,31 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
 
   // Annule l'édition du dashboard
   const handleCancelEdit = () => {
-    //  Annuler les requêtes en cours AVANT de recharger
+    //  Annuler les requêtes en cours
     abortControllerRef.current?.abort();
+
+    if (!props.openListDashboard || props.openListDashboard.length === 0) {
+      props.setComponentsListDashboard(null);
+      props.setActiveDashboard(null);
+      props.setEditTabIndex(null);
+      return;
+    }
+
+    const editedDashboard = props.openListDashboard.find(
+      (dashboard) => dashboard.index === props.editTabIndex,
+    );
+
+    const dashboardToRestore = editedDashboard ?? props.openListDashboard[0];
+
+    if (dashboardToRestore?.id) {
+      dashboardCacheRef.current.delete(dashboardToRestore.id);
+    }
+
     props.setComponentsListDashboard(null);
-    props.setActiveDashboard(null);
+    props.setActiveDashboard(dashboardToRestore);
+    setGridReloadVersion((prev) => prev + 1);
+
     props.setEditTabIndex(null);
-    window.location.reload();
   };
 
   return (
@@ -191,7 +215,10 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
       />
       <div className="flex-grow-1 d-flex flex-column">
         <div className="d-flex align-items-center">
-          <Nav variant="tabs">
+          <Nav
+            variant="tabs"
+            activeKey={props.activeDashboard?.index ?? undefined}
+          >
             {props.openListDashboard &&
               props.openListDashboard.map((dashboard) => (
                 <Nav.Item
@@ -206,12 +233,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
                   <Nav.Link
                     eventKey={dashboard.index}
                     onClick={() => handleDashboardClick(dashboard.index || 0)}
-                    className={
-                      props.activeDashboard &&
-                      props.activeDashboard.index === dashboard.index
-                        ? "active d-flex align-items-center"
-                        : "d-flex align-items-center"
-                    }
+                    className="d-flex align-items-center"
                   >
                     <div
                       className="col-4d-flex align-items-center text-truncate"
@@ -274,6 +296,11 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
       <div className="flex-grow-1 mt-3">
         {props.activeDashboard ? (
           <ConfigDynamicGrid
+            key={
+              props.activeDashboard.id
+                ? `dashboard-${props.activeDashboard.id}-${gridReloadVersion}`
+                : `dashboard-new-${props.activeDashboard.index ?? "default"}-${gridReloadVersion}`
+            }
             editTabIndex={props.editTabIndex}
             componentsListDashboard={props.componentsListDashboard}
             setComponentsListDashboard={props.setComponentsListDashboard}
