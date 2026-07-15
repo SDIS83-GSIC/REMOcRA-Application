@@ -1,5 +1,60 @@
 = Release Notes
 
+== 3.0.9
+
+* https://redmine.atolcd.com/issues/268491[#268491]: [TABLEAU DE BORD] PARAMETRAGE REQUETE - Composant MAP Pourcentage 0%
+* https://redmine.atolcd.com/issues/290847[#290847]: Notification par mail - Restreindre à la zone de compétence
+* https://redmine.atolcd.com/issues/291781[#291781]: Accès rapide : afficher toutes les communes
+* https://redmine.atolcd.com/issues/292377[#292377]: Réservation de tournée - informations utilisateurs manquantes
+* https://redmine.atolcd.com/issues/292485[#292485]: permis - le déplacement de la carte en cours de saisie efface les données
+* https://redmine.atolcd.com/issues/292536[#292536]: [RAPPORTS PERSONNALISES] REQUETE SPATIALE - La carte sort du cadre
+* https://redmine.atolcd.com/issues/293041[#293041]: [ADMINISTRATION] GESTION DES METADONNEES - Tri par défaut
+* https://redmine.atolcd.com/issues/293048[#293048]: [CARTE] OUTIL I - Métadonnées visibles même si le profil n'est pas spécifié
+* https://redmine.atolcd.com/issues/293256[#293256]: Tournée - Ajout PEI
+* https://redmine.atolcd.com/issues/293322[#293322]: [TABLEAUX DE BORD] COMPOSANT MAP - Intégration d'un nouveau pourcentage déplace les autres
+* https://redmine.atolcd.com/issues/294126[#294126]: [CARTE] AFFECTER DES PEI A UNE TOURNEE - Deux remarques
+* https://redmine.atolcd.com/issues/294136[#294136]: [POINT D'EAU] FICHE RESUME PENA - Capacité illimitée
+* https://redmine.atolcd.com/issues/294367[#294367]: [TOURNEE] SAISIR TOUTES LES VISITES DE LA TOURNEE - Logo visite plutôt que logo tournée
+* https://redmine.atolcd.com/issues/294461[#294461]: Tableau de bord : Composant jauge
+* https://redmine.atolcd.com/issues/294551[#294551]: Mauvais message d'erreur lors de la modification d'une nature
+* https://redmine.atolcd.com/issues/294622[#294622]: [API] - Listing des PEI avec profil COMMUNE ou EPCI
+* https://redmine.atolcd.com/issues/294660[#294660]: Champ "Maintenance et CTP"
+* https://redmine.atolcd.com/issues/294682[#294682]: Documents : Import de plusieurs documents en même temps
+* https://redmine.atolcd.com/issues/294755[#294755]: Tableaux de bord : accès impossible à une requête sans paramètres
+* https://redmine.atolcd.com/issues/294769[#294769]: Tableau de bord : améliorer les performances lors de la configuration
+* https://redmine.atolcd.com/issues/294873[#294873]: Autoriser les identifiants utilisateurs de moins de 3 caractères
+* https://redmine.atolcd.com/issues/294916[#294916]: [API points d'eau] - Récupération de l'access token
+* https://redmine.atolcd.com/issues/294945[#294945]: [API] - Description du /diff dans la documentation
+* https://redmine.atolcd.com/issues/294994[#294994]: [TABLEAU DE BORD] SUPPRESSION D'UNE REQUETE - Pop-up vide
+* https://redmine.atolcd.com/issues/295169[#295169]: Édition des tableaux de bord : Déplacement des composants non pris en compte
+* https://redmine.atolcd.com/issues/295177[#295177]: Rapport Post-ROP : Modale de confirmation de remise à zéro
+* https://redmine.atolcd.com/issues/295183[#295183]: Tableaux de bord : Optimisation du chargement de la liste des requêtes
+* https://redmine.atolcd.com/issues/295275[#295275]: Tableaux de bord : Affichage des requêtes
+* https://redmine.atolcd.com/issues/295337[#295337]: Bouton retour : Mauvaise redirection
+* https://redmine.atolcd.com/issues/295413[#295413]: [RAPPORTS PERSONNALISES] DESCRIPTION - Prendre en compte les retours à la ligne
+* https://redmine.atolcd.com/issues/295524[#295524]: RCCI : Désactivation le vient du Geoserver pour la couche RCCI
+* https://redmine.atolcd.com/issues/295529[#295529]: RCCI : Conserver les valeurs saisies
+* https://redmine.atolcd.com/issues/295541[#295541]: Modification du calcul de renumérotation
+* https://redmine.atolcd.com/issues/295835[#295835]: [SIGNALEMENT] ELEMENTS - Ordre des éléments sur la carte
+* https://redmine.atolcd.com/issues/295846[#295846]: [SIGNALEMENT] ADMINISTRATION DES SOUS TYPES D'ELEMENT - Les types d'éléments ne remontent pas dans le tableau
+* https://redmine.atolcd.com/issues/295847[#295847]: [SIGNALEMENT] ADMINISTRATION DES SOUS TYPE ELEMENT - Pouvoir modifier un sous type élément si l'élément est utilisé dans un signalement
+* https://redmine.atolcd.com/issues/295895[#295895]: Import du cadastre : Gestion des doublons
+* https://redmine.atolcd.com/issues/295964[#295964]: [SIGNALEMENT] CREATION D'UN SIGNALEMENT - Volet récapitulatif
+* https://redmine.atolcd.com/issues/296006[#296006]: message suppression d'un PEI prescrit
+* https://redmine.atolcd.com/issues/296044[#296044]: débit simultané
+* https://redmine.atolcd.com/issues/296046[#296046]: [SIGNALEMENT] FAIRE UN SIGNALEMENT - Comportement étrange
+* https://redmine.atolcd.com/issues/296141[#296141]: [SIGNALEMENT] INFOBULLE SIGNALEMENT - Paramétrable ? / Quelques modifications
+* https://redmine.atolcd.com/issues/296277[#296277]: Affichage du champ Numéro interne
+* https://redmine.atolcd.com/issues/296291[#296291]: Indisponibilité temporaire - Liste déroulante PEI
+* https://redmine.atolcd.com/issues/296628[#296628]: Mail avec tableau
+* https://redmine.atolcd.com/issues/296633[#296633]: Rechargement des tâches personnalisées
+* https://redmine.atolcd.com/issues/296650[#296650]: Signalement - limite zone de compétence
+* https://redmine.atolcd.com/issues/297033[#297033]: Rapports personnalisés - PEI sans tournée
+* https://redmine.atolcd.com/issues/297499[#297499]: [CARTES] OUTIL INFORMATION - Disparition de l'outil
+* https://redmine.atolcd.com/issues/297505[#297505]: [PEI] FICHE PEI - Numéro interne visible alors que fonctionnalité décochée
+* https://redmine.atolcd.com/issues/297669[#297669]: [TABLEAU DE BORD] AFFICHAGE - Les éléments ne s'affichent pas (v 3.0.9-a3)
+* https://redmine.atolcd.com/issues/297909[#297909]: [TABLEAUX DE BORD] EDITION - Bug sur la listes des profils utilisateurs autorisés et message d'erreur
+
 == 3.0.8
 
 * https://redmine.atolcd.com/issues/252223[#252223]: [CARTO PERSONNALISEE] Partie dessin
