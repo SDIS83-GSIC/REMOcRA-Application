@@ -55,6 +55,14 @@ constructor(
         }
     }
 
+    fun importFavicon(userInfo: WrappedUserInfo, faviconPart: Part) {
+        checkDroits(userInfo)
+
+        faviconPart.inputStream.use {
+            documentUtils.saveFile(it, "favicon", GlobalConstants.DOSSIER_IMAGES_RESSOURCES)
+        }
+    }
+
     fun importSymbologie(userInfo: WrappedUserInfo, symbologiePart: Part) {
         checkDroits(userInfo)
 
