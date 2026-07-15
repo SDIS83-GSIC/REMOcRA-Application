@@ -105,28 +105,61 @@ class GeoserverEndpoint : AbstractEndpoint() {
         @Context securityContext: SecurityContext,
     ): Response = proxyWmsInternal(uriInfo, securityContext, suffix)
 
+    @Public("Les couches peuvent etre accessibles publiquement")
+    @NoCsrf("OpenLayers utilise un <img src=> qui ne permet pas l'entete CSRF")
+    @Path("/wfs")
+    @GET
+    fun proxyWfs(
+        @Context uriInfo: UriInfo,
+        @Context securityContext: SecurityContext,
+    ): Response = proxyWfsInternal(uriInfo, securityContext, null)
+
+    @Public("Les couches peuvent etre accessibles publiquement")
+    @NoCsrf("OpenLayers utilise un <img src=> qui ne permet pas l'entete CSRF")
+    @Path("/wfs/{suffix: .*}")
+    @GET
+    fun proxyWfs(
+        @PathParam("suffix") suffix: String,
+        @Context uriInfo: UriInfo,
+        @Context securityContext: SecurityContext,
+    ): Response = proxyWfsInternal(uriInfo, securityContext, suffix)
+
     private fun proxyWmsInternal(
         uriInfo: UriInfo,
         securityContext: SecurityContext,
         suffix: String?,
-    ): Response {
-        val result = geoserverUseCase.proxyWms(securityContext.userInfo, uriInfo, suffix)
+    ): Response =
+        proxyGeoServiceInternal(
+            uriInfo,
+            geoserverUseCase.proxyWms(securityContext.userInfo, uriInfo, suffix),
+        )
 
+    private fun proxyWfsInternal(
+        uriInfo: UriInfo,
+        securityContext: SecurityContext,
+        suffix: String?,
+    ): Response =
+        proxyGeoServiceInternal(
+            uriInfo,
+            geoserverUseCase.proxyWfs(securityContext.userInfo, uriInfo, suffix),
+        )
+
+    private fun proxyGeoServiceInternal(uriInfo: UriInfo, result: AbstractUseCase.Result): Response {
         if (result !is AbstractUseCase.Result.Success) {
             return result.wrap()
         }
 
-        // Si c'est un GetCapabilities, il faut qu'on transforme les url geoserver en url REMOcRA, sinon,
-        //  comme Geoserver est privé, les partenaires externes des SDIS ne pourront pas accéder aux ressources
-        if (uriInfo.queryParameters["REQUEST"]?.firstOrNull()?.lowercase() == "getcapabilities") {
+        val request = result.entity as Request
+        val isGetCapabilities = uriInfo.queryParameters["REQUEST"]?.firstOrNull()?.lowercase() == "getcapabilities"
+        if (isGetCapabilities) {
             return proxyCapabilitiesWithRemocraUrls(
-                result.entity as Request,
+                request,
                 uriInfo.requestUri.toString().substringBefore("?"),
                 geoserverSettings.url.toString(),
             )
         }
 
-        return doProxyRequest(httpClient, result.entity as Request)
+        return doProxyRequest(httpClient, request)
     }
 
     @Public("Les couches peuvent être accessibles publiquement")

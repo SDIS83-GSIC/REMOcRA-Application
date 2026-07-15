@@ -17,6 +17,19 @@ class GeoserverUseCase @Inject constructor(
 ) : AbstractUseCase() {
 
     fun proxyWms(user: WrappedUserInfo, uriInfo: UriInfo, geoserverPath: String? = null): Result {
+        return proxyService(user, uriInfo, geoserverPath, listOf("remocra", "wms"))
+    }
+
+    fun proxyWfs(user: WrappedUserInfo, uriInfo: UriInfo, geoserverPath: String? = null): Result {
+        return proxyService(user, uriInfo, geoserverPath, listOf("remocra", "wfs"))
+    }
+
+    private fun proxyService(
+        user: WrappedUserInfo,
+        uriInfo: UriInfo,
+        geoserverPath: String?,
+        defaultPath: List<String>,
+    ): Result {
         val queryParameters = MultivaluedHashMap(uriInfo.queryParameters)
         // on récupère le type de requête que c'est
         val requestType = queryParameters.getFirstIgnoreCase("REQUEST")?.lowercase()
@@ -70,8 +83,7 @@ class GeoserverUseCase @Inject constructor(
             .apply {
                 // Si un suffixe est fourni (dans le path), on le propage tel quel vers GeoServer.
                 if (geoserverPath.isNullOrBlank()) {
-                    addPathSegment("remocra")
-                    addPathSegment("wms")
+                    defaultPath.forEach { addPathSegment(it) }
                 } else {
                     geoserverPath
                         .trim('/')
