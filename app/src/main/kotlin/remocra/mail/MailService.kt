@@ -2,20 +2,43 @@ package remocra.mail
 
 import jakarta.inject.Inject
 import org.apache.commons.mail2.core.EmailException
+import org.apache.commons.mail2.jakarta.EmailAttachment
 import org.apache.commons.mail2.jakarta.HtmlEmail
+import remocra.log.LogManager
+import java.io.File
 
-class MailService @Inject constructor(private val settings: MailSettings) {
+class MailService @Inject constructor(
+    private val settings: MailSettings,
+) {
+
     @Throws(EmailException::class)
     fun send(
         subject: String,
         body: String,
         bcc: Set<String> = emptySet(),
+        attachment: File? = null,
+        logManager: LogManager?,
     ) {
         val email = createEmail()
 
         bcc.forEach(email::addBcc)
         email.subject = subject
-        email.setMsg("<html><body><p>$body</p></body></html>")
+        email.setHtmlMsg("<html><body><p>$body</p></body></html>")
+        email.setTextMsg(body)
+
+        if (attachment != null) {
+            if (attachment.exists() && attachment.isFile) {
+                val att = EmailAttachment().apply {
+                    this.path = attachment.absolutePath
+                    disposition = EmailAttachment.ATTACHMENT
+                    name = attachment.name
+                }
+                email.attach(att)
+            } else {
+                logManager?.error("Envoi du mail annulé : la pièce jointe est attendue mais introuvable : '${attachment.absolutePath}'")
+                return
+            }
+        }
 
         email.send()
     }

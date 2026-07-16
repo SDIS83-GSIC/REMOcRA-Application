@@ -130,9 +130,9 @@ open class ModeleCourrier(
 
     /**
      * The column
-     * <code>remocra.modele_courrier.modele_courrier_corps_email</code>.
+     * <code>remocra.modele_courrier.modele_courrier_corps_email_utilisateur</code>.
      */
-    val CORPS_EMAIL: TableField<Record, String?> = createField(DSL.name("modele_courrier_corps_email"), SQLDataType.CLOB.nullable(false), this, "")
+    val CORPS_EMAIL_UTILISATEUR: TableField<Record, String?> = createField(DSL.name("modele_courrier_corps_email_utilisateur"), SQLDataType.CLOB.nullable(false), this, "")
 
     /**
      * The column
@@ -150,6 +150,12 @@ open class ModeleCourrier(
      * The column <code>remocra.modele_courrier.modele_courrier_type</code>.
      */
     val TYPE: TableField<Record, TypeCourrier?> = createField(DSL.name("modele_courrier_type"), SQLDataType.VARCHAR.asEnumDataType(TypeCourrier::class.java), this, "")
+
+    /**
+     * The column
+     * <code>remocra.modele_courrier.modele_courrier_corps_email_piece_jointe</code>.
+     */
+    val CORPS_EMAIL_PIECE_JOINTE: TableField<Record, String?> = createField(DSL.name("modele_courrier_corps_email_piece_jointe"), SQLDataType.CLOB.nullable(false), this, "")
 
     private constructor(alias: Name, aliased: Table<Record>?) : this(alias, null, null, null, aliased, null, null)
     private constructor(alias: Name, aliased: Table<Record>?, parameters: Array<Field<*>?>?) : this(alias, null, null, null, aliased, parameters, null)

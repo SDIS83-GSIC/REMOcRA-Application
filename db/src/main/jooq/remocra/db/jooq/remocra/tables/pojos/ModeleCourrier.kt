@@ -29,10 +29,11 @@ data class ModeleCourrier(
     val modeleCourrierDescription: String?,
     val modeleCourrierSourceSql: String,
     val modeleCourrierModule: TypeModule,
-    val modeleCourrierCorpsEmail: String,
+    val modeleCourrierCorpsEmailUtilisateur: String,
     val modeleCourrierObjetEmail: String,
     val modeleCourrierDocumentId: UUID?,
     val modeleCourrierType: TypeCourrier?,
+    val modeleCourrierCorpsEmailPieceJointe: String,
 ) : Serializable {
 
     override fun equals(other: Any?): Boolean {
@@ -74,7 +75,7 @@ data class ModeleCourrier(
         if (this.modeleCourrierModule != o.modeleCourrierModule) {
             return false
         }
-        if (this.modeleCourrierCorpsEmail != o.modeleCourrierCorpsEmail) {
+        if (this.modeleCourrierCorpsEmailUtilisateur != o.modeleCourrierCorpsEmailUtilisateur) {
             return false
         }
         if (this.modeleCourrierObjetEmail != o.modeleCourrierObjetEmail) {
@@ -94,6 +95,9 @@ data class ModeleCourrier(
         } else if (this.modeleCourrierType != o.modeleCourrierType) {
             return false
         }
+        if (this.modeleCourrierCorpsEmailPieceJointe != o.modeleCourrierCorpsEmailPieceJointe) {
+            return false
+        }
         return true
     }
 
@@ -108,10 +112,11 @@ data class ModeleCourrier(
         result = prime * result + (if (this.modeleCourrierDescription == null) 0 else this.modeleCourrierDescription.hashCode())
         result = prime * result + this.modeleCourrierSourceSql.hashCode()
         result = prime * result + this.modeleCourrierModule.hashCode()
-        result = prime * result + this.modeleCourrierCorpsEmail.hashCode()
+        result = prime * result + this.modeleCourrierCorpsEmailUtilisateur.hashCode()
         result = prime * result + this.modeleCourrierObjetEmail.hashCode()
         result = prime * result + (if (this.modeleCourrierDocumentId == null) 0 else this.modeleCourrierDocumentId.hashCode())
         result = prime * result + (if (this.modeleCourrierType == null) 0 else this.modeleCourrierType.hashCode())
+        result = prime * result + this.modeleCourrierCorpsEmailPieceJointe.hashCode()
         return result
     }
 
@@ -126,10 +131,11 @@ data class ModeleCourrier(
         sb.append(", ").append(modeleCourrierDescription)
         sb.append(", ").append(modeleCourrierSourceSql)
         sb.append(", ").append(modeleCourrierModule)
-        sb.append(", ").append(modeleCourrierCorpsEmail)
+        sb.append(", ").append(modeleCourrierCorpsEmailUtilisateur)
         sb.append(", ").append(modeleCourrierObjetEmail)
         sb.append(", ").append(modeleCourrierDocumentId)
         sb.append(", ").append(modeleCourrierType)
+        sb.append(", ").append(modeleCourrierCorpsEmailPieceJointe)
 
         sb.append(")")
         return sb.toString()

@@ -39,7 +39,8 @@ type ModeleCourrierType = {
   modeleCourrierSourceSql: string;
   modeleCourrierDescription: string;
   modeleCourrierObjetEmail: string;
-  modeleCourrierCorpsEmail: string;
+  modeleCourrierCorpsEmailUtilisateur: string;
+  modeleCourrierCorpsEmailPieceJointe: string;
   listeGroupeFonctionnalitesId: string[];
   modeleCourrierModule: string;
   modeleCourrierType: keyof typeof TypeCourrierEnum | null;
@@ -72,7 +73,10 @@ export const getInitialValues = (data?: ModeleCourrierType) => ({
   modeleCourrierModule: data?.modeleCourrierModule ?? null,
   modeleCourrierDescription: data?.modeleCourrierDescription ?? null,
   modeleCourrierObjetEmail: data?.modeleCourrierObjetEmail ?? null,
-  modeleCourrierCorpsEmail: data?.modeleCourrierCorpsEmail ?? null,
+  modeleCourrierCorpsEmailUtilisateur:
+    data?.modeleCourrierCorpsEmailUtilisateur ?? null,
+  modeleCourrierCorpsEmailPieceJointe:
+    data?.modeleCourrierCorpsEmailPieceJointe ?? null,
   modeleCourrierType: data?.modeleCourrierType ?? null,
   listeGroupeFonctionnalitesId: data?.listeGroupeFonctionnalitesId ?? [],
   listeModeleCourrierParametre:
@@ -122,7 +126,10 @@ export const prepareVariables = (values: ModeleCourrierType) => {
       modeleCourrierSourceSql: values.modeleCourrierSourceSql,
       modeleCourrierModule: values.modeleCourrierModule,
       modeleCourrierObjetEmail: values.modeleCourrierObjetEmail,
-      modeleCourrierCorpsEmail: values.modeleCourrierCorpsEmail,
+      modeleCourrierCorpsEmailUtilisateur:
+        values.modeleCourrierCorpsEmailUtilisateur,
+      modeleCourrierCorpsEmailPieceJointe:
+        values.modeleCourrierCorpsEmailPieceJointe,
       listeGroupeFonctionnalitesId: values.listeGroupeFonctionnalitesId,
       modeleCourrierType: values.modeleCourrierType,
       documentId: values.documentId,
@@ -323,22 +330,31 @@ const ModeleCourrier = () => {
       ) : stepActive === 2 ? (
         <>
           <Row className="mt-3">
-            <Col className="bg-light border p-2 rounded">
-              <IconInfo /> Vous pouvez utiliser le code
-              &apos;#[LIEN_TELECHARGEMENT]#&apos; dans le corps de mail. Ce
-              dernier sera automatiquement remplacé par le lien de
-              téléchargement du courrier.
-            </Col>
-          </Row>
-          <Row className="mt-3">
-            <Col>
+            <Col className="d-flex flex-column gap-4">
               <TextInput
                 name="modeleCourrierObjetEmail"
                 label="Objet de l'email"
               />
+
               <TextAreaInput
-                name="modeleCourrierCorpsEmail"
-                label="Corps de l'email"
+                name="modeleCourrierCorpsEmailUtilisateur"
+                label="Corps de l'email à destination d'un utilisateur de REMOcRA"
+                hint={
+                  <div className="bg-light border p-2 rounded d-flex align-items-center gap-2">
+                    <IconInfo />
+                    <span>
+                      Vous pouvez utiliser le code
+                      &apos;#[LIEN_TELECHARGEMENT]#&apos; dans ce corps de mail.
+                      Il sera automatiquement remplacé par le lien de
+                      téléchargement du courrier.
+                    </span>
+                  </div>
+                }
+              />
+
+              <TextAreaInput
+                name="modeleCourrierCorpsEmailPieceJointe"
+                label="Corps de l'email à destination d'un destinataire externe (pièce jointe)"
               />
             </Col>
           </Row>
@@ -448,7 +464,8 @@ const ModeleCourrier = () => {
                           ),
                       ))) ||
                 (stepActive === 2 &&
-                  (isEmptyOrNull(values.modeleCourrierCorpsEmail) ||
+                  (isEmptyOrNull(values.modeleCourrierCorpsEmailUtilisateur) ||
+                    isEmptyOrNull(values.modeleCourrierCorpsEmailPieceJointe) ||
                     isEmptyOrNull(values.modeleCourrierObjetEmail)))
               }
               variant="primary"
