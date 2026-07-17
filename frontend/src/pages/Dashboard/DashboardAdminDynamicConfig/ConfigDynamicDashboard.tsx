@@ -1,4 +1,11 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import {
+  Dispatch,
+  MutableRefObject,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Button, Nav } from "react-bootstrap";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
@@ -10,6 +17,7 @@ import {
 import ConfirmModal from "../../../components/Modal/ConfirmModal.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
+import { URLS } from "../../../routes.tsx";
 import { ComponentDashboard, DashboardItemParam } from "../Constants.tsx";
 import ConfigDynamicGrid from "./ConfigDynamicGrid.tsx";
 
@@ -34,6 +42,7 @@ type ConfigDynamicDashboardProps = {
   setComponentsListDashboard: Dispatch<
     SetStateAction<ComponentDashboard[] | null>
   >;
+  dashboardCacheRef: MutableRefObject<Map<string, DashboardCacheEntry>>;
 };
 
 const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
@@ -44,10 +53,6 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
   const [gridReloadVersion, setGridReloadVersion] = useState(0);
 
   const abortControllerRef = useRef<AbortController | null>(null);
-
-  // Cache mémoire
-  // Survit aux changements d'onglet, perdu uniquement au démontage / reload
-  const dashboardCacheRef = useRef<Map<string, DashboardCacheEntry>>(new Map());
 
   useEffect(() => {
     return () => {
@@ -62,7 +67,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
     if (props.openListDashboard && props.editTabIndex === null) {
       const target = props.openListDashboard[indexKey];
       const cached = target?.id
-        ? dashboardCacheRef.current.get(target.id)
+        ? props.dashboardCacheRef.current.get(target.id)
         : null;
 
       if (cached) {
@@ -138,7 +143,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
       await response.json();
       // le dashboard n'existe plus
       if (dashboard.id) {
-        dashboardCacheRef.current.delete(dashboard.id);
+        props.dashboardCacheRef.current.delete(dashboard.id);
       }
       updateDashboardList(indexKey);
       successToast("Le tableau de bord a correctement été supprimé");
@@ -197,7 +202,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
     const dashboardToRestore = editedDashboard ?? props.openListDashboard[0];
 
     if (dashboardToRestore?.id) {
-      dashboardCacheRef.current.delete(dashboardToRestore.id);
+      props.dashboardCacheRef.current.delete(dashboardToRestore.id);
     }
 
     props.setComponentsListDashboard(null);
@@ -212,6 +217,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
       <PageTitle
         icon={<IconGaugeComponent />}
         title={"Édition des tableaux de bord et profils associés"}
+        urlRetour={URLS.MODULE_ADMIN}
       />
       <div className="flex-grow-1 d-flex flex-column">
         <div className="d-flex align-items-center">
@@ -306,7 +312,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
             setComponentsListDashboard={props.setComponentsListDashboard}
             activeDashboard={props.activeDashboard}
             setActiveDashboard={props.setActiveDashboard}
-            dashboardCacheRef={dashboardCacheRef}
+            dashboardCacheRef={props.dashboardCacheRef}
             onSave={handleCancelEdit}
           />
         ) : (
