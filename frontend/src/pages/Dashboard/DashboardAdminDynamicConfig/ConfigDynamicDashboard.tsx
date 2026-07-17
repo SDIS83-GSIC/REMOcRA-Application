@@ -307,6 +307,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
             activeDashboard={props.activeDashboard}
             setActiveDashboard={props.setActiveDashboard}
             dashboardCacheRef={dashboardCacheRef}
+            onSave={handleCancelEdit}
           />
         ) : (
           <div className="alert alert-primary" role="alert">
