@@ -441,6 +441,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     DOCUMENT_FORBIDDEN_INSERT(10015, "Vous n'avez pas les droits pour déclarer un PEI.", Status.FORBIDDEN),
     DFCI_FORBIDDEN_RECEPTION_TRAVAUX(10016, "Vous n'avez pas les droits pour réceptionner des travaux.", Status.FORBIDDEN),
     DOCUMENT_FORBIDDEN_SYSTEM(10017, "L'application REMOcRA n'a pas les droits de modifier ce repertoire."),
+    DOCUMENT_NOT_FOUND(10018, "Le document n'a pas été trouvé."),
 
     //
     // ********************************************************************************
@@ -702,6 +703,10 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     // ********************************************************************************
     //
     REQUETE_SQL_CREATION_INVALIDE(33001, "La requête de création est invalide"),
+
+    ATLAS_ANNEXES_FORBIDDEN_UPDATE(34001, "Vous n'avez pas les droits de modification de l'ordre des annexes"),
+    ATLAS_DOCUMENTS_NOT_FOUND(34002, "Aucun fichier existant pour l'atlas"),
+
     ;
 
     override fun toString(): String {

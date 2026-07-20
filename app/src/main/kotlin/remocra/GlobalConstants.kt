@@ -84,6 +84,8 @@ object GlobalConstants {
     val DOSSIER_DOCUMENT_COURRIER = DOSSIER_DOCUMENT.resolve("courriers")
     val DOSSIER_DOCUMENT_DELIBERATION = DOSSIER_DOCUMENT.resolve("deliberation")
 
+    val DOSSIER_DOCUMENT_ATLAS = DOSSIER_DOCUMENT.resolve("atlas")
+
     val DOSSIER_DEBIT_SIMULTANE = DOSSIER_DOCUMENT.resolve("debits_simultanes")
 
     val DOSSIER_DOCUMENT_PEI = DOSSIER_DOCUMENT.resolve("pei")
