@@ -97,15 +97,16 @@ class CadastreRepository @Inject constructor(
             .limit(limit)
             .fetchInto()
 
-    fun getAllSections(): Set<Pair<UUID, String>> =
-        dsl.select(CADASTRE_SECTION.COMMUNE_ID, CADASTRE_SECTION.NUMERO)
+    fun getAllSections(): Map<Pair<UUID, String>, UUID> =
+        dsl.select(CADASTRE_SECTION.ID, CADASTRE_SECTION.COMMUNE_ID, CADASTRE_SECTION.NUMERO)
             .from(CADASTRE_SECTION)
             .fetch {
+                val sectionId = it.get<UUID>(CADASTRE_SECTION.ID)
                 val communeId = it.get<UUID>(CADASTRE_SECTION.COMMUNE_ID)
                 val numero = it.get<String>(CADASTRE_SECTION.NUMERO)
-                communeId to numero
+                (communeId to numero) to sectionId
             }
-            .toSet()
+            .toMap()
 
     fun insertSection(cadastreSection: CadastreSection) =
         dsl.insertInto(

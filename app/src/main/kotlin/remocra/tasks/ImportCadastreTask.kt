@@ -58,7 +58,7 @@ class ImportCadastreTask @Inject constructor(
         private val CODE_SDIS_SDMIS = setOf("69")
 
         lateinit var parcelles: MutableSet<Pair<UUID, String>>
-        lateinit var sections: MutableSet<Pair<UUID, String>>
+        lateinit var sections: MutableMap<Pair<UUID, String>, UUID>
     }
 
     private fun checkDroits(userInfo: WrappedUserInfo) {
@@ -136,15 +136,19 @@ class ImportCadastreTask @Inject constructor(
             cadastreSectionNumero = numero,
             cadastreSectionCommuneId = communeId,
         )
-
-        mapSectionByCode[SectionIdMetier(codeInseeCommune, prefixe, numero)] = section.cadastreSectionId
-
         val sectionKey = communeId to numero
-        if (!sections.contains(sectionKey)) {
+        val existingSectionId = sections[sectionKey]
+        if (existingSectionId == null) {
             cadastreRepository.insertSection(section)
-            sections.add(sectionKey)
+            sections[sectionKey] = section.cadastreSectionId
+            mapSectionByCode[SectionIdMetier(codeInseeCommune, prefixe, numero)] = section.cadastreSectionId
         } else if (remplacerDonneesCadastre) {
-            cadastreRepository.updateGeometrieSection(section)
+            cadastreRepository.updateGeometrieSection(
+                section.copy(cadastreSectionId = existingSectionId),
+            )
+            mapSectionByCode[SectionIdMetier(codeInseeCommune, prefixe, numero)] = existingSectionId
+        } else {
+            mapSectionByCode[SectionIdMetier(codeInseeCommune, prefixe, numero)] = existingSectionId
         }
     }
 
@@ -161,7 +165,11 @@ class ImportCadastreTask @Inject constructor(
         val numero = extractStringProperty(feature, PROPERTY_NUMERO) ?: logManager.error("Numéro non trouvé pour la section $id").let { return }
 
         val sectionNumero = extractStringProperty(feature, PROPERTY_SECTION)?.padStart(NUMERO_LENGTH, '0') ?: logManager.error("Numéro non trouvé pour la section $id").let { return }
-        val sectionId = mapSectionByCode[SectionIdMetier(codeInsee = codeInseeCommune, prefixe = prefixe, numero = sectionNumero)] ?: throw RemocraResponseException(ErrorType.SECTION_NOT_FOUND)
+        val sectionId = mapSectionByCode[SectionIdMetier(codeInsee = codeInseeCommune, prefixe = prefixe, numero = sectionNumero)]
+            ?: throw RemocraResponseException(
+                "${ErrorType.SECTION_NOT_FOUND} (commune=$codeInseeCommune, section=$sectionNumero, prefixe=$prefixe)",
+                ErrorType.SECTION_NOT_FOUND.status,
+            )
 
         val parcelle = CadastreParcelle(
             cadastreParcelleId = UUID.randomUUID(),
@@ -228,7 +236,7 @@ class ImportCadastreTask @Inject constructor(
             cadastreRepository.deleteUnusedSections()
         }
 
-        sections = cadastreRepository.getAllSections().toMutableSet()
+        sections = cadastreRepository.getAllSections().toMutableMap()
         parcelles = cadastreRepository.getAllParcelles().toMutableSet()
 
         getDepartementsForSdis().forEach { departement ->
