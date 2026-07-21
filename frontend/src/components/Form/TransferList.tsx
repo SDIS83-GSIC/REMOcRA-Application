@@ -20,6 +20,8 @@ const TransferList = ({
   label,
   tooltipText,
   name,
+  titleColumnAvailable = "Options disponibles",
+  titleColumnSelected = "Options sélectionnées",
 }: TransferListType) => {
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
@@ -102,7 +104,7 @@ const TransferList = ({
               <DroppableList
                 id="available"
                 items={availableOptions}
-                title="Options disponibles"
+                title={titleColumnAvailable}
               />
             </Col>
             {/* Liste des options sélectionnées */}
@@ -114,7 +116,7 @@ const TransferList = ({
               <DroppableList
                 id="selected"
                 items={selectedOptions}
-                title="Options sélectionnées"
+                title={titleColumnSelected}
               />
             </Col>
           </SortableContext>
@@ -186,9 +188,11 @@ type TransferListType = {
   label: string;
   tooltipText?: string;
   name: string;
+  titleColumnAvailable?: string;
+  titleColumnSelected?: string;
 };
 
-type ItemType = {
+export type ItemType = {
   id: string;
   libelle: string;
 };
@@ -213,12 +217,14 @@ export const useTransferList = ({
   listeDisponible,
   listeSelectionne,
   nameFormik,
+  useFormik = true,
 }: {
   listeDisponible: ItemType[] | undefined | null;
   listeSelectionne: ItemType[] | undefined | null;
   nameFormik: string;
+  useFormik?: boolean;
 }) => {
-  const { setFieldValue } = useFormikContext();
+  const { setFieldValue } = useFormikContext() || {};
   const [availableOptions, setAvailableOptions] = useState<
     ItemType[] | undefined | null
   >(listeDisponible);
@@ -228,15 +234,18 @@ export const useTransferList = ({
 
   useEffect(() => {
     if (
+      useFormik &&
       listeSelectionne != null &&
       selectedOptions?.length !== listeSelectionne?.length
     ) {
       setSelectedOptions(listeSelectionne ? listeSelectionne : []);
     }
-  }, [listeSelectionne, selectedOptions]);
+  }, [listeSelectionne, selectedOptions, useFormik]);
 
   useEffect(() => {
-    setFieldValue(nameFormik, selectedOptions);
+    if (useFormik && setFieldValue && nameFormik) {
+      setFieldValue(nameFormik, selectedOptions);
+    }
 
     const filteredOptions = availableOptions?.filter(
       (option) =>
@@ -245,7 +254,7 @@ export const useTransferList = ({
     if (availableOptions?.length !== filteredOptions?.length) {
       setAvailableOptions(filteredOptions);
     }
-  }, [selectedOptions, availableOptions, nameFormik, setFieldValue]);
+  }, [selectedOptions, availableOptions, useFormik, setFieldValue, nameFormik]);
 
   return {
     availableOptions,

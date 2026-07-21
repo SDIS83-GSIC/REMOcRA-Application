@@ -32,6 +32,7 @@ import CreateAnomalieCategorie from "./pages/Admin/anomalieCategorie/CreateAnoma
 import ListAnomalieCategorie from "./pages/Admin/anomalieCategorie/ListAnomalieCategorie.tsx";
 import SortAnomalieCategorie from "./pages/Admin/anomalieCategorie/SortAnomalieCategorie.tsx";
 import UpdateAnomalieCategorie from "./pages/Admin/anomalieCategorie/UpdateAnomalieCategorie.tsx";
+import { AtlasManagement } from "./pages/Admin/atlas/AtlasManagement.tsx";
 import CreateContact from "./pages/Admin/contact/CreateContact.tsx";
 import ListContact from "./pages/Admin/contact/ListContact.tsx";
 import UpdateContact from "./pages/Admin/contact/UpdateContact.tsx";
@@ -547,6 +548,8 @@ export const URLS = {
   CREATE_TACHE_SPECIFIQUE: url`/admin/tache-specifique/create`,
   LIST_TASK_SPECIFIQUE: url`/admin/tache-specifique`,
   ADMIN_EXECUTE_TASK_MANUELLE: url`/admin/tasks-manuelles/`,
+
+  ADMIN_GESTION_ATLAS: url`/admin/gestion-atlas`,
 
   LIST_MODULE_DOCUMENT_COURRIER: (moduleType: string, moduleId: string) =>
     url`/documents/` +
@@ -1255,6 +1258,19 @@ export default [
           <Authorization
             Component={ImportRessources}
             droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
+          />
+        ),
+      },
+      {
+        path: "/admin/gestion-atlas",
+        element: (
+          <Authorization
+            Component={AtlasManagement}
+            droits={[
+              TYPE_DROIT.ATLAS_A,
+              TYPE_DROIT.ATLAS_C,
+              TYPE_DROIT.ATLAS_D,
+            ]}
           />
         ),
       },
