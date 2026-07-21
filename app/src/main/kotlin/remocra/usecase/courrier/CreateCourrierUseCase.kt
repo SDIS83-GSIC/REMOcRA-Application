@@ -52,7 +52,7 @@ constructor(
         userInfo: WrappedUserInfo,
         element: CourrierData,
     ): CourrierData {
-        // On va chercher le le modeleCourrier
+        // On va chercher le modeleCourrier
         val modeleCourrier = modeleCourrierRepository.getById(element.modeleCourrierId)
         val thematiques = thematiqueRepository.getAll()
 
@@ -102,13 +102,13 @@ constructor(
                         accuseReception = null,
                     ),
                 )
-                TypeDestinataire.CONTACT_GESTIONNAIRE.libelle -> courrierRepository.insertLCourrierContactOrganisme(
+                TypeDestinataire.CONTACT_ORGANISME.libelle -> courrierRepository.insertLCourrierContactOrganisme(
                     LCourrierContactOrganisme(
                         courrierId = element.courrierId,
                         contactId = it.destinataireId,
                     ),
                 )
-                TypeDestinataire.CONTACT_ORGANISME.libelle -> courrierRepository.insertLCourrierContactGestionnaire(
+                TypeDestinataire.CONTACT_GESTIONNAIRE.libelle -> courrierRepository.insertLCourrierContactGestionnaire(
                     LCourrierContactGestionnaire(
                         courrierId = element.courrierId,
                         contactId = it.destinataireId,
@@ -120,7 +120,7 @@ constructor(
     }
 
     override fun postEvent(element: CourrierData, userInfo: WrappedUserInfo) {
-        // On va chercher le le modeleCourrier
+        // On va chercher le modeleCourrier
         val modeleCourrier = modeleCourrierRepository.getById(element.modeleCourrierId)
         eventBus.post(
             TracabiliteEvent(
