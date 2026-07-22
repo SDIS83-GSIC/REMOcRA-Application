@@ -155,7 +155,7 @@ constructor(
         }
 
         if (typeElementCarte == TypeElementCarte.PEI) {
-            val peiCaracteristiques = peiCaracteristiquesUseCase.getPeiCaracteristiquesWeb()
+            val peiCaracteristiques = peiCaracteristiquesUseCase.getPeiCaracteristiquesWeb(userInfo)
             feature.map {
                 it.propertiesToDisplay = peiCaracteristiques[it.elementId]
             }
