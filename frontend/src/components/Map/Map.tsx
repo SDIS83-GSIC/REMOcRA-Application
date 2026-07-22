@@ -91,7 +91,7 @@ export function toOpenLayer(
         TILED: true,
         projection: layer.projection,
         matrixSet: "PM",
-        format: layer.format ?? "image/png",
+        FORMAT: layer.format ?? "image/png",
         tileGrid: tileGrid,
         style: "normal",
       };
@@ -135,7 +135,7 @@ export function toOpenLayer(
         layer: layer.layer,
         projection: layer.projection,
         matrixSet: "PM",
-        format: layer.format ?? "image/png",
+        FORMAT: layer.format ?? "image/png",
         tileGrid: tileGrid,
         style: "normal",
         // Optimisations de performance
