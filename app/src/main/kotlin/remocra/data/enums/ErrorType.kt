@@ -400,8 +400,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     GESTIONNAIRE_FORBIDDEN_UPDATE(9103, "Vous n'avez pas les droits de modification des gestionnaires", Status.FORBIDDEN),
     GESTIONNAIRE_FORBIDDEN_INSERT(9104, "Vous n'avez pas les droits de création des gestionnaires", Status.FORBIDDEN),
     GESTIONNAIRE_FORBIDDEN_DELETE(9105, "Vous n'avez pas les droits de suppression des gestionnaires", Status.FORBIDDEN),
-    GESTIONNAIRE_USED_IN_PEI(9106, "Un ou plusieurs PEI sont rattachés à ce gestionnaire"),
-    GESTIONNAIRE_USED_IN_SITE(9107, "Un ou plusieurs sites sont rattachés à ce gestionnaire"),
+    GESTIONNAIRE_ERROR_ON_DELETE(9106, "Impossible de supprimer le gestionnaire : $PLACEHOLDER_ERROR_TYPE"),
 
     IMPORT_SITES_SHP_INTROUVABLE(9108, AUCUN_SHAPEFILE),
     IMPORT_SITES_GEOMETRIE_NULLE(9109, GEOMETRIE_NULLE),

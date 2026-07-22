@@ -38,27 +38,35 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : 
     fun getAllForAdmin(params: Params<Filter, Sort>): Collection<GestionnaireWithHasContact> =
         dsl.select(
             *GESTIONNAIRE.fields(),
-            DSL.field(
-                DSL.exists(
-                    dsl.select(L_CONTACT_GESTIONNAIRE.CONTACT_ID)
-                        .from(
-                            L_CONTACT_GESTIONNAIRE,
-                        )
-                        .where(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID)),
-                ),
-            ).`as`("hasContact"),
-            DSL.field(
-                DSL.exists(
-                    dsl.select(PEI.GESTIONNAIRE_ID)
-                        .from(
-                            PEI,
-                        )
-                        .leftJoin(SITE).on(PEI.SITE_ID.eq(SITE.ID))
-                        .where(
-                            PEI.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID).or(SITE.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID)),
+            DSL.multiset(
+                dsl.select(
+                    DSL.coalesce(
+                        DSL.nullif(
+                            DSL.trim(
+                                DSL.concat(
+                                    DSL.coalesce(CONTACT.PRENOM, ""),
+                                    DSL.inline(" "),
+                                    DSL.coalesce(CONTACT.NOM, ""),
+                                ),
+                            ),
+                            "",
                         ),
-                ),
-            ).`as`("hasPei"),
+                        DSL.inline("Inconnu"),
+                    ),
+                )
+                    .from(L_CONTACT_GESTIONNAIRE)
+                    .join(CONTACT).on(L_CONTACT_GESTIONNAIRE.CONTACT_ID.eq(CONTACT.ID))
+                    .where(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID)),
+            ).convertFrom { result -> result.mapNotNull { it.value1() } }.`as`("listContact"),
+            DSL.multiset(
+                dsl.selectDistinct(PEI.NUMERO_COMPLET)
+                    .from(PEI)
+                    .leftJoin(SITE).on(PEI.SITE_ID.eq(SITE.ID))
+                    .where(
+                        PEI.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID).or(SITE.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID)),
+                    )
+                    .orderBy(PEI.NUMERO_COMPLET),
+            ).convertFrom { result -> result.mapNotNull { it.value1() } }.`as`("listPei"),
         )
             .from(GESTIONNAIRE)
             .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
@@ -72,8 +80,8 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : 
         val gestionnaireActif: Boolean,
         val gestionnaireCode: String,
         val gestionnaireLibelle: String,
-        val hasContact: Boolean,
-        val hasPei: Boolean,
+        val listContact: List<String>,
+        val listPei: List<String>,
     )
 
     fun countAllForAdmin(filterBy: Filter?) =
@@ -158,20 +166,6 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : 
             .where(GESTIONNAIRE.ID.eq(gestionnaireId))
             .execute()
 
-    fun gestionnaireUsedInPei(gestionnaireId: UUID) =
-        dsl.fetchExists(
-            dsl.select(PEI.ID)
-                .from(PEI)
-                .where(PEI.GESTIONNAIRE_ID.eq(gestionnaireId)),
-        )
-
-    fun gestionnaireUsedInSite(gestionnaireId: UUID) =
-        dsl.fetchExists(
-            dsl.select(SITE.ID)
-                .from(SITE)
-                .where(SITE.GESTIONNAIRE_ID.eq(gestionnaireId)),
-        )
-
     fun checkCodeExists(code: String, id: UUID?) =
         dsl.fetchExists(
             dsl.select(GESTIONNAIRE.CODE)
@@ -226,4 +220,16 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : 
                     record.get(PEI.ID)
                 },
             )
+
+    fun getPeiIdByGestionnaireId(gestionnaireId: UUID): List<UUID> =
+        dsl.select(PEI.ID)
+            .from(PEI)
+            .where(PEI.GESTIONNAIRE_ID.eq(gestionnaireId))
+            .fetchInto()
+
+    fun getSiteIdByGestionnaireId(gestionnaireId: UUID): List<UUID> =
+        dsl.select(SITE.ID)
+            .from(SITE)
+            .where(SITE.GESTIONNAIRE_ID.eq(gestionnaireId))
+            .fetchInto()
 }
