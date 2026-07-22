@@ -469,4 +469,43 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
         dsl.insertInto(L_COURRIER_CONTACT_GESTIONNAIRE)
             .set(dsl.newRecord(L_COURRIER_CONTACT_GESTIONNAIRE, lCourrierContactGestionnaire))
             .execute()
+
+    /**
+     * Vérifie si un courrier est toujours référencé pour au moins un destinataire.
+     *
+     * Un courrier est considéré comme référencé s'il possède au moins un lien dans
+     * l'une des tables de liaison suivantes :
+     * - [L_COURRIER_CONTACT_GESTIONNAIRE]
+     * - [L_COURRIER_CONTACT_ORGANISME]
+     * - [L_COURRIER_ORGANISME]
+     * - [L_COURRIER_UTILISATEUR]
+     *
+     * @param courrierId l'identifiant unique du courrier à vérifier
+     * @return `true` si le courrier possède au moins une référence, `false` sinon
+     */
+    fun isCourrierStillReferenced(courrierId: UUID): Boolean =
+        dsl.fetchExists(
+            dsl.select(COURRIER.ID)
+                .from(COURRIER)
+                .where(COURRIER.ID.eq(courrierId))
+                .and(
+                    COURRIER.ID.`in`(
+                        DSL.select(L_COURRIER_CONTACT_GESTIONNAIRE.COURRIER_ID).from(L_COURRIER_CONTACT_GESTIONNAIRE)
+                            .union(DSL.select(L_COURRIER_CONTACT_ORGANISME.COURRIER_ID).from(L_COURRIER_CONTACT_ORGANISME))
+                            .union(DSL.select(L_COURRIER_ORGANISME.COURRIER_ID).from(L_COURRIER_ORGANISME))
+                            .union(DSL.select(L_COURRIER_UTILISATEUR.COURRIER_ID).from(L_COURRIER_UTILISATEUR)),
+                    ),
+                ),
+        )
+
+    fun deleteLCourrierThematique(courrierId: UUID) =
+        dsl.deleteFrom(L_THEMATIQUE_COURRIER)
+            .where(L_THEMATIQUE_COURRIER.COURRIER_ID.eq(courrierId))
+            .execute()
+
+    fun deleteCourrierById(courrierId: UUID): UUID =
+        dsl.deleteFrom(COURRIER)
+            .where(COURRIER.ID.eq(courrierId))
+            .returning(COURRIER.DOCUMENT_ID)
+            .fetchOne(COURRIER.DOCUMENT_ID)!!
 }
