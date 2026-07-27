@@ -135,7 +135,7 @@ export function toOpenLayer(
         layer: layer.layer,
         projection: layer.projection,
         matrixSet: "PM",
-        FORMAT: layer.format ?? "image/png",
+        format: layer.format ?? "image/png",
         tileGrid: tileGrid,
         style: "normal",
         // Optimisations de performance
