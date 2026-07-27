@@ -14,6 +14,7 @@ enum class CodeSdis {
     SDIS_42,
     SDIS_49,
     SDIS_53,
+    SDIS_56,
     SDIS_58,
     SDIS_59,
     SDIS_61,

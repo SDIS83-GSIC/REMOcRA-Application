@@ -264,6 +264,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_42 -> pei.penaCapacite == null || pei.penaCapacite < 2
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> pei.penaCapacite != null && pei.penaCapacite < 60
+            CodeSdis.SDIS_56 -> false
             CodeSdis.SDIS_58 -> pei.penaCapacite != null && pei.penaCapacite < 15
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
@@ -308,6 +309,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_42 -> pei.penaCapaciteIncertaine == true || pei.penaCapacite != null && pei.penaCapacite < 30
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> pei.penaCapacite == null || pei.penaCapacite in 60..<100
+            CodeSdis.SDIS_56 -> false
             CodeSdis.SDIS_58 -> pei.penaCapacite != null && pei.penaCapacite in 16..29
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> false
@@ -338,6 +340,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_42 -> false
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> pei.pression != null && pei.pression < 0.95
+            CodeSdis.SDIS_56 -> false
             CodeSdis.SDIS_58 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
@@ -382,6 +385,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_42 -> false
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> pei.pression == null || pei.pression in 0.95..<1.0
+            CodeSdis.SDIS_56 -> false
             CodeSdis.SDIS_58 -> pei.pression != null && pei.pression > 8
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
@@ -417,6 +421,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_42 -> isPressionTropEleveeDefault(pei)
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> pei.pression != null && pei.pression > 6
+            CodeSdis.SDIS_56 -> false
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> pei.pression != null && pei.pression > 8
@@ -456,6 +461,7 @@ class CalculDispoUseCase @Inject constructor(
 
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
+            CodeSdis.SDIS_56 -> false
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> false
@@ -502,6 +508,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_42 -> pei.pressionDynamique != null && pei.pressionDynamique >= 0.6 && pei.pressionDynamique < 1
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
+            CodeSdis.SDIS_56 -> false
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> false
@@ -539,6 +546,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_42 -> isPressionDynamiqueTropEleveeDefault(pei)
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
+            CodeSdis.SDIS_56 -> false
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 ->
@@ -617,6 +625,7 @@ class CalculDispoUseCase @Inject constructor(
                 }
             }
             CodeSdis.SDIS_58 -> pei.debit == null || pei.debit < 15
+            CodeSdis.SDIS_56 -> false
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
                     if (pei.debit == null) {
@@ -766,6 +775,7 @@ class CalculDispoUseCase @Inject constructor(
                 }
             }
             CodeSdis.SDIS_58 -> pei.debit != null && (pei.debit in 15..29)
+            CodeSdis.SDIS_56 -> false
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
                     when (pei.debit) {
@@ -890,6 +900,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_42 -> pei.debit != null && pei.debit > 500
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
+            CodeSdis.SDIS_56 -> false
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> {

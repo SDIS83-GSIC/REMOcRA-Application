@@ -266,7 +266,7 @@ class ImportCadastreTask @Inject constructor(
             // Liste des départements spécifiques à chaque SDIS
             CodeSdis.SDIS_01, CodeSdis.SDIS_09, CodeSdis.SDIS_16, CodeSdis.SDIS_21,
             CodeSdis.SDIS_22, CodeSdis.SDIS_38, CodeSdis.SDIS_39, CodeSdis.SDIS_42,
-            CodeSdis.SDIS_49, CodeSdis.SDIS_53, CodeSdis.SDIS_58, CodeSdis.SDIS_59,
+            CodeSdis.SDIS_49, CodeSdis.SDIS_53, CodeSdis.SDIS_56, CodeSdis.SDIS_58, CodeSdis.SDIS_59,
             CodeSdis.SDIS_61, CodeSdis.SDIS_62, CodeSdis.SDIS_66, CodeSdis.SDIS_71,
             CodeSdis.SDIS_77, CodeSdis.SDIS_78, CodeSdis.SDIS_83, CodeSdis.SDIS_89,
             CodeSdis.SDIS_95, CodeSdis.SDIS_971, CodeSdis.SDIS_973,

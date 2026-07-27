@@ -118,6 +118,7 @@ constructor(
 
             CodeSdis.SDIS_49 -> computeNumero49(pei)
             CodeSdis.SDIS_53 -> computeNumero53(pei)
+            CodeSdis.SDIS_56 -> computeNumero56(pei)
             CodeSdis.SDIS_58 -> computeNumero58(pei)
             CodeSdis.SDIS_59 -> computeNumero59(pei)
             CodeSdis.SDIS_62 -> computeNumero62(pei)
@@ -169,6 +170,7 @@ constructor(
                 CodeSdis.SDIS_39 -> computeNumeroInterne39(pei)
                 CodeSdis.SDIS_49 -> computeNumeroInterne49()
                 CodeSdis.SDIS_53 -> computeNumeroInterne53(pei)
+                CodeSdis.SDIS_56 -> computeNumeroInterne56(pei)
                 CodeSdis.SDIS_58 -> computeNumeroInterne58(pei)
                 CodeSdis.SDIS_59 -> computeNumeroInterne59(pei)
                 CodeSdis.SDIS_71 -> computeNumeroInterne71(pei)
@@ -232,6 +234,61 @@ constructor(
             typePei = typePei,
             peiNatureId = pei.nature.natureId,
             peiCommuneId = if (pei.peiZoneSpecialeId == null) pei.peiCommuneId else null,
+            peiZoneSpecialeId = pei.peiZoneSpecialeId,
+            peiNatureDeciId = null,
+        )
+
+        return listPeiNumeroInterne.getNextNumeroInterneWhile(seed, maxValue)
+    }
+
+    /**
+     * SDIS 56 - Numérotation avec préfixes selon le type de PEI
+     * - PIBI : 0001 à 6999 (commence à 1)
+     * - PEN (tous types: PEN, PEN_MARE_LAC_ETANG, PEN_OCEAN, PEN_COURS_D_EAU) : 9001 à 9999
+     * - PEA (tous types: PEA, PEA_RS, PEA_RA, PEA_RAL, PEA_RE) : 7001 à 7999
+     * Pas de réutilisation des numéros, incrémentation continue
+     */
+    private fun computeNumeroInterne56(pei: PeiForNumerotationData): Int {
+        checkCommuneId(pei)
+        checkNature(pei)
+
+        val seed: Int
+        val maxValue: Int
+
+        val natureCode = pei.nature!!.natureCode
+        val typePei = pei.nature.natureTypePei
+
+        when {
+            // PEN et toutes ses variantes : PEN, PEN_MARE_LAC_ETANG, PEN_OCEAN, PEN_COURS_D_EAU
+            // je n'utilise pas la constante car si on décide de renommer le code
+            // il ne faut pas que ça plante ici
+            natureCode.startsWith("PEN") -> {
+                seed = 9001
+                maxValue = 9999
+            }
+            // PEA et toutes ses variantes : PEA, PEA_RS, PEA_RA, PEA_RAL, PEA_RE
+            // je n'utilise pas la constante car si on décide de renommer le code
+            // il ne faut pas que ça plante ici
+            natureCode.startsWith("PEA") -> {
+                seed = 7001
+                maxValue = 7999
+            }
+            // PIBI (hydrants PI/BI, PI_RELAIS, PIBI_A_CATEGORISER) : commence à 1 (affiché comme 0001)
+            typePei == TypePei.PIBI -> {
+                seed = 1
+                maxValue = 6999 // On évite les plages 7xxx et 9xxx réservées
+            }
+            // PENA_A_CATEGORISER ou autres cas non couverts
+            else -> {
+                seed = 1
+                maxValue = 6999
+            }
+        }
+
+        val listPeiNumeroInterne = numerotationRepository.getListPeiNumeroInterne(
+            typePei = null, // On ne filtre pas par type pour avoir tous les numéros de la commune
+            peiNatureId = null,
+            peiCommuneId = pei.peiCommuneId,
             peiZoneSpecialeId = pei.peiZoneSpecialeId,
             peiNatureDeciId = null,
         )
@@ -820,6 +877,26 @@ constructor(
     }
 
     /**
+     * SDIS 56
+     * <code insee commune><numéro interne>
+     * sans espace
+     * avec numéro interne sur 4 chiffres
+     * - Hydrants (PIBI) : 0xxx (0001 à 6999)
+     * - PEN : 9xxx (9001 à 9999)
+     * - PEA : 7xxx (7001 à 7999)
+     * Exemple : 562600001 - PI 1 sur Vannes (56260)
+     * Exemple : 562609001 - premier PEN sur Vannes (56260)
+     * Exemple : 562607001 - premier PEA sur Vannes (56260)
+     *
+     */
+    private fun computeNumero56(pei: PeiForNumerotationData): String {
+        checkCommuneId(pei)
+
+        val commune = ensureCommune(pei)
+        return commune.communeCodeInsee + "%04d".format(Locale.getDefault(), pei.peiNumeroInterne)
+    }
+
+    /**
      * PEI Public : <code insee commune>_<numéro interne>
      * PEI Privé : <code gestionnaire>_<numéro interne>
      * numéro interne sur 5 chiffres:
@@ -1037,6 +1114,7 @@ constructor(
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_39,
             CodeSdis.SDIS_53,
+            CodeSdis.SDIS_56,
             CodeSdis.SDIS_58,
             CodeSdis.SDIS_71,
             CodeSdis.SDIS_83,
@@ -1066,6 +1144,7 @@ constructor(
             CodeSdis.SDIS_22,
             CodeSdis.SDIS_42,
             CodeSdis.SDIS_53,
+            CodeSdis.SDIS_56,
             CodeSdis.SDIS_58,
             CodeSdis.SDIS_59,
             CodeSdis.SDIS_61,
