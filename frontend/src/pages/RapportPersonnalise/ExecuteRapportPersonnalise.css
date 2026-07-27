@@ -1,7 +1,7 @@
 /* Styles pour le redimensionnement des colonnes */
 .resizable-table {
-  table-layout: fixed;
-  width: auto;
+  table-layout: auto;
+  width: max-content;
 }
 
 .resizable-table th {
@@ -9,6 +9,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.resizable-table.auto {
+  width: max-content;
+}
+
+.resizable-table.manual {
+  table-layout: fixed;
+  width: max-content;
 }
 
 .column-resizer {

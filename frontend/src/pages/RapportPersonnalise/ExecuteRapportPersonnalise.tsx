@@ -50,7 +50,7 @@ const ExecuteRapportPersonnalise = () => {
 
   const [offset, setOffset] = useState<number>(0);
   const [limit, setLimit] = useState<number>(
-    localStorage.getItem("itemsPerPage") || DEFAULT_PAGINATION,
+    Number(localStorage.getItem("itemsPerPage")) || DEFAULT_PAGINATION,
   );
   const [activeTab, setActiveTab] = useState<string>("data");
   const [valuesFormik, setValuesFormik] = useState<any>();
@@ -162,38 +162,13 @@ const ExecuteRapportPersonnalise = () => {
   const getColumnStyle = (index: number) => {
     const width = columnWidths[index];
     if (width) {
-      return { width: `${width}px`, minWidth: `${width}px` };
+      return { width: `${width}px`, maxWidth: `${width}px` };
     }
 
-    // Calculer la largeur basée sur la longueur du header
-    const headerText = tableau?.headers?.[index] || "";
-    const estimatedWidth = Math.max(100, headerText.length * 8 + 40); // 8px par caractère + padding
-
-    return { minWidth: `${estimatedWidth}px` };
+    return undefined;
   };
 
-  const getTableStyle = () => {
-    const totalWidth = Object.values(columnWidths).reduce(
-      (sum, width) => sum + width,
-      0,
-    );
-
-    // Calculer la largeur des colonnes non redimensionnées basée sur leurs headers
-    let defaultTotalWidth = 0;
-    if (tableau?.headers) {
-      tableau.headers.forEach((header, index) => {
-        if (!(index in columnWidths)) {
-          const estimatedWidth = Math.max(100, header.length * 8 + 40);
-          defaultTotalWidth += estimatedWidth;
-        }
-      });
-    }
-
-    if (totalWidth > 0 || defaultTotalWidth > 0) {
-      return { width: `${totalWidth + defaultTotalWidth}px` };
-    }
-    return { minWidth: "100%" };
-  };
+  const hasManualResize = Object.keys(columnWidths).length > 0;
 
   return (
     <Container fluid style={{ maxWidth: "95vw" }}>
@@ -309,8 +284,7 @@ const ExecuteRapportPersonnalise = () => {
                     bordered
                     striped
                     ref={tableRef}
-                    className="resizable-table"
-                    style={getTableStyle()}
+                    className={`resizable-table ${hasManualResize ? "manual" : "auto"}`}
                   >
                     <thead>
                       <tr>
