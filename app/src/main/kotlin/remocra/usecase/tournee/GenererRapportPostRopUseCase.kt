@@ -16,6 +16,7 @@ import remocra.db.ModeleCourrierRepository
 import remocra.db.OrganismeRepository
 import remocra.db.PeiRepository
 import remocra.db.TourneeRepository
+import remocra.db.jooq.remocra.enums.TypeCourrier
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.courrier.CourrierGeneratorUseCase
@@ -33,7 +34,7 @@ class GenererRapportPostRopUseCase @Inject constructor(
 ) : AbstractUseCase() {
 
     fun execute(tourneeId: UUID, userInfo: WrappedUserInfo): Result {
-        val modeleCourrier = modeleCourrierRepository.getRapportPostRop()
+        val modeleCourrier = modeleCourrierRepository.getByType(TypeCourrier.RAPPORT_POST_ROP)
             ?: throw RemocraResponseException(ErrorType.RAPPORT_POST_ROP_MODELE_INEXISTANT)
 
         val listPeiTournee = tourneeRepository.getListPeiByListTournee(listOf(tourneeId))[tourneeId]
@@ -63,7 +64,7 @@ class GenererRapportPostRopUseCase @Inject constructor(
 
         // Sur ces PEI, en fonction des cas, on extrait les organismes à notifier
         // Déjà les SP_DECI
-        val listeDestinataire = organismeRepository.getDestinataireContactOrganisme(
+        val listeDestinataire = organismeRepository.getDestinatairesContactOrganisme(
             listePeiId = listPeiTournee.map { it.peiId },
             typeOrganisme = listIdTypeOrganismeANotifier,
             contactRole = GlobalConstants.CONTACT_ROLE_RAPPORT_POST_ROP,

@@ -45,18 +45,6 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             .where(MODELE_COURRIER.ID.eq(modeleCourrierId))
             .fetchSingleInto()
 
-    fun getAll(utilisateurId: UUID): Collection<ModeleCourrier> =
-        dsl.select(*MODELE_COURRIER.fields())
-            .from(MODELE_COURRIER)
-            .join(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES)
-            .on(MODELE_COURRIER.ID.eq(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.MODELE_COURRIER_ID))
-            .join(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES)
-            .on(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID))
-            .join(UTILISATEUR)
-            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_UTILISATEUR_ID))
-            .where(UTILISATEUR.ID.eq(utilisateurId))
-            .fetchInto()
-
     /**
      * Retourne les paramètres groupés par courrier
      */
@@ -416,9 +404,6 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             .where(MODELE_COURRIER.TYPE.eq(TypeCourrier.RAPPORT_POST_ROP)),
     )
 
-    /**
-     * Retourne le modèle de courrier de type RAPPORT_POST_ROP s'il existe, null sinon
-     */
-    fun getRapportPostRop(): ModeleCourrier? = dsl.selectFrom(MODELE_COURRIER)
-        .where(MODELE_COURRIER.TYPE.eq(TypeCourrier.RAPPORT_POST_ROP)).fetchOneInto()
+    fun getByType(typeCourrier: TypeCourrier): ModeleCourrier? = dsl.selectFrom(MODELE_COURRIER)
+        .where(MODELE_COURRIER.TYPE.eq(typeCourrier)).fetchOneInto()
 }

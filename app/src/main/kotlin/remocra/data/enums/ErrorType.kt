@@ -680,6 +680,9 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     RAPPORT_POST_ROP_NO_PEI(31011, "Aucun PEI dans la tournée"),
     RAPPORT_POST_ROP_ERREUR_GENERATION(31012, "Erreur lors de la création du courrier pour le rapport post ROP de la tournée"),
 
+    RAPPORT_VISITE_RECEPTION_MODEL_INEXISTANT(31013, "Modèle de courrier pour rapport visite de réception introuvable"),
+    COURRIER_VISITE_RECEPTION_ERREUR(31014, "Erreur lors de la création du courrier pour la visite de réception : aucun destinataire trouvé."),
+
     //
     // ********************************************************************************
     // Image

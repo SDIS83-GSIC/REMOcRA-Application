@@ -226,6 +226,12 @@ class UpdateParametresUseCase
             updateParametre(ParametreEnum.PEI_LIBELLE_NON_CONFORME, parametresAdminData.pei.peiLibelleNonConforme)
             updateParametre(ParametreEnum.PEI_ROUTE_HISTORIQUE, parametresAdminData.pei.peiRouteHistorique)
 
+            updateParametre(ParametreEnum.PEI_ORGANISME_NOTIFICATION_VISITE_RECEPTION, parametresAdminData.pei.peiOrganismeNotificationVisiteReception?.let { objectMapper.writeValueAsString(it) })
+            updateParametre(ParametreEnum.PEI_ORGANISME_NOTIFICATION_ROI, parametresAdminData.pei.peiOrganismeNotificationRoi?.let { objectMapper.writeValueAsString(it) })
+
+            updateParametre(ParametreEnum.AUTORISER_MAIL_ROI, parametresAdminData.pei.autoriserMailRoi.toString())
+            updateParametre(ParametreEnum.AUTORISER_MAIL_VISITE_RECEPTION, parametresAdminData.pei.autoriserMailVisiteReception.toString())
+
             // ALERTE
             updateParametre(
                 ParametreEnum.PEI_LONGUE_INDISPONIBILITE_MESSAGE,

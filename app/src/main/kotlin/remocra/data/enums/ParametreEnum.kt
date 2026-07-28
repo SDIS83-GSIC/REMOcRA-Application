@@ -95,6 +95,10 @@ enum class ParametreEnum(val section: ParametreSection) {
     RECEPTION_RECO_INIT_OBLIGATOIRE(ParametreSection.PEI),
     VALEUR_HAUTE_MINIMALE_HISTOGRAMME(ParametreSection.PEI),
     CONSERVER_OBSERVATION_VISITE(ParametreSection.PEI),
+    PEI_ORGANISME_NOTIFICATION_VISITE_RECEPTION(ParametreSection.PEI),
+    PEI_ORGANISME_NOTIFICATION_ROI(ParametreSection.PEI),
+    AUTORISER_MAIL_VISITE_RECEPTION(ParametreSection.PEI),
+    AUTORISER_MAIL_ROI(ParametreSection.PEI),
 
     // Permis
     PERMIS_TOLERANCE_CHARGEMENT_METRES(ParametreSection.PERMIS),

@@ -149,6 +149,17 @@ constructor(
             valeurMinimaleHistogramme = mapParametres.getIntOrNull(ParametreEnum.VALEUR_HAUTE_MINIMALE_HISTOGRAMME.name),
             peiRouteHistorique = mapParametres.getString(ParametreEnum.PEI_ROUTE_HISTORIQUE.name),
             conserverObservationVisite = mapParametres.getBoolean(ParametreEnum.CONSERVER_OBSERVATION_VISITE.name),
+            peiOrganismeNotificationVisiteReception = mapParametres.getListOfString(
+                ParametreEnum.PEI_ORGANISME_NOTIFICATION_VISITE_RECEPTION.name,
+                objectMapper,
+            ),
+            peiOrganismeNotificationRoi = mapParametres.getListOfString(
+                ParametreEnum.PEI_ORGANISME_NOTIFICATION_ROI.name,
+                objectMapper,
+            ),
+            autoriserMailRoi = mapParametres.getBoolean(ParametreEnum.AUTORISER_MAIL_ROI.name),
+            autoriserMailVisiteReception = mapParametres.getBoolean(ParametreEnum.AUTORISER_MAIL_VISITE_RECEPTION.name),
+
         )
 
         val peiLongueIndispo = ParametresSectionPeiLongueIndispo(

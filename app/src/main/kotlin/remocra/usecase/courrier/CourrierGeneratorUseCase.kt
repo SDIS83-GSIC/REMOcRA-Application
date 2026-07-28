@@ -33,11 +33,12 @@ import java.util.UUID
 class CourrierGeneratorUseCase
 @Inject
 constructor(
-    private val transactionManager: TransactionManager,
     private val modeleCourrierRepository: ModeleCourrierRepository,
-    private val requestUtils: RequestUtils,
-    private val documentUtils: DocumentUtils,
     private val objectMapper: ObjectMapper,
+    private val documentUtils: DocumentUtils,
+    private val userInfo: WrappedUserInfo,
+    private val transactionManager: TransactionManager,
+    private val requestUtils: RequestUtils,
 ) :
     AbstractUseCase() {
 
@@ -78,8 +79,6 @@ constructor(
         )
     }
 
-    private fun escapeApostrophes(input: String): String = input.replace("'", "''")
-
     /**
      * Fonction interne de génération de courrier
      * Retourne un [Path] vers le fichier PDF généré
@@ -89,46 +88,57 @@ constructor(
         parametreCourrierInput: ParametreCourrierInput,
         userInfo: WrappedUserInfo,
         isApacheHop: Boolean = false,
+        mainTransactionManager: TransactionManager? = null,
     ): Path {
         if (!isApacheHop) {
             checkGroupeFonctionnalites(userInfo, parametreCourrierInput.modeleCourrierId)
         }
 
-        var mapParameters: MutableMap<String, Any?>? = mutableMapOf()
-        val modeleCourrier = modeleCourrierRepository.getModeleCourrier(parametreCourrierInput.modeleCourrierId)
+        return courrierPdfGenerator(
+            parametreCourrierInput,
+            mainTransactionManager,
+        )
+    }
 
-        transactionManager.transactionResult {
+    private fun escapeApostrophes(input: String): String = input.replace("'", "''")
+
+    private fun courrierPdfGenerator(
+        parameterCourrierInput: ParametreCourrierInput,
+        mainTransactionManager: TransactionManager?,
+    ): Path {
+        val modeleCourrier = modeleCourrierRepository.getModeleCourrier(parameterCourrierInput.modeleCourrierId)
+
+        val mapParameters = (mainTransactionManager ?: transactionManager).transactionResult(
+            wrapInsideTransaction = mainTransactionManager == null,
+        ) {
             // On va chercher la requête du rapport
             var requete = modeleCourrier.modeleCourrierSourceSql
 
             // On remplace avec les données paramètres fournies
-            parametreCourrierInput.listParametres?.forEach {
+            parameterCourrierInput.listParametres?.forEach {
                 requete = requete.replace(
                     it.nom,
-                    escapeApostrophes(it.valeur?.takeIf { it.isNotBlank() } ?: "null"),
+                    escapeApostrophes(it.valeur?.takeIf { valeur -> valeur.isNotBlank() } ?: "null"),
                 )
             }
 
-            // On remplace les variables utilisateur de la requête par les données userinfo
+            // On remplace les variables utilisateur de la requête par les données userInfo
             val requeteModifiee = requestUtils.replaceGlobalParameters(userInfo, requete)
 
-            // on exécute la requête et on sauvegarde
-            mapParameters = modeleCourrierRepository.executeRequeteSql(requeteModifiee)
+            modeleCourrierRepository.executeRequeteSql(requeteModifiee)
+                ?: throw RemocraResponseException(ErrorType.COURRIER_GENERATE_NO_DATA_FOUND)
+        }.toMutableMap()
 
-            if (mapParameters == null) {
-                throw RemocraResponseException(ErrorType.COURRIER_GENERATE_NO_DATA_FOUND)
-            }
-        }
+        // On ajoute les paramètres système
+        mapParameters["dateGeneration"] =
+            dateUtils.format(
+                dateUtils.now(),
+                DateUtils.PATTERN_NATUREL_DATE_ONLY,
+            )
 
-        // on ajoute la date
-        mapParameters!!["dateGeneration"] =
-            dateUtils.format(dateUtils.now(), DateUtils.Companion.PATTERN_NATUREL_DATE_ONLY)
+        mapParameters["userGenerationCourrier"] = "${userInfo.prenom} ${userInfo.nom}"
+        mapParameters["reference"] = parameterCourrierInput.courrierReference
 
-        // et le nom de l'utilisateur connecté qui génére le courrier
-        mapParameters!!["userGenerationCourrier"] = "${userInfo.prenom} ${userInfo.nom}"
-
-        // et le nom de l'utilisateur connecté qui génére le courrier
-        mapParameters!!["reference"] = parametreCourrierInput.courrierReference
         val report = XDocReportRegistry.getRegistry().loadReport(
             FileInputStream("${modeleCourrier.documentRepertoire}/${modeleCourrier.documentNomFichier}"),
             TemplateEngineKind.Freemarker,
@@ -136,14 +146,11 @@ constructor(
 
         val context = report.createContext()
 
-        val mapTemp = mapParameters
-        mapTemp!!.forEach {
-            (it.value as? JSON)?.let { it1 ->
-                mapTemp[it.key] = objectMapper.readValue<List<Map<String, Any>>>(it1.data())
+        mapParameters.forEach { (key, value) ->
+            if (value is JSON) {
+                mapParameters[key] = objectMapper.readValue<List<Map<String, Any>>>(value.data())
             }
         }
-
-        mapParameters = mapTemp
 
         context.putMap(mapParameters)
 
@@ -155,11 +162,11 @@ constructor(
         documentUtils.ensureDirectory(GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE)
 
         val pdfPath = GlobalConstants.DOSSIER_DOCUMENT_TEMPORAIRE.resolve("$nomFichier.pdf")
-        val pdfFile = pdfPath.toFile()
 
-        val options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.ODFDOM)
+        val options = Options.getTo(ConverterTypeTo.PDF)
+            .via(ConverterTypeVia.ODFDOM)
 
-        FileOutputStream(pdfFile).use {
+        FileOutputStream(pdfPath.toFile()).use {
             report.convert(context, options, it)
         }
         return pdfPath

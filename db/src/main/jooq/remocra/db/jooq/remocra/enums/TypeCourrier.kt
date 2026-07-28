@@ -21,6 +21,8 @@ import javax.annotation.processing.Generated
 @Suppress("warnings")
 enum class TypeCourrier(@get:JvmName("literal") public val literal: String) : EnumType {
     RAPPORT_POST_ROP("RAPPORT_POST_ROP"),
+    COURRIER_ROI("COURRIER_ROI"),
+    COURRIER_VISITE_RECEPTION("COURRIER_VISITE_RECEPTION"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA
