@@ -88,9 +88,11 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
                 .and(ORGANISME.ID.ne(organismeId)),
         )
 
-    fun getOrganismeForSelect(): List<IdCodeLibelleData> = getIdLibelleByCondition(DSL.noCondition())
+    fun getOrganismeForSelect(affiliatedOrganismeIds: Set<UUID>?): List<IdCodeLibelleData> = getIdLibelleByCondition(
+        DSL.condition(affiliatedOrganismeIds?.let { ORGANISME.ID.`in`(it) } ?: DSL.noCondition()),
+    )
 
-    fun getOrganismeFilterWithPeiForSelect(listePei: Set<UUID>): List<IdCodeLibelleData> =
+    fun getOrganismeFilterWithPeiForSelect(listePei: Set<UUID>, affiliatedOrganismeIds: Set<UUID>?): List<IdCodeLibelleData> =
         getIdLibelleByCondition(
             DSL.condition(
                 ORGANISME.ID.`notIn`(
@@ -98,7 +100,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
                         .from(L_TOURNEE_PEI)
                         .leftJoin(TOURNEE).on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
                         .where(L_TOURNEE_PEI.PEI_ID.`in`(listePei)),
-                ),
+                ).and(affiliatedOrganismeIds?.let { ORGANISME.ID.`in`(it) } ?: DSL.noCondition()),
             ),
         )
 

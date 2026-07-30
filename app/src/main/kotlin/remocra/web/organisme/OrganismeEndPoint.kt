@@ -51,7 +51,7 @@ class OrganismeEndPoint : AbstractEndpoint() {
     @Produces(MediaType.APPLICATION_JSON)
     fun getOrganismeForSelect(): Response {
         return Response.ok(
-            organismeUseCase.getOrganismeForSelect(),
+            organismeUseCase.getOrganismeForSelect(securityContext.userInfo.affiliatedOrganismeIds),
         ).build()
     }
 
@@ -64,7 +64,7 @@ class OrganismeEndPoint : AbstractEndpoint() {
         listePei: Set<UUID>,
     ): Response {
         return Response.ok().entity(
-            organismeUseCase.getOrganismeFilterWithPeiForSelect(listePei),
+            organismeUseCase.getOrganismeFilterWithPeiForSelect(listePei, securityContext.userInfo.affiliatedOrganismeIds),
         )
             .build()
     }
