@@ -11,6 +11,7 @@ import remocra.db.CourrierRepository
 import remocra.db.DocumentRepository
 import remocra.db.ModeleCourrierRepository
 import remocra.db.ThematiqueRepository
+import remocra.db.UtilisateurRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
@@ -35,6 +36,7 @@ constructor(
     private val documentRepository: DocumentRepository,
     private val courrierRepository: CourrierRepository,
     private val thematiqueRepository: ThematiqueRepository,
+    private val utilisateurRepository: UtilisateurRepository,
 ) :
     AbstractCUDUseCase<CourrierData>(TypeOperation.INSERT) {
 
@@ -135,12 +137,12 @@ constructor(
 
         // Puis on post les notificationEvent pour chaque destinataire
         val utilisateurs = element.listeDestinataire
-            .filter { it.typeDestinataire == TypeDestinataire.UTILISATEUR.libelle }
+            .filter { it.typeDestinataire == TypeDestinataire.UTILISATEUR.libelle || utilisateurRepository.isEmailUsedByAnUser(it.emailDestinataire) }
             .map { it.emailDestinataire }
             .toSet()
 
         val autres = element.listeDestinataire
-            .filter { it.typeDestinataire != TypeDestinataire.UTILISATEUR.libelle }
+            .filter { it.typeDestinataire != TypeDestinataire.UTILISATEUR.libelle && !utilisateurRepository.isEmailUsedByAnUser(it.emailDestinataire) }
             .map { it.emailDestinataire }
             .toSet()
 
