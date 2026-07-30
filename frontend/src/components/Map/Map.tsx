@@ -42,6 +42,8 @@ import { useGet } from "../Fetch/useFetch.tsx";
 import { TypeModuleRemocra } from "../ModuleRemocra/ModuleRemocra.tsx";
 import MapLegend from "./MapLegend.tsx";
 import {
+  createAbortableImageLoadFunction,
+  createAbortableTileLoadFunction,
   debounce,
   optimizeMap,
   optimizeTileLayer,
@@ -114,18 +116,17 @@ export function toOpenLayer(
         ? new ImageWMS({
             url: layer.url,
             params: wmsParams,
+            imageLoadFunction: createAbortableImageLoadFunction(),
           })
         : new TileWMS({
             url: layer.url,
             params: wmsParams,
             // Optimisations de performance
-            cacheSize: 512, // Cache plus important pour les tuiles
-            transition: 0, // Désactive les transitions pour un affichage plus rapide
-            tileLoadFunction: (tile: any, src: string) => {
-              const image = tile.getImage();
-              image.crossOrigin = layer.crossOrigin ?? "anonymous";
-              image.src = src;
-            },
+            cacheSize: 512,
+            transition: 0,
+            tileLoadFunction: createAbortableTileLoadFunction(
+              layer.crossOrigin ?? "anonymous",
+            ),
           });
     }
     case SOURCE_CARTO.WMTS:
@@ -141,11 +142,9 @@ export function toOpenLayer(
         // Optimisations de performance
         cacheSize: 512,
         transition: 0,
-        tileLoadFunction: (tile: any, src: string) => {
-          const image = tile.getImage();
-          image.crossOrigin = layer.crossOrigin ?? "anonymous";
-          image.src = src;
-        },
+        tileLoadFunction: createAbortableTileLoadFunction(
+          layer.crossOrigin ?? "anonymous",
+        ),
       });
     case SOURCE_CARTO.GEOJSON:
       return new VectorSource({
@@ -164,11 +163,9 @@ export function toOpenLayer(
         // Optimisations de performance
         cacheSize: 512,
         transition: 0,
-        tileLoadFunction: (tile: any, src: string) => {
-          const image = tile.getImage();
-          image.crossOrigin = layer.crossOrigin ?? null;
-          image.src = src;
-        },
+        tileLoadFunction: createAbortableTileLoadFunction(
+          layer.crossOrigin ?? null,
+        ),
       });
 
     case SOURCE_CARTO.WFS:
