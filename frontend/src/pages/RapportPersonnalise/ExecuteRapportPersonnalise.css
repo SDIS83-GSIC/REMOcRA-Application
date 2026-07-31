@@ -2,6 +2,7 @@
 .resizable-table {
   table-layout: auto;
   width: max-content;
+  border-spacing: 0;
 }
 
 .resizable-table th {
@@ -9,6 +10,30 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.rapport-table-scroll {
+  max-height: 65vh;
+  overflow: auto;
+  max-width: 100%;
+  position: relative;
+  background-color: var(--bs-table-bg);
+}
+
+.rapport-table-scroll .resizable-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+.rapport-table-scroll .resizable-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background-color: var(--bs-table-bg);
+  border-bottom: 1px solid var(--bs-border-color) !important;
+  box-shadow: inset 0 -1px 0 var(--bs-border-color);
+  background-clip: padding-box;
 }
 
 .resizable-table.auto {
@@ -34,7 +59,7 @@
 }
 
 .column-resizer:hover {
-  border-right: 2px solid #007bff !important;
+  border-right: 2px solid var(--bs-primary) !important;
 }
 
 .resizable-table td {

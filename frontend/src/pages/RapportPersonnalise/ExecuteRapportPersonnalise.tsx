@@ -269,57 +269,55 @@ const ExecuteRapportPersonnalise = () => {
         </Col>
         <Col xs={12} lg={9}>
           <Tabs activeKey={activeTab} onSelect={(k) => k && setActiveTab(k)}>
-            <Tab
-              eventKey="data"
-              title={"Données"}
-              className="overflow-scroll h-75"
-            >
+            <Tab eventKey="data" title={"Données"}>
               {tableau === null ? (
                 <Row className="m-3 text-center">
                   <Col className="text-center">Aucune donnée à afficher</Col>
                 </Row>
               ) : (
                 <div>
-                  <Table
-                    bordered
-                    striped
-                    ref={tableRef}
-                    className={`resizable-table ${hasManualResize ? "manual" : "auto"}`}
-                  >
-                    <thead>
-                      <tr>
-                        {tableau?.headers?.map((e, index) => (
-                          <th
-                            key={index}
-                            style={getColumnStyle(index)}
-                            title={e}
-                          >
-                            {e}
-                            <div className="column-resizer" />
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {tableau?.values
-                        ?.slice(offset, offset + limit)
-                        ?.map((ligne, index) => {
-                          return (
-                            <tr key={index} className={"fw-normal"}>
-                              {ligne.map((e: any, key: number) => (
-                                <td
-                                  key={key}
-                                  style={getColumnStyle(key)}
-                                  title={e?.toString()}
-                                >
-                                  {e?.toString()}
-                                </td>
-                              ))}
-                            </tr>
-                          );
-                        })}
-                    </tbody>
-                  </Table>
+                  <div className="rapport-table-scroll">
+                    <Table
+                      bordered
+                      striped
+                      ref={tableRef}
+                      className={`resizable-table ${hasManualResize ? "manual" : "auto"}`}
+                    >
+                      <thead>
+                        <tr>
+                          {tableau?.headers?.map((e, index) => (
+                            <th
+                              key={index}
+                              style={getColumnStyle(index)}
+                              title={e}
+                            >
+                              {e}
+                              <div className="column-resizer" />
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {tableau?.values
+                          ?.slice(offset, offset + limit)
+                          ?.map((ligne, index) => {
+                            return (
+                              <tr key={index} className={"fw-normal"}>
+                                {ligne.map((e: any, key: number) => (
+                                  <td
+                                    key={key}
+                                    style={getColumnStyle(key)}
+                                    title={e?.toString()}
+                                  >
+                                    {e?.toString()}
+                                  </td>
+                                ))}
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                    </Table>
+                  </div>
                   {tableau?.values && (
                     <PaginationFront
                       key={tableau?.values?.length}
