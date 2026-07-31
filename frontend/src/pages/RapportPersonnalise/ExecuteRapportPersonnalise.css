@@ -68,6 +68,15 @@
   white-space: nowrap;
 }
 
+.resizable-table tbody tr {
+  cursor: pointer;
+}
+
+.resizable-table tbody tr.selected-row > * {
+  background-color: var(--bs-table-hover-bg) !important;
+  color: var(--bs-table-hover-color);
+}
+
 /* Indicateur visuel pendant le redimensionnement */
 body.resizing {
   cursor: col-resize !important;

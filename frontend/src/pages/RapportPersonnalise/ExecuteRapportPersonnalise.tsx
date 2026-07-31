@@ -64,6 +64,7 @@ const ExecuteRapportPersonnalise = () => {
   const tableRef = useRef<HTMLTableElement>(null);
   const formikRef = useRef<any>(null);
   const [hasAutoExecuted, setHasAutoExecuted] = useState(false);
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
 
   const table = tableRef.current;
 
@@ -159,6 +160,10 @@ const ExecuteRapportPersonnalise = () => {
     listeParametres.length,
   ]);
 
+  useEffect(() => {
+    setSelectedRowIndex(null);
+  }, [offset, limit]);
+
   const getColumnStyle = (index: number) => {
     const width = columnWidths[index];
     if (width) {
@@ -253,6 +258,7 @@ const ExecuteRapportPersonnalise = () => {
               setActiveTab("data");
               // Réinitialiser les largeurs de colonnes pour le nouveau tableau
               setColumnWidths({});
+              setSelectedRowIndex(null);
               setOffset(0);
             }}
           >
@@ -301,8 +307,13 @@ const ExecuteRapportPersonnalise = () => {
                         {tableau?.values
                           ?.slice(offset, offset + limit)
                           ?.map((ligne, index) => {
+                            const rowIndex = offset + index;
                             return (
-                              <tr key={index} className={"fw-normal"}>
+                              <tr
+                                key={index}
+                                className={`fw-normal ${selectedRowIndex === rowIndex ? "selected-row" : ""}`}
+                                onClick={() => setSelectedRowIndex(rowIndex)}
+                              >
                                 {ligne.map((e: any, key: number) => (
                                   <td
                                     key={key}
