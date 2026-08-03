@@ -118,8 +118,8 @@ constructor(
             )
         }
 
-        if (!element.rapportCourrierSourceSql.startsWith("SELECT", ignoreCase = true) &&
-            !element.rapportCourrierSourceSql.startsWith("WITH", ignoreCase = true)
+        if (!element.rapportCourrierSourceSql.trim().startsWith("SELECT", ignoreCase = true) &&
+            !element.rapportCourrierSourceSql.trim().startsWith("WITH", ignoreCase = true)
         ) {
             throw RemocraResponseException(
                 ErrorType.ADMIN_RAPPORT_PERSO_REQUETE_INVALID,
