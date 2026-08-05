@@ -164,10 +164,10 @@ class PeiEndpoint : AbstractEndpoint() {
     }
 
     @GET
-    @Path("/get-id-numero")
+    @Path("/get-id-numero-indispos-temp-active/")
     @RequireDroits([Droit.PEI_R])
-    fun getIdNumeroComplet(): Response {
-        return Response.ok(peiRepository.getListIdNumeroCompletInZoneCompetence(securityContext.userInfo)).build()
+    fun getIdNumeroCompletIndisposTempActive(@QueryParam("idIndisponibiliteTemporaire") idIndisponibiliteTemporaire: UUID?): Response {
+        return Response.ok(peiRepository.getListIdNumeroCompletInZoneCompetenceIndisposTempActive(securityContext.userInfo, idIndisponibiliteTemporaire)).build()
     }
 
     @GET

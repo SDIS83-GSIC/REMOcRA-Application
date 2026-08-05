@@ -1,4 +1,6 @@
 import { useFormikContext } from "formik";
+import { useState } from "react";
+import Alert from "react-bootstrap/Alert";
 import Col from "react-bootstrap/Col";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
@@ -71,16 +73,44 @@ export const prepareVariables = (
     values?.indisponibiliteTemporaireMailApresIndisponibilite,
 });
 
+const hasSelectedPeiWithActiveIndispo = (
+  selectedPeiIds: string[] | undefined,
+  peis: { peiId: string; hasIndispoTempActive: boolean }[] | undefined,
+) =>
+  (selectedPeiIds?.length ?? 0) > 0 &&
+  (selectedPeiIds ?? []).some((selectedPeiId) =>
+    (peis ?? []).some(
+      (pei) => pei.peiId === selectedPeiId && pei.hasIndispoTempActive,
+    ),
+  );
+
 const IndisponibiliteTemporaireForm = ({
   title,
   listePeiId,
+  indisponibiliteTemporaireId = null,
 }: {
   title: string;
   listePeiId?: string[];
+  indisponibiliteTemporaireId?: string | null;
 }) => {
   const { values, setFieldValue } =
     useFormikContext<IndisponibiliteTemporaireFormValues>();
-  const peiState = useGet(url`/api/pei/get-id-numero`);
+  const [shouldDisplayIndispoWarning, setShouldDisplayIndispoWarning] =
+    useState(false);
+  const peiState = useGet(
+    url`/api/pei/get-id-numero-indispos-temp-active?${{
+      indisponibiliteTemporaireId,
+    }}`,
+  );
+
+  const selectedPeiIds = values?.listePeiId ?? listePeiId;
+  const hasSelectedPeiWithWarningAtInit = hasSelectedPeiWithActiveIndispo(
+    selectedPeiIds,
+    peiState?.data,
+  );
+  const shouldDisplayWarningAtInit =
+    indisponibiliteTemporaireId === null && hasSelectedPeiWithWarningAtInit;
+
   return (
     <>
       <Container>
@@ -232,7 +262,7 @@ const IndisponibiliteTemporaireForm = ({
                 getOptionValue={(t) => t.peiId}
                 getOptionLabel={(t) => t.peiNumeroComplet}
                 value={
-                  values?.listePeiId?.map((e) =>
+                  selectedPeiIds?.map((e) =>
                     peiState?.data?.find(
                       (pei: { peiId: string }) => pei.peiId === e,
                     ),
@@ -240,12 +270,20 @@ const IndisponibiliteTemporaireForm = ({
                 }
                 onChange={(pei) => {
                   const peiId = pei.map((e: { peiId: string }) => e.peiId);
-                  peiId.length > 0
-                    ? setFieldValue("listePeiId", peiId)
-                    : setFieldValue("listePeiId", undefined);
+                  setFieldValue("listePeiId", peiId);
+                  setShouldDisplayIndispoWarning(
+                    hasSelectedPeiWithActiveIndispo(peiId, peiState?.data),
+                  );
                 }}
                 isClearable={true}
               />
+              {(shouldDisplayWarningAtInit || shouldDisplayIndispoWarning) && (
+                <Alert variant="warning" className="mt-3">
+                  Attention : au moins un PEI sélectionné est déjà concerné par
+                  une indisponibilité temporaire en cours ou planifiée dans le
+                  futur.
+                </Alert>
+              )}
             </Col>
           </Row>
           <SubmitFormButtons returnLink={!((listePeiId?.length ?? 0) > 0)} />

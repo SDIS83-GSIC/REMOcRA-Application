@@ -879,8 +879,33 @@ class PeiRepository
             .where(if (listPei.isEmpty()) DSL.noCondition() else PEI.ID.`in`(listPei))
             .fetchInto()
 
-    fun getListIdNumeroCompletInZoneCompetence(userInfo: WrappedUserInfo): Collection<IdNumeroComplet> =
-        dsl.select(PEI.ID, PEI.NUMERO_COMPLET)
+    fun getListIdNumeroCompletInZoneCompetenceIndisposTempActive(
+        userInfo: WrappedUserInfo,
+        idIndisponibiliteTemporaire: UUID?,
+    ): Collection<IdNumeroCompletWithIndispoTempActive> {
+        val hasIndispoTempActive = DSL.exists(
+            DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID)
+                .from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+                .join(INDISPONIBILITE_TEMPORAIRE)
+                .on(INDISPONIBILITE_TEMPORAIRE.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID))
+                .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
+                .and(
+                    INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.gt(dateUtils.now())
+                        .or(
+                            INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(dateUtils.now())
+                                .and(
+                                    INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(dateUtils.now())
+                                        .or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull),
+                                ),
+                        ),
+                ).and(
+                    idIndisponibiliteTemporaire?.let {
+                        INDISPONIBILITE_TEMPORAIRE.ID.ne(it)
+                    } ?: DSL.noCondition(),
+                ),
+        ).`as`("hasIndispoTempActive")
+
+        return dsl.select(PEI.ID, PEI.NUMERO_COMPLET, hasIndispoTempActive)
             .from(
                 userInfo.isSuperAdmin.let {
                     if (it) {
@@ -892,6 +917,7 @@ class PeiRepository
             )
             .orderBy(PEI.NUMERO_COMPLET)
             .fetchInto()
+    }
 
     fun getListIdNumeroCompletInZoneCompetenceIndisposTemp(userInfo: WrappedUserInfo): Collection<IdNumeroComplet> =
         dsl.selectDistinct(PEI.ID, PEI.NUMERO_COMPLET)
@@ -1301,6 +1327,12 @@ data class PeiIndispoTemp(
 data class IdNumeroComplet(
     val peiId: UUID,
     val peiNumeroComplet: String,
+)
+
+data class IdNumeroCompletWithIndispoTempActive(
+    val peiId: UUID,
+    val peiNumeroComplet: String,
+    val hasIndispoTempActive: Boolean,
 )
 
 data class ApiPeiAccessibility(
