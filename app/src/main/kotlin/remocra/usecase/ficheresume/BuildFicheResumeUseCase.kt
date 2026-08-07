@@ -261,13 +261,6 @@ constructor(
         val siteLibelle: String?,
     )
 
-    private fun String?.takeIfNotNullElseIllimiteeElseNonRenseigne(illimite: Boolean): String =
-        if (illimite) {
-            "Illimitée"
-        } else {
-            takeIfNotNullElseNonRenseigne()
-        }
-
     private fun String?.takeIfNotNullElseNonRenseigne() =
         this.takeIf { !it.isNullOrBlank() && it != "null" } ?: "Non renseigné"
 }
