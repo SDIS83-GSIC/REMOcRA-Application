@@ -75,6 +75,7 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
                     ANOMALIE.LIBELLE,
                     POIDS_ANOMALIE.VAL_INDISPO_TERRESTRE,
                     POIDS_ANOMALIE.VAL_INDISPO_HBE,
+                    ANOMALIE.REND_NON_CONFORME,
                 )
                     .from(ANOMALIE)
                     .join(L_PEI_ANOMALIE)
@@ -86,9 +87,10 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
             ).`as`("listeAnomalieValIndispo").convertFrom { record ->
                 record?.map { r ->
                     AnomalieValIndispo(
-                        anomalieLibelle = r.value1().toString(),
-                        valIndispoTerrestre = r.value2(),
-                        valIndispoHbe = r.value3(),
+                        anomalieLibelle = r.get<String>(ANOMALIE.LIBELLE),
+                        valIndispoTerrestre = r.get<Int?>(POIDS_ANOMALIE.VAL_INDISPO_TERRESTRE),
+                        valIndispoHbe = r.get<Int?>(POIDS_ANOMALIE.VAL_INDISPO_HBE),
+                        rendNonConforme = r.get<Boolean>(ANOMALIE.REND_NON_CONFORME),
                     )
                 }
             },
@@ -142,6 +144,7 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
         val anomalieLibelle: String,
         val valIndispoTerrestre: Int?,
         val valIndispoHbe: Int?,
+        val rendNonConforme: Boolean = false,
     )
 
     data class PeiFicheResume(
