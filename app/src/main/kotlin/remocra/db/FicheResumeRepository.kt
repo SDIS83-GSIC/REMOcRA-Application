@@ -12,6 +12,7 @@ import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.pojos.FicheResumeBloc
 import remocra.db.jooq.remocra.tables.pojos.IndisponibiliteTemporaire
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
+import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.FICHE_RESUME_BLOC
@@ -73,23 +74,34 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
             multiset(
                 selectDistinct(
                     ANOMALIE.LIBELLE,
-                    POIDS_ANOMALIE.VAL_INDISPO_TERRESTRE,
-                    POIDS_ANOMALIE.VAL_INDISPO_HBE,
+                    DSL.`when`(
+                        ANOMALIE_CATEGORIE.CODE.eq(GlobalConstants.CATEGORIE_ANOMALIE_SYSTEME),
+                        ANOMALIE.POIDS_ANOMALIE_SYSTEME_VAL_INDISPO_TERRESTRE,
+                    ).otherwise(POIDS_ANOMALIE.VAL_INDISPO_TERRESTRE).`as`("valIndispoTerrestre"),
+                    DSL.`when`(
+                        ANOMALIE_CATEGORIE.CODE.eq(GlobalConstants.CATEGORIE_ANOMALIE_SYSTEME),
+                        ANOMALIE.POIDS_ANOMALIE_SYSTEME_VAL_INDISPO_HBE,
+                    ).otherwise(POIDS_ANOMALIE.VAL_INDISPO_HBE).`as`("valIndispoHbe"),
                     ANOMALIE.REND_NON_CONFORME,
                 )
                     .from(ANOMALIE)
                     .join(L_PEI_ANOMALIE)
                     .on(L_PEI_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID))
-                    .join(POIDS_ANOMALIE)
+                    .leftJoin(POIDS_ANOMALIE)
                     .on(POIDS_ANOMALIE.ANOMALIE_ID.eq(ANOMALIE.ID))
+                    .join(ANOMALIE_CATEGORIE)
+                    .on(ANOMALIE.ANOMALIE_CATEGORIE_ID.eq(ANOMALIE_CATEGORIE.ID))
                     .where(L_PEI_ANOMALIE.PEI_ID.eq(PEI.ID))
-                    .and(POIDS_ANOMALIE.NATURE_ID.eq(PEI.NATURE_ID)),
+                    .and(
+                        POIDS_ANOMALIE.NATURE_ID.eq(PEI.NATURE_ID)
+                            .or(ANOMALIE_CATEGORIE.CODE.eq(GlobalConstants.CATEGORIE_ANOMALIE_SYSTEME)),
+                    ),
             ).`as`("listeAnomalieValIndispo").convertFrom { record ->
                 record?.map { r ->
                     AnomalieValIndispo(
                         anomalieLibelle = r.get<String>(ANOMALIE.LIBELLE),
-                        valIndispoTerrestre = r.get<Int?>(POIDS_ANOMALIE.VAL_INDISPO_TERRESTRE),
-                        valIndispoHbe = r.get<Int?>(POIDS_ANOMALIE.VAL_INDISPO_HBE),
+                        valIndispoTerrestre = r.get("valIndispoTerrestre", Int::class.java),
+                        valIndispoHbe = r.get("valIndispoHbe", Int::class.java),
                         rendNonConforme = r.get<Boolean>(ANOMALIE.REND_NON_CONFORME),
                     )
                 }
