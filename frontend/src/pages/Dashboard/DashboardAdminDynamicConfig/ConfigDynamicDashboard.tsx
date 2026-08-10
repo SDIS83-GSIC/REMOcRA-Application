@@ -65,6 +65,10 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
   // Sélectionne l'onglet du dashboard cliqué
   const handleDashboardClick = (indexKey: number) => {
     if (props.openListDashboard && props.editTabIndex === null) {
+      if (props.activeDashboard?.index === indexKey) {
+        return;
+      }
+
       const target = props.openListDashboard[indexKey];
       const cached = target?.id
         ? props.dashboardCacheRef.current.get(target.id)
