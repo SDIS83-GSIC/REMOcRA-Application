@@ -36,6 +36,7 @@ import remocra.db.jooq.remocra.tables.references.L_COURRIER_CONTACT_GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.L_COURRIER_CONTACT_ORGANISME
 import remocra.db.jooq.remocra.tables.references.L_COURRIER_ORGANISME
 import remocra.db.jooq.remocra.tables.references.L_COURRIER_UTILISATEUR
+import remocra.db.jooq.remocra.tables.references.L_PEI_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_COURRIER
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PROFIL_ORGANISME
@@ -508,4 +509,21 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
             .where(COURRIER.ID.eq(courrierId))
             .returning(COURRIER.DOCUMENT_ID)
             .fetchOne(COURRIER.DOCUMENT_ID)!!
+
+    fun getCourriersNonReferencesDansPei(courriersIds: List<UUID>): List<UUID> =
+        dsl.select(COURRIER.ID)
+            .from(COURRIER)
+            .where(
+                COURRIER.ID.`in`(courriersIds)
+                    .and(
+                        DSL.notExists(
+                            DSL.selectOne()
+                                .from(L_PEI_DOCUMENT)
+                                .where(
+                                    L_PEI_DOCUMENT.DOCUMENT_ID.eq(COURRIER.DOCUMENT_ID),
+                                ),
+                        ),
+                    ),
+            )
+            .fetchInto()
 }

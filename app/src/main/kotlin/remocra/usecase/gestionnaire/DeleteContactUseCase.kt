@@ -56,12 +56,15 @@ constructor(
         }
 
         // On est obligé de supprimer dans les deux tables, car un bug en amont a induit des données pourries
-        // Ca n'a pas d'impact, parce que les deux tables pointes sur les mêmes primary key ; contact_id
+        // Ça n'a pas d'impact, parce que les deux tables pointes sur les mêmes primary key ; contact_id
         // On supprime dans les deux pour garantir que le contact n'est plus lié à un courrier, qu'il s'agisse d'un gestionnaire ou organisme
         val courriersIds = (
             contactRepository.deleteLCourrierContactGestionnaireReturningCourrierId(contactId) +
                 contactRepository.deleteLCourrierContactOrganismeReturningCourrierId(contactId)
             ).distinct()
+
+        // courriers dont le document n'est pas utilisé par un PEI
+        val courriersNonPeiIds = courrierRepository.getCourriersNonReferencesDansPei(courriersIds)
 
         /**
          * Suppression des courriers
@@ -71,6 +74,8 @@ constructor(
          * 3. Si NON : le courrier n'a plus aucun destinataire, le supprimer complètement
          *    - Supprime le lien Thematique <-> Courrier
          *    - Supprime l'objet Courrier en récupèrant le documentId
+         *    - Si le document du courrier n'est référencé par aucun PEI,
+         *          alors je peux supprimer le document et son dossier
          *    - Supprime l'objet Document en base
          *    - Supprime le répertoire du document sur le disque
          */
@@ -80,8 +85,10 @@ constructor(
             .forEach { courrierId ->
                 courrierRepository.deleteLCourrierThematique(courrierId)
                 val documentId = courrierRepository.deleteCourrierById(courrierId)
-                documentRepository.deleteDocumentByIds(listOf(documentId))
-                documentUtils.deleteDirectory(GlobalConstants.DOSSIER_DOCUMENT_COURRIER.resolve(documentId.toString()))
+                if (courriersNonPeiIds.contains(courrierId)) {
+                    documentRepository.deleteDocumentByIds(listOf(documentId))
+                    documentUtils.deleteDirectory(GlobalConstants.DOSSIER_DOCUMENT_COURRIER.resolve(documentId.toString()))
+                }
             }
 
         // Suppression du contact
