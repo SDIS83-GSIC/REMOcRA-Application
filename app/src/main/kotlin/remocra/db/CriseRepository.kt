@@ -146,11 +146,6 @@ class CriseRepository @Inject constructor(
         var listeCommune: Collection<String>?,
     )
 
-    data class TypeCriseComplete(
-        val criseId: String?,
-        val criseNom: String?,
-    )
-
     data class FilterCrise(
         val criseLibelle: String?,
         val criseDescription: String?,
@@ -208,8 +203,12 @@ class CriseRepository @Inject constructor(
             .orderBy(CRISE.LIBELLE)
             .fetchInto()
 
-    fun getCriseForSelect(): Collection<TypeCriseComplete> =
-        dsl.select(TYPE_CRISE.ID.`as`("criseId"), TYPE_CRISE.LIBELLE.`as`("criseNom"))
+    fun getTypeCriseForSelect(): Collection<GlobalData.IdCodeLibelleData> =
+        dsl.select(
+            TYPE_CRISE.ID.`as`("id"),
+            TYPE_CRISE.CODE.`as`("code"),
+            TYPE_CRISE.LIBELLE.`as`("libelle"),
+        )
             .from(TYPE_CRISE)
             .orderBy(TYPE_CRISE.LIBELLE)
             .fetchInto()
