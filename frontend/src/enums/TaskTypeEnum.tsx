@@ -238,6 +238,15 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
     notification: false,
     isConfigurable: false,
   },
+  IMPORTER_CTP: {
+    id: "IMPORTER_CTP",
+    code: "IMPORTER_CTP",
+    label: "Import CTP - Enregistrement des visites",
+    commentaire: "",
+    parametre: {},
+    notification: false,
+    isConfigurable: false,
+  },
 };
 
 export default TaskType;

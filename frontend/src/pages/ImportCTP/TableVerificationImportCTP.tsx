@@ -11,13 +11,36 @@ import { IconExport, IconValidation } from "../../components/Icon/Icon.tsx";
 import { URLS } from "../../routes.tsx";
 import { calculerBilan } from "../../utils/fonctionsUtils.tsx";
 
-export const getInitialValues = (initialValues) => ({
-  bilanVerifications: initialValues.result.bilanVerifications,
+type BilanVerificationCTP = {
+  numeroLigne: string;
+  codeInsee: string;
+  numeroInterne: string;
+  dateCtp: string;
+  warnings: string[];
+  bilan: string;
+  bilanStyle: string;
+};
+
+type ImportCtpFormValues = {
+  bilanVerifications: BilanVerificationCTP[];
+};
+
+type VerificationImportCtpState = {
+  result: {
+    bilanVerifications: BilanVerificationCTP[];
+  };
+  from?: string;
+};
+
+export const getInitialValues = (
+  initialValues?: VerificationImportCtpState,
+): ImportCtpFormValues => ({
+  bilanVerifications: initialValues?.result?.bilanVerifications ?? [],
 });
 
 export const validationSchema = object({});
 
-export const prepareVariables = (values) => ({
+export const prepareVariables = (values: ImportCtpFormValues) => ({
   bilanVerifications: values.bilanVerifications ?? null,
 });
 
@@ -44,6 +67,7 @@ const VerificationImportCTP = () => {
         submitUrl={`/api/importctp/enregistrement`}
         prepareVariables={(values) => prepareVariables(values)}
         redirectUrl={URLS.ACCUEIL}
+        successToastMessage={"L'import CTP a été lancé"}
       >
         <ResultatsVerificationImportCTP />
       </MyFormik>
@@ -54,7 +78,7 @@ const VerificationImportCTP = () => {
 export default VerificationImportCTP;
 
 const ResultatsVerificationImportCTP = () => {
-  const { values } = useFormikContext();
+  const { values } = useFormikContext<ImportCtpFormValues>();
   const navigate = useNavigate();
   const data = calculerBilan(values);
 
