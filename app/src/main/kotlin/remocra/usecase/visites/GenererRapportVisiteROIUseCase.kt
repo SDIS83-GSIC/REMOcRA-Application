@@ -8,9 +8,7 @@ import remocra.auth.WrappedUserInfo
 import remocra.data.DestinataireData
 import remocra.data.TypeDestinataire
 import remocra.data.VisiteData
-import remocra.data.courrier.form.CourrierData
 import remocra.data.courrier.form.NomValue
-import remocra.data.courrier.form.ParametreCourrierInput
 import remocra.data.enums.ErrorType
 import remocra.data.enums.ParametreEnum
 import remocra.db.ModeleCourrierRepository
@@ -20,16 +18,14 @@ import remocra.db.TransactionManager
 import remocra.db.jooq.remocra.enums.TypeCourrier
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
-import remocra.usecase.courrier.CourrierGeneratorUseCase
-import remocra.usecase.courrier.CreateCourrierUseCase
+import remocra.usecase.utils.GenererRapportCourrierUseCase
 import remocra.utils.getListOfString
 import java.util.UUID
 import kotlin.collections.map
 
 class GenererRapportVisiteROIUseCase @Inject constructor(
-    private val courrierGeneratorUseCase: CourrierGeneratorUseCase,
+    private val genererCourrierUseCase: GenererRapportCourrierUseCase,
     private val modeleCourrierRepository: ModeleCourrierRepository,
-    private val createCourrierUseCase: CreateCourrierUseCase,
     private val parameterRepository: ParametreRepository,
     private val organismeRepository: OrganismeRepository,
     private val objectMapper: ObjectMapper,
@@ -40,20 +36,6 @@ class GenererRapportVisiteROIUseCase @Inject constructor(
     fun execute(element: VisiteData, userInfo: WrappedUserInfo, transactionManager: TransactionManager): Result? {
         val modeleCourrier = modeleCourrierRepository.getByType(TypeCourrier.COURRIER_ROI)
             ?: throw RemocraResponseException(ErrorType.RAPPORT_VISITE_ROI_MODEL_INEXISTANT)
-
-        val courrierReference = "${modeleCourrier.modeleCourrierLibelle}_${element.visiteId}}"
-
-        val generationPath = courrierGeneratorUseCase.executeInternal(
-            ParametreCourrierInput(
-                modeleCourrierId = modeleCourrier.modeleCourrierId,
-                courrierReference = courrierReference,
-                listParametres = listOf(
-                    NomValue("PEI_ID", element.visitePeiId.toString(), true),
-                ),
-            ),
-            userInfo,
-            mainTransactionManager = transactionManager,
-        )
 
         val listIdTypeOrganismeANotifier = parameterRepository.getMapParametres()
             .getListOfString(ParametreEnum.PEI_ORGANISME_NOTIFICATION_ROI.name, objectMapper)
@@ -76,18 +58,13 @@ class GenererRapportVisiteROIUseCase @Inject constructor(
             )
         }
 
-        return createCourrierUseCase.execute(
-            userInfo,
-            CourrierData(
-                courrierId = UUID.randomUUID(),
-                documentId = UUID.randomUUID(),
-                modeleCourrierId = modeleCourrier.modeleCourrierId,
-                nomDocumentTmp = generationPath.fileName.toString(),
-                listeDestinataire = listeDestinataire,
-                courrierReference = courrierReference,
-                codeThematique = GlobalConstants.THEMATIQUE_POINT_EAU,
-            ),
-            mainTransactionManager = transactionManager,
+        return genererCourrierUseCase.execute(
+            modeleCourrier = modeleCourrier,
+            courrierReference = "${modeleCourrier.modeleCourrierLibelle}_${element.visiteId}",
+            parametres = listOf(NomValue("PEI_ID", element.visitePeiId.toString(), true)),
+            destinataires = listeDestinataire,
+            userInfo = userInfo,
+            transactionManager = transactionManager,
         )
     }
 }
