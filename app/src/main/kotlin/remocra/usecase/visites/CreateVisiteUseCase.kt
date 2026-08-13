@@ -34,6 +34,7 @@ class CreateVisiteUseCase @Inject constructor(
     private val peiRepository: PeiRepository,
     private val clock: Clock,
     private val genererRapportVisiteReceptionUseCase: GenererRapportVisiteReceptionUseCase,
+    private val genererRapportVisiteROIUseCase: GenererRapportVisiteROIUseCase,
 ) : AbstractCUDUseCase<VisiteData>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
@@ -162,6 +163,7 @@ class CreateVisiteUseCase @Inject constructor(
     }
 
     override fun execute(userInfo: WrappedUserInfo, element: VisiteData): VisiteData {
+        val parametres = parametres.get()
         // Insertion de la visite : remocra.visite
         visiteRepository.insertVisite(
             Visite(
@@ -226,10 +228,14 @@ class CreateVisiteUseCase @Inject constructor(
             userInfo = userInfo,
         )
 
-        if ((parametres.get().getParametreBoolean(ParametreEnum.AUTORISER_MAIL_VISITE_RECEPTION.name) == true) &&
-            (element.visiteTypeVisite == TypeVisite.RECEPTION)
-        ) {
-            genererRapportVisiteReceptionUseCase.execute(element, userInfo, transactionManager)
+        when {
+            (parametres.getParametreBoolean(ParametreEnum.AUTORISER_MAIL_VISITE_RECEPTION.name) == true) &&
+                (element.visiteTypeVisite == TypeVisite.RECEPTION) ->
+                genererRapportVisiteReceptionUseCase.execute(element, userInfo, transactionManager)
+
+            (parametres.getParametreBoolean(ParametreEnum.AUTORISER_MAIL_ROI.name) == true) &&
+                (element.visiteTypeVisite == TypeVisite.RECO_INIT) ->
+                genererRapportVisiteROIUseCase.execute(element, userInfo, transactionManager)
         }
 
         return element

@@ -682,6 +682,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
 
     RAPPORT_VISITE_RECEPTION_MODEL_INEXISTANT(31013, "Modèle de courrier pour rapport visite de réception introuvable"),
     COURRIER_VISITE_RECEPTION_ERREUR(31014, "Erreur lors de la création du courrier pour la visite de réception : aucun destinataire trouvé."),
+    RAPPORT_VISITE_ROI_MODEL_INEXISTANT(31015, "Modèle de courrier pour rapport visite ROI introuvable."),
+    COURRIER_VISITE_ROI_ERREUR(31016, "Erreur lors de la création du courrier pour la visite ROI : aucun destinataire trouvé."),
 
     //
     // ********************************************************************************
