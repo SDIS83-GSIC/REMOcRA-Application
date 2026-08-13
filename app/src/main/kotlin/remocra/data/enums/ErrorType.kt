@@ -38,6 +38,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     PEI_VOIE_OBLIGATOIRE(1008, "La saisie d'une voie est obligatoire"),
     PEI_VOIE_XOR(1009, "Vous ne pouvez pas à la fois sélectionner une voie et saisir une valeur textuelle"),
     PEI_NUMERO_COMPLET_EXISTS(1011, "Un PEI existe déjà avec ce numéro"),
+    PEI_UNAUTHORIZED_CHANGEMENT_DECI(1018, "Ce changement de nature DECI rompt les conditions de création d'une tournée."),
 
     // Modification en masse des positions de PEI
     ERR_PEI_MANQUANT(1012, "Le numéro du PEI est manquant"),

@@ -15,6 +15,7 @@ import remocra.data.enums.ParametreEnum
 import remocra.db.PeiRepository
 import remocra.db.PenaRepository
 import remocra.db.PibiRepository
+import remocra.db.TourneeRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -47,6 +48,8 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
 
     @Inject
     lateinit var visiteRepository: VisiteRepository
+
+    @Inject lateinit var tourneeRepository: TourneeRepository
 
     @Inject
     lateinit var dataCacheProvider: DataCacheProvider
@@ -227,6 +230,44 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
         // On ne veut pas les 2 champs en même temps (XOR non nullable)
         if (!element.peiVoieTexte.isNullOrBlank() && element.peiVoieId != null) {
             throw RemocraResponseException(ErrorType.PEI_VOIE_XOR)
+        }
+
+        // Si la nature DECI à été modifiée
+        if (element.peiNatureDeciId != element.peiNatureDeciIdInitial) {
+            // alors on verifie si le changement est autorisé
+            if (!autorisedNatureDeciChange(element)) {
+                throw RemocraResponseException(ErrorType.PEI_UNAUTHORIZED_CHANGEMENT_DECI)
+            }
+        }
+    }
+
+    /**
+     * Vérifie si le changement de nature DECI d'un PEI est autorisé au regard de ses tournées.
+     *
+     * Nativement, il est possible de mélanger les natures DECI dans une tournée uniquement pour
+     * les natures [GlobalConstants.NATURE_DECI_ICPE] et [GlobalConstants.NATURE_DECI_ICPE_CONVENTIONNE].
+     * Pour toutes les autres natures, le mélange est interdit.
+     *
+     * La logique appliquée est la suivante :
+     * - Si le PEI ne partage aucune tournée avec d'autres PEI, le changement est toujours autorisé
+     *   (aucun impact sur les tournées existantes).
+     * - Sinon, le changement n'est toléré que si la nature DECI initiale **et** la nouvelle nature DECI
+     *   appartiennent toutes les deux au pool ICPE (passage de ICPE à ICPE_CONVENTIONNE et inversement).
+     *
+     * @param element Le PEI dont on souhaite modifier la nature DECI.
+     * @return `true` si le changement est autorisé, `false` sinon.
+     */
+    private fun autorisedNatureDeciChange(element: PeiData): Boolean {
+        // TODO 3.1 : prendre en compte le paramètre CREATION_TOURNEE_DECI_DIFFERENTES :
+        // Si le paramètre autorise les tournées panachées, retourner TRUE directement
+        // Sinon, ce sont ces conditions qui valident ou non le changement de nature DECI
+        if (!tourneeRepository.shareTourneeWithOtherPeis(element.peiId)) {
+            return true
+        } else {
+            val icpePool = setOf(GlobalConstants.NATURE_DECI_ICPE, GlobalConstants.NATURE_DECI_ICPE_CONVENTIONNE)
+            val listeNaturesDeci = dataCacheProvider.getNaturesDeci()
+            return listOf(element.peiNatureDeciId, element.peiNatureDeciIdInitial)
+                .all { listeNaturesDeci[it]?.natureDeciCode in icpePool }
         }
     }
 }
