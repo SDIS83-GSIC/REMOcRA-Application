@@ -94,7 +94,6 @@ export function toOpenLayer(
         projection: layer.projection,
         matrixSet: "PM",
         FORMAT: layer.format ?? "image/png",
-        tileGrid: tileGrid,
         style: "normal",
       };
 
@@ -124,6 +123,7 @@ export function toOpenLayer(
             // Optimisations de performance
             cacheSize: 512,
             transition: 0,
+            tileGrid: tileGrid,
             tileLoadFunction: createAbortableTileLoadFunction(
               layer.crossOrigin ?? "anonymous",
             ),
