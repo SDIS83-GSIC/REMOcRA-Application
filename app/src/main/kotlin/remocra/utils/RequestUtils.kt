@@ -5,6 +5,7 @@ import org.jooq.Result
 import remocra.auth.WrappedUserInfo
 import remocra.data.DashboardQueryRequestData
 import remocra.data.enums.ErrorType
+import remocra.db.rawsql.RawSqlQueryBuilder
 import remocra.exception.RemocraResponseException
 import java.util.UUID
 
@@ -15,7 +16,11 @@ class RequestUtils {
     // Utilisé pour exécuter une "fausse" requête, typiquement pour tester sa validité, sans s'intéresser au résultat (qui ne remontera rien, au vu de la valeur !)
     private val dummyUUID = "00000000-0000-0000-0000-000000000000"
 
-    private enum class VariableContextUtilisateur(val varName: String) { ZONE_COMPETENCE_ID("ZONE_COMPETENCE_ID"), UTILISATEUR_ID("UTILISATEUR_ID"), ORGANISME_ID("ORGANISME_ID") }
+    private enum class VariableContextUtilisateur(val varName: String) {
+        ZONE_COMPETENCE_ID("ZONE_COMPETENCE_ID"),
+        UTILISATEUR_ID("UTILISATEUR_ID"),
+        ORGANISME_ID("ORGANISME_ID"),
+    }
 
     /**
      * Remplace les paramètres globaux, dans une requête SQL pouvant les contenir, par les données de <b>l'utilisateur connecté</b>.
@@ -29,6 +34,21 @@ class RequestUtils {
             VariableContextUtilisateur.ORGANISME_ID to userInfo.utilisateur?.let { if (it.utilisateurOrganismeId != null) it.utilisateurOrganismeId else dummyUUID }.toString(),
         )
         return replaceFromMap(requeteSql, remplacementMap)
+    }
+
+    fun RawSqlQueryBuilder.replaceGlobalParameters(userInfo: WrappedUserInfo) {
+        mapOf(
+            VariableContextUtilisateur.ZONE_COMPETENCE_ID to userInfo.let { if (it.zoneCompetence != null) it.zoneCompetence!!.zoneIntegrationId else dummyUUID }.toString(),
+            VariableContextUtilisateur.UTILISATEUR_ID to userInfo.utilisateur?.utilisateurId.toString(),
+            VariableContextUtilisateur.ORGANISME_ID to userInfo.utilisateur?.let { if (it.utilisateurOrganismeId != null) it.utilisateurOrganismeId else dummyUUID }.toString(),
+        ).forEach { (cle, valeur) ->
+            if (valeur == dummyUUID) {
+                val regex = Regex("=\\s*\\$PLACEHOLDER_DELIMITER${cle.varName}\\$PLACEHOLDER_DELIMITER")
+                this withRawReplace (regex to "IS NOT NULL")
+            } else {
+                this withBindParam ("$PLACEHOLDER_DELIMITER${cle.varName}$PLACEHOLDER_DELIMITER" to "'$valeur'")
+            }
+        }
     }
 
     /**
