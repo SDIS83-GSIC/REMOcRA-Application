@@ -125,13 +125,13 @@ export function toOpenLayer(
             transition: 0,
             tileGrid: tileGrid,
             tileLoadFunction: createAbortableTileLoadFunction(
-              layer.crossOrigin ?? "anonymous",
+              layer.crossOrigin,
             ),
           });
     }
     case SOURCE_CARTO.WMTS:
       return new WMTS({
-        crossOrigin: layer.crossOrigin ?? "anonymous",
+        crossOrigin: layer.crossOrigin,
         url: layer.url,
         layer: layer.layer,
         projection: layer.projection,
@@ -142,9 +142,7 @@ export function toOpenLayer(
         // Optimisations de performance
         cacheSize: 512,
         transition: 0,
-        tileLoadFunction: createAbortableTileLoadFunction(
-          layer.crossOrigin ?? "anonymous",
-        ),
+        tileLoadFunction: createAbortableTileLoadFunction(layer.crossOrigin),
       });
     case SOURCE_CARTO.GEOJSON:
       return new VectorSource({
@@ -163,9 +161,7 @@ export function toOpenLayer(
         // Optimisations de performance
         cacheSize: 512,
         transition: 0,
-        tileLoadFunction: createAbortableTileLoadFunction(
-          layer.crossOrigin ?? null,
-        ),
+        tileLoadFunction: createAbortableTileLoadFunction(layer.crossOrigin),
       });
 
     case SOURCE_CARTO.WFS:
