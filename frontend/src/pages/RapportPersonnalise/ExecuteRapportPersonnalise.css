@@ -1,7 +1,7 @@
 /* Styles pour le redimensionnement des colonnes */
 .resizable-table {
   table-layout: auto;
-  width: max-content;
+  width: 100%;
   border-spacing: 0;
 }
 
@@ -37,7 +37,7 @@
 }
 
 .resizable-table.auto {
-  width: max-content;
+  width: 100%;
 }
 
 .resizable-table.manual {
