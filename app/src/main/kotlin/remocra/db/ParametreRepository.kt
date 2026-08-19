@@ -17,4 +17,6 @@ class ParametreRepository @Inject constructor(private val dsl: DSLContext) : Abs
             .set(PARAMETRE.VALEUR, parametreValeur)
             .where(PARAMETRE.CODE.eq(parametreCode)).execute() == 1
     }
+
+    fun getAll(): List<Parametre> = dsl.selectFrom(PARAMETRE).fetchInto()
 }

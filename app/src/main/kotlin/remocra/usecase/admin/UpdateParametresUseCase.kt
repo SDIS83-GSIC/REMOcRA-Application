@@ -13,9 +13,11 @@ import remocra.data.enums.ErrorType
 import remocra.data.enums.ParametreEnum
 import remocra.data.mapToParametresSectionCouvertureHydraulique
 import remocra.db.ParametreRepository
+import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.eventbus.parametres.ParametresModifiedEvent
+import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.admin.relancercalcul.RelancerCalculDispoUseCase
@@ -37,7 +39,24 @@ class UpdateParametresUseCase
     }
 
     override fun postEvent(element: ParametresAdminDataInput, userInfo: WrappedUserInfo) {
-        // impossible de tracer un pojo qui n'a pas d'id aujourd'hui
+        // Les parametres etant mis a jour globalement, on trace l'integralite des parametres existants
+        // afin de conserver un instantane complet de leur etat a chaque modification (y compris les non modifies).
+        val dateTracabilite = dateUtils.now()
+        val auteurTracabilite = userInfo.getInfosTracabilite()
+        parametreRepository.getAll().forEach {
+            eventBus.post(
+                TracabiliteEvent(
+                    pojo = it,
+                    pojoId = it.parametreId,
+                    typeOperation = typeOperation,
+                    typeObjet = TypeObjet.PARAMETRE,
+                    auteurTracabilite = auteurTracabilite,
+                    date = dateTracabilite,
+                ),
+            )
+        }
+
+        // Invalide le cache pour que les nouvelles valeurs soient prises en compte immediatement
         eventBus.post(ParametresModifiedEvent())
     }
 
