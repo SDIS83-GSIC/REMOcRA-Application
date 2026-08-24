@@ -1,13 +1,13 @@
 package remocra.usecase.carte
 
 import jakarta.inject.Inject
+import org.owasp.html.PolicyFactory
 import org.slf4j.LoggerFactory
 import remocra.apimobile.usecase.PeiCaracteristiquesUseCase
 import remocra.auth.WrappedUserInfo
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeElementCarte
 import remocra.db.CarteRepository
-import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.EvenementStatutMode
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
@@ -19,7 +19,7 @@ import java.util.UUID
 class GetPointCarteUseCase
 @Inject
 constructor(
-    private val utilisateurRepository: UtilisateurRepository,
+    private val policyFactory: PolicyFactory,
     private val carteRepository: CarteRepository,
     private val peiCaracteristiquesUseCase: PeiCaracteristiquesUseCase,
 ) :
@@ -162,38 +162,42 @@ constructor(
         }
 
         return LayersRes(
-            features = feature.map {
-                Feature(
-                    geometry = if (it.elementGeometrie.geometryType == "Point") {
-                        FeatureGeom(
-                            type = it.elementGeometrie.geometryType,
-                            coordinates =
-                            it.elementGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }.first(),
-                            srid = "EPSG:${it.elementGeometrie.srid}",
-                        )
-                    } else {
-                        FeatureGeom(
-                            type = it.elementGeometrie.geometryType,
-                            coordinates = if (it.elementGeometrie.geometryType == "MultiPolygon") {
-                                arrayOf(
+            features = feature
+                .onEach {
+                    it.propertiesToDisplay = policyFactory.sanitize(it.propertiesToDisplay)
+                }
+                .map {
+                    Feature(
+                        geometry = if (it.elementGeometrie.geometryType == "Point") {
+                            FeatureGeom(
+                                type = it.elementGeometrie.geometryType,
+                                coordinates =
+                                it.elementGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }.first(),
+                                srid = "EPSG:${it.elementGeometrie.srid}",
+                            )
+                        } else {
+                            FeatureGeom(
+                                type = it.elementGeometrie.geometryType,
+                                coordinates = if (it.elementGeometrie.geometryType == "MultiPolygon") {
+                                    arrayOf(
+                                        arrayOf(
+                                            it.elementGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }
+                                                .toTypedArray(),
+                                        ),
+                                    )
+                                } else {
                                     arrayOf(
                                         it.elementGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }
                                             .toTypedArray(),
-                                    ),
-                                )
-                            } else {
-                                arrayOf(
-                                    it.elementGeometrie.coordinates.map { c -> arrayOf(c.x, c.y) }
-                                        .toTypedArray(),
-                                )
-                            },
-                            srid = "EPSG:${it.elementGeometrie.srid}",
-                        )
-                    },
-                    id = it.elementId,
-                    properties = it,
-                )
-            },
+                                    )
+                                },
+                                srid = "EPSG:${it.elementGeometrie.srid}",
+                            )
+                        },
+                        id = it.elementId,
+                        properties = it,
+                    )
+                },
         )
     }
 
