@@ -170,14 +170,21 @@ export function toOpenLayer(
 
     case SOURCE_CARTO.WFS:
       return new VectorSource({
-        url:
-          layer.url +
-          "&request=GetFeature&typename=" +
-          layer.layer +
-          "&outputFormat=" +
-          (layer.format ?? "application/json") +
-          "&srsname=" +
-          layer.projection,
+        url: (extent) => {
+          return (
+            layer.url +
+            "?service=WFS&request=GetFeature&typename=" +
+            layer.layer +
+            "&outputFormat=" +
+            (layer.format ?? "application/json") +
+            "&srsname=" +
+            layer.projection +
+            "&bbox=" +
+            extent.join(",") +
+            "," +
+            layer.projection
+          );
+        },
         format: new GeoJSON({}),
         strategy: bbox,
       });
