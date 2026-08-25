@@ -216,7 +216,7 @@ class TourneeEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/listPeiTournee/{tourneeId}")
-    @RequireDroits([Droit.TOURNEE_A])
+    @RequireDroits([Droit.TOURNEE_A, Droit.TOURNEE_ORDRE_PEIS_U])
     fun getListPeiTournee(
         @PathParam("tourneeId") tourneeId: UUID,
         @QueryParam("listePeiId") listePeiId: Set<UUID>?,
@@ -246,7 +246,7 @@ class TourneeEndpoint : AbstractEndpoint() {
 
     @PUT
     @Path("/listPeiTournee/update/{tourneeId}")
-    @RequireDroits([Droit.TOURNEE_A])
+    @RequireDroits([Droit.TOURNEE_A, Droit.TOURNEE_ORDRE_PEIS_U])
     fun updateLTourneePei(@PathParam("tourneeId") tourneeId: UUID, @Context httpRequest: HttpServletRequest): Response =
         updateLTourneePeiUseCase.execute(
             userInfo = securityContext.userInfo,

@@ -787,7 +787,7 @@ const FormEntetePei = ({
   return (
     listNatureDeci && (
       <>
-        <Row>
+        <Row className="align-items-end">
           <Col xs={12} sm={isFromMap ? 12 : 5} lg={isFromMap ? 12 : 2}>
             <PositiveNumberInput
               name="peiNumeroInterne"
@@ -847,7 +847,7 @@ const FormEntetePei = ({
             )}
           </Col>
         </Row>
-        <Row className="mt-3">
+        <Row className="mt-3 align-items-end">
           <Col>
             <SelectForm
               name={"peiAutoriteDeciId"}
@@ -888,7 +888,7 @@ const FormEntetePei = ({
             />
           </Col>
         </Row>
-        <Row className="mt-3">
+        <Row className="mt-3 align-items-end">
           <Col>
             <SelectForm
               name={"peiNatureDeciId"}
@@ -961,7 +961,7 @@ const FormEntetePei = ({
             </Row>
           )}
         {natureParticipeDfci && (
-          <Row className="mt-3">
+          <Row className="mt-3 align-items-end">
             <Col>
               <CheckBoxInput
                 name="peiPerenne"
@@ -1205,16 +1205,16 @@ const FormLocalisationPei = ({
           )}
         </Col>
       </Row>
-      <Row className="mt-3 d-flex align-items-center">
-        <Col>
+      <Row className="mt-3 g-3 align-items-end">
+        <Col xs={6} xxl={2}>
           <TextInput
             name="peiNumeroVoie"
-            label="Numéro de voie"
+            label="N° de voie"
             required={false}
             disabled={!canEdit}
           />
         </Col>
-        <Col>
+        <Col xs={6} xxl={2}>
           <TextInput
             name="peiSuffixeVoie"
             label="Suffixe"
@@ -1222,7 +1222,7 @@ const FormLocalisationPei = ({
             disabled={!canEdit}
           />
         </Col>
-        <Col>
+        <Col xs={8} xxl={5}>
           <SelectForm
             name={"peiVoieId"}
             listIdCodeLibelle={selectData.listVoie.filter(
@@ -1241,37 +1241,12 @@ const FormLocalisationPei = ({
                 values.peiVoieTexte?.trim() !== "")
             }
           />
-          {isSaisieVoieEnabled && (
-            <>
-              <CheckBoxInput
-                name="voieSaisieLibre"
-                label="Voie non trouvée"
-                disabled={!canEdit}
-                onChange={() => {
-                  setFieldValue("voieSaisieLibre", !values.voieSaisieLibre);
-                  if (!values.voieSaisieLibre) {
-                    setFieldValue("peiVoieId", null);
-                  } else {
-                    setFieldValue("peiVoieTexte", null);
-                  }
-                }}
-              />
-              {values.voieSaisieLibre && (
-                <TextInput
-                  name="peiVoieTexte"
-                  label="Voie (saisie libre)"
-                  required={values.voieSaisieLibre}
-                  disabled={
-                    !canEdit ||
-                    (values.peiVoieId != null &&
-                      values.peiVoieId?.trim() !== "")
-                  }
-                />
-              )}
-            </>
-          )}
         </Col>
-        <Col className="d-flex align-items-center">
+        <Col
+          xs={4}
+          xxl={3}
+          className="d-flex align-self-end justify-content-start"
+        >
           <CheckBoxInput
             name="peiEnFace"
             label="Situé en face"
@@ -1279,7 +1254,41 @@ const FormLocalisationPei = ({
           />
         </Col>
       </Row>
-      <Row className="mt-3 d-flex align-items-center">
+      {isSaisieVoieEnabled && (
+        <Row>
+          <Col xs={8} xxl={{ span: 5, offset: 4 }}>
+            <CheckBoxInput
+              name="voieSaisieLibre"
+              label="Voie non trouvée"
+              disabled={!canEdit}
+              onChange={() => {
+                setFieldValue("voieSaisieLibre", !values.voieSaisieLibre);
+                if (!values.voieSaisieLibre) {
+                  setFieldValue("peiVoieId", null);
+                } else {
+                  setFieldValue("peiVoieTexte", null);
+                }
+              }}
+            />
+          </Col>
+        </Row>
+      )}
+      {isSaisieVoieEnabled && values.voieSaisieLibre && (
+        <Row>
+          <Col xs={12} xxl={{ span: 5, offset: 4 }}>
+            <TextInput
+              name="peiVoieTexte"
+              label="Voie (saisie libre)"
+              required={values.voieSaisieLibre}
+              disabled={
+                !canEdit ||
+                (values.peiVoieId != null && values.peiVoieId?.trim() !== "")
+              }
+            />
+          </Col>
+        </Row>
+      )}
+      <Row className="mt-3 d-flex align-items-end">
         <Col>
           <SelectNomenclaturesForm
             name={"peiNiveauId"}

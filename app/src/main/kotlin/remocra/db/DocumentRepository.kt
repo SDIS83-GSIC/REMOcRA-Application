@@ -69,6 +69,12 @@ class DocumentRepository @Inject constructor(private val dsl: DSLContext) : Abst
             .where(L_PEI_DOCUMENT.DOCUMENT_ID.`in`(listDocumentId))
             .execute()
 
+    fun updateIsPhotoPeiFalse(peiId: List<UUID>) =
+        dsl.update(L_PEI_DOCUMENT)
+            .set(L_PEI_DOCUMENT.IS_PHOTO_PEI, false)
+            .where(L_PEI_DOCUMENT.PEI_ID.`in`(peiId))
+            .execute()
+
     data class DocumentPei(
         val documentId: UUID,
         val documentNomFichier: String,

@@ -1,6 +1,9 @@
 package remocra.couverturehydraulique.usecase
 
 import jakarta.inject.Inject
+import remocra.couverturehydraulique.db.PeiRepository
+import remocra.couverturehydraulique.db.PeiRepository.PeiCouvertureHydraulique
+import remocra.couverturehydraulique.graphe.Graphe
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
@@ -9,8 +12,8 @@ import java.util.UUID
  */
 class CouvertureHydrauliqueUseCase @Inject constructor(
     private val zonageUseCase: ZonageUseCase,
-
     private val parcoursUseCase: ParcoursUseCase,
+    private val peiRepository: PeiRepository,
 ) : AbstractUseCase() {
 
     /**
@@ -20,6 +23,7 @@ class CouvertureHydrauliqueUseCase @Inject constructor(
         idEtude: UUID,
         isodistances: List<Int>,
         profondeurCouverture: Int,
+        graphe: Graphe,
     ): Int {
         val tabDistances = isodistances.map { it - profondeurCouverture }.sorted().toIntArray()
 
@@ -29,7 +33,7 @@ class CouvertureHydrauliqueUseCase @Inject constructor(
         }
 
         // Calcul des zones de risque
-        zonageUseCase.calculeZonesRisque(idEtude)
+        zonageUseCase.calculateRiskZones(idEtude, graphe)
 
         return 1
     }
@@ -38,22 +42,22 @@ class CouvertureHydrauliqueUseCase @Inject constructor(
      * Fonction principale équivalente à parcours_couverture_hydraulique
      */
     fun parcoursCouvertureHydraulique(
-        depart: UUID,
+        listePeiIdWithProjets: Set<UUID>,
         idEtude: UUID,
-        idReseauImporte: UUID?,
-        isodistances: List<Int>,
+        distance: Int,
         profondeurCouverture: Int,
-        useReseauImporteWithCourant: Boolean,
+        graphe: Graphe,
     ): Int {
-        val tabDistances = isodistances.map { it - profondeurCouverture }.sorted().toIntArray()
+        val listePei = listePeiIdWithProjets
+            .mapNotNull { peiRepository.getById(it) }
+            .sortedWith(compareBy<PeiCouvertureHydraulique> { it.peiGeometrie.x }.thenBy { it.peiGeometrie.y })
 
         return parcoursUseCase.executeParcours(
-            depart,
+            listePei,
             idEtude,
-            idReseauImporte,
-            tabDistances,
+            distance,
             profondeurCouverture,
-            useReseauImporteWithCourant,
+            graphe,
         )
     }
 }

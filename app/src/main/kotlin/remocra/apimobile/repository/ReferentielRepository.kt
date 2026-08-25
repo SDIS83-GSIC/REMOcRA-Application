@@ -6,12 +6,14 @@ import org.jooq.Field
 import org.jooq.Record
 import org.jooq.SelectOnConditionStep
 import org.jooq.impl.DSL
+import org.jooq.impl.DSL.field
 import org.jooq.impl.TableImpl
 import remocra.GlobalConstants
 import remocra.apimobile.data.ContactForApiMobileData
 import remocra.apimobile.data.ContactRoleForApiMobileData
 import remocra.apimobile.data.PeiAnomalieForApiMobileData
 import remocra.apimobile.data.PeiForApiMobileData
+import remocra.auth.WrappedUserInfo
 import remocra.data.PeiCaracteristqueData
 import remocra.data.enums.PeiCaracteristique
 import remocra.db.AbstractRepository
@@ -35,6 +37,7 @@ import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.PENA
 import remocra.db.jooq.remocra.tables.references.PIBI
 import remocra.db.jooq.remocra.tables.references.POIDS_ANOMALIE
+import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.VOIE
 import remocra.db.jooq.remocra.tables.references.V_PEI_LAST_MESURES
 import remocra.db.jooq.remocra.tables.references.V_PEI_VISITE_DATE
@@ -42,7 +45,9 @@ import remocra.utils.AdresseUtils
 import java.util.UUID
 import java.util.stream.Collectors
 
-class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
+class ReferentielRepository @Inject constructor(
+    private val dsl: DSLContext,
+) : AbstractRepository() {
 
     companion object {
         val pibiJumeleTable = PEI.`as`("PIBI_JUMELE")
@@ -191,6 +196,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
     fun getPeiCaracteristiques(
         pibiSelectedFields: List<PeiCaracteristique>,
         penaSelectedFields: List<PeiCaracteristique>,
+        userInfo: WrappedUserInfo,
     ): Map<UUID, List<PeiCaracteristqueData?>> {
         // Les PIBI
         val mapPibi = if (pibiSelectedFields.isNotEmpty()) {
@@ -235,8 +241,11 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
         // On a besoin de l'ID pour construire la map à retourner
         fieldsToSelect.add(PEI.ID)
         for (selectedField in selectedFields) {
-            // à chaque objet correspond un champ en base
-            fieldsToSelect.add(getFieldFromCaracteristique(selectedField, createAlias()))
+            // TOURNEE est gérée séparément, ne pas l'ajouter ici
+            if (selectedField != PeiCaracteristique.TOURNEE) {
+                // à chaque objet correspond un champ en base
+                fieldsToSelect.add(getFieldFromCaracteristique(selectedField, createAlias()))
+            }
         }
         return fieldsToSelect
     }
@@ -271,7 +280,12 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
         onClause.fetch().forEach { record ->
             val peiCaracteristiques: List<PeiCaracteristqueData?> = selectedFields.stream()
                 .map { caracteristique: PeiCaracteristique ->
-                    val value: Any? = record!!.get(getFieldFromCaracteristique(caracteristique, createAlias()))
+                    // TOURNEE est gérée séparément, retourner null temporairement
+                    val value: Any? = if (caracteristique == PeiCaracteristique.TOURNEE) {
+                        null
+                    } else {
+                        record!!.get(getFieldFromCaracteristique(caracteristique, createAlias()))
+                    }
                     PeiCaracteristqueData(caracteristique, value)
                 }
                 .collect(Collectors.toList())
@@ -383,6 +397,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
                     }
                 }
                 PeiCaracteristique.ADRESSE -> onClause = onClause.leftJoin(VOIE).on(PEI.VOIE_ID.eq(VOIE.ID))
+                PeiCaracteristique.TOURNEE -> Unit // Géré séparément
             }
         }
         return onClause
@@ -437,6 +452,7 @@ class ReferentielRepository @Inject constructor(private val dsl: DSLContext) : A
             }
 
             PeiCaracteristique.ADRESSE -> AdresseUtils.getDslConcatForAdresse()
+            PeiCaracteristique.TOURNEE -> TOURNEE.LIBELLE
         }
     }
 }

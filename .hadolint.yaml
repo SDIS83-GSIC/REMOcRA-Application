@@ -1,0 +1,6 @@
+ignored:
+  - DL3066 #Non-numeric user-id may not be resolvable by host system
+
+trustedRegistries:
+  - docker-registry.priv.atolcd.com
+  - docker.io

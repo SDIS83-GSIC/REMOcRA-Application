@@ -153,6 +153,11 @@ class ValideIncomingTournee @Inject constructor(
     private fun gestionPhoto(tourneeId: UUID, logManager: LogManager) {
         val listePhotoPei = incomingRepository.getPhotoPei(tourneeId)
 
+        // on enlève toutes les photos principales des PEI qui ont des nouvelles photos :
+        documentRepository.updateIsPhotoPeiFalse(listePhotoPei.map { it.peiId })
+
+        // on stocke les id des PEI pour lesquels on a déjà mis une photo principale
+        val listePeiIdWithPhotoPrincipale = mutableSetOf<UUID>()
         listePhotoPei.forEach {
             logManager.info("CREATION document ${it.photoId} pour le PEI ${it.peiId}")
             documentRepository.insertDocument(
@@ -164,12 +169,13 @@ class ValideIncomingTournee @Inject constructor(
                 ),
             )
 
-            // On insère ensuite le lien avec isPhotoPei
             documentRepository.insertDocumentPei(
                 peiId = it.peiId,
                 documentId = it.photoId,
-                isPhotoPei = true,
+                isPhotoPei = !listePeiIdWithPhotoPrincipale.contains(it.peiId),
             )
+
+            listePeiIdWithPhotoPrincipale.add(it.peiId)
         }
 
         logManager.info("Suppression des photos")

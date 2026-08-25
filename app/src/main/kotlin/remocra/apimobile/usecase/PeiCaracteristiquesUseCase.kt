@@ -5,9 +5,11 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.inject.Inject
 import remocra.apimobile.repository.ReferentielRepository
 import remocra.app.ParametresProvider
+import remocra.auth.WrappedUserInfo
 import remocra.data.PeiCaracteristqueData
 import remocra.data.enums.ParametreEnum
 import remocra.data.enums.PeiCaracteristique
+import remocra.db.TourneeRepository
 import remocra.usecase.AbstractUseCase
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -20,28 +22,67 @@ class PeiCaracteristiquesUseCase
 @Inject
 constructor(
     private val referentielRepository: ReferentielRepository,
+    private val tourneeRepository: TourneeRepository,
     private val parametresProvider: ParametresProvider,
     private val objectMapper: ObjectMapper,
 ) :
     AbstractUseCase() {
-    fun getPeiCaracteristiquesMobile() =
+    fun getPeiCaracteristiquesMobile(userInfo: WrappedUserInfo) =
         getPeiCaracteristiques(
             parametresProvider.getParametreString(ParametreEnum.CARACTERISTIQUE_PIBI.name),
             parametresProvider.getParametreString(ParametreEnum.CARACTERISTIQUE_PENA.name),
+            userInfo,
         )
 
-    fun getPeiCaracteristiquesWeb() =
+    fun getPeiCaracteristiquesWeb(userInfo: WrappedUserInfo) =
         getPeiCaracteristiques(
             parametresProvider.getParametreString(ParametreEnum.CARACTERISTIQUES_PIBI_TOOLTIP_WEB.name),
             parametresProvider.getParametreString(ParametreEnum.CARACTERISTIQUES_PENA_TOOLTIP_WEB.name),
+            userInfo,
         )
 
-    private fun getPeiCaracteristiques(pibiSelectedCaracteristiques: String?, penaSelectedCaracteristiques: String?): Map<UUID, String> {
-        val map =
+    /**
+     * Enrichit les résultats avec les libellés de tournée
+     */
+    private fun enrichTourneesInResults(
+        result: Map<UUID, List<PeiCaracteristqueData?>>,
+        tournees: Map<UUID, String>,
+    ): Map<UUID, List<PeiCaracteristqueData?>> {
+        if (tournees.isEmpty()) return result
+
+        return result.mapValues { (peiId, caracteristiques) ->
+            caracteristiques.map { car ->
+                if (car?.caracteristique == PeiCaracteristique.TOURNEE) {
+                    car.copy(value = tournees[peiId] ?: car.value)
+                } else {
+                    car
+                }
+            }
+        }
+    }
+
+    private fun getPeiCaracteristiques(pibiSelectedCaracteristiques: String?, penaSelectedCaracteristiques: String?, userInfo: WrappedUserInfo): Map<UUID, String> {
+        val pibiCaracteristiques = pibiSelectedCaracteristiques.fromStringParameter()
+        val penaCaracteristiques = penaSelectedCaracteristiques.fromStringParameter()
+
+        var map =
             referentielRepository.getPeiCaracteristiques(
-                pibiSelectedCaracteristiques.fromStringParameter(),
-                penaSelectedCaracteristiques.fromStringParameter(),
+                pibiCaracteristiques,
+                penaCaracteristiques,
+                userInfo,
             )
+
+        val hasTournee =
+            pibiCaracteristiques.contains(PeiCaracteristique.TOURNEE) ||
+                penaCaracteristiques.contains(PeiCaracteristique.TOURNEE)
+
+        if (hasTournee) {
+            map =
+                enrichTourneesInResults(
+                    map,
+                    tourneeRepository.getListTourneeLibelleByListPeiAndAffiliatedOrganisme(map.keys.toList(), userInfo),
+                )
+        }
 
         // On transforme la liste de caractéristiques en HTML (liste à puces dans une DIV)
         val mapRetour: MutableMap<UUID, String> = HashMap()

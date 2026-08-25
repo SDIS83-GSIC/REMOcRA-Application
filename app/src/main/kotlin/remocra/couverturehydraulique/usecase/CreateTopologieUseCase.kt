@@ -17,7 +17,7 @@ class CreateTopologieUseCase @Inject constructor(
 ) : AbstractUseCase() {
 
     fun createTopologie(idEtude: UUID) {
-        val voies = reseauRepository.getReseauEtude(idEtude)
+        val voies = reseauRepository.getReseauEtudeTopologie(idEtude)
         // Pré-chargement des sommets existants (clé = coord arrondie + étude)
         val sommetsExistants = sommetRepository.getAllForEtudeOrNull(idEtude)
         val sommetKey: (Point) -> String = { pt ->

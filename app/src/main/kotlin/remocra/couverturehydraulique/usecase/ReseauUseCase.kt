@@ -1,5 +1,4 @@
 package remocra.couverturehydraulique.usecase
-
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
@@ -7,42 +6,57 @@ import org.locationtech.jts.geom.LineString
 import org.locationtech.jts.geom.Point
 import org.locationtech.jts.geom.PrecisionModel
 import remocra.app.AppSettings
+import remocra.couverturehydraulique.GeometrieUtils
 import remocra.couverturehydraulique.db.PeiRepository
-import remocra.couverturehydraulique.db.ReseauRepository
-import remocra.couverturehydraulique.db.SommetRepository
-import remocra.db.jooq.couverturehydraulique.tables.pojos.Reseau
+import remocra.couverturehydraulique.graphe.Graphe
+import remocra.couverturehydraulique.graphe.ReseauManager
+import remocra.couverturehydraulique.graphe.SommetManager
+import remocra.couverturehydraulique.graphe.Voie
 import remocra.usecase.AbstractUseCase
-import remocra.usecase.couverturehydraulique.GeometrieUseCase
 import java.util.UUID
-
 /**
  * UseCase pour la gestion du réseau et des jonctions PEI
  * Équivalent des fonctions inserer_jonction_pei et retirer_jonction_pei
  */
 class ReseauUseCase @Inject constructor(
-    private val geometrieUseCase: GeometrieUseCase,
-    private val reseauRepository: ReseauRepository,
-    private val sommetRepository: SommetRepository,
+    private val geometrieUtils: GeometrieUtils,
+    private val reseauManager: ReseauManager,
+    private val sommetManager: SommetManager,
     private val peiRepository: PeiRepository,
     private val appSettings: AppSettings,
 ) : AbstractUseCase() {
-
     companion object {
         private const val FRACTION_MIN = 0.00001
         private const val FRACTION_MAX = 0.99999
+        private const val DISTANCE_TOLERANCE = 0.001
+        private const val DEFAULT_DISTANCE = 0.0
     }
 
-    // Suivi des tronçons créés pour chaque PEI (clé = peiId)
+    // Suivi des tronçons créés et modifiés pour chaque PEI (clé = peiId)
     private val tronconsCreesParPei = mutableMapOf<UUID, MutableList<UUID>>()
-
+    private val tronconsModifiesParPei = mutableMapOf<UUID, MutableList<Voie>>()
     private fun registerTronconForPei(peiId: UUID, tronconId: UUID) {
         tronconsCreesParPei.computeIfAbsent(peiId) { mutableListOf() }.add(tronconId)
     }
-
-    fun getAndClearTronconsCrees(peiId: UUID): List<UUID> {
-        val list = tronconsCreesParPei[peiId]?.toList().orEmpty()
+    private fun registerTronconModifieForPei(peiId: UUID, voie: Voie) {
+        tronconsModifiesParPei.computeIfAbsent(peiId) { mutableListOf() }.add(voie.copy())
+    }
+    fun restoreGraphePourPei(peiId: UUID, graphe: Graphe) {
+        // Supprimer tous les tronçons créés
+        tronconsCreesParPei[peiId]?.forEach { id ->
+            graphe.voies.remove(id)
+        }
+        // Supprimer tous les tronçons modifiés (ceux qui ont été découpés/remplacés)
+        tronconsModifiesParPei[peiId]?.forEach { voieOriginale ->
+            graphe.voies.remove(voieOriginale.id)
+        }
+        // Réinsérer les originaux
+        tronconsModifiesParPei[peiId]?.forEach { voieOriginale ->
+            graphe.voies[voieOriginale.id] = voieOriginale
+        }
+        // Nettoyer les structures de suivi
         tronconsCreesParPei.remove(peiId)
-        return list
+        tronconsModifiesParPei.remove(peiId)
     }
 
     /**
@@ -50,42 +64,38 @@ class ReseauUseCase @Inject constructor(
      *
      * @param peiId Identifiant du PEI à connecter.
      * @param distanceMaxAuReseau Distance maximale pour la jonction.
-     * @param idEtude Identifiant de l'étude concernée.
-     * @param idReseau Identifiant du réseau (si utilisation du réseau importé seul).
-     * @param useReseauImporteWithCourant Mode d'utilisation du réseau importé et courant.
      * @return `true` si la jonction a été créée, `false` sinon (pei trop loin du réseau).
      */
     fun insertJonctionPei(
         peiId: UUID,
         distanceMaxAuReseau: Int,
-        idEtude: UUID,
-        idReseau: UUID?,
-        useReseauImporteWithCourant: Boolean,
+        graphe: Graphe,
     ): Boolean {
         val pei = peiRepository.getById(peiId) ?: return false
-        val jonction = findJonctionReseau(pei, distanceMaxAuReseau, idReseau, useReseauImporteWithCourant)
-            ?: return false
-
-        val idEtudePourJonction = when {
-            useReseauImporteWithCourant -> idEtude // mode courant ou courant+importé
-            idReseau != null -> idReseau // mode importé
-            else -> null // mode commun
-        }
-
+        val jonction = reseauManager.findClosestTroncon(
+            pei.peiGeometrie,
+            distanceMaxAuReseau,
+            graphe,
+        )?.let { voie ->
+            val tronconGeom = voie.geometrie
+            val pointProche = computePointPlusProcheSurLigne(tronconGeom, pei.peiGeometrie)
+            val fraction = computeFractionOnLine(tronconGeom, pointProche)
+            val distance = pei.peiGeometrie.distance(pointProche)
+            JonctionInfo(
+                tronconId = voie.id,
+                jonctionGeometrie = pointProche,
+                fraction = fraction,
+                peiGeometrie = pei.peiGeometrie,
+                tronconGeometrie = tronconGeom,
+                distance = distance,
+            )
+        } ?: return false
         return when {
-            // Jonction au milieu du tronçon
             jonction.fraction in FRACTION_MIN..FRACTION_MAX -> {
-                splitTroncon(jonction, idEtudePourJonction, idReseau, useReseauImporteWithCourant, peiId)
+                splitTroncon(jonction, peiId, graphe, sommetManager)
             }
-            // Jonction à une extrémité
             else -> {
-                createJonctionExtremite(
-                    jonction,
-                    pei,
-                    idEtudePourJonction,
-                    idReseau,
-                    useReseauImporteWithCourant,
-                )
+                createJonctionExtremite(jonction, pei, graphe, sommetManager)
             }
         }
     }
@@ -93,21 +103,10 @@ class ReseauUseCase @Inject constructor(
     /**
      * Retire la jonction PEI du réseau.
      *
-     * On ne supprime plus aucun tronçon existant (commun ou importé).
-     * Le nettoyage principal (suppression des tronçons créés pour la jonction)
-     * est fait via getAndClearTronconsCrees() dans CalculCouvertureUseCase.
      */
-    fun removeJonctionPei(idPei: UUID): Boolean {
-        reseauRepository.getByPei(idPei) ?: return false
-
-        // Nettoyage systématique : on remet à NULL tous les champs reseau_pei_troncon pour ce PEI
-        reseauRepository.resetPeiTronconByPei(idPei)
-
+    fun removeJonctionPei(idPei: UUID, graphe: Graphe): Boolean {
+        restoreGraphePourPei(idPei, graphe)
         return true
-    }
-
-    fun resetPeiTronconForEtude(etudeId: UUID) {
-        reseauRepository.resetPeiTronconByEtude(etudeId)
     }
 
     private data class JonctionInfo(
@@ -120,66 +119,24 @@ class ReseauUseCase @Inject constructor(
     )
 
     /**
-     * Recherche la jonction la plus proche sur le réseau pour un PEI donné.
-     *
-     * @param pei Objet PEI à connecter.
-     * @param distanceMax Distance maximale pour la jonction.
-     * @param idReseau Identifiant du réseau (si utilisation du réseau importé seul).
-     * @param useReseauImporteWithCourant Mode d'utilisation du réseau importé et courant.
-     * @return Informations sur la jonction trouvée ou `null` si aucune jonction possible.
-     */
-    private fun findJonctionReseau(
-        pei: PeiRepository.PeiCouvertureHydraulique,
-        distanceMax: Int,
-        idReseau: UUID?,
-        useReseauImporteWithCourant: Boolean,
-    ): JonctionInfo? {
-        val peiGeom = pei.peiGeometrie
-
-        val reseauProche = reseauRepository.findTronconPlusProche(
-            peiGeom,
-            distanceMax,
-            idReseau,
-            useReseauImporteWithCourant,
-        ) ?: return null
-
-        val tronconGeom = reseauProche.reseauGeometrie as LineString
-        val pointProche = computePointPlusProcheSurLigne(tronconGeom, peiGeom)
-        val fraction = computeFractionOnLine(tronconGeom, pointProche)
-        val distance = peiGeom.distance(pointProche)
-
-        return JonctionInfo(
-            tronconId = reseauProche.reseauId,
-            jonctionGeometrie = pointProche,
-            fraction = fraction,
-            peiGeometrie = peiGeom,
-            tronconGeometrie = tronconGeom,
-            distance = distance,
-        )
-    }
-
-    /**
      * Calcule le point le plus proche sur une LineString (équivalent ST_ClosestPoint)
      */
     private fun computePointPlusProcheSurLigne(ligne: LineString, point: Point): Point {
         var minDistance = Double.MAX_VALUE
         var closestPoint: Coordinate? = null
-
         val coordinates = ligne.coordinates
         for (i in 0 until coordinates.size - 1) {
-            val segmentClosest = geometrieUseCase.calculateClosestPointOnSegment(
+            val segmentClosest = geometrieUtils.calculateClosestPointOnSegment(
                 coordinates[i],
                 coordinates[i + 1],
                 point.coordinate,
             )
             val distance = point.coordinate.distance(segmentClosest)
-
             if (distance < minDistance) {
                 minDistance = distance
                 closestPoint = segmentClosest
             }
         }
-
         return GeometryFactory(PrecisionModel(), appSettings.srid).createPoint(closestPoint ?: coordinates[0])
     }
 
@@ -187,58 +144,57 @@ class ReseauUseCase @Inject constructor(
      * Sépare un tronçon en deux parties lors de l'ajout d'une jonction.
      *
      * @param jonction Informations sur la jonction.
-     * @param idEtude Identifiant de l'étude.
-     * @param idReseau Identifiant du réseau (si utilisation du réseau importé seul).
-     * @param useReseauImporteWithCourant Mode d'utilisation du réseau importé et courant.
      * @param peiId Identifiant du PEI.
      * @return `true` si l'opération a réussi, `false` sinon.
      */
-    private fun splitTroncon(jonction: JonctionInfo, idEtude: UUID?, idReseau: UUID?, useReseauImporteWithCourant: Boolean, peiId: UUID): Boolean {
-        val tronconOriginal = reseauRepository.getById(jonction.tronconId, useReseauImporteWithCourant, idReseau) ?: return false
-
-        // On NE MODIFIE JAMAIS le tronçon d'origine (importé ou courant)
-        // On crée TOUJOURS deux nouveaux tronçons pour l'étude courante
-        val premierePartie = geometrieUseCase.lineSubstring(
-            tronconOriginal.reseauGeometrie as LineString,
+    private fun splitTroncon(
+        jonction: JonctionInfo,
+        peiId: UUID,
+        graphe: Graphe,
+        sommetManager: SommetManager,
+    ): Boolean {
+        val tronconOriginal = reseauManager.getById(jonction.tronconId, graphe) ?: return false
+        // Sauvegarde du tronçon original avant suppression
+        registerTronconModifieForPei(peiId, tronconOriginal)
+        // SUPPRESSION DU TRONÇON ORIGINAL (équivalent SQL)
+        reseauManager.delete(jonction.tronconId, graphe)
+        val premierePartie = geometrieUtils.lineSubstring(
+            tronconOriginal.geometrie,
             0.0,
             jonction.fraction,
         )
-        val deuxiemePartie = geometrieUseCase.lineSubstring(
+        val deuxiemePartie = geometrieUtils.lineSubstring(
             jonction.tronconGeometrie,
             jonction.fraction,
             1.0,
         )
-        val nouvelleVoieId1 = reseauRepository.insert(
+        val nouvelleVoieId1 = reseauManager.insert(
             geometrie = premierePartie,
-            idEtude = idEtude,
-            traversable = tronconOriginal.reseauTraversable,
-            sensUnique = tronconOriginal.reseauSensUnique,
-            niveau = tronconOriginal.reseauNiveau,
+            traversable = tronconOriginal.traversable,
+            sensUnique = tronconOriginal.sensUnique,
+            niveau = tronconOriginal.niveau,
+            graphe = graphe,
         )
         registerTronconForPei(peiId, nouvelleVoieId1)
-        val nouvelleVoieId2 = reseauRepository.insert(
+        val nouvelleVoieId2 = reseauManager.insert(
             geometrie = deuxiemePartie,
-            idEtude = idEtude,
-            traversable = tronconOriginal.reseauTraversable,
-            sensUnique = tronconOriginal.reseauSensUnique,
-            niveau = tronconOriginal.reseauNiveau,
+            traversable = tronconOriginal.traversable,
+            sensUnique = tronconOriginal.sensUnique,
+            niveau = tronconOriginal.niveau,
+            graphe = graphe,
         )
         registerTronconForPei(peiId, nouvelleVoieId2)
-        // Création du tronçon PEI (St_MakeLine entre le PEI et la jonction)
-        val sommetSourceId = sommetRepository.getByGeometrieTopologie(jonction.peiGeometrie, idEtude)?.sommetId
-            ?: sommetRepository.ensureSommet(jonction.peiGeometrie, idEtude)
-        val sommetDestinationId = sommetRepository.getByGeometrieTopologie(jonction.jonctionGeometrie, idEtude)?.sommetId
-            ?: sommetRepository.ensureSommet(jonction.jonctionGeometrie, idEtude)
-        val jonctionTronconId = reseauRepository.insert(
-            geometrie = geometrieUseCase.makeLine(jonction.peiGeometrie, jonction.jonctionGeometrie),
-            idEtude = idEtude,
+        val sommetSourceId = sommetManager.ensureSommet(jonction.peiGeometrie, graphe)
+        val sommetDestinationId = sommetManager.ensureSommet(jonction.jonctionGeometrie, graphe)
+        val jonctionTronconId = reseauManager.insert(
+            geometrie = geometrieUtils.makeLine(jonction.peiGeometrie, jonction.jonctionGeometrie),
             peiTroncon = peiId,
             sommetSource = sommetSourceId,
             sommetDestination = sommetDestinationId,
+            graphe = graphe,
         )
         registerTronconForPei(peiId, jonctionTronconId)
-        // Création du sommet de jonction et des connexions
-        createSommetsAndConnexionsSplit(jonction, tronconOriginal, nouvelleVoieId1, nouvelleVoieId2, jonctionTronconId, idEtude)
+        createSommetsAndConnexionsSplit(jonction, tronconOriginal, nouvelleVoieId1, nouvelleVoieId2, jonctionTronconId, graphe, sommetManager)
         return true
     }
 
@@ -247,43 +203,36 @@ class ReseauUseCase @Inject constructor(
      *
      * @param jonction Informations sur la jonction.
      * @param pei Objet PEI à connecter.
-     * @param idEtude Identifiant de l'étude.
-     * @param idReseau Identifiant du réseau (si utilisation du réseau importé seul).
-     * @param useReseauImporteWithCourant Mode d'utilisation du réseau importé et courant.
      * @return `true` si la jonction a été créée, `false` sinon.
      */
     private fun createJonctionExtremite(
         jonction: JonctionInfo,
         pei: PeiRepository.PeiCouvertureHydraulique,
-        idEtude: UUID?,
-        idReseau: UUID?,
-        useReseauImporteWithCourant: Boolean,
+        graphe: Graphe,
+        sommetManager: SommetManager,
     ): Boolean {
-        val tronconOriginal = reseauRepository.getById(jonction.tronconId, useReseauImporteWithCourant, idReseau)
-
+        val tronconOriginal = reseauManager.getById(jonction.tronconId, graphe)
+        if (tronconOriginal != null) {
+            registerTronconModifieForPei(pei.peiId, tronconOriginal)
+        }
         val extremiteSummit = when {
             tronconOriginal == null -> null
-            jonction.fraction <= FRACTION_MIN -> tronconOriginal.reseauSommetSource
-            jonction.fraction >= 1.0 - FRACTION_MIN -> tronconOriginal.reseauSommetDestination
+            jonction.fraction <= FRACTION_MIN -> tronconOriginal.source
+            jonction.fraction >= 1.0 - FRACTION_MIN -> tronconOriginal.destination
             else -> null
         }
-
         val sommetJonctionId = extremiteSummit
-            ?: sommetRepository.getByGeometrieTopologie(jonction.jonctionGeometrie, idEtude)?.sommetId
-            ?: sommetRepository.ensureSommet(jonction.jonctionGeometrie, idEtude)
-
-        val sommetPeiId = sommetRepository.getByGeometrie(pei.peiGeometrie)?.sommetId
-            ?: sommetRepository.ensureSommet(pei.peiGeometrie, idEtude)
-
-        val tronconJonctionId = reseauRepository.insert(
-            geometrie = geometrieUseCase.makeLine(
+            ?: sommetManager.ensureSommet(jonction.jonctionGeometrie, graphe)
+        val sommetPeiId = sommetManager.ensureSommet(pei.peiGeometrie, graphe)
+        val tronconJonctionId = reseauManager.insert(
+            geometrie = geometrieUtils.makeLine(
                 pei.peiGeometrie,
                 jonction.jonctionGeometrie,
             ),
-            idEtude = idEtude,
             peiTroncon = pei.peiId,
             sommetSource = sommetPeiId,
             sommetDestination = sommetJonctionId,
+            graphe = graphe,
         )
         registerTronconForPei(pei.peiId, tronconJonctionId)
         return true
@@ -297,69 +246,62 @@ class ReseauUseCase @Inject constructor(
      * @return Fraction (entre 0 et 1) représentant la position sur la ligne.
      */
     private fun computeFractionOnLine(ligne: LineString, point: Point): Double {
-        // Implémentation simplifiée du calcul de fraction
         val longueurTotale = ligne.length
-        var distanceParcourue = 0.0
+        var distanceParcourue = DEFAULT_DISTANCE
         val coordinates = ligne.coordinates
-
         for (i in 0 until coordinates.size - 1) {
-            val segmentClosest = geometrieUseCase.calculateClosestPointOnSegment(
+            val segmentClosest = geometrieUtils.calculateClosestPointOnSegment(
                 coordinates[i],
                 coordinates[i + 1],
                 point.coordinate,
             )
-
-            if (point.coordinate.distance(segmentClosest) < 0.001) { // Tolerance
+            if (point.coordinate.distance(segmentClosest) < DISTANCE_TOLERANCE) {
                 val distanceSegment = coordinates[i].distance(segmentClosest)
                 return (distanceParcourue + distanceSegment) / longueurTotale
             }
-
             distanceParcourue += coordinates[i].distance(coordinates[i + 1])
         }
-
-        return 0.0
+        return DEFAULT_DISTANCE
     }
 
     /**
      * Crée les sommets et met à jour les connexions pour deux tronçons découpés et la jonction PEI.
-     *
-     * @param jonction Informations sur la jonction.
-     * @param tronconOriginal Tronçon original avant découpe.
-     * @param voieId1 Identifiant du premier tronçon créé (avant la jonction).
-     * @param voieId2 Identifiant du second tronçon créé (après la jonction).
-     * @param jonctionTronconId Identifiant du tronçon de jonction PEI.
      */
+    private fun updateVoisins(voieId: UUID, graphe: Graphe) {
+        val voie = graphe.voies[voieId] ?: return
+        voie.source?.let { sommetId ->
+            val sommet = graphe.sommets[sommetId]
+            sommet?.voisins?.put(voieId, voie)
+        }
+        voie.destination?.let { sommetId ->
+            val sommet = graphe.sommets[sommetId]
+            sommet?.voisins?.put(voieId, voie)
+        }
+    }
     private fun createSommetsAndConnexionsSplit(
         jonction: JonctionInfo,
-        tronconOriginal: Reseau,
+        tronconOriginal: Voie,
         voieId1: UUID,
         voieId2: UUID,
         jonctionTronconId: UUID,
-        idEtude: UUID?,
+        graphe: Graphe,
+        sommetManager: SommetManager,
     ) {
-        // Création ou récupération du sommet de jonction
-        val sommetJonctionId = sommetRepository.getByGeometrieTopologie(jonction.jonctionGeometrie, idEtude)?.sommetId
-            ?: sommetRepository.ensureSommet(jonction.jonctionGeometrie, idEtude)
-        val sommetPeiId = sommetRepository.getByGeometrieTopologie(jonction.peiGeometrie, idEtude)?.sommetId
-            ?: sommetRepository.ensureSommet(jonction.peiGeometrie, idEtude)
-
-        // Mise à jour des connexions pour les deux nouveaux tronçons
-        // voie1 (avant jonction) : destination = sommetJonction, source = source d'origine
-        reseauRepository.updateSommetDestination(voieId1, sommetJonctionId)
-        tronconOriginal.reseauSommetSource?.let {
-            reseauRepository.updateSommetSource(voieId1, it)
+        val sommetJonctionId = sommetManager.ensureSommet(jonction.jonctionGeometrie, graphe)
+        val sommetPeiId = sommetManager.ensureSommet(jonction.peiGeometrie, graphe)
+        reseauManager.updateSommetDestination(voieId1, sommetJonctionId, graphe)
+        tronconOriginal.source?.let {
+            reseauManager.updateSommetSource(voieId1, it, graphe)
         }
-        // voie2 (après jonction) : source = sommetJonction, destination = destination d'origine
-        reseauRepository.updateSommetSource(voieId2, sommetJonctionId)
-        tronconOriginal.reseauSommetDestination?.let {
-            reseauRepository.updateSommetDestination(voieId2, it)
+        reseauManager.updateSommetSource(voieId2, sommetJonctionId, graphe)
+        tronconOriginal.destination?.let {
+            reseauManager.updateSommetDestination(voieId2, it, graphe)
         }
-        // tronçon de jonction PEI : source = sommetPei, destination = sommetJonction
-        reseauRepository.updateSommetSource(jonctionTronconId, sommetPeiId)
-        reseauRepository.updateSommetDestination(jonctionTronconId, sommetJonctionId)
-    }
-
-    fun deleteTroncon(tronconId: UUID) {
-        reseauRepository.delete(tronconId)
+        reseauManager.updateSommetSource(jonctionTronconId, sommetPeiId, graphe)
+        reseauManager.updateSommetDestination(jonctionTronconId, sommetJonctionId, graphe)
+        // Mise à jour explicite des voisins pour garantir la continuité du graphe
+        updateVoisins(voieId1, graphe)
+        updateVoisins(voieId2, graphe)
+        updateVoisins(jonctionTronconId, graphe)
     }
 }

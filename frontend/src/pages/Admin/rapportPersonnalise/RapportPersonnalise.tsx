@@ -55,6 +55,61 @@ type RapportPersonnaliseType = {
   unavailableCode: number[];
 };
 
+/**
+ * Permet de découper la requête SQL d'un paramètre en deux parties, avant et après les champs id et libelle
+ * @param sourceSql : La requête SQL complète du paramètre
+ * @param sourceSqlId : Le nom du champ qui sera utilisé comme identifiant dans la requête SQL
+ * @param sourceSqlLibelle : Le nom du champ qui sera utilisé comme libellé dans la requête SQL
+ * @returns les propriétés rapportPersonnaliseParametreSourceSqlDebut et rapportPersonnaliseParametreSourceSqlFin
+ */
+const splitParametreSourceSql = (
+  sourceSql?: string,
+  sourceSqlId?: string,
+  sourceSqlLibelle?: string,
+) => {
+  if (!sourceSql || !sourceSqlId || !sourceSqlLibelle) {
+    return {
+      rapportPersonnaliseParametreSourceSqlDebut: null,
+      rapportPersonnaliseParametreSourceSqlFin: null,
+    };
+  }
+
+  // on cherche l'emplacement du "as id" et du "as libelle" dans la requête SQL pour découper la requête en deux parties
+  const idPattern = `${sourceSqlId} as id,`;
+  const libellePattern = `${sourceSqlLibelle} as libelle`;
+
+  const idPatternIndex = sourceSql.indexOf(idPattern);
+  if (idPatternIndex !== -1) {
+    const libellePatternIndex = sourceSql.indexOf(
+      libellePattern,
+      idPatternIndex + idPattern.length,
+    );
+
+    if (libellePatternIndex !== -1) {
+      return {
+        rapportPersonnaliseParametreSourceSqlDebut: sourceSql.slice(
+          0,
+          idPatternIndex,
+        ),
+        // Si plusieurs "as libelle" existent, on coupe au premier trouvé après "as id".
+        rapportPersonnaliseParametreSourceSqlFin: sourceSql.slice(
+          libellePatternIndex + libellePattern.length,
+        ),
+      };
+    }
+  }
+
+  // Fallback défensif si on ne retrouve pas la structure attendue.
+  return {
+    rapportPersonnaliseParametreSourceSqlDebut: sourceSql.split(sourceSqlId)[0],
+    rapportPersonnaliseParametreSourceSqlFin: sourceSql.includes(
+      sourceSqlLibelle + " as libelle",
+    )
+      ? sourceSql.split(sourceSqlLibelle + " as libelle")[1]
+      : null,
+  };
+};
+
 export const getInitialValues = (data?: RapportPersonnaliseType) => ({
   rapportPersonnaliseProtected: data?.rapportPersonnaliseProtected ?? false,
   rapportPersonnaliseActif: data?.rapportPersonnaliseActif ?? true,
@@ -68,25 +123,11 @@ export const getInitialValues = (data?: RapportPersonnaliseType) => ({
   listeGroupeFonctionnalitesId: data?.listeGroupeFonctionnalitesId ?? [],
   listeRapportPersonnaliseParametre:
     data?.listeRapportPersonnaliseParametre.map((e) => ({
-      rapportPersonnaliseParametreSourceSqlDebut:
-        e.rapportPersonnaliseParametreSourceSql
-          ? e.rapportPersonnaliseParametreSourceSql?.split(
-              e.rapportPersonnaliseParametreSourceSqlId
-                ? e.rapportPersonnaliseParametreSourceSqlId
-                : null,
-            )[0]
-          : null,
-      rapportPersonnaliseParametreSourceSqlFin:
-        e.rapportPersonnaliseParametreSourceSql
-          ? e.rapportPersonnaliseParametreSourceSql
-              ?.split(
-                e.rapportPersonnaliseParametreSourceSqlLibelle
-                  ? e.rapportPersonnaliseParametreSourceSqlLibelle +
-                      " as libelle"
-                  : null,
-              )
-              .slice(-1)[0]
-          : null,
+      ...splitParametreSourceSql(
+        e.rapportPersonnaliseParametreSourceSql,
+        e.rapportPersonnaliseParametreSourceSqlId,
+        e.rapportPersonnaliseParametreSourceSqlLibelle,
+      ),
       // Le composant drag and drop a besoin d'un identifiant unique, donc on passe par un random
       id: Math.random(),
       ...e,

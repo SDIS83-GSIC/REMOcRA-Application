@@ -43,6 +43,8 @@ class NotificationEventListener @Inject constructor(
                     },
                 ),
                 bcc = event.notificationData.destinataires,
+                attachment = event.notificationData.attachment,
+                logManager = logManager,
             )
 
             if (idJob != null) {

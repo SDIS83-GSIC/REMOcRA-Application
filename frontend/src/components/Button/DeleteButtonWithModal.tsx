@@ -1,7 +1,7 @@
 import { Button } from "react-bootstrap";
 import { IconDelete } from "../Icon/Icon.tsx";
 import DeleteModal from "../Modal/DeleteModal.tsx";
-import useModal from "../Modal/ModalUtils.tsx";
+import useDeleteButtonEnabled from "./useDeleteButtonEnabled.tsx";
 
 const DeleteButtonWithModal = ({
   path,
@@ -22,13 +22,22 @@ const DeleteButtonWithModal = ({
   header?: React.ReactNode;
   content?: React.ReactNode;
 }) => {
-  const { visible, show, close, ref } = useModal();
+  const {
+    visible,
+    ref,
+    isDeleteEnabled,
+    openDeleteModal,
+    closeDeleteModalCancel,
+    closeDeleteModalError,
+    closeDeleteModalSuccess,
+  } = useDeleteButtonEnabled();
+
   return (
     <>
       <Button
         variant={variant}
-        disabled={disabled}
-        onClick={show}
+        disabled={disabled || !isDeleteEnabled}
+        onClick={openDeleteModal}
         className={className}
       >
         <IconDelete />
@@ -36,7 +45,9 @@ const DeleteButtonWithModal = ({
       </Button>
       <DeleteModal
         visible={visible}
-        closeModal={close}
+        onCancel={closeDeleteModalCancel}
+        onError={closeDeleteModalError}
+        onSuccess={closeDeleteModalSuccess}
         query={path}
         ref={ref}
         onDelete={() => (reload ? reload() : window.location.reload())}

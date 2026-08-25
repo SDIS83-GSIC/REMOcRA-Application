@@ -53,6 +53,7 @@ const GenereCourrier = () => {
     modeleCourrierId: string;
     courrierReference: string;
   } | null>(null);
+  const [formKey, setFormKey] = useState(0);
   const navigate = useNavigate();
   const { activesKeys, handleShowClose } = useAccordionState([true, false]);
 
@@ -79,6 +80,7 @@ const GenereCourrier = () => {
               <Row>
                 <Col xs={12} lg={4}>
                   <MyFormik
+                    key={formKey}
                     initialValues={getInitialValues()}
                     validationSchema={validationSchema}
                     isPost={true}
@@ -116,6 +118,10 @@ const GenereCourrier = () => {
                 modeleCourrierId={urlCourrier.modeleCourrierId}
                 courrierReference={urlCourrier.courrierReference}
                 thematique={getThematiqueFromTypeModule(typeModule)}
+                onNotificationSuccess={() => {
+                  setUrlCourrier(null);
+                  setFormKey((prev) => prev + 1);
+                }}
               />
             ) : (
               <Row>Veuillez générer le courrier avant de notifier.</Row>
@@ -139,11 +145,13 @@ const ListDestinataire = ({
   modeleCourrierId,
   courrierReference,
   thematique,
+  onNotificationSuccess,
 }: {
   urlCourrier: string;
   modeleCourrierId: string;
   courrierReference: string;
   thematique: string;
+  onNotificationSuccess: () => void;
 }) => {
   const parametresState = useGet(
     url`/api/parametres?${{
@@ -193,6 +201,8 @@ const ListDestinataire = ({
       .text()
       .then(() => {
         successToast("Destinataires notifiés");
+        setListeDestinataire([]);
+        onNotificationSuccess();
       })
       .catch((reason: string) => {
         errorToast(reason);

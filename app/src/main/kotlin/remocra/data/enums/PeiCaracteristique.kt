@@ -19,6 +19,7 @@ enum class PeiCaracteristique(val libelle: String, val typeCaracteristique: Type
     DATE_ROP("Date de la dernière ROP", TypeCaracteristique.GENERAL),
     DATE_CTP("Date du dernier CTP", TypeCaracteristique.GENERAL),
     ADRESSE("Adresse", TypeCaracteristique.GENERAL),
+    TOURNEE("Tournée(s)", TypeCaracteristique.GENERAL),
 
     // PIBI
     DIAMETRE_NOMINAL("Diamètre nominal", TypeCaracteristique.PIBI),

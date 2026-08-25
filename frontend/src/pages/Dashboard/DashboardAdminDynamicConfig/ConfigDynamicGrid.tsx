@@ -36,6 +36,7 @@ type ConfigDynamicGridProps = {
       { components: ComponentDashboard[]; profils: DashboardProfilApiEntry[] }
     >
   >;
+  onSave: () => void;
 };
 
 const HEIGHT_ROW = 200;
@@ -124,6 +125,7 @@ const ConfigDynamicGrid = ({
   activeDashboard,
   setActiveDashboard,
   dashboardCacheRef,
+  onSave,
 }: ConfigDynamicGridProps) => {
   // Initialiser le profil depuis le cache si disponible
   const [dashboardProfil, setDashboardProfil] = useState<
@@ -403,6 +405,7 @@ const ConfigDynamicGrid = ({
             title: savedDashboardTitle,
             index: activeDashboard.index,
           });
+          onSave();
         }}
         initialValues={getInitialValues(componentSelected)}
         submitUrl={

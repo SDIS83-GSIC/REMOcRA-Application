@@ -86,8 +86,8 @@ const OldebMap = () => {
   }, [state, map]);
 
   return (
-    <Row className="map-wrapper">
-      <Col>
+    <Row className="map-page-wrapper">
+      <Col className="map-page-map-col">
         <MapComponent
           outilI={infoOutilI}
           handleCloseInfoI={handleCloseInfoI}

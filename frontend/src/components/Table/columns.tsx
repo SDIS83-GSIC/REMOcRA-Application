@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
 import { Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
+import useDeleteButtonEnabled from "../Button/useDeleteButtonEnabled.tsx";
 import { IconDelete, IconEdit, IconLock, IconUnlock } from "../Icon/Icon.tsx";
 import DeleteModal from "../Modal/DeleteModal.tsx";
-import useModal from "../Modal/ModalUtils.tsx";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
 import { actionColumnType, columnType } from "./QueryTable.tsx";
 import { ActionButton } from "./TableActionColumn.tsx";
@@ -101,7 +101,7 @@ type LinkColumnType = {
 
 type DeleteColumnType = {
   path: string;
-  reload?: boolean;
+  reload?: () => void;
   title: boolean;
   accessor: string;
   disabled?: boolean;
@@ -116,22 +116,35 @@ export const DeleteColumn = ({
   disable = () => false,
   textDisable = "",
   ...options
-}): DeleteColumnType => ({
+}: DeleteColumnType) => ({
   // eslint-disable-next-line react/display-name
-  Cell: (row) => {
-    const { visible, show, close, ref } = useModal();
+  Cell: (row: { value: string }) => {
+    const {
+      visible,
+      ref,
+      isDeleteEnabled,
+      openDeleteModal,
+      closeDeleteModalCancel,
+      closeDeleteModalError,
+      closeDeleteModalSuccess,
+    } = useDeleteButtonEnabled();
     const query = `${path}${row.value}`;
+
+    const isDisabled = disabled || disable(row) || !isDeleteEnabled;
+    const computedTextDisable = !isDeleteEnabled
+      ? "Élément déjà supprimé"
+      : textDisable;
     return (
       <>
         <TooltipCustom
-          tooltipText={!disable(row) ? "Supprimer" : textDisable}
+          tooltipText={isDisabled ? computedTextDisable : "Supprimer"}
           tooltipId={row.value}
         >
           <Button
             variant={"link"}
-            className={disabled || disable(row) ? "" : "text-danger"}
-            disabled={disabled || disable(row)}
-            onClick={show}
+            className={isDisabled ? "" : "text-danger"}
+            disabled={isDisabled}
+            onClick={openDeleteModal}
           >
             <IconDelete />
             {title && <>&nbsp;Supprimer</>}
@@ -140,10 +153,12 @@ export const DeleteColumn = ({
         {!disable(row) && (
           <DeleteModal
             visible={visible}
-            closeModal={close}
+            onCancel={closeDeleteModalCancel}
+            onError={closeDeleteModalError}
+            onSuccess={closeDeleteModalSuccess}
             query={query}
             ref={ref}
-            onDelete={() => (reload ? reload() : window.location.reload(false))}
+            onDelete={() => (reload ? reload() : window.location.reload())}
           />
         )}
       </>

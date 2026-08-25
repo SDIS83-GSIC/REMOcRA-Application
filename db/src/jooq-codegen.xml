@@ -47,6 +47,8 @@
       <immutablePojos>true</immutablePojos>
       <javaTimeTypes>true</javaTimeTypes>
       <generatedAnnotation>true</generatedAnnotation>
+      <!-- on désactive pour faciliter les mises à jour de jOOQ -->
+      <generatedAnnotationJooqVersion>false</generatedAnnotationJooqVersion>
       <nullableAnnotation>true</nullableAnnotation>
       <nullableAnnotationType>org.checkerframework.checker.nullness.qual.Nullable</nullableAnnotationType>
       <nonnullAnnotation>true</nonnullAnnotation>

@@ -69,21 +69,7 @@ const Crise = () => {
   const communeState = useGet(url`/api/commune/get-libelle-commune`);
   const toponymieList = useGet(url`/api/toponymie/get-libelle-toponymie`);
 
-  // mapper le dictionnaire retourné par "typeCriseState" pour récupérer l'id et le libellé
-  const listTypeCrise = useMemo(() => {
-    if (!typeCriseState.data) {
-      return [];
-    }
-    return typeCriseState.data.map(
-      (crise: { criseId: string; criseNom: string }) => {
-        return {
-          id: crise.criseId,
-          code: crise.criseNom,
-          libelle: crise.criseNom,
-        };
-      },
-    );
-  }, [typeCriseState.data]);
+  const listTypeCrise = typeCriseState.data ?? [];
 
   // Récupération des couches disponibles (toutes les couches WMS)
   const couchesWMSState = useGet(url`/api/crise/get-couches-wms`);

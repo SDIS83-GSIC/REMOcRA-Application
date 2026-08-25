@@ -38,7 +38,7 @@ const TourneeForm = ({
     listePei
       ? url`/api/organisme/get-libelle-organisme-filter-with-pei?${{ listePei: JSON.stringify(listePei) }}`
       : url`/api/organisme/get-libelle-organisme`,
-  ); // TODO : ne remonter que l'organisme et les enfants de l'utilisateur courant
+  );
 
   return (
     <FormContainer>
@@ -50,6 +50,7 @@ const TourneeForm = ({
               ? "Création d'une tournée"
               : "Modification de la tournée " + tourneeLibelle
           }
+          displayReturnButton={!hideSubmit}
         />
         <Col>
           <TextInput name="tourneeLibelle" label="Nom de la tournée :" />

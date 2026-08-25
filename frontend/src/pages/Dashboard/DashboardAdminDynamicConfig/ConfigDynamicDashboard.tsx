@@ -1,4 +1,11 @@
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import {
+  Dispatch,
+  MutableRefObject,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Button, Nav } from "react-bootstrap";
 import CreateButton from "../../../components/Button/CreateButton.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
@@ -10,6 +17,7 @@ import {
 import ConfirmModal from "../../../components/Modal/ConfirmModal.tsx";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
+import { URLS } from "../../../routes.tsx";
 import { ComponentDashboard, DashboardItemParam } from "../Constants.tsx";
 import ConfigDynamicGrid from "./ConfigDynamicGrid.tsx";
 
@@ -34,20 +42,17 @@ type ConfigDynamicDashboardProps = {
   setComponentsListDashboard: Dispatch<
     SetStateAction<ComponentDashboard[] | null>
   >;
+  dashboardCacheRef: MutableRefObject<Map<string, DashboardCacheEntry>>;
 };
 
 const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
   const { error: errorToast, success: successToast } = useToastContext();
 
   const [disabledModal, setDisabledModal] = useState(false);
-  const [indexToRemove, setIdtoremove] = useState<number | null>();
+  const [indexToRemove, setIndexToRemove] = useState<number | null>(null);
   const [gridReloadVersion, setGridReloadVersion] = useState(0);
 
   const abortControllerRef = useRef<AbortController | null>(null);
-
-  // Cache mémoire
-  // Survit aux changements d'onglet, perdu uniquement au démontage / reload
-  const dashboardCacheRef = useRef<Map<string, DashboardCacheEntry>>(new Map());
 
   useEffect(() => {
     return () => {
@@ -60,9 +65,13 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
   // Sélectionne l'onglet du dashboard cliqué
   const handleDashboardClick = (indexKey: number) => {
     if (props.openListDashboard && props.editTabIndex === null) {
+      if (props.activeDashboard?.index === indexKey) {
+        return;
+      }
+
       const target = props.openListDashboard[indexKey];
       const cached = target?.id
-        ? dashboardCacheRef.current.get(target.id)
+        ? props.dashboardCacheRef.current.get(target.id)
         : null;
 
       if (cached) {
@@ -80,19 +89,19 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
   const handleEditTab = (indexKey: number | null) => {
     if (props.openListDashboard) {
       props.setEditTabIndex(indexKey);
-      props.setActiveDashboard(props.openListDashboard[indexKey || 0]);
+      props.setActiveDashboard(props.openListDashboard[indexKey ?? 0]);
     }
   };
 
   // Ferme l'onglet sélectionné
   const handleCloseTab = (indexKey: number) => {
     if (props.openListDashboard) {
-      const dahsboarToRemove = props.openListDashboard.find(
+      const dashboardToRemove = props.openListDashboard.find(
         (dashboard) => dashboard.index === indexKey,
       );
 
-      if (dahsboarToRemove && dahsboarToRemove.id) {
-        fetchDeleteDashboard(dahsboarToRemove, indexKey);
+      if (dashboardToRemove && dashboardToRemove.id) {
+        fetchDeleteDashboard(dashboardToRemove, indexKey);
       } else {
         updateDashboardList(indexKey);
       }
@@ -138,7 +147,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
       await response.json();
       // le dashboard n'existe plus
       if (dashboard.id) {
-        dashboardCacheRef.current.delete(dashboard.id);
+        props.dashboardCacheRef.current.delete(dashboard.id);
       }
       updateDashboardList(indexKey);
       successToast("Le tableau de bord a correctement été supprimé");
@@ -197,7 +206,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
     const dashboardToRestore = editedDashboard ?? props.openListDashboard[0];
 
     if (dashboardToRestore?.id) {
-      dashboardCacheRef.current.delete(dashboardToRestore.id);
+      props.dashboardCacheRef.current.delete(dashboardToRestore.id);
     }
 
     props.setComponentsListDashboard(null);
@@ -212,6 +221,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
       <PageTitle
         icon={<IconGaugeComponent />}
         title={"Édition des tableaux de bord et profils associés"}
+        urlRetour={URLS.MODULE_ADMIN}
       />
       <div className="flex-grow-1 d-flex flex-column">
         <div className="d-flex align-items-center">
@@ -232,11 +242,11 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
                 >
                   <Nav.Link
                     eventKey={dashboard.index}
-                    onClick={() => handleDashboardClick(dashboard.index || 0)}
+                    onClick={() => handleDashboardClick(dashboard.index ?? 0)}
                     className="d-flex align-items-center"
                   >
                     <div
-                      className="col-4d-flex align-items-center text-truncate"
+                      className="align-items-center text-truncate"
                       title={dashboard.title}
                       style={{ width: "11rem" }}
                     >
@@ -251,7 +261,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
                           className="text-info ms-2 text-decoration-none"
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleEditTab(dashboard.index || 0);
+                            handleEditTab(dashboard.index ?? 0);
                           }}
                         >
                           <IconEdit />
@@ -261,7 +271,7 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
                           size="sm"
                           onClick={(e) => {
                             e.stopPropagation();
-                            setIdtoremove(dashboard.index || 0);
+                            setIndexToRemove(dashboard.index ?? 0);
                             setDisabledModal(true);
                           }}
                           className="ms-2 text-danger text-decoration-none"
@@ -278,7 +288,6 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
           {/* Bouton pour ajouter un nouvel onglet */}
           {props.editTabIndex === null ? (
             <div className="ms-auto">
-              {" "}
               <CreateButton title={"Ajouter"} onClick={handleAddDashboard} />
             </div>
           ) : (
@@ -306,7 +315,8 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
             setComponentsListDashboard={props.setComponentsListDashboard}
             activeDashboard={props.activeDashboard}
             setActiveDashboard={props.setActiveDashboard}
-            dashboardCacheRef={dashboardCacheRef}
+            dashboardCacheRef={props.dashboardCacheRef}
+            onSave={handleCancelEdit}
           />
         ) : (
           <div className="alert alert-primary" role="alert">
@@ -322,7 +332,11 @@ const ConfigDynamicDashboard = (props: ConfigDynamicDashboardProps) => {
           closeModal={() => setDisabledModal(false)}
           query={""}
           href="#"
-          onConfirm={() => handleCloseTab(indexToRemove || 0)}
+          onConfirm={() => {
+            if (indexToRemove !== null) {
+              handleCloseTab(indexToRemove);
+            }
+          }}
         />
       )}
     </>

@@ -34,7 +34,7 @@ constructor(
             return
         }
 
-        if (userInfo.nom != GlobalConstants.UTILISATEUR_SYSTEME_USERNAME) {
+        if (userInfo.userInfo?.username != GlobalConstants.UTILISATEUR_SYSTEME_USERNAME) {
             if (userInfo.zoneCompetence == null) {
                 throw RemocraResponseException(ErrorType.ZONE_COMPETENCE_INTROUVABLE_FORBIDDEN)
             }

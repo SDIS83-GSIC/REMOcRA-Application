@@ -6,11 +6,11 @@ import remocra.app.AppSettings
 import remocra.auth.WrappedUserInfo
 import remocra.data.EvenementSousCategorieDetails
 import remocra.data.EvenementSousCategorieWithComplementData
+import remocra.data.GlobalData
 import remocra.data.TypeEvent
 import remocra.db.CommuneRepository
 import remocra.db.CriseRepository
 import remocra.db.CriseRepository.ToponymieResult
-import remocra.db.CriseRepository.TypeCriseComplete
 import remocra.db.EvenementRepository
 import remocra.db.EvenementSousCategorieRepository
 import remocra.db.ToponymieRepository
@@ -29,7 +29,7 @@ class CriseUseCase @Inject constructor(
     private var buildDynamicForm: BuildDynamicForm,
 ) : AbstractUseCase() {
 
-    fun getTypeCriseForSelect(): Collection<TypeCriseComplete> = criseRepository.getCriseForSelect()
+    fun getTypeCriseForSelect(): Collection<GlobalData.IdCodeLibelleData> = criseRepository.getTypeCriseForSelect()
 
     /**
      * Récupère toutes les géométries des communes associées à la crise spécifiée par son identifiant.

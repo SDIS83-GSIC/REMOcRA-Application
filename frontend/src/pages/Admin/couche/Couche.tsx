@@ -1,5 +1,5 @@
 import { useFormikContext } from "formik";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button, Col, Image, Row } from "react-bootstrap";
 import { object } from "yup";
 import { useGet, useGetRun } from "../../../components/Fetch/useFetch.tsx";
@@ -128,6 +128,21 @@ export const validationSchema = object({
 const Couche = () => {
   const { values, setFieldValue }: any = useFormikContext<CoucheType>();
   const [estInitialise, setEstInitialisee] = useState(false);
+
+  const legendeUrl = useMemo(() => {
+    if (!values.coucheLegendeUrl) {
+      return undefined;
+    }
+    return `${values.coucheLegendeUrl}?v=${Date.now()}`;
+  }, [values.coucheLegendeUrl]);
+
+  const iconeUrl = useMemo(() => {
+    if (!values.coucheIconeUrl) {
+      return undefined;
+    }
+    return `${values.coucheIconeUrl}?v=${Date.now()}`;
+  }, [values.coucheIconeUrl]);
+
   const { run, data: coucheDisponibleDansGeoserver } = useGetRun(
     `/api/geoserver/check-couche-dispo/${values.coucheNom}`,
   );
@@ -444,7 +459,7 @@ const Couche = () => {
             <div className="mt-3 d-flex align-items-center gap-3">
               <Image
                 thumbnail={true}
-                src={values.coucheIconeUrl}
+                src={iconeUrl}
                 style={{ maxWidth: "100px" }}
               />
               <Button
@@ -475,7 +490,7 @@ const Couche = () => {
             <div className="mt-3">
               <Image
                 thumbnail={true}
-                src={values.coucheLegendeUrl}
+                src={legendeUrl}
                 style={{ maxWidth: "300px" }}
               />
               <Button

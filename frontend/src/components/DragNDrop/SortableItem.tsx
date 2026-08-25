@@ -5,19 +5,24 @@ import { FC } from "react";
 import { Button } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 import TooltipCustom from "../../components/Tooltip/Tooltip.tsx";
+import { hasDroit } from "../../droits.tsx";
 import { PeiInfoEntity } from "../../Entities/PeiEntity.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
+import { useAppContext } from "../App/AppProvider.tsx";
 import { IconClose, IconDragNDrop, IconInfo } from "../Icon/Icon.tsx";
 
 type SortableTourneePeiType = {
   id: string;
   item: string;
   onRemove: (id: string) => any;
+  canRemove: boolean;
 };
 
 const SortableRowTourneePei: FC<SortableTourneePeiType> = ({
   id, // La propriété id doit impérativement s'appeler id
   item,
   onRemove,
+  canRemove,
 }) => {
   const { setNodeRef, listeners, transform, transition } = useSortable({ id });
 
@@ -37,17 +42,19 @@ const SortableRowTourneePei: FC<SortableTourneePeiType> = ({
       <td>{item.natureLibelle}</td>
       <td>{item.adresse}</td>
       <td>{item.communeLibelle}</td>
-      <td>
-        <Button
-          variant={"link"}
-          className={"text-danger text-decoration-none"}
-          onClick={() => {
-            onRemove(id);
-          }}
-        >
-          <IconClose />
-        </Button>
-      </td>
+      {canRemove && (
+        <td>
+          <Button
+            variant={"link"}
+            className={"text-danger text-decoration-none"}
+            onClick={() => {
+              onRemove(id);
+            }}
+          >
+            <IconClose />
+          </Button>
+        </td>
+      )}
     </tr>
   );
 };
@@ -61,6 +68,9 @@ const SortableTableTourneePei = ({
   data,
   setData,
 }: SortableTableTourneePeiType) => {
+  const { user } = useAppContext();
+  const canRemove = hasDroit(user, TYPE_DROIT.TOURNEE_A);
+
   function handleRemove(id: string) {
     setData((data) => data.filter((e) => e.id !== id));
   }
@@ -99,22 +109,24 @@ const SortableTableTourneePei = ({
             <th>Nature</th>
             <th>Adresse</th>
             <th>Commune</th>
-            <th>
-              Action
-              <TooltipCustom
-                tooltipText={
-                  <>
-                    Le bouton &nbsp;
-                    <IconClose />
-                    &nbsp; permet de supprimer le PEI correspondant de la
-                    tourn&eacute;e
-                  </>
-                }
-                tooltipId={"supprimeTournee"}
-              >
-                <IconInfo />
-              </TooltipCustom>
-            </th>
+            {canRemove && (
+              <th>
+                Action
+                <TooltipCustom
+                  tooltipText={
+                    <>
+                      Le bouton &nbsp;
+                      <IconClose />
+                      &nbsp; permet de supprimer le PEI correspondant de la
+                      tourn&eacute;e
+                    </>
+                  }
+                  tooltipId={"supprimeTournee"}
+                >
+                  <IconInfo />
+                </TooltipCustom>
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -125,6 +137,7 @@ const SortableTableTourneePei = ({
                 id={v.id}
                 item={v}
                 onRemove={handleRemove}
+                canRemove={canRemove}
               />
             ))}
           </SortableContext>

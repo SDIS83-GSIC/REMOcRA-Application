@@ -2,18 +2,13 @@ package remocra.couverturehydraulique.db
 
 import jakarta.inject.Inject
 import org.jooq.DSLContext
-import org.locationtech.jts.geom.Geometry
 import org.locationtech.jts.geom.LineString
-import org.locationtech.jts.geom.Point
+import remocra.couverturehydraulique.graphe.Voie
 import remocra.db.AbstractRepository
 import remocra.db.fetchInto
 import remocra.db.fetchOneInto
 import remocra.db.jooq.couverturehydraulique.tables.pojos.Reseau
 import remocra.db.jooq.couverturehydraulique.tables.references.RESEAU
-import remocra.utils.ST_DWithin
-import remocra.utils.ST_Distance
-import remocra.utils.ST_Intersects
-import remocra.utils.toGeomFromText
 import java.util.UUID
 
 /**
@@ -22,29 +17,6 @@ import java.util.UUID
 class ReseauRepository @Inject constructor(
     private val dsl: DSLContext,
 ) : AbstractRepository() {
-    /**
-     * Trouve le tronçon le plus proche d'un point
-     */
-    fun findTronconPlusProche(
-        point: Point,
-        distanceMax: Int,
-        idEtude: UUID?,
-        useReseauImporteWithCourant: Boolean,
-    ): Reseau? {
-        val condition = if (useReseauImporteWithCourant) {
-            RESEAU.ETUDE_ID.eq(idEtude).or(RESEAU.ETUDE_ID.isNull)
-        } else {
-            idEtude?.let { RESEAU.ETUDE_ID.eq(it) } ?: RESEAU.ETUDE_ID.isNull
-        }
-
-        return dsl.selectFrom(RESEAU)
-            .where(ST_DWithin(RESEAU.GEOMETRIE, point.toGeomFromText(), distanceMax.toDouble()))
-            .and(condition)
-            .and(RESEAU.PEI_TRONCON.isNull)
-            .orderBy(ST_Distance(RESEAU.GEOMETRIE, point.toGeomFromText()))
-            .limit(1)
-            .fetchOneInto()
-    }
 
     /**
      * Obtient un tronçon par ID
@@ -64,26 +36,13 @@ class ReseauRepository @Inject constructor(
             .fetchOneInto()
     }
 
-    /**
-     * Obtient un tronçon par PEI
-     */
-    fun getByPei(peiId: UUID): Reseau? {
-        return dsl.selectFrom(RESEAU)
-            .where(RESEAU.PEI_TRONCON.eq(peiId))
-            .limit(1)
-            .fetchOneInto()
-    }
-
     data class ReseauTopologie(
         val reseauId: UUID,
         val reseauGeometrie: LineString,
         val reseauEtude: UUID?,
     )
 
-    /**
-     * Récupère le réseau de l'étude
-     */
-    fun getReseauEtude(etudeId: UUID): List<ReseauTopologie> {
+    fun getReseauEtudeTopologie(etudeId: UUID): List<ReseauTopologie> {
         return dsl.select(
             RESEAU.ID,
             RESEAU.GEOMETRIE,
@@ -95,29 +54,26 @@ class ReseauRepository @Inject constructor(
     }
 
     /**
-     * Met à jour la géométrie d'un tronçon
+     * Récupère le réseau de l'étude
      */
-    fun updateGeometrie(id: UUID, geometrie: LineString) {
-        dsl.update(RESEAU)
-            .set(RESEAU.GEOMETRIE, geometrie)
-            .where(RESEAU.ID.eq(id))
-            .execute()
-    }
-
-    /**
-     * Met à jour le sommet de destination
-     */
-    fun updateSommetDestination(id: UUID, sommetDestination: UUID) {
-        dsl.update(RESEAU)
-            .set(RESEAU.SOMMET_DESTINATION, sommetDestination)
-            .where(RESEAU.ID.eq(id))
-            .execute()
-    }
-
-    fun updateSommetSource(id: UUID, sommetSource: UUID) {
-        dsl.update(RESEAU)
-            .set(RESEAU.SOMMET_SOURCE, sommetSource)
-            .where(RESEAU.ID.eq(id)).execute()
+    fun getReseauEtude(etudeId: UUID?, useReseauImporteWithCourant: Boolean): List<Voie> {
+        val condition = if (useReseauImporteWithCourant) {
+            RESEAU.ETUDE_ID.eq(etudeId).or(RESEAU.ETUDE_ID.isNull)
+        } else {
+            etudeId?.let { RESEAU.ETUDE_ID.eq(it) } ?: RESEAU.ETUDE_ID.isNull
+        }
+        val result = dsl.select(
+            RESEAU.ID.`as`("id"),
+            RESEAU.GEOMETRIE.`as`("geometrie"),
+            RESEAU.SOMMET_SOURCE.`as`("source"),
+            RESEAU.SOMMET_DESTINATION.`as`("destination"),
+            RESEAU.TRAVERSABLE.`as`("traversable"),
+            RESEAU.SENS_UNIQUE.`as`("sensUnique"),
+            RESEAU.NIVEAU.`as`("niveau"),
+        ).from(RESEAU)
+            .where(condition)
+            .fetchInto(Voie::class.java)
+        return result
     }
 
     /**
@@ -159,129 +115,6 @@ class ReseauRepository @Inject constructor(
     }
 
     /**
-     * Supprime un tronçon par PEI
-     */
-    fun deleteByPei(peiId: UUID) {
-        dsl.deleteFrom(RESEAU)
-            .where(RESEAU.PEI_TRONCON.eq(peiId))
-            .execute()
-    }
-
-    /**
-     * Obtient les tronçons connectés à un sommet (sortants)
-     */
-    fun getTronconsSortants(
-        sommetId: UUID,
-        idReseauImporte: UUID?,
-        useReseauImporteWithCourant: Boolean,
-    ): List<Reseau> {
-        val condition = if (useReseauImporteWithCourant) {
-            RESEAU.ETUDE_ID.eq(idReseauImporte).or(RESEAU.ETUDE_ID.isNull)
-        } else {
-            idReseauImporte?.let { RESEAU.ETUDE_ID.eq(it) } ?: RESEAU.ETUDE_ID.isNull
-        }
-
-        return dsl.selectFrom(RESEAU)
-            .where(RESEAU.SOMMET_SOURCE.eq(sommetId))
-            .and(condition)
-            .fetchInto()
-    }
-
-    /**
-     * Obtient les tronçons connectés à un sommet (entrants)
-     */
-    fun getTronconsEntrants(
-        sommetId: UUID,
-        idReseauImporte: UUID?,
-        useReseauImporteWithCourant: Boolean,
-    ): List<Reseau> {
-        val condition = if (useReseauImporteWithCourant) {
-            RESEAU.ETUDE_ID.eq(idReseauImporte).or(RESEAU.ETUDE_ID.isNull)
-        } else {
-            idReseauImporte?.let { RESEAU.ETUDE_ID.eq(it) } ?: RESEAU.ETUDE_ID.isNull
-        }
-
-        return dsl.selectFrom(RESEAU)
-            .where(RESEAU.SOMMET_DESTINATION.eq(sommetId))
-            .and(condition)
-            .fetchInto()
-    }
-
-    /**
-     * Obtient les tronçons non traversables qui intersectent une géométrie
-     */
-    fun getTronconsNonTraversablesIntersectant(
-        geometrie: Geometry,
-        tronconExclu: UUID,
-        idReseauImporte: UUID?,
-        useReseauImporteWithCourant: Boolean,
-    ): List<Reseau> {
-        val condition = if (useReseauImporteWithCourant) {
-            RESEAU.ETUDE_ID.eq(idReseauImporte).or(RESEAU.ETUDE_ID.isNull)
-        } else {
-            idReseauImporte?.let { RESEAU.ETUDE_ID.eq(it) } ?: RESEAU.ETUDE_ID.isNull
-        }
-
-        return dsl.selectFrom(RESEAU)
-            .where(RESEAU.PEI_TRONCON.isNull)
-            .and(RESEAU.TRAVERSABLE.eq(false))
-            .and(RESEAU.NIVEAU.eq(0))
-            .and(RESEAU.ID.ne(tronconExclu))
-            .and(
-                ST_Intersects(
-                    geometrie.toGeomFromText(),
-                    RESEAU.GEOMETRIE,
-                ),
-            )
-            .and(condition)
-            .fetchInto()
-    }
-
-    /**
-     * Obtient le sommet source d'un tronçon PEI
-     */
-    fun getSommetSourcePei(peiId: UUID): UUID? {
-        return dsl.select(RESEAU.SOMMET_SOURCE)
-            .from(RESEAU)
-            .where(RESEAU.PEI_TRONCON.eq(peiId))
-            .limit(1)
-            .fetchOne()
-            ?.get(RESEAU.SOMMET_SOURCE)
-    }
-
-    /**
-     * Obtient l'ID d'un tronçon PEI
-     */
-    fun getIdTronconPei(peiId: UUID): UUID? {
-        return dsl.select(RESEAU.ID)
-            .from(RESEAU)
-            .where(RESEAU.PEI_TRONCON.eq(peiId))
-            .limit(1)
-            .fetchOne()
-            ?.get(RESEAU.ID)
-    }
-
-    /**
-     * Trouve les tronçons connectés à un sommet par destination
-     */
-    fun getTronconByDestination(sommetId: UUID): Reseau? {
-        return dsl.selectFrom(RESEAU)
-            .where(RESEAU.SOMMET_DESTINATION.eq(sommetId))
-            .and(RESEAU.PEI_TRONCON.isNull)
-            .fetchOneInto()
-    }
-
-    /**
-     * Trouve les tronçons connectés à un sommet par source
-     */
-    fun getTronconBySource(sommetId: UUID): Reseau? {
-        return dsl.selectFrom(RESEAU)
-            .where(RESEAU.SOMMET_SOURCE.eq(sommetId))
-            .and(RESEAU.PEI_TRONCON.isNull)
-            .fetchOneInto()
-    }
-
-    /**
      * Batch update des sommets source
      */
     fun batchUpdateSource(updates: List<Pair<UUID, UUID>>) {
@@ -307,25 +140,5 @@ class ReseauRepository @Inject constructor(
                     .where(RESEAU.ID.eq(reseauId))
             },
         ).execute()
-    }
-
-    /**
-     * Remet à NULL le champ reseau_pei_troncon pour tous les tronçons liés à un PEI
-     */
-    fun resetPeiTronconByPei(peiId: UUID) {
-        dsl.update(RESEAU)
-            .set(RESEAU.PEI_TRONCON, null as UUID?)
-            .where(RESEAU.PEI_TRONCON.eq(peiId))
-            .execute()
-    }
-
-    /**
-     * Remet à NULL le champ reseau_pei_troncon pour tous les tronçons de l'étude
-     */
-    fun resetPeiTronconByEtude(etudeId: UUID) {
-        dsl.update(RESEAU)
-            .set(RESEAU.PEI_TRONCON, null as UUID?)
-            .where(RESEAU.ETUDE_ID.eq(etudeId))
-            .execute()
     }
 }

@@ -267,6 +267,10 @@ class UpdateParametresUseCase
                 ParametreEnum.PROFIL_UTILISATEUR_DEFAUT,
                 parametresAdminData.utilisateur.profilUtilisateurDefaut,
             )
+            updateParametre(
+                ParametreEnum.ORGANISME_PROFIL_MAJ_SYNCHRO,
+                parametresAdminData.utilisateur.organismeProfilMajSynchro.toString(),
+            )
 
             // aller chercher l'ancienne valeur pour comparaison
             val ancienneValeur = parametreProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name)

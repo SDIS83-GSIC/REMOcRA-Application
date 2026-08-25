@@ -1,5 +1,6 @@
 import Feature from "ol/Feature";
 import { Geometry } from "ol/geom";
+import ImageTile from "ol/ImageTile";
 import TileLayer from "ol/layer/Tile";
 import VectorLayer from "ol/layer/Vector";
 import OLMap from "ol/Map";
@@ -104,6 +105,108 @@ export function patchCanvasContextForReadback(): void {
     }
     return originalGetContext.call(this, contextType, contextAttributes);
   } as typeof HTMLCanvasElement.prototype.getContext;
+}
+
+// Convertit la valeur crossOrigin HTML en options fetch équivalentes
+function crossOriginToFetchOptions(crossOrigin?: string | null): RequestInit {
+  if (crossOrigin === "use-credentials") {
+    return { mode: "cors", credentials: "include" };
+  }
+  if (crossOrigin === "anonymous") {
+    return { mode: "cors", credentials: "omit" };
+  }
+  return { credentials: "same-origin" };
+}
+
+// Crée une tileLoadFunction avec annulation des requêtes en cours via AbortController.
+// Chaque appel retourne une closure indépendante (un contrôleur par source).
+export function createAbortableTileLoadFunction(
+  crossOrigin?: string | null,
+): (tile: ImageTile, src: string) => void {
+  const controllers = new Map<string, AbortController>();
+  const fetchOptions = crossOriginToFetchOptions(crossOrigin);
+
+  return (tile: ImageTile, src: string) => {
+    // Annuler une éventuelle requête en cours pour la même URL (re-demande de la même tuile)
+    controllers.get(src)?.abort();
+
+    const controller = new AbortController();
+    controllers.set(src, controller);
+
+    // OL appelle dispose() sur la tuile quand elle quitte le viewport — on abort alors la requête
+    const onDispose = () => {
+      controller.abort();
+      controllers.delete(src);
+      tile.removeEventListener("dispose", onDispose);
+    };
+    tile.addEventListener("dispose", onDispose);
+
+    fetch(src, { ...fetchOptions, signal: controller.signal })
+      .then((res) => res.blob())
+      .then((blob) => {
+        const imgEl = tile.getImage() as HTMLImageElement;
+        const objectUrl = URL.createObjectURL(blob);
+        imgEl.onload = () => URL.revokeObjectURL(objectUrl);
+        imgEl.src = objectUrl;
+        controllers.delete(src);
+      })
+      .catch((e) => {
+        controllers.delete(src);
+        if (e.name !== "AbortError") {
+          (tile.getImage() as HTMLImageElement).dispatchEvent(
+            new Event(
+              "Erreur lors de la récupération de la tuile : " + e.message,
+            ),
+          );
+        }
+      });
+  };
+}
+
+// Crée une imageLoadFunction pour ImageWMS qui annule la requête précédente
+// dès qu'une nouvelle vue est demandée (déplacement / zoom).
+// Chaque appel retourne une closure indépendante (un contrôleur par source).
+export function createAbortableImageLoadFunction(): (
+  image: ImageTile,
+  src: string,
+) => void {
+  let controller: AbortController | null = null;
+  let currentObjectUrl: string | null = null;
+
+  return (image: ImageTile, src: string) => {
+    // Annuler la requête précédente si elle est encore en cours
+    controller?.abort();
+    controller = new AbortController();
+    // Libérer l'URL blob précédente si elle n'a pas encore été révoquée
+    if (currentObjectUrl) {
+      URL.revokeObjectURL(currentObjectUrl);
+      currentObjectUrl = null;
+    }
+
+    fetch(src, { credentials: "same-origin", signal: controller.signal })
+      .then((res) => res.blob())
+      .then((blob) => {
+        const imgEl = image.getImage() as HTMLImageElement;
+        const objectUrl = URL.createObjectURL(blob);
+        currentObjectUrl = objectUrl;
+        imgEl.onload = () => {
+          URL.revokeObjectURL(objectUrl);
+          currentObjectUrl = null;
+        };
+        imgEl.src = objectUrl;
+        controller = null;
+      })
+      .catch((e) => {
+        controller = null;
+        if (e.name !== "AbortError") {
+          (image.getImage() as HTMLImageElement).dispatchEvent(
+            new Event(
+              "Erreur lors de la récupération de la tuile : " + e.message,
+            ),
+          );
+        }
+      });
+  };
 }
 
 // Débounce pour les événements de déplacement de carte

@@ -169,6 +169,7 @@ data class ParametresSectionPei(
 data class ParametresSectionUtilisateur(
     val organismeDefaut: String?,
     val profilUtilisateurDefaut: String?,
+    val organismeProfilMajSynchro: Boolean,
 )
 
 data class ParametresSectionCourrier(

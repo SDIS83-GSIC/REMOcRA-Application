@@ -21,7 +21,7 @@ class UpdateLTourneePeiUseCase @Inject constructor(
     private val peiRepository: PeiRepository,
 ) : AbstractCUDGeometrieUseCase<UpdateLTourneePeiUseCase.LTourneePeiToInsert>(TypeOperation.UPDATE) {
     override fun checkDroits(userInfo: WrappedUserInfo) {
-        if (!userInfo.hasDroit(droitWeb = Droit.TOURNEE_A)) {
+        if (!userInfo.hasDroit(droitWeb = Droit.TOURNEE_A) && !userInfo.hasDroit(droitWeb = Droit.TOURNEE_ORDRE_PEIS_U)) {
             throw RemocraResponseException(ErrorType.TOURNEE_GESTION_FORBIDDEN)
         }
     }

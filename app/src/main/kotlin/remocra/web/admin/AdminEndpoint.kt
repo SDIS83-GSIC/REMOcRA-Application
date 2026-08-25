@@ -129,6 +129,22 @@ class AdminEndpoint : AbstractEndpoint() {
     }
 
     @PUT
+    @Path("/import-favicon")
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    fun importFavicon(
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        return Response.ok(
+            importRessourcesUseCase.importFavicon(
+                securityContext.userInfo,
+                httpRequest.getPart("favicon"),
+            ),
+        ).build()
+    }
+
+    @PUT
     @Path("/import-symbologie")
     @RequireDroits([Droit.ADMIN_PARAM_APPLI])
     @Consumes(MediaType.MULTIPART_FORM_DATA)

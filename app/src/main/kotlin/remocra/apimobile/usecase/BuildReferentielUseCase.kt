@@ -109,7 +109,7 @@ constructor(
             listParametre = parametresMobile,
             listDroit = userInfo.droits!!.map { it.name },
             utilisateurConnecte = nomPrenom,
-            peiCaracteristiques = peiCaracteristiquesUseCase.getPeiCaracteristiquesMobile(),
+            peiCaracteristiques = peiCaracteristiquesUseCase.getPeiCaracteristiquesMobile(userInfo),
             listFonctionContact = fonctionContactRepository.getAllForMobile(),
             listDomaine = domaineRepository.getAll(),
             mapDisponibiliteByLibelle = Disponibilite.entries.associateWith { dispoDecorator.decorateDisponibilite(it) },

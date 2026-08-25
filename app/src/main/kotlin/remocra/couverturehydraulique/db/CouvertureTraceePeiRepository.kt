@@ -80,7 +80,7 @@ class CouvertureTraceePeiRepository @Inject constructor(private val dsl: DSLCont
     }
 
     /**
-     * Logique métier pour déterminer si un PEI est "gros débit" (JOOQ pur avec jointures)
+     * Logique métier pour déterminer si un PEI est "gros débit"
      * - Pour BSPP :
      *   - PEI existant : PI + DIAM150 OU BI + DIAM100 + jumelé
      *   - PEI projet : DIAM150 + canalisation >= 150

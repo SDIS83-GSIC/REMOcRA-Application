@@ -14,8 +14,8 @@ constructor(
 ) :
     AbstractUseCase() {
 
-    fun getOrganismeForSelect(): List<IdCodeLibelleData> = organismeRepository.getOrganismeForSelect()
-    fun getOrganismeFilterWithPeiForSelect(listePei: Set<UUID>): List<IdCodeLibelleData> = organismeRepository.getOrganismeFilterWithPeiForSelect(listePei)
+    fun getOrganismeForSelect(affiliatedOrganismeIds: Set<UUID>?): List<IdCodeLibelleData> = organismeRepository.getOrganismeForSelect(affiliatedOrganismeIds)
+    fun getOrganismeFilterWithPeiForSelect(listePei: Set<UUID>, affiliatedOrganismeIds: Set<UUID>?): List<IdCodeLibelleData> = organismeRepository.getOrganismeFilterWithPeiForSelect(listePei, affiliatedOrganismeIds)
     fun getAutoriteDeciForSelect(): List<IdCodeLibelleData> = organismeRepository.getAutoriteDeciForSelect()
     fun getServicePublicForSelect(): List<IdCodeLibelleData> = organismeRepository.getServicePublicForSelect()
     fun getActiveOrganisme(): Collection<Organisme> = organismeRepository.getActive()

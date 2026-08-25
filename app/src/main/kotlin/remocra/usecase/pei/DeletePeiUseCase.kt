@@ -9,7 +9,6 @@ import remocra.db.AnomalieRepository
 import remocra.db.DebitSimultaneRepository
 import remocra.db.DocumentRepository
 import remocra.db.IndisponibiliteTemporaireRepository
-import remocra.db.TourneeRepository
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypePei
@@ -28,7 +27,6 @@ constructor(
     private val debitSimultaneRepository: DebitSimultaneRepository,
     private val deleIndisponibiliteTemporaireUseCase: DeleteIndisponibiliteTemporaireUseCase,
     private val updateIndisponibiliteTemporaireUseCase: UpdateIndisponibiliteTemporaireUseCase,
-    private val tourneeRepository: TourneeRepository,
     private val anomalieRepository: AnomalieRepository,
     private val aireAspirationRepository: AireAspirationRepository,
     private val upsertDocument: UpsertDocumentPeiUseCase,

@@ -5,6 +5,7 @@ import remocra.app.AppSettings
 import remocra.auth.WrappedUserInfo
 import remocra.data.GenererRapportPersonnaliseData
 import remocra.db.RapportPersonnaliseRepository
+import remocra.db.rawsql.RawSqlQueryBuilder.Companion.toRawSqlQueryBuilder
 import remocra.utils.RequestUtils
 import remocra.utils.canParseParam
 import remocra.utils.parseParam
@@ -20,32 +21,47 @@ constructor(
     private val appSettings: AppSettings,
 ) {
 
+    companion object {
+        private const val PARSED_WKT_PARAM_NAME = "__PARSED_WKT__"
+        private const val PARSED_SRID_PARAM_NAME = "__PARSED_SRID__"
+        private const val APP_SETTING_SRID_PARAM_NAME = "__APP_SETTING_SRID__"
+    }
+
     /**
      *  Construit les données du rapport personnalisé en fonction des paramètres fournis
      */
     fun buildRapportPersonnaliseData(genererRapportPersonnaliseData: GenererRapportPersonnaliseData, userInfo: WrappedUserInfo): Result<Record> {
         // On va chercher la requête du rapport
-        var requete = rapportPersonnaliseRepository.getSqlRequete(genererRapportPersonnaliseData.rapportPersonnaliseId)
+        val requete = rapportPersonnaliseRepository.getSqlRequete(genererRapportPersonnaliseData.rapportPersonnaliseId)
+            .toRawSqlQueryBuilder()
 
         genererRapportPersonnaliseData.listeParametre.forEach { param ->
             val code = param.rapportPersonnaliseParametreCode
             val value = param.value.orEmpty()
 
-            requete = when {
-                value.isBlank() -> requete.replace(code, "null")
+            when {
+                value.isBlank() -> requete withBindParam (code to "null")
 
                 canParseParam(value) -> {
                     val parsed = parseParam(value)
-                    requete.replace("'$code'", "ST_Transform(ST_GeomFromText('${parsed.wkt}', ${parsed.srid}), ${appSettings.srid})")
+                    requete withRawReplace (
+                        Regex("'$code'")
+                            to "ST_Transform(ST_GeomFromText($PARSED_WKT_PARAM_NAME, $PARSED_SRID_PARAM_NAME), $APP_SETTING_SRID_PARAM_NAME)"
+                        )
+                    requete withBindParam (PARSED_WKT_PARAM_NAME to parsed.wkt)
+                    requete withBindParam (PARSED_SRID_PARAM_NAME to parsed.srid)
+                    requete withBindParam (APP_SETTING_SRID_PARAM_NAME to appSettings.srid)
                 }
 
-                else -> requete.replace(code, value)
+                else -> requete withBindParam (code to value)
             }
         }
 
         // On remplace les variables utilisateur de la requête par les données userinfo
-        requete = requestUtils.replaceGlobalParameters(userInfo, requete)
+        requestUtils.apply {
+            requete.replaceGlobalParameters(userInfo)
+        }
 
-        return rapportPersonnaliseRepository.executeSqlRapport(requete)
+        return rapportPersonnaliseRepository.executeSqlRapport(requete.build())
     }
 }

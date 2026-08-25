@@ -129,10 +129,10 @@ const GaugeComponent = ({ data, config }: GaugeComponentProps) => {
   );
 
   return (
-    <>
+    <div className="w-100 h-100 d-flex flex-column justify-content-center align-items-center">
       <ResponsiveContainer
         width="100%"
-        height="80%"
+        height="70%"
         initialDimension={{ width: 400, height: 300 }}
       >
         <PieChart className="d-flex flex-column justify-content-center align-items-center">
@@ -141,8 +141,8 @@ const GaugeComponent = ({ data, config }: GaugeComponentProps) => {
             data={outerGaugeData}
             cx="50%"
             cy="100%"
-            innerRadius={120}
-            outerRadius={150}
+            innerRadius="130%"
+            outerRadius="170%"
             startAngle={180}
             endAngle={0}
             dataKey="value"
@@ -154,10 +154,10 @@ const GaugeComponent = ({ data, config }: GaugeComponentProps) => {
             data={innerGaugeData}
             cx="50%"
             cy="100%"
-            innerRadius={0} // Rayon intérieur de la jauge intérieure
-            outerRadius={120} // Rayon extérieur de la jauge intérieure
+            innerRadius="0%"
+            outerRadius="130%"
             startAngle={180}
-            endAngle={0} // Demi-jauge (de 180 à 0 degrés)
+            endAngle={0}
             dataKey="value"
             shape={PieCell}
           />
@@ -175,7 +175,7 @@ const GaugeComponent = ({ data, config }: GaugeComponentProps) => {
       >
         {percentage + "%"}
       </div>
-    </>
+    </div>
   );
 };
 

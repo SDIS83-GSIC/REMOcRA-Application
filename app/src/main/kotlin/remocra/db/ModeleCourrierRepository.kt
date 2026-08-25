@@ -224,7 +224,8 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             MODELE_COURRIER.SOURCE_SQL,
             MODELE_COURRIER.DESCRIPTION,
             MODELE_COURRIER.MODULE,
-            MODELE_COURRIER.CORPS_EMAIL,
+            MODELE_COURRIER.CORPS_EMAIL_UTILISATEUR,
+            MODELE_COURRIER.CORPS_EMAIL_PIECE_JOINTE,
             MODELE_COURRIER.OBJET_EMAIL,
             MODELE_COURRIER.TYPE,
             multiset(

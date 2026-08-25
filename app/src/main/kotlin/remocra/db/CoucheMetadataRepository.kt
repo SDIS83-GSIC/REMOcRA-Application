@@ -19,10 +19,12 @@ import remocra.db.jooq.remocra.tables.references.GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.tables.references.L_COUCHE_GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.tables.references.L_GROUPE_FONCTIONNALITES_COUCHE_METADATA
 import java.util.UUID
+import kotlin.math.absoluteValue
 
 class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
     data class FilterCoucheMetadata(
         val groupeCoucheLibelle: String?,
+        val coucheCode: String?,
         val coucheLibelle: String?,
         val coucheMetadataActif: Boolean?,
         val coucheMetadataPublic: Boolean?,
@@ -30,6 +32,7 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
         fun toCondition(): Condition = DSL.and(
             listOfNotNull(
                 groupeCoucheLibelle?.let { DSL.and(GROUPE_COUCHE.LIBELLE.containsIgnoreCaseUnaccent(it)) },
+                coucheCode?.let { DSL.and(COUCHE.CODE.containsIgnoreCaseUnaccent(it)) },
                 coucheLibelle?.let { DSL.and(COUCHE.LIBELLE.containsIgnoreCaseUnaccent(it)) },
                 coucheMetadataActif?.let { DSL.and(COUCHE_METADATA.ACTIF.eq(it)) },
                 coucheMetadataPublic?.let { DSL.and(COUCHE_METADATA.PUBLIC.eq(it)) },
@@ -170,6 +173,7 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
             GROUPE_COUCHE.ID,
             GROUPE_COUCHE.LIBELLE,
             COUCHE.ID,
+            COUCHE.CODE,
             COUCHE.LIBELLE,
             COUCHE_METADATA.ID,
             COUCHE_METADATA.ACTIF,
@@ -204,7 +208,7 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
             .and(params.filterBy?.toCondition() ?: DSL.trueCondition())
             .orderBy(
                 params.sortBy?.toCondition()?.takeIf { it.isNotEmpty() }
-                    ?: listOf(GROUPE_COUCHE.LIBELLE.asc(), COUCHE.LIBELLE.asc()),
+                    ?: listOf(GROUPE_COUCHE.LIBELLE.asc(), COUCHE.CODE.asc(), COUCHE.LIBELLE.asc()),
             )
             .limit(params.limit)
             .offset(params.offset)
@@ -257,16 +261,29 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
 
     data class SortCouche(
         val groupeCoucheLibelle: Int?,
+        val coucheCode: Int?,
         val coucheLibelle: Int?,
         val coucheMetadataActif: Int?,
         val coucheMetadataPublic: Int?,
     ) {
-        fun toCondition(): List<SortField<*>> = listOfNotNull(
-            GROUPE_COUCHE.LIBELLE.getSortField(groupeCoucheLibelle),
-            COUCHE.LIBELLE.getSortField(coucheLibelle),
-            COUCHE_METADATA.ACTIF.getSortField(coucheMetadataActif),
-            COUCHE_METADATA.PUBLIC.getSortField(coucheMetadataPublic),
+        fun getPairsToSort(): List<Pair<String, Int>> = listOfNotNull(
+            groupeCoucheLibelle?.let { "groupeCoucheLibelle" to it },
+            coucheCode?.let { "coucheCode" to it },
+            coucheLibelle?.let { "coucheLibelle" to it },
+            coucheMetadataActif?.let { "coucheMetadataActif" to it },
+            coucheMetadataPublic?.let { "coucheMetadataPublic" to it },
         )
+
+        fun toCondition(): List<SortField<*>> = getPairsToSort().sortedBy { it.second.absoluteValue }.mapNotNull { pair ->
+            when (pair.first) {
+                "groupeCoucheLibelle" -> GROUPE_COUCHE.LIBELLE.getSortField(pair.second)
+                "coucheCode" -> COUCHE.CODE.getSortField(pair.second)
+                "coucheLibelle" -> COUCHE.LIBELLE.getSortField(pair.second)
+                "coucheMetadataActif" -> COUCHE_METADATA.ACTIF.getSortField(pair.second)
+                "coucheMetadataPublic" -> COUCHE_METADATA.PUBLIC.getSortField(pair.second)
+                else -> null
+            }
+        }
     }
 
     fun deleteLienGroupeFonctionnalites(coucheMetadataId: UUID) =

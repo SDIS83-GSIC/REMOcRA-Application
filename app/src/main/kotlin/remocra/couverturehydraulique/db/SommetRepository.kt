@@ -5,77 +5,29 @@ import org.jooq.DSLContext
 import org.locationtech.jts.geom.Point
 import remocra.app.AppSettings
 import remocra.db.AbstractRepository
-import remocra.db.fetchOneInto
+import remocra.db.fetchInto
 import remocra.db.jooq.couverturehydraulique.tables.pojos.Sommet
 import remocra.db.jooq.couverturehydraulique.tables.references.SOMMET
-import remocra.utils.distanceBetween
-import remocra.utils.normalizePoint
 import java.util.UUID
 
 /**
- * Repository pour les données de sommet
+ * Repository pour les données de somme
  */
 class SommetRepository @Inject constructor(
     private val dsl: DSLContext,
     private val appSettings: AppSettings,
 ) : AbstractRepository() {
 
-    companion object {
-        const val TOLERANCE_TOPOLOGIE = 0.2
-    }
-
-    /**
-     * Trouve un sommet par géométrie exacte
-     */
-    fun getByGeometrie(geometrie: Point): Sommet? {
-        return dsl.selectFrom(SOMMET)
-            .where(SOMMET.GEOMETRIE.eq(geometrie))
-            .fetchOneInto()
-    }
-
-    fun getByGeometrieTopologie(geometrie: Point, idEtude: UUID?): Sommet? {
-        val referencePoint = normalizePoint(geometrie, appSettings.srid)
-        val condition = idEtude?.let { SOMMET.ETUDE_ID.eq(it).or(SOMMET.ETUDE_ID.isNull) } ?: SOMMET.ETUDE_ID.isNull
-        val candidats = dsl.selectFrom(SOMMET)
-            .where(condition)
-            .fetchInto(Sommet::class.java)
-
-        return candidats
-            .asSequence()
-            .mapNotNull { sommet ->
-                val geometry = sommet.sommetGeometrie as? Point ?: return@mapNotNull null
-                val normalized = normalizePoint(geometry, appSettings.srid)
-                val distance = distanceBetween(referencePoint, normalized)
-                if (distance <= TOLERANCE_TOPOLOGIE) sommet to distance else null
-            }
-            .minByOrNull { it.second }
-            ?.first
-    }
-
-    fun getPoint(id: UUID): Point? {
-        return dsl.select(SOMMET.GEOMETRIE)
-            .from(SOMMET)
-            .where(SOMMET.ID.eq(id))
-            .fetchOneInto(Point::class.java)
-    }
-
-    /**
-     * Crée un nouveau sommet ou retourne l'existant
-     */
-    fun ensureSommet(geometrie: Point, idEtude: UUID? = null): UUID {
-        val sommetExistant = getByGeometrie(geometrie)
-
-        return if (sommetExistant != null) {
-            sommetExistant.sommetId
+    fun getSommetsEtude(etudeId: UUID?, useReseauImporteWithCourant: Boolean): List<Sommet> {
+        val condition = if (useReseauImporteWithCourant) {
+            SOMMET.ETUDE_ID.eq(etudeId).or(SOMMET.ETUDE_ID.isNull)
         } else {
-            val nouveauId = UUID.randomUUID()
-            dsl.insertInto(SOMMET)
-                .set(SOMMET.ID, nouveauId)
-                .set(SOMMET.GEOMETRIE, geometrie)
-                .set(SOMMET.ETUDE_ID, idEtude)
-                .execute()
-            nouveauId
+            etudeId?.let { SOMMET.ETUDE_ID.eq(it) } ?: SOMMET.ETUDE_ID.isNull
         }
+
+        return dsl.selectFrom(SOMMET)
+            .where(condition)
+            .fetchInto()
     }
 
     /**

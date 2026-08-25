@@ -826,7 +826,7 @@ class TourneeRepository
                 VISITE_CTRL_DEBIT_PRESSION.PRESSION,
                 VISITE_CTRL_DEBIT_PRESSION.PRESSION_DYN,
             )
-            .distinctOn(PEI.ID)
+            .distinctOn(L_TOURNEE_PEI.ORDRE, PEI.ID)
             .from(PEI)
             .leftJoin(table(lastCDPCteName)).on(PEI.ID.eq(field(name("LAST_CDP_CTE", "PEI_ID"), SQLDataType.UUID)))
             .leftJoin(VISITE).on(PEI.ID.eq(VISITE.PEI_ID)).and(
@@ -837,7 +837,7 @@ class TourneeRepository
             .leftJoin(VISITE_CTRL_DEBIT_PRESSION).on(VISITE.ID.eq(VISITE_CTRL_DEBIT_PRESSION.VISITE_ID))
             .join(L_TOURNEE_PEI).on(PEI.ID.eq(L_TOURNEE_PEI.PEI_ID))
             .where(L_TOURNEE_PEI.TOURNEE_ID.eq(tourneeId))
-            .orderBy(PEI.ID)
+            .orderBy(L_TOURNEE_PEI.ORDRE, PEI.ID)
             .fetchInto()
     }
 
@@ -1020,6 +1020,23 @@ class TourneeRepository
         dsl.selectFrom(L_TOURNEE_PEI)
             .where(L_TOURNEE_PEI.TOURNEE_ID.`in`(tourneeIds))
             .fetchInto()
+
+    fun shareTourneeWithOtherPeis(peiId: UUID): Boolean {
+        val cte = name("short_list_tournee").`as`(
+            select(L_TOURNEE_PEI.TOURNEE_ID)
+                .from(L_TOURNEE_PEI)
+                .where(L_TOURNEE_PEI.PEI_ID.eq(peiId)),
+        )
+        val sltTourneeId = field(name("short_list_tournee", "tournee_id"), SQLDataType.UUID)
+
+        return dsl.fetchExists(
+            DSL.with(cte).select(sltTourneeId)
+                .from(table(name("short_list_tournee")))
+                .join(L_TOURNEE_PEI).on(sltTourneeId.eq(L_TOURNEE_PEI.TOURNEE_ID))
+                .groupBy(sltTourneeId)
+                .having(count(L_TOURNEE_PEI.PEI_ID).gt(1)),
+        )
+    }
 }
 
 data class TourneeShortData(

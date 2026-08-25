@@ -5,6 +5,7 @@ import CustomLinkButton from "../../components/Button/CustomLinkButton.tsx";
 import ButtonWithSimpleModal from "../Button/ButtonWithSimpleModal.tsx";
 import ConfirmButtonWithModal from "../Button/ConfirmButtonWithModal.tsx";
 import DeleteButton from "../Button/DeleteButton.tsx";
+import useDeleteButtonEnabled from "../Button/useDeleteButtonEnabled.tsx";
 import { IconClose, IconDelete, IconEdit, IconSee } from "../Icon/Icon.tsx";
 import DeleteModal from "../Modal/DeleteModal.tsx";
 import EditModal from "../Modal/EditModal.tsx";
@@ -39,7 +40,7 @@ const TableActionColumn = ({
           {editModal != null ? (
             <>
               <EditModal
-                closeModal={editModal.close}
+                closeModal={editModal.close!}
                 header={editModal.header}
                 ref={editModal.ref}
                 visible={editModal.visible}
@@ -84,22 +85,22 @@ const TableActionColumn = ({
                     disabled ? "text-muted" : "text-" + classEnable,
                   )}
                   disabled={disabled}
-                  onClick={deleteModal?.show}
+                  onClick={() => deleteModal?.show?.()}
                 />
               </TooltipCustom>
-              {!disabled && (
-                <DeleteModal
-                  visible={deleteModal.visible}
-                  closeModal={deleteModal.close}
-                  query={pathname}
-                  ref={deleteModal.ref}
-                  onDelete={() =>
-                    reload ? reload() : window.location.reload(false)
-                  }
-                  header={deleteModal.header}
-                  content={deleteModal.content}
-                />
-              )}
+              <DeleteModal
+                visible={!!deleteModal.visible}
+                onCancel={deleteModal.onCancel ?? (() => null)}
+                onError={deleteModal.onError ?? (() => null)}
+                onSuccess={deleteModal.onSuccess ?? (() => null)}
+                query={pathname}
+                ref={deleteModal.ref}
+                onDelete={() =>
+                  reload ? reload() : window.location.reload(false)
+                }
+                header={deleteModal.header}
+                content={deleteModal.content}
+              />
             </>
           ) : confirmModal != null ? (
             <ConfirmButtonWithModal
@@ -187,7 +188,7 @@ type TableActionButtonType = {
   reload?: () => void;
   query?;
   confirmModal?: SimpleModalType | null;
-  deleteModal?: object | null;
+  deleteModal?: ModaleType | null;
   editModal?: EditModalType | null;
   simpleModal?: SimpleModalType | null;
   state?: any | undefined;
@@ -205,6 +206,9 @@ type ModaleType = {
   visible?: boolean;
   show?: (value?: any) => void;
   close?: () => void;
+  onCancel?: () => void;
+  onError?: () => void;
+  onSuccess?: () => void;
   ref?: MutableRefObject<HTMLDialogElement | null>;
   header?: string | ReactNode | ((row: any) => string | ReactNode);
   content?: ReactNode | ((row: any) => ReactNode);
@@ -374,11 +378,28 @@ const EditModalButtonPrivate = ({ row, _button }: DeleteButtonType) => {
 };
 
 const DeleteButtonPrivate = ({ row, _button }: DeleteButtonType) => {
-  const { visible, show, close, ref } = useModal();
+  const {
+    visible,
+    ref,
+    isDeleteEnabled,
+    openDeleteModal,
+    closeDeleteModalCancel,
+    closeDeleteModalError,
+    closeDeleteModalSuccess,
+  } = useDeleteButtonEnabled();
+
+  const businessDisabled = _button.disable ? _button.disable(row) : false;
+  const isDisabled = businessDisabled || !isDeleteEnabled;
+  const textDisable = !isDeleteEnabled
+    ? "Élément déjà supprimé"
+    : (_button.textDisable ?? _button.textDisableFunction?.(row));
+
   const deleteModal: ModaleType = {
-    close: close,
+    onCancel: closeDeleteModalCancel,
+    onError: closeDeleteModalError,
+    onSuccess: closeDeleteModalSuccess,
     ref: ref,
-    show: show,
+    show: openDeleteModal,
     visible: visible,
     header: _button.header ? _button.header(row) : undefined,
     content: _button.content ? _button.content(row) : undefined,
@@ -392,8 +413,8 @@ const DeleteButtonPrivate = ({ row, _button }: DeleteButtonType) => {
   return (
     <TableActionColumn
       row={row}
-      disabled={_button.disable ? _button.disable(row) : false}
-      textDisable={_button.textDisable ?? _button.textDisableFunction?.(row)}
+      disabled={isDisabled}
+      textDisable={textDisable}
       textEnable={_button.textEnable ?? "Supprimer"}
       classEnable={"danger"}
       deleteModal={deleteModal}

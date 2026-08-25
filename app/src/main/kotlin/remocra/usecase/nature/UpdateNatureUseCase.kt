@@ -62,7 +62,12 @@ class UpdateNatureUseCase @Inject constructor(
             throw RemocraResponseException(ErrorType.ADMIN_NATURE_IS_PROTECTED)
         }
 
-        if (peiRepository.existsPeiPerenneOrRotation6CcfForNature(element.natureId)
+        /**
+         * Si ma nature praticipait à la DFCI et que quelqu'un a changer le booléen, alors on regarde si les champs
+         * perenne et rotation6Ccf sont renseignés pour cette nature dans les PEI. Si c'est le cas, on ne peut pas changer le booléen
+         */
+        if (existingNature.natureParticipeDfci && !element.natureParticipeDfci &&
+            peiRepository.existsPeiPerenneOrRotation6CcfForNature(element.natureId)
         ) {
             throw RemocraResponseException(ErrorType.ADMIN_NATURE_DFCI)
         }

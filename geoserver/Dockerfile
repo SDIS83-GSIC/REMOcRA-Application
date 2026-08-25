@@ -44,9 +44,9 @@ RUN groupadd --system --non-unique --gid 1000 geoserver \
 COPY --link --from=glowroot \
      --exclude=opt/glowroot/lib/*-osx.jar \
      --exclude=opt/glowroot/lib/*-windows.jar \
-     / /
+     /opt/glowroot/ /opt/glowroot/
 
-COPY --from=docker-registry.priv.atolcd.com/opentelemetry-javaagent:latest / /
+COPY --from=docker-registry.priv.atolcd.com/opentelemetry-javaagent:latest /opt/opentelemetry-javaagent/ /opt/opentelemetry-javaagent/
 # Configuration par défaut pour OpenTelemetry
 # OTEL_SERVICE_NAMESPACE, OTEL_SERVICE_INSTANCE_ID et OTEL_SERVICE_VERSION ne sont pas des variables standard OpenTelemetry
 # elles sont utilisées par l'entrypoint pour compléter OTEL_RESOURCE_ATTRIBUTES

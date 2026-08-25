@@ -166,6 +166,7 @@ import UpdateUtilisateur from "./pages/Admin/utilisateur/UpdateUtilisateur.tsx";
 import ListZoneIntegration from "./pages/Admin/zoneIntegration/ListZoneIntegration.tsx";
 import UpdateZoneIntegration from "./pages/Admin/zoneIntegration/UpdateZoneIntegration.tsx";
 import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
+import TelechargerCourrier from "./pages/Courrier/TelechargerCourrier.tsx";
 import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
 import CreateEtude from "./pages/CouvertureHydraulique/Etude/CreateEtude.tsx";
 import ImportShapeEtude from "./pages/CouvertureHydraulique/Etude/ImportShapeEtude.tsx";
@@ -610,6 +611,11 @@ export default [
     element: <Authorization Component={Accueil} isPublic />,
   },
   {
+    //Doit toujours être correspondre au returnTo dans le backend de DocumentEndpoit -> telechargerRessource
+    path: "/telecharger-courrier/:documentId",
+    element: <Authorization Component={TelechargerCourrier} isPublic />,
+  },
+  {
     path: "/dfci/",
     element: (
       <Authorization Component={ModuleDfci} droits={[TYPE_DROIT.DFCI_R]} />
@@ -742,7 +748,7 @@ export default [
         element: (
           <Authorization
             Component={TourneePei}
-            droits={[TYPE_DROIT.TOURNEE_A]}
+            droits={[TYPE_DROIT.TOURNEE_A, TYPE_DROIT.TOURNEE_ORDRE_PEIS_U]}
           />
         ),
       },
