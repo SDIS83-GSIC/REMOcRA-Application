@@ -1,5 +1,67 @@
 = Release Notes
 
+== 3.0.10
+
+* https://redmine.atolcd.com/issues/275048[#275048]: Edition canevas Reconnaissance opérationnelle
+* https://redmine.atolcd.com/issues/287857[#287857]: Automatisation envoi de courrier
+* https://redmine.atolcd.com/issues/288149[#288149]: Téléchargement des pages de l'atlas
+* https://redmine.atolcd.com/issues/301635[#301635]: VULN-2026-0002 - Injection SQL authentifiée dans les paramètres de rapport personnalisé
+* https://redmine.atolcd.com/issues/301638[#301638]: VULN-2026-0003 - Écriture de fichier arbitraire non authentifiée via path traversal (synchro-photo)
+* https://redmine.atolcd.com/issues/301639[#301639]: VULN-2026-0004 - Lecture de fichier arbitraire authentifiée
+* https://redmine.atolcd.com/issues/301640[#301640]: VULN-2026-0005 - Injection HTML Stockée
+* https://redmine.atolcd.com/issues/301655[#301655]: Keycloak : mise à jour de sécurité
+* https://redmine.atolcd.com/issues/294340[#294340]: Cases à cocher localisation PEI depuis la fiche complète de la carte
+* https://redmine.atolcd.com/issues/297936[#297936]: Impossible de modifier la légende d'une couche
+* https://redmine.atolcd.com/issues/269363[#269363]: [POINTS D'EAU] TOURNEE - Saisir les visites pour la tournée - Rendu visuel des PEI
+* https://redmine.atolcd.com/issues/269460[#269460]: [ADMINISTRATION] ANOMALIE - Rend non conforme - Visibilité sur la fiche point d'eau
+* https://redmine.atolcd.com/issues/289405[#289405]: Synchronisation AD - Groupes de sécurité pour gestion du profil et de l'organisme des utilisateurs
+* https://redmine.atolcd.com/issues/289815[#289815]: [CARTE] TOUS LES MODULES CARTO - Les cartes n'ont pas la même taille
+* https://redmine.atolcd.com/issues/289916[#289916]: [INSTALLATION] RAPPOT POST ROP - Aide à la mise en place
+* https://redmine.atolcd.com/issues/291689[#291689]: Cohérence dans l'ordre PEI dans les tournées
+* https://redmine.atolcd.com/issues/294652[#294652]: [POINT D'EAU] LISTE DES POINTS D'EAU - Lenteur extrême de la suppression
+* https://redmine.atolcd.com/issues/294871[#294871]: [ADMINISTRATION] COUCHE CARTO - Faire entrer le tableau sur l'écran
+* https://redmine.atolcd.com/issues/294913[#294913]: Attribution des fonctionnalités - séparation droits modification des tournées
+* https://redmine.atolcd.com/issues/296676[#296676]: [COUCHES CARTO] GESTION DES METADONNEES - Nom de la couche (Code de la couche) et Tri par défaut
+* https://redmine.atolcd.com/issues/296863[#296863]: [METADONNEES] AGREGATS DE COUCHES ET METADONNEES - L'ordre n'est pas respecté
+* https://redmine.atolcd.com/issues/297491[#297491]: Gestion de la photo du PEI et la synchronisation depuis l'application mobile
+* https://redmine.atolcd.com/issues/297567[#297567]: [Rapport personnalisé] - Export d'un fichier shp - variables globales
+* https://redmine.atolcd.com/issues/297582[#297582]: Infobulle carte - lenteur
+* https://redmine.atolcd.com/issues/297617[#297617]: Création de tournée depuis la carte - Suppression du bouton retour
+* https://redmine.atolcd.com/issues/297915[#297915]: [TABLEAUX DE BORD] COMPOSANT JAUGE - Ne s'adapte pas au cadre
+* https://redmine.atolcd.com/issues/298136[#298136]: Exposer les flux WMS et WFS
+* https://redmine.atolcd.com/issues/298145[#298145]: [TABLEAUX DE BORD] EDITION DES TABLEAUX DE BORD - Dans l'édition d'un tableau de bord le bouton Retour renvoi à la page des paramètres
+* https://redmine.atolcd.com/issues/298160[#298160]: Importer un favicon
+* https://redmine.atolcd.com/issues/298383[#298383]: Tableau de bord : Bouton retour
+* https://redmine.atolcd.com/issues/298428[#298428]: Infobulle : Afficher le nom de la tournée
+* https://redmine.atolcd.com/issues/298548[#298548]: Suppression gestionnaire
+* https://redmine.atolcd.com/issues/298976[#298976]: [IMPORT DU CADASTRE] certaines parcelles ne sont pas insérées
+* https://redmine.atolcd.com/issues/299005[#299005]: Validation des voies dans le formulaire des Peis
+* https://redmine.atolcd.com/issues/299156[#299156]: Rapports personnalisés : Affichage des colonnes
+* https://redmine.atolcd.com/issues/299341[#299341]: Type mal retranscrit
+* https://redmine.atolcd.com/issues/299457[#299457]: Sélection d'une tournée : ajout d'un filtre supplémentaire
+* https://redmine.atolcd.com/issues/299550[#299550]: Rapports personnalisés : Affichage des résultats
+* https://redmine.atolcd.com/issues/299815[#299815]: Rapports personnalisés : Vérification de la requête
+* https://redmine.atolcd.com/issues/299990[#299990]: Indisponibilité temporaire : ajouter un message informatif
+* https://redmine.atolcd.com/issues/300044[#300044]: Gestion des couches : flag vient du geoserver
+* https://redmine.atolcd.com/issues/300161[#300161]: Couverture hydraulique : optimisation
+* https://redmine.atolcd.com/issues/300303[#300303]: Tableaux de bord - Re-clic sur l'onglet actif masque le contenu
+* https://redmine.atolcd.com/issues/300463[#300463]: Lenteur couches cartographiques
+* https://redmine.atolcd.com/issues/300476[#300476]: Indisponibilités temporaires : vérification de l'utilisateur système lors de la bascule
+* https://redmine.atolcd.com/issues/300481[#300481]: Import CTP : amélioration de l'import et du traitement des visites
+* https://redmine.atolcd.com/issues/300603[#300603]: Nature DECI : vérification de la nature lors de la modification d'un PEI
+* https://redmine.atolcd.com/issues/300732[#300732]: Tuilage des couches WMS
+* https://redmine.atolcd.com/issues/300898[#300898]: Scrollbar horizontale dans l'exécution des rapports personnalisés
+* https://redmine.atolcd.com/issues/301022[#301022]: Traçabilité des paramètres applicatifs
+* https://redmine.atolcd.com/issues/301043[#301043]: Rapports personnalisés - récupération des requêtes de paramètres
+* https://redmine.atolcd.com/issues/301221[#301221]: Couche WFS
+* https://redmine.atolcd.com/issues/233634[#233634]: Générer des courriers - notifier contact sans compte REMOcRA
+* https://redmine.atolcd.com/issues/294273[#294273]: Paramètres applicatifs - appli mobile
+* https://redmine.atolcd.com/issues/298917[#298917]: [PEI] Date prochain CTP pour les PEI n'ayant pas encore eu de CTP
+* https://redmine.atolcd.com/issues/301304[#301304]: [SDIS 22] Conformité PEI 22182-0079
+* https://redmine.atolcd.com/issues/288460[#288460]: [SDIS 38] PENA en emploi restreint (= non conforme)
+
+Pour plus d'informations, consultez les tickets REDMINE associés.
+
 == 3.0.9
 
 * https://redmine.atolcd.com/issues/268491[#268491]: [TABLEAU DE BORD] PARAMETRAGE REQUETE - Composant MAP Pourcentage 0%
@@ -55,6 +117,8 @@
 * https://redmine.atolcd.com/issues/297669[#297669]: [TABLEAU DE BORD] AFFICHAGE - Les éléments ne s'affichent pas (v 3.0.9-a3)
 * https://redmine.atolcd.com/issues/297909[#297909]: [TABLEAUX DE BORD] EDITION - Bug sur la listes des profils utilisateurs autorisés et message d'erreur
 
+Pour plus d'informations, consultez les tickets REDMINE associés.
+
 == 3.0.8
 
 * https://redmine.atolcd.com/issues/252223[#252223]: [CARTO PERSONNALISEE] Partie dessin
@@ -98,8 +162,7 @@
 * https://redmine.atolcd.com/issues/293539[#293539]: Synchronisation utilisateurs : Adresse mail par defaut
 * https://redmine.atolcd.com/issues/294111[#294111]: version 3.0.8-a1 [ADMINISTRATION] PARAMATRES APPLICATIFS - Parametres disparus
 
-Pour plus d'informations, consultez les tickets REDMINE associes.
-
+Pour plus d'informations, consultez les tickets REDMINE associés.
 
 == 3.0.7
 
@@ -141,6 +204,7 @@ Pour plus d'informations, consultez les tickets REDMINE associes.
 * https://redmine.atolcd.com/issues/289716[#289716]: Synchronisation SIG - Types de données
 * https://redmine.atolcd.com/issues/290217[#290217]: Synchronisation SIG - Insertion par batch
 
+Pour plus d'informations, consultez les tickets REDMINE associés.
 
 == 3.0.6
 
@@ -171,6 +235,8 @@ Pour plus d'informations, consultez les tickets REDMINE associes.
 * https://redmine.atolcd.com/issues/286416[#286416]: Modifier une crise - ajouter des couches
 * https://redmine.atolcd.com/issues/286675[#286675]: Rapports personnalisés : Affichage de la tooltip
 
+Pour plus d'informations, consultez les tickets REDMINE associés.
+
 == 3.0.5
 
 * https://redmine.atolcd.com/issues/279447[#279447]: Ajout de nouveaux droits
@@ -193,6 +259,8 @@ Pour plus d'informations, consultez les tickets REDMINE associes.
 * https://redmine.atolcd.com/issues/285204[#285204]: Navigation entre les pages des tableaux
 * https://redmine.atolcd.com/issues/285208[#285208]: Tri sur le tableau historique
 * https://redmine.atolcd.com/issues/285229[#285229]: Création aire d'aspiration déportée
+
+Pour plus d'informations, consultez les tickets REDMINE associés.
 
 == 3.0.4
 
@@ -219,6 +287,8 @@ Pour plus d'informations, consultez les tickets REDMINE associes.
 * https://redmine.atolcd.com/issues/283692[#283692]: Tableau de bord : Titres des graphiques
 * https://redmine.atolcd.com/issues/283755[#283755]: Checkbox taille et position
 * https://redmine.atolcd.com/issues/284141[#284141]: Import CTP : Empêcher plusieurs enregistrements
+
+Pour plus d'informations, consultez les tickets REDMINE associés.
 
 == 3.0.3
 
@@ -295,7 +365,7 @@ Pour plus d'informations, consultez les tickets REDMINE associés.
 * https://redmine.atolcd.com/issues/273780[#273780]: Tolérance affichage de la Tooltip
 * https://redmine.atolcd.com/issues/273795[#273795]: Localiser un élément
 * https://redmine.atolcd.com/issues/274049[#274049]: Création d'une indisponibilité temporaire depuis la carto
-* https://redmine.atolcd.com/issues/274059[#274059]: Correction API : POST /deci/pei/{numeroComplet}/visites
+* https://redmine.atolcd.com/issues/274059[#274059]: Correction API : POST /deci/pei/+{numeroComplet}+/visites
 * https://redmine.atolcd.com/issues/274471[#274471]: Modification d'un permis provenant de la v2
 * https://redmine.atolcd.com/issues/274534[#274534]: Enregistrement d'une oldeb sans "suite"
 * https://redmine.atolcd.com/issues/274542[#274542]: Rapport personnalisé - Export de fichier shp
