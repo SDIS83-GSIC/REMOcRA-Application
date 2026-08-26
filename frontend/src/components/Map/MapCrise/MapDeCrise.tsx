@@ -142,14 +142,6 @@ const MapCrise = ({
     dataEvenementLayer,
   });
 
-  const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
-    useToolbarContext({
-      availableLayers: availableLayers,
-      map: map,
-      workingLayer: workingLayer,
-      extraTools: extraTools,
-    });
-
   /**
    * Met à jour la liste des couches actives sur la carte en fonction des couches WMS sélectionnées.
    */
@@ -167,6 +159,14 @@ const MapCrise = ({
       }),
     }));
   }, [availableLayers, listeCouches, state]);
+
+  const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
+    useToolbarContext({
+      availableLayers: listeDesCouches,
+      map: map,
+      workingLayer: workingLayer,
+      extraTools: extraTools,
+    });
 
   useEffect(() => {
     if (!map || !listeCouches) {
