@@ -2,6 +2,7 @@ package remocra.db.rawsql
 
 import org.jooq.SQL
 import org.jooq.impl.DSL
+import java.util.UUID
 
 class RawSqlQueryBuilder private constructor(
     private val query: String,
@@ -66,17 +67,24 @@ class RawSqlQueryBuilder private constructor(
     }
 
     /**
-     * On essaie de convertir la valeur en Int si c'est une String, car sinon les bind parame
+     * On essaie de convertir la valeur en Int ou UUID si c'est une String, car sinon les bind parame
      * tres sont toujours considérés comme des String et ça peut poser problème pour certaines requêtes.
      */
-    private fun Any.tryConvert(): Any = try {
+    private fun Any.tryConvert(): Any =
         when (this) {
-            is String -> this.toInt()
+            is String -> runCatching { this.toInt() }
+                .fold(
+                    onSuccess = { it },
+                    onFailure = {
+                        runCatching { UUID.fromString(this) }
+                            .fold(
+                                onSuccess = { it },
+                                onFailure = { this },
+                            )
+                    },
+                )
             else -> this
         }
-    } catch (_: NumberFormatException) {
-        this
-    }
 
     private sealed interface Substitution {
         data class BindParam(val token: String, val value: Any) : Substitution
