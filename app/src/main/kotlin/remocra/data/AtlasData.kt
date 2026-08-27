@@ -1,15 +1,19 @@
 package remocra.data
 
 import org.locationtech.jts.geom.Geometry
-import remocra.db.jooq.remocra.tables.pojos.AtlasAnnexe
-import remocra.db.jooq.remocra.tables.pojos.AtlasDocument
 import java.io.InputStream
 import java.nio.file.Path
+import java.util.UUID
 import kotlin.io.path.inputStream
 
-data class AtlasElements(
-    val atlasAnnexe: List<AtlasAnnexe>,
-    val atlasDocument: List<AtlasDocument>,
+data class AtlasElementsIds(
+    val atlasAnnexe: List<UUID>?,
+    val atlasDocument: List<UUID>?,
+)
+
+data class AtlasElementsTemplate(
+    val atlasDocument: List<String>,
+    val atlasAnnexe: List<String>,
 )
 
 // //////////// ZIP //////////////

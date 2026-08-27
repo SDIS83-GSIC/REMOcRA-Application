@@ -18,6 +18,7 @@ import remocra.db.AtlasRepository
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.AtlasAnnexe
 import remocra.security.NoCsrf
+import remocra.usecase.atlas.DownloadAtlasUseCase
 import remocra.usecase.atlas.DownloadTemplateZipAtlasUseCase
 import remocra.usecase.atlas.ImportAtlasZipUseCase
 import remocra.usecase.atlas.UpdateAnnexesAtlasPagination
@@ -39,6 +40,8 @@ class AtlasEndpoint : AbstractEndpoint() {
     @Inject lateinit var downloadTemplateZipAtlasUseCase: DownloadTemplateZipAtlasUseCase
 
     @Inject lateinit var updateAnnexesAtlasPagination: UpdateAnnexesAtlasPagination
+
+    @Inject lateinit var downloadAtlasUseCase: DownloadAtlasUseCase
 
     @GET
     @Path("/has-element")
@@ -105,4 +108,14 @@ class AtlasEndpoint : AbstractEndpoint() {
         Response.ok().entity(
             updateAnnexesAtlasPagination.execute(securityContext.userInfo, downloadRequest),
         ).build()
+
+    @POST
+    @Path("/download-atlas")
+    @RequireDroits([Droit.DFCI_EXPORTATLAS_C])
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    fun downloadAtlas(): Response =
+        Response.ok(
+            downloadAtlasUseCase.execute(userInfo = securityContext.userInfo),
+        ).header("Content-Disposition", "attachment; filename=\"atlas.zip\"").build()
 }

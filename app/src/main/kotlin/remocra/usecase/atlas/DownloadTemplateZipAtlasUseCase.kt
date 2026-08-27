@@ -3,14 +3,13 @@ package remocra.usecase.atlas
 import jakarta.inject.Inject
 import jakarta.ws.rs.core.StreamingOutput
 import remocra.data.AtlasDirectories
-import remocra.data.AtlasElements
-import remocra.db.AtlasRepository
+import remocra.data.AtlasElementsTemplate
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.atlas.zipstrategy.ZipBuilder
 import java.io.File
 
 class DownloadTemplateZipAtlasUseCase @Inject constructor(
-    private val atlasRepository: AtlasRepository,
+    private val atlasTypesSeparatedUseCase: AtlasTypesSeparatedUseCase,
 ) : AbstractUseCase() {
 
     fun execute(): StreamingOutput {
@@ -20,7 +19,7 @@ class DownloadTemplateZipAtlasUseCase @Inject constructor(
             builder.addDirectory(it.name)
         }
 
-        createAtlasFile(atlasRepository.getAllSeparated())?.let {
+        createAtlasFile(atlasTypesSeparatedUseCase.execute())?.let {
             builder.addFile(it, "${AtlasDirectories.PAGES.name}/atlas_names.txt")
         }
 
@@ -30,24 +29,21 @@ class DownloadTemplateZipAtlasUseCase @Inject constructor(
         return builder.build()
     }
 
-    private fun createAtlasFile(atlasList: AtlasElements): File? {
+    private fun createAtlasFile(atlasList: AtlasElementsTemplate): File? {
         if (atlasList.atlasDocument.isEmpty() || atlasList.atlasAnnexe.isEmpty()) return null
-
-        val documentFileNames = atlasRepository.findAtlasDocumentFileNames()
-        val annexeFileNames = atlasRepository.findAtlasAnnexeFileNames()
 
         return createTempFile(
             "atlas_names",
             ".txt",
             buildString {
                 appendLine("Noms des fichiers PDF enregistrés dans l'application :")
-                documentFileNames.forEach {
-                    appendLine("$it.pdf")
+                atlasList.atlasDocument.forEach {
+                    appendLine(it)
                 }
 
                 appendLine("Noms des annexes PDF :")
-                annexeFileNames.forEach {
-                    appendLine("$it.pdf")
+                atlasList.atlasAnnexe.forEach {
+                    appendLine(it)
                 }
                 appendLine("Attention : ce fichier ne doit pas apparaître dans le document ZIP final.")
             },

@@ -2,23 +2,40 @@ package remocra.db
 
 import jakarta.inject.Inject
 import org.jooq.DSLContext
-import remocra.data.AtlasElements
+import org.jooq.impl.DSL
+import remocra.auth.WrappedUserInfo
 import remocra.db.jooq.remocra.tables.pojos.AtlasAnnexe
 import remocra.db.jooq.remocra.tables.pojos.AtlasDocument
+import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.db.jooq.remocra.tables.references.ATLAS_ANNEXE
 import remocra.db.jooq.remocra.tables.references.ATLAS_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
+import remocra.db.jooq.remocra.tables.references.ZONE_INTEGRATION
+import remocra.utils.ST_Within
+import java.util.UUID
 
 class AtlasRepository @Inject constructor(
     private val dsl: DSLContext,
 ) : AbstractRepository() {
 
-    fun getAllSeparated(): AtlasElements {
-        return AtlasElements(
-            atlasAnnexe = getAtlasAnnexes(),
-            atlasDocument = getAtlasDocuments(),
-        )
-    }
+    fun getAtlasDocumentsIds(userInfo: WrappedUserInfo): List<UUID> =
+        dsl.select(ATLAS_DOCUMENT.DOCUMENT_ID)
+            .from(ATLAS_DOCUMENT)
+            .where(
+                ATLAS_DOCUMENT.ACTIF.isTrue.and(ATLAS_DOCUMENT.DOCUMENT_ID.isNotNull),
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    ST_Within(
+                        ATLAS_DOCUMENT.GEOMETRIE,
+                        DSL.field(
+                            DSL.select(ZONE_INTEGRATION.GEOMETRIE)
+                                .from(ZONE_INTEGRATION)
+                                .where(ZONE_INTEGRATION.ID.eq(userInfo.zoneCompetence?.zoneIntegrationId)),
+                        ),
+                    ).isTrue,
+                    userInfo.isSuperAdmin,
+                ),
+            )
+            .fetchInto()
 
     fun hasDocumentsOrAnnexes(): Boolean =
         dsl.fetchExists(
@@ -32,7 +49,12 @@ class AtlasRepository @Inject constructor(
             .orderBy(ATLAS_ANNEXE.ORDER)
             .fetchInto()
 
-    private fun getAtlasDocuments(): List<AtlasDocument> = dsl.selectFrom(ATLAS_DOCUMENT).fetchInto()
+    fun getAtlasDocsAnnexesIds(): List<UUID> =
+        dsl.select(ATLAS_ANNEXE.DOCUMENT_ID)
+            .from(ATLAS_ANNEXE)
+            .where(ATLAS_ANNEXE.ACTIF.isTrue)
+            .and(ATLAS_ANNEXE.IS_VISIBLE.isTrue)
+            .fetchInto()
 
     fun deleteAll() {
         val documentIds =
@@ -61,6 +83,10 @@ class AtlasRepository @Inject constructor(
     fun insertAtlasAnnexes(atlas: AtlasAnnexe) {
         dsl.insertInto(ATLAS_ANNEXE).set(dsl.newRecord(ATLAS_ANNEXE, atlas)).execute()
     }
+
+    fun getDocumentsByIds(documentIds: List<UUID>): List<Document> = dsl.selectFrom(DOCUMENT)
+        .where(DOCUMENT.ID.`in`(documentIds))
+        .fetchInto()
 
     fun findAtlasDocumentFileNames(): List<String> =
         dsl.select(DOCUMENT.NOM_FICHIER)

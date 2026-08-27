@@ -9,6 +9,7 @@ sentry= "7.22.6"
 jts = "1.20.0"
 xdocreport = "2.1.0"
 jackson = "2.21.0"
+pdfbox = "3.0.5"
 
 # Versions utilisées par build-logic
 javaToolchain = "21"
@@ -88,6 +89,8 @@ sentry-servlet-jakarta = { module = "io.sentry:sentry-servlet-jakarta", version.
 sentry-log4j2 = { module = "io.sentry:sentry-log4j2", version.ref = "sentry" }
 
 archunit-junit5 = "com.tngtech.archunit:archunit-junit5:1.4.1"
+
+apache-pdfbox = { module = "org.apache.pdfbox:pdfbox", version.ref = "pdfbox" }
 
 owasp = "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20240325.1"
 
