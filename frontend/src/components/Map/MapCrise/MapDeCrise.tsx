@@ -1,11 +1,10 @@
 import { GeoJSON } from "ol/format";
 import VectorLayer from "ol/layer/Vector";
 import { bbox } from "ol/loadingstrategy";
-import "ol/ol.css";
 import VectorSource from "ol/source/Vector";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import url, { getFetchOptions } from "../../../module/fetch.tsx";
 import { useGet } from "../../Fetch/useFetch.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
@@ -23,11 +22,40 @@ const MapCrise = ({
   variant: string;
 }) => {
   const mapElement = useRef<HTMLDivElement>();
+  const [evenementIdsFiltres, setEvenementIdsFiltres] = useState<string[]>([]);
+  const evenementIdsRef = useRef<string[]>([]);
+
+  const handleEvenementIdsFiltresChange = useCallback(
+    (listeEvenementId: string[]) => {
+      setEvenementIdsFiltres(listeEvenementId);
+      evenementIdsRef.current = listeEvenementId;
+    },
+    [],
+  );
+
+  // Construire les viewParams supplémentaires avec les IDs filtrés - VERSION STABLE (sans dépendances)
+  // La ref sera mise à jour mais viewParamsExtras ne changera pas de référence
+  const viewParamsExtras = useMemo<Record<string, string>>(() => {
+    return {};
+  }, []);
 
   /** Permet d'afficher les géometries évènements */
   const getLayerUrl = useCallback(
-    (extent: number[], projection: { getCode: () => string }) =>
-      `/api/crise/evenement/layer?bbox=${extent.join(",")}&srid=${projection.getCode()}&criseId=${criseId}&state=${evenementStatutMode}`,
+    (
+      extent: number[],
+      projection: { getCode: () => string },
+      evenementIdsFiltres: string[],
+    ) => {
+      const params = new URLSearchParams();
+      if (evenementIdsFiltres?.length > 0) {
+        params.append("evenementIds", JSON.stringify(evenementIdsFiltres));
+      }
+      params.append("bbox", extent.join(","));
+      params.append("srid", projection.getCode());
+      params.append("criseId", criseId);
+      params.append("state", evenementStatutMode);
+      return `/api/crise/evenement/layer?${params.toString()}`;
+    },
     [criseId, evenementStatutMode],
   );
 
@@ -47,6 +75,7 @@ const MapCrise = ({
     typeModule: TypeModuleRemocra.CRISE,
     criseId: criseId,
     evenementStatutMode: evenementStatutMode,
+    viewParamsExtras: viewParamsExtras,
   });
 
   const dataEvenementLayer = useMemo(() => {
@@ -103,7 +132,7 @@ const MapCrise = ({
       ) => {
         try {
           const res = await fetch(
-            url`${getLayerUrl(extent, projection)}`,
+            getLayerUrl(extent, projection, evenementIdsFiltres),
             getFetchOptions({ method: "GET" }),
           );
           const features = source.getFormat().readFeatures(await res.json());
@@ -116,8 +145,14 @@ const MapCrise = ({
       },
     );
 
+    // Vider complètement la source et forcer le rechargement
+    source.clear();
+    // Forcer le rechargement de toutes les extents actuellement visibles
+    const view = map.getView();
+    const extent = view.calculateExtent(map.getSize());
+    source.removeLoadedExtent(extent);
     source.refresh();
-  }, [dataEvenementLayer, getLayerUrl, map]);
+  }, [dataEvenementLayer, getLayerUrl, map, evenementIdsFiltres]);
 
   const {
     tools: extraTools,
@@ -194,6 +229,50 @@ const MapCrise = ({
       });
   }, [availableLayers, listeCouches, map, evenementStatutMode]);
 
+  // Rafraîchir les couches WMS/WMTS quand les IDs filtrés changent
+  useEffect(() => {
+    if (!map) {
+      return;
+    }
+
+    map.getLayers().forEach((layer) => {
+      if (layer.getSource().updateParams) {
+        // Récupérer les paramètres actuels
+        const currentParams = layer.getSource().getParams();
+        const currentViewParams = currentParams?.viewParams || "";
+
+        // Parser les viewParams existants pour extraire les autres paramètres
+        const viewParamsMap: Record<string, string> = {};
+        if (currentViewParams) {
+          currentViewParams.split(";").forEach((param: string) => {
+            const [key, value] = param.split(":");
+            if (key && value) {
+              viewParamsMap[key.trim()] = value;
+            }
+          });
+        }
+
+        // Mettre à jour ou ajouter evenementIds
+        if (evenementIdsRef.current.length > 0) {
+          viewParamsMap.evenementIds = evenementIdsRef.current.join("|");
+        } else {
+          delete viewParamsMap.evenementIds;
+        }
+
+        // Reconstruire le string viewParams avec tous les paramètres
+        const newViewParams = Object.entries(viewParamsMap)
+          .map(([key, value]) => `${key}:${value}`)
+          .join(";");
+
+        layer.getSource().updateParams({
+          time: Date.now(),
+          viewParams: newViewParams,
+        });
+        layer.getSource().refresh();
+      }
+    });
+  }, [map]);
+
   return (
     <MapComponent
       key={evenementStatutMode}
@@ -236,6 +315,7 @@ const MapCrise = ({
             setShowPersonalReports={setShowPersonalReports}
             showPersonalReports={showPersonalReports}
             variant={variant}
+            onEvenementIdsFiltresChange={handleEvenementIdsFiltresChange}
           />
         )
       }

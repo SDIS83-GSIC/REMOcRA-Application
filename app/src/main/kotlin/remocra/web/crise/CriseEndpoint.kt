@@ -441,6 +441,7 @@ class CriseEndpoint : AbstractEndpoint() {
         @QueryParam("srid") srid: String,
         @QueryParam("criseId") criseId: UUID,
         @QueryParam("state") state: EvenementStatutMode,
+        @QueryParam("evenementIds") evenementIds: Set<UUID>?,
     ): Response {
         return Response.ok(
             getPointCarteUseCase.execute(
@@ -451,6 +452,7 @@ class CriseEndpoint : AbstractEndpoint() {
                 userInfo = securityContext.userInfo,
                 criseId = criseId,
                 criseState = state,
+                evenementIds = evenementIds,
             ),
         ).build()
     }

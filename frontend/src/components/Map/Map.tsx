@@ -85,6 +85,7 @@ export function toOpenLayer(
   etudeId?: string,
   criseId?: string,
   evenementStatutMode?: string,
+  viewParamsExtras?: Record<string, string>,
 ): TileSource | WMTS | VectorSource | ImageWMS | TileWMS | undefined {
   switch (layer.source) {
     case SOURCE_CARTO.WMS: {
@@ -108,6 +109,17 @@ export function toOpenLayer(
         viewParamsArray.push(
           `statutMode:${encodeURIComponent(evenementStatutMode)}`,
         );
+      }
+      // Ajouter les viewParams supplémentaires passés en paramètre
+      if (viewParamsExtras) {
+        Object.entries(viewParamsExtras).forEach(([key, value]) => {
+          // Ne pas encoder les listes d'IDs (séparées par ;) pour préserver les séparateurs
+          if (key === "evenementIds") {
+            viewParamsArray.push(`${key}:${value}`);
+          } else {
+            viewParamsArray.push(`${key}:${encodeURIComponent(value)}`);
+          }
+        });
       }
       wmsParams.viewParams = viewParamsArray.join(";");
 
@@ -303,6 +315,7 @@ export const useMapComponent = ({
   etudeId,
   criseId,
   evenementStatutMode,
+  viewParamsExtras,
 }: {
   mapElement: MutableRefObject<HTMLDivElement | undefined>;
   typeModule: TypeModuleRemocra;
@@ -310,6 +323,7 @@ export const useMapComponent = ({
   etudeId?: string;
   criseId?: string;
   evenementStatutMode?: string;
+  viewParamsExtras?: Record<string, string>;
 }) => {
   const { state, search } = useLocation();
   const navigate = useNavigate();
@@ -501,6 +515,7 @@ export const useMapComponent = ({
                 etudeId,
                 criseId,
                 evenementStatutMode,
+                viewParamsExtras,
               ) as ImageWMS,
               zIndex,
               opacity: layer.opacite,
@@ -512,6 +527,7 @@ export const useMapComponent = ({
                 etudeId,
                 criseId,
                 evenementStatutMode,
+                viewParamsExtras,
               ) as TileSource,
               zIndex,
               preload: 1,
@@ -539,6 +555,7 @@ export const useMapComponent = ({
     etudeId,
     criseId,
     evenementStatutMode,
+    viewParamsExtras,
   ]);
 
   // Ajout / retrait d'une couche sur la carte

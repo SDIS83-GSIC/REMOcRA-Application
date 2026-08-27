@@ -45,6 +45,7 @@ constructor(
         criseId: UUID? = null,
         criseState: EvenementStatutMode? = null,
         listePeiId: Set<UUID>? = null,
+        evenementIds: Set<UUID>? = null,
     ): LayersRes {
         val srid = sridFromEpsgCode(sridSource)
 
@@ -141,10 +142,10 @@ constructor(
 
             TypeElementCarte.CRISE -> bbox.let {
                 if (it.isEmpty()) {
-                    carteRepository.getEvenementProjetFromCrise(criseId!!, srid, criseState)
+                    carteRepository.getEvenementProjetFromCrise(criseId!!, srid, criseState, evenementIds)
                 } else {
                     val geom = geometryFromBBox(bbox, sridSource) ?: throw RemocraResponseException(ErrorType.BBOX_GEOMETRIE)
-                    carteRepository.getEvenementProjetFromCriseAndBbox(criseId!!, geom.toGeomFromText(), srid, criseState)
+                    carteRepository.getEvenementProjetFromCriseAndBbox(criseId!!, geom.toGeomFromText(), srid, criseState, evenementIds)
                 }
             }
             TypeElementCarte.PEI_HIGHLIGHT ->

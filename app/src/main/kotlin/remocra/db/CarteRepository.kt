@@ -220,7 +220,7 @@ class CarteRepository @Inject constructor(
     /**
      * Récupère les évènements selon la crise et le EvenementStatutMode associé.
      */
-    fun getEvenementProjetFromCrise(criseId: UUID, srid: Int, evenementState: EvenementStatutMode?): Collection<EvenementCarte> {
+    fun getEvenementProjetFromCrise(criseId: UUID, srid: Int, evenementState: EvenementStatutMode?, evenementIds: Set<UUID>?): Collection<EvenementCarte> {
         return dsl.select(ST_Transform(EVENEMENT.GEOMETRIE, srid).`as`("elementGeometrie"), EVENEMENT.ID.`as`("elementId"))
             .from(EVENEMENT)
             .where(
@@ -233,6 +233,8 @@ class CarteRepository @Inject constructor(
                         EVENEMENT.STATUT_MODE.eq(it)
                     }
                 },
+            ).and(
+                evenementIds?.let { EVENEMENT.ID.`in`(it) },
             )
             .fetchInto()
     }
@@ -240,7 +242,7 @@ class CarteRepository @Inject constructor(
     /**
      * Récupère les évènements dans une BBOX selon la crise.
      */
-    fun getEvenementProjetFromCriseAndBbox(criseId: UUID, bbox: Field<Geometry?>, srid: Int, evenementState: EvenementStatutMode?): Collection<EvenementCarte> {
+    fun getEvenementProjetFromCriseAndBbox(criseId: UUID, bbox: Field<Geometry?>, srid: Int, evenementState: EvenementStatutMode?, evenementIds: Set<UUID>?): Collection<EvenementCarte> {
         return dsl.select(ST_Transform(EVENEMENT.GEOMETRIE, srid).`as`("elementGeometrie"), EVENEMENT.ID.`as`("elementId"))
             .from(EVENEMENT)
             .where(
@@ -255,6 +257,8 @@ class CarteRepository @Inject constructor(
                 },
             ).and(
                 ST_Within(EVENEMENT.GEOMETRIE, ST_Transform(bbox, appSettings.srid)),
+            ).and(
+                evenementIds?.let { EVENEMENT.ID.`in`(it) },
             )
             .fetchInto()
     }

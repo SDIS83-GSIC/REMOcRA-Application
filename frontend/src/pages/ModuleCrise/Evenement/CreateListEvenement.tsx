@@ -8,6 +8,7 @@ const CreateListEvenement = ({
   criseIdentifiant,
   mapType,
   evenementStatutMode,
+  onEvenementIdsFiltresChange,
 }: CreateListEvenementType) => {
   return (
     <Container>
@@ -20,6 +21,7 @@ const CreateListEvenement = ({
         criseId={criseIdentifiant}
         map={mapType}
         evenementStatutMode={evenementStatutMode}
+        onEvenementIdsFiltresChange={onEvenementIdsFiltresChange}
       />
     </Container>
   );
@@ -29,6 +31,7 @@ type CreateListEvenementType = {
   criseIdentifiant: string;
   mapType: OlMap | undefined;
   evenementStatutMode: string;
+  onEvenementIdsFiltresChange?: (uuids: string[]) => void;
 };
 
 export default CreateListEvenement;

@@ -366,6 +366,7 @@ const MapToolbarCrise = forwardRef(
     setGeometryReportCode,
     showPersonalReports,
     variant = "primary",
+    onEvenementIdsFiltresChange,
   }: {
     map?: OLMap;
     workingLayer: any;
@@ -391,6 +392,7 @@ const MapToolbarCrise = forwardRef(
     dataCriseLayer: any;
     setSousTypeElement: (object: object | undefined) => void;
     variant: string;
+    onEvenementIdsFiltresChange?: (uuids: string[]) => void;
   }) => {
     const { user } = useAppContext();
     const { visible, show, close } = useModal();
@@ -561,6 +563,7 @@ const MapToolbarCrise = forwardRef(
             evenementStatutMode={evenementStatutMode}
             criseIdentifiant={criseId}
             mapType={map}
+            onEvenementIdsFiltresChange={onEvenementIdsFiltresChange}
           />
         </Volet>
 
