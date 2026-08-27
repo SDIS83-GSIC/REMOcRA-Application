@@ -39,17 +39,17 @@ enum EvenementStatutEnum {
 const ListEvenement = ({
   criseId,
   map,
-  stateEvent,
+  evenementStatutMode,
 }: {
   criseId: string;
   map: any;
-  stateEvent: string;
+  evenementStatutMode: string;
 }) => {
   const [params, setSearchParam] = useState<FilterEvenement>({});
   const [buttonClicked, setButtonClick] = useState<boolean>(false);
 
   const { data, run } = useGetRun(
-    url`/api/crise/${criseId}/evenement/${stateEvent}/?${params}`,
+    url`/api/crise/${criseId}/evenement/${evenementStatutMode}/?${params}`,
     {},
   );
 
@@ -150,7 +150,7 @@ const ListEvenement = ({
 
       {buttonClicked && (
         <FilterEvent
-          statut={stateEvent}
+          statut={evenementStatutMode}
           setSearchParam={setSearchParam}
           run={run}
           criseId={criseId}

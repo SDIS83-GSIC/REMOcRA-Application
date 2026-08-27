@@ -50,7 +50,7 @@ const ModuleMapCrise = () => {
         />
         <MapCrise
           criseId={criseId}
-          state={checkBoxOption.code}
+          evenementStatutMode={checkBoxOption.code}
           variant={
             checkBoxOption.code === options[1].code ? "warning" : "primary"
           }

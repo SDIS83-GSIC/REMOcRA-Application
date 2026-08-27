@@ -84,7 +84,7 @@ export function toOpenLayer(
   layer: any,
   etudeId?: string,
   criseId?: string,
-  criseStatutMode?: string,
+  evenementStatutMode?: string,
 ): TileSource | WMTS | VectorSource | ImageWMS | TileWMS | undefined {
   switch (layer.source) {
     case SOURCE_CARTO.WMS: {
@@ -104,9 +104,9 @@ export function toOpenLayer(
       if (etudeId) {
         viewParamsArray.push(`idEtude:${encodeURIComponent(etudeId)}`);
       }
-      if (criseStatutMode) {
+      if (evenementStatutMode) {
         viewParamsArray.push(
-          `statutMode:${encodeURIComponent(criseStatutMode)}`,
+          `statutMode:${encodeURIComponent(evenementStatutMode)}`,
         );
       }
       wmsParams.viewParams = viewParamsArray.join(";");
@@ -302,14 +302,14 @@ export const useMapComponent = ({
   displayPei = true,
   etudeId,
   criseId,
-  criseStatutMode,
+  evenementStatutMode,
 }: {
   mapElement: MutableRefObject<HTMLDivElement | undefined>;
   typeModule: TypeModuleRemocra;
   displayPei?: boolean;
   etudeId?: string;
   criseId?: string;
-  criseStatutMode?: string;
+  evenementStatutMode?: string;
 }) => {
   const { state, search } = useLocation();
   const navigate = useNavigate();
@@ -500,7 +500,7 @@ export const useMapComponent = ({
                 layer,
                 etudeId,
                 criseId,
-                criseStatutMode,
+                evenementStatutMode,
               ) as ImageWMS,
               zIndex,
               opacity: layer.opacite,
@@ -511,7 +511,7 @@ export const useMapComponent = ({
                 layer,
                 etudeId,
                 criseId,
-                criseStatutMode,
+                evenementStatutMode,
               ) as TileSource,
               zIndex,
               preload: 1,
@@ -532,7 +532,14 @@ export const useMapComponent = ({
         }),
       };
     });
-  }, [layersState.data, map, projection, etudeId, criseId, criseStatutMode]);
+  }, [
+    layersState.data,
+    map,
+    projection,
+    etudeId,
+    criseId,
+    evenementStatutMode,
+  ]);
 
   // Ajout / retrait d'une couche sur la carte
   const addOrRemoveLayer = (layer: any) => {

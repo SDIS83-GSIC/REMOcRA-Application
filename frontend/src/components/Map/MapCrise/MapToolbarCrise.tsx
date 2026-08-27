@@ -347,7 +347,7 @@ export const useToolbarCriseContext = ({
 const MapToolbarCrise = forwardRef(
   ({
     map,
-    state,
+    evenementStatutMode,
     criseId,
     geometryElement,
     reportGeometryElement,
@@ -370,7 +370,7 @@ const MapToolbarCrise = forwardRef(
     map?: OLMap;
     workingLayer: any;
     criseId: string;
-    state: string;
+    evenementStatutMode: string;
     disabledEditEvent: boolean;
     activeTool: string;
     handleCloseEvent: () => void;
@@ -558,7 +558,7 @@ const MapToolbarCrise = forwardRef(
           className="w-auto"
         >
           <CreateListEvenement
-            state={state}
+            evenementStatutMode={evenementStatutMode}
             criseIdentifiant={criseId}
             mapType={map}
           />
@@ -599,7 +599,7 @@ const MapToolbarCrise = forwardRef(
             geometrieEvenement={geometryElement}
             evenementSousCategorieId={evenementSousCategorieId}
             criseId={criseId}
-            state={state}
+            state={evenementStatutMode}
             onSubmit={() => {
               dataCriseLayer.getSource().refresh();
               refreshLayerGeoserver(map);
@@ -609,7 +609,7 @@ const MapToolbarCrise = forwardRef(
         </Volet>
 
         <TooltipMapEditEvenement
-          state={state}
+          state={evenementStatutMode}
           map={map}
           dataEvenementLayer={dataCriseLayer}
           disabled={"move-event" === activeTool}

@@ -15,11 +15,11 @@ import MapToolbarCrise, { useToolbarCriseContext } from "./MapToolbarCrise.tsx";
 
 const MapCrise = ({
   criseId,
-  state,
+  evenementStatutMode,
   variant,
 }: {
   criseId: string;
-  state: string;
+  evenementStatutMode: string;
   variant: string;
 }) => {
   const mapElement = useRef<HTMLDivElement>();
@@ -27,8 +27,8 @@ const MapCrise = ({
   /** Permet d'afficher les géometries évènements */
   const getLayerUrl = useCallback(
     (extent: number[], projection: { getCode: () => string }) =>
-      `/api/crise/evenement/layer?bbox=${extent.join(",")}&srid=${projection.getCode()}&criseId=${criseId}&state=${state}`,
-    [criseId, state],
+      `/api/crise/evenement/layer?bbox=${extent.join(",")}&srid=${projection.getCode()}&criseId=${criseId}&state=${evenementStatutMode}`,
+    [criseId, evenementStatutMode],
   );
 
   const listeCouches = useGet(url`/api/crise/${criseId}/get-couches`)?.data;
@@ -46,7 +46,7 @@ const MapCrise = ({
     mapElement: mapElement,
     typeModule: TypeModuleRemocra.CRISE,
     criseId: criseId,
-    criseStatutMode: state,
+    evenementStatutMode: evenementStatutMode,
   });
 
   const dataEvenementLayer = useMemo(() => {
@@ -153,12 +153,13 @@ const MapCrise = ({
       ...group,
       layers: group.layers.filter((layer: any) => {
         const isActive = listeCouches.some(
-          (c: any) => c.code === layer.code && c[state.toLowerCase()],
+          (c: any) =>
+            c.code === layer.code && c[evenementStatutMode.toLowerCase()],
         );
         return isActive;
       }),
     }));
-  }, [availableLayers, listeCouches, state]);
+  }, [availableLayers, listeCouches, evenementStatutMode]);
 
   const { toggleTool, activeTool, infoOutilI, handleCloseInfoI } =
     useToolbarContext({
@@ -175,7 +176,7 @@ const MapCrise = ({
 
     const activeCoucheCodes = new Set(
       listeCouches
-        .filter((c: any) => c[state.toLowerCase()])
+        .filter((c: any) => c[evenementStatutMode.toLowerCase()])
         .map((c: any) => c.code),
     );
 
@@ -191,11 +192,11 @@ const MapCrise = ({
           currentLayer.setVisible(activeCoucheCodes.has(layer.code));
         }
       });
-  }, [availableLayers, listeCouches, map, state]);
+  }, [availableLayers, listeCouches, map, evenementStatutMode]);
 
   return (
     <MapComponent
-      key={state}
+      key={evenementStatutMode}
       map={map}
       showZoomPlace={false}
       mapElement={mapElement}
@@ -213,7 +214,7 @@ const MapCrise = ({
         dataEvenementLayer && (
           <MapToolbarCrise
             setGeometryReportCode={setGeometryReportCode}
-            state={state}
+            evenementStatutMode={evenementStatutMode}
             map={map}
             criseId={criseId}
             handleCloseEvent={handleCloseEvent}

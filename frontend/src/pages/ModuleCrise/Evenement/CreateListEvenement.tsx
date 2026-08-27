@@ -1,3 +1,4 @@
+import { Map as OlMap } from "ol";
 import { Container } from "react-bootstrap";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { IconList } from "../../../components/Icon/Icon.tsx";
@@ -6,7 +7,7 @@ import ListEvenement from "./ListEvenement.tsx";
 const CreateListEvenement = ({
   criseIdentifiant,
   mapType,
-  state,
+  evenementStatutMode,
 }: CreateListEvenementType) => {
   return (
     <Container>
@@ -18,7 +19,7 @@ const CreateListEvenement = ({
       <ListEvenement
         criseId={criseIdentifiant}
         map={mapType}
-        stateEvent={state}
+        evenementStatutMode={evenementStatutMode}
       />
     </Container>
   );
@@ -26,8 +27,8 @@ const CreateListEvenement = ({
 
 type CreateListEvenementType = {
   criseIdentifiant: string;
-  mapType: Map | undefined;
-  state: string;
+  mapType: OlMap | undefined;
+  evenementStatutMode: string;
 };
 
 export default CreateListEvenement;
