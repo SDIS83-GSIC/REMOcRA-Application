@@ -101,6 +101,15 @@ class PeiRepository
             PEI.PERENNE,
             PEI.ROTATION_6_CCF.`as`("peiRotation6Ccf"),
             PEI.DATE_RELEVE_GPS,
+            // Attributs supplémentaires pour le recalcul de la numérotation à l'enregistrement ; non modifiables
+            PEI.NUMERO_INTERNE.`as`("peiNumeroInterneInitial"),
+            PEI.COMMUNE_ID.`as`("peiCommuneIdInitial"),
+            PEI.ZONE_SPECIALE_ID.`as`("peiZoneSpecialeIdInitial"),
+            PEI.NATURE_DECI_ID.`as`("peiNatureDeciIdInitial"),
+            PEI.NATURE_ID.`as`("peiNatureIdInitial"),
+            PEI.DOMAINE_ID.`as`("peiDomaineIdInitial"),
+            PEI.GESTIONNAIRE_ID.`as`("peiGestionnaireIdInitial"),
+            PEI.DISPONIBILITE_TERRESTRE.`as`("peiDisponibiliteTerrestreInitiale"),
         )
     }
 

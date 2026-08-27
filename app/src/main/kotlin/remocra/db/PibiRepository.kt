@@ -49,6 +49,7 @@ class PibiRepository @Inject constructor(
             PIBI.SURPRESSE,
             PIBI.ADDITIVE,
             PIBI.JUMELE_ID,
+            PIBI.IDENTIFIANT_GESTIONNAIRE.`as`("pibiIdentifiantGestionnaireInitial"),
         )
             .from(PEI)
             .join(PIBI)
