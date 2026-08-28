@@ -7,6 +7,7 @@ import remocra.data.DestinataireData
 import remocra.data.courrier.form.CourrierData
 import remocra.data.courrier.form.NomValue
 import remocra.data.courrier.form.ParametreCourrierInput
+import remocra.db.DocumentRepository
 import remocra.db.TransactionManager
 import remocra.db.jooq.remocra.tables.pojos.ModeleCourrier
 import remocra.usecase.AbstractUseCase
@@ -17,6 +18,7 @@ import java.util.UUID
 class GenererRapportCourrierUseCase @Inject constructor(
     private val courrierGeneratorUseCase: CourrierGeneratorUseCase,
     private val createCourrierUseCase: CreateCourrierUseCase,
+    private val documentRepository: DocumentRepository,
 ) : AbstractUseCase() {
 
     fun execute(
@@ -26,6 +28,7 @@ class GenererRapportCourrierUseCase @Inject constructor(
         destinataires: List<DestinataireData>,
         userInfo: WrappedUserInfo,
         transactionManager: TransactionManager? = null,
+        peiId: UUID? = null,
     ): Result {
         val generationPath = courrierGeneratorUseCase.executeInternal(
             ParametreCourrierInput(
@@ -37,11 +40,12 @@ class GenererRapportCourrierUseCase @Inject constructor(
             mainTransactionManager = transactionManager,
         )
 
-        return createCourrierUseCase.execute(
+        val docId = UUID.randomUUID()
+        val courrier = createCourrierUseCase.execute(
             userInfo,
             CourrierData(
                 courrierId = UUID.randomUUID(),
-                documentId = UUID.randomUUID(),
+                documentId = docId,
                 modeleCourrierId = modeleCourrier.modeleCourrierId,
                 nomDocumentTmp = generationPath.fileName.toString(),
                 listeDestinataire = destinataires,
@@ -50,5 +54,11 @@ class GenererRapportCourrierUseCase @Inject constructor(
             ),
             mainTransactionManager = transactionManager,
         )
+
+        peiId?.let {
+            documentRepository.insertDocumentPei(it, docId, false)
+        }
+
+        return courrier
     }
 }
