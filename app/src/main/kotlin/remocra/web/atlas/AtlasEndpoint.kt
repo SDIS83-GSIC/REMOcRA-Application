@@ -45,7 +45,7 @@ class AtlasEndpoint : AbstractEndpoint() {
 
     @GET
     @Path("/has-element")
-    @RequireDroits([Droit.ATLAS_A, Droit.DFCI_EXPORTATLAS_C, Droit.ATLAS_C])
+    @RequireDroits([Droit.ATLAS_A, Droit.DFCI_EXPORTATLAS_C, Droit.ATLAS_C, Droit.ATLAS_D])
     @Produces(MediaType.APPLICATION_JSON)
     fun hasElement(): Response {
         return Response.ok(
@@ -79,7 +79,7 @@ class AtlasEndpoint : AbstractEndpoint() {
 
     @POST
     @Path("/download-atlas-zip-template")
-    @RequireDroits([Droit.ATLAS_A])
+    @RequireDroits([Droit.ATLAS_A, Droit.ATLAS_C])
     @Produces(MediaType.TEXT_PLAIN)
     @NoCsrf("On télécharge un fichier")
     fun downloadZipAtlas(): Response =

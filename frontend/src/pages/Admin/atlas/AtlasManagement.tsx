@@ -133,7 +133,8 @@ const FormikImportZip = ({
         <p className="text-muted">Aucune donnée enregistrée.</p>
       )}
 
-      <ButtonDownloadTemplate />
+      {(hasDroit(user, TYPE_DROIT.ATLAS_C) ||
+        hasDroit(user, TYPE_DROIT.ATLAS_A)) && <ButtonDownloadTemplate />}
 
       {hasDroit(user, TYPE_DROIT.ATLAS_D) && hasElements && (
         <>
