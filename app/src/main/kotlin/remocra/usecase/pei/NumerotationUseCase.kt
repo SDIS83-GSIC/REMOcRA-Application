@@ -11,7 +11,6 @@ import remocra.data.PeiForNumerotationData
 import remocra.data.PibiData
 import remocra.data.enums.CodeSdis
 import remocra.db.CommuneRepository
-import remocra.db.DomaineRepository
 import remocra.db.GestionnaireRepository
 import remocra.db.NumerotationRepository
 import remocra.db.ZoneIntegrationRepository
@@ -84,7 +83,6 @@ constructor(
     private val communeRepository: CommuneRepository,
     private val zoneIntegrationRepository: ZoneIntegrationRepository,
     private val gestionnaireRepository: GestionnaireRepository,
-    private val domaineRepository: DomaineRepository,
     private val parametresProvider: ParametresProvider,
 ) :
     AbstractUseCase() {
@@ -970,18 +968,18 @@ constructor(
     }
 
     /**
-     * Retourne TRUE si on a besoin de recalculer le numéro interne à cause d'un changement de gestionnaire. <br />
+     * Retourne TRUE si on a besoin de recalculer le numéro interne à cause d'un changement de gestionnaire.
      *
      *
-     * @param gestionnaireId id du domaine courante
-     * @param gestionnaireIdInitial id du domaine en BDD
+     * @param peiGestionnaireId id du gestionnaire courant
+     * @param peiGestionnaireIdInitial id du gestionnaire initial
      *
      * @return Boolean : doit-on recalculer le numéro interne ?
      */
-    fun needComputeNumeroInterneGestionnaire(gestionnaireId: UUID?, gestionnaireIdInitial: UUID?): Boolean {
+    fun needComputeNumeroInterneGestionnaire(peiGestionnaireId: UUID?, peiGestionnaireIdInitial: UUID?): Boolean {
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_59 ->
-                gestionnaireId != gestionnaireIdInitial
+                peiGestionnaireId != peiGestionnaireIdInitial
             else -> false
         }
     }
