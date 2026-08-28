@@ -147,8 +147,8 @@ const FormikImportZip = ({
           </Button>
 
           <DeleteModal
+            onCancel={close}
             visible={visible}
-            closeModal={close}
             query={`/api/atlas/delete/`}
             header={"Atlas"}
             content={`Confirmez-vous la purge de l'Atlas ?`}
