@@ -621,7 +621,10 @@ export default [
   {
     path: "/dfci/",
     element: (
-      <Authorization Component={ModuleDfci} droits={[TYPE_DROIT.DFCI_R]} />
+      <Authorization
+        Component={ModuleDfci}
+        droits={[TYPE_DROIT.DFCI_R, TYPE_DROIT.DFCI_RECEPTRAVAUX_C]}
+      />
     ),
     children: [
       {
