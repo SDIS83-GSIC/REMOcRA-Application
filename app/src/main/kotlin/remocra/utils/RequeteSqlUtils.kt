@@ -145,9 +145,9 @@ constructor(
                 TypeParametreRapportCourrier.POINT ->
                     requete = requete.replace("'${it.rapportCourrierParametreCode}'", "ST_SetSRID('POINT EMPTY'::geometry, ${appSettings.srid})")
                 TypeParametreRapportCourrier.POLYGON ->
-                    requete = requete.replace("'${it.rapportCourrierParametreCode}'", "ST_SetSRID('POLYGON EMPTY'::geometry, ${appSettings.srid}")
+                    requete = requete.replace("'${it.rapportCourrierParametreCode}'", "ST_SetSRID('POLYGON EMPTY'::geometry, ${appSettings.srid})")
                 TypeParametreRapportCourrier.LINESTRING ->
-                    requete = requete.replace("'${it.rapportCourrierParametreCode}'", "ST_SetSRID('LINESTRING EMPTY'::geometry, ${appSettings.srid}")
+                    requete = requete.replace("'${it.rapportCourrierParametreCode}'", "ST_SetSRID('LINESTRING EMPTY'::geometry, ${appSettings.srid})")
             }
         }
 
