@@ -58,8 +58,8 @@ constructor(
         gestionnaireRepository.getPeiIdByGestionnaireId(gestionnaireId).forEach { peiId ->
             peiUseCase.getInfoPei(peiId).let { peiData ->
                 val peiWithoutGestionnaire = when (peiData) {
-                    is PibiData -> peiData.copy(peiGestionnaireId = null)
-                    is PenaData -> peiData.copy(peiGestionnaireId = null)
+                    is PibiData -> peiData.copy(peiGestionnaireId = null, peiSiteId = null)
+                    is PenaData -> peiData.copy(peiGestionnaireId = null, peiSiteId = null)
                     else -> throw RemocraResponseException(ErrorType.GESTIONNAIRE_ERROR_ON_DELETE, "Type de PEI non supporté : ${peiData.peiTypePei}")
                 }
                 updatePeiUseCase.execute(userInfo, peiWithoutGestionnaire, transactionManager).ensureSuccess()
