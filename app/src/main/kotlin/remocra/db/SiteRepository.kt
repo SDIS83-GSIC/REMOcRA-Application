@@ -147,4 +147,10 @@ class SiteRepository @Inject constructor(private val dsl: DSLContext) : Abstract
                 .from(PEI)
                 .where(PEI.SITE_ID.eq(siteId)),
         )
+
+    fun getPeiId(siteId: UUID): List<UUID> =
+        dsl.select(PEI.ID)
+            .from(PEI)
+            .where(PEI.SITE_ID.eq(siteId))
+            .fetchInto()
 }

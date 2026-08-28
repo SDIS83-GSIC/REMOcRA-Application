@@ -402,6 +402,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     GESTIONNAIRE_FORBIDDEN_INSERT(9104, "Vous n'avez pas les droits de création des gestionnaires", Status.FORBIDDEN),
     GESTIONNAIRE_FORBIDDEN_DELETE(9105, "Vous n'avez pas les droits de suppression des gestionnaires", Status.FORBIDDEN),
     GESTIONNAIRE_ERROR_ON_DELETE(9106, "Impossible de supprimer le gestionnaire : $PLACEHOLDER_ERROR_TYPE"),
+    SITE_ERROR_ON_UPDATE(9107, "Impossible de mettre à jour le site : $PLACEHOLDER_ERROR_TYPE"),
 
     IMPORT_SITES_SHP_INTROUVABLE(9108, AUCUN_SHAPEFILE),
     IMPORT_SITES_GEOMETRIE_NULLE(9109, GEOMETRIE_NULLE),

@@ -29,7 +29,7 @@ class UpdatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.UPD
         }
     }
 
-    fun updatePeiWithId(peiId: UUID, userInfo: WrappedUserInfo) {
+    fun updatePeiWithId(peiId: UUID, userInfo: WrappedUserInfo): Result {
         val typePei = peiRepository.getTypePei(peiId)
         val peiData =
             if (TypePei.PIBI == typePei) {
@@ -38,7 +38,7 @@ class UpdatePeiUseCase : AbstractCUDPeiUseCase(typeOperation = TypeOperation.UPD
                 penaRepository.getInfoPena(peiId)
             }
 
-        execute(
+        return execute(
             userInfo = userInfo,
             element = peiData,
             this.transactionManager,
