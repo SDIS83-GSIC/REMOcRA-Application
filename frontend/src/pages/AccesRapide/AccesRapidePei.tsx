@@ -25,20 +25,23 @@ const AccesRapidePei = () => {
   const [voieId, setVoieId] = useState<string | null>();
 
   const { run: fetchOptionVoie, data: optionVoieData } = useGetRun(
-    url`/api/voie/${communeId}`,
+    communeId ? url`/api/voie/${communeId}` : "",
   );
-  const optionVoie = optionVoieData as VoieOption | undefined;
+  const optionVoie = optionVoieData as VoieOption[] | undefined;
 
   const { fetchGeometry } = useLocalisation();
 
-  const handleTourneeObject = (obj: ItemSearch) => {
-    setTourneeId(obj.id);
+  const handleTourneeObject = (obj: ItemSearch | null) => {
+    setTourneeId(obj?.id ?? null);
   };
-  const handlePeiObject = (obj: ItemSearch) => {
-    setPeiId(obj.id);
+  const handlePeiObject = (obj: ItemSearch | null) => {
+    setPeiId(obj?.id ?? null);
   };
-  const handleCommuneObject = (obj: ItemSearch) => {
-    setCommuneId(obj.id);
+  const handleCommuneObject = (obj: ItemSearch | null) => {
+    setCommuneId(obj?.id ?? null);
+    if (!obj) {
+      setVoieId(null);
+    }
   };
 
   useEffect(() => {
@@ -115,6 +118,7 @@ const AccesRapidePei = () => {
           <Col className="d-flex align-items-start flex-column" sm={2}>
             <FormLabel name={"voie"} label="Voie :" required={false} />
             <SelectFilterFromList
+              key={communeId ?? ""}
               name={"voie"}
               listIdCodeLibelle={(optionVoie || []).map((v) => {
                 return {
