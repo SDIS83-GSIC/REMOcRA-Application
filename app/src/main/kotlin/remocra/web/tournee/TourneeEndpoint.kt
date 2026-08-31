@@ -365,7 +365,7 @@ class TourneeEndpoint : AbstractEndpoint() {
     @GET
     @Path("/generer-canevas-rop/{tourneeId}")
     @Produces("application/pdf")
-    @RequireDroits([Droit.ADMIN_ROP_A])
+    @RequireDroits([Droit.GENERER_CANEVAS_ROP_A])
     @NoCsrf("On utilise une URL directe et donc on n'a pas les entêtes remplis")
     fun genererCanevasRop(
         @PathParam("tourneeId") tourneeId: UUID,

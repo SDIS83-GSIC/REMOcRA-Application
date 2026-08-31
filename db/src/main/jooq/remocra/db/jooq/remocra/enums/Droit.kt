@@ -138,6 +138,7 @@ enum class Droit(@get:JvmName("literal") public val literal: String) : EnumType 
     ATLAS_A("ATLAS_A"),
     ATLAS_C("ATLAS_C"),
     ATLAS_D("ATLAS_D"),
+    GENERER_CANEVAS_ROP_A("GENERER_CANEVAS_ROP_A"),
     ;
     override fun getCatalog(): Catalog? = schema.catalog
     override fun getSchema(): Schema = Remocra.REMOCRA

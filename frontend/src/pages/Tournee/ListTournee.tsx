@@ -79,7 +79,7 @@ const ListTournee = ({
 
   const canGenererCanevasRop =
     useGet(url`/api/courriers/modeles/exists-canevas-rop`, {})?.data === true &&
-    hasDroit(user, TYPE_DROIT.ADMIN_ROP_A);
+    hasDroit(user, TYPE_DROIT.GENERER_CANEVAS_ROP_A);
 
   /**
    * Constante permettant de savoir le nombre d'actions de génération de documents activées
