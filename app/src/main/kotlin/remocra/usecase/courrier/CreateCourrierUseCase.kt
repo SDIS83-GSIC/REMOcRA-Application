@@ -137,12 +137,12 @@ constructor(
 
         // Puis on post les notificationEvent pour chaque destinataire
         val utilisateurs = element.listeDestinataire
-            .filter { it.typeDestinataire == TypeDestinataire.UTILISATEUR.libelle || utilisateurRepository.isEmailUsedByAnUser(it.emailDestinataire) }
+            .filter { it.typeDestinataire == TypeDestinataire.UTILISATEUR.libelle || utilisateurRepository.isEmailUsedByAnActiveUser(it.emailDestinataire) }
             .map { it.emailDestinataire }
             .toSet()
 
         val autres = element.listeDestinataire
-            .filter { it.typeDestinataire != TypeDestinataire.UTILISATEUR.libelle && !utilisateurRepository.isEmailUsedByAnUser(it.emailDestinataire) }
+            .filter { it.typeDestinataire != TypeDestinataire.UTILISATEUR.libelle && !utilisateurRepository.isEmailUsedByAnActiveUser(it.emailDestinataire) }
             .map { it.emailDestinataire }
             .toSet()
 
