@@ -496,7 +496,9 @@ const MapToolbarRcci = ({
       {deleteModalRefs.visible && (
         <DeleteModal
           visible={deleteModalRefs.visible}
-          closeModal={deleteModalRefs.close}
+          onCancel={deleteModalRefs.close}
+          onSuccess={deleteModalRefs.close}
+          onError={deleteModalRefs.close}
           query={url`/api/rcci`}
           ref={deleteModalRefs.ref}
           id={deleteModalRefs.value}

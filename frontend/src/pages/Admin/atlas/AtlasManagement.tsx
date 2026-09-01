@@ -149,6 +149,8 @@ const FormikImportZip = ({
 
           <DeleteModal
             onCancel={close}
+            onSuccess={close}
+            onError={close}
             visible={visible}
             query={`/api/atlas/delete/`}
             header={"Atlas"}
