@@ -2,6 +2,10 @@
 
 == 3.0.10
 
+* https://redmine.atolcd.com/issues/302308[#302308]: Accès rapide : Suppression de la sélection
+* https://redmine.atolcd.com/issues/302163[#302163]: Visites : Modale de suppression
+* https://redmine.atolcd.com/issues/302160[#302160]: Carte : ajuster l'affichage de la carte
+* https://redmine.atolcd.com/issues/302108[#302108]: Erreur sur les rapports personnalisé
 * https://redmine.atolcd.com/issues/275048[#275048]: Edition canevas Reconnaissance opérationnelle
 * https://redmine.atolcd.com/issues/287857[#287857]: Automatisation envoi de courrier
 * https://redmine.atolcd.com/issues/288149[#288149]: Téléchargement des pages de l'atlas
@@ -10,6 +14,7 @@
 * https://redmine.atolcd.com/issues/301639[#301639]: VULN-2026-0004 - Lecture de fichier arbitraire authentifiée
 * https://redmine.atolcd.com/issues/301640[#301640]: VULN-2026-0005 - Injection HTML Stockée
 * https://redmine.atolcd.com/issues/301655[#301655]: Keycloak : mise à jour de sécurité
+* https://redmine.atolcd.com/issues/301953[#301953]: GeoServer : Faille de sécurité
 * https://redmine.atolcd.com/issues/294340[#294340]: Cases à cocher localisation PEI depuis la fiche complète de la carte
 * https://redmine.atolcd.com/issues/297936[#297936]: Impossible de modifier la légende d'une couche
 * https://redmine.atolcd.com/issues/269363[#269363]: [POINTS D'EAU] TOURNEE - Saisir les visites pour la tournée - Rendu visuel des PEI
