@@ -36,7 +36,6 @@ constructor(
     private val modeleCourrierRepository: ModeleCourrierRepository,
     private val objectMapper: ObjectMapper,
     private val documentUtils: DocumentUtils,
-    private val userInfo: WrappedUserInfo,
     private val transactionManager: TransactionManager,
     private val requestUtils: RequestUtils,
 ) :
@@ -97,6 +96,7 @@ constructor(
         return courrierPdfGenerator(
             parametreCourrierInput,
             mainTransactionManager,
+            userInfo,
         )
     }
 
@@ -105,6 +105,7 @@ constructor(
     private fun courrierPdfGenerator(
         parameterCourrierInput: ParametreCourrierInput,
         mainTransactionManager: TransactionManager?,
+        userInfo: WrappedUserInfo,
     ): Path {
         val modeleCourrier = modeleCourrierRepository.getModeleCourrier(parameterCourrierInput.modeleCourrierId)
 
