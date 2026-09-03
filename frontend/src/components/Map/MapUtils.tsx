@@ -9,7 +9,10 @@ import CircleStyle from "ol/style/Circle";
 import { PeiInfoEntityElement } from "../../Entities/PeiEntity.tsx";
 import SOURCE_CARTO from "../../enums/SourceCartoEnum.tsx";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
-import { EPSG_3857 } from "../../utils/constantsUtils.tsx";
+import {
+  EPSG_3857,
+  MIN_ZOOM_COUCHE_TRANSPARENTE,
+} from "../../utils/constantsUtils.tsx";
 import { toOpenLayer } from "./Map.tsx";
 import { optimizeVectorLayer } from "./MapPerformanceUtils.tsx";
 
@@ -192,7 +195,7 @@ export function createVectorLayer(
     extent: map.getView().calculateExtent(),
     opacity: 1,
     visible: true,
-    minZoom: 12,
+    minZoom: MIN_ZOOM_COUCHE_TRANSPARENTE,
     minResolution: 0,
     maxResolution: 99999,
     zIndex: 9999,

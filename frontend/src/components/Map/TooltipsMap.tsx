@@ -26,6 +26,7 @@ import AireAspiration from "../../pages/Pena/AireAspiration.tsx";
 import UpdatePermis from "../../pages/Permis/UpdatePermis.tsx";
 import ListTournee from "../../pages/Tournee/ListTournee.tsx";
 import { URLS } from "../../routes.tsx";
+import { MIN_ZOOM_COUCHE_TRANSPARENTE } from "../../utils/constantsUtils.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import CustomLinkButton from "../Button/CustomLinkButton.tsx";
 import DeleteButtonWithModal from "../Button/DeleteButtonWithModal.tsx";
@@ -1092,6 +1093,30 @@ const useTooltipMap = ({
 
   useEffect(() => {
     if (map && ref.current != null && !disabled) {
+      // Change le curseur au survol des éléments interactifs
+      map.on("pointermove", (event) => {
+        const pixel = map.getEventPixel(event.originalEvent);
+        const currentZoom = map.getView().getZoom() || 0;
+        let hasInteractiveFeature = false;
+
+        map.forEachFeatureAtPixel(
+          pixel,
+          function (feature) {
+            if (!filterFeature || filterFeature(feature)) {
+              hasInteractiveFeature = true;
+              return true;
+            }
+            return false;
+          },
+          { hitTolerance: 15 },
+        );
+
+        map.getTargetElement().style.cursor =
+          hasInteractiveFeature && currentZoom >= MIN_ZOOM_COUCHE_TRANSPARENTE
+            ? "pointer"
+            : "";
+      });
+
       map.on("singleclick", (event) => {
         const pixel = map.getEventPixel(event.originalEvent);
 
