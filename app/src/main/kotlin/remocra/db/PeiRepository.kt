@@ -593,6 +593,7 @@ class PeiRepository
         val peiNextCtp: Int?,
         var ordreTournee: Int?,
         val diametreNominalLibelle: Int?,
+        val adresse: Int?,
     ) {
         fun toCondition(): List<SortField<*>> = listOfNotNull(
             PEI.NUMERO_INTERNE.getSortField(peiNumeroInterne),
@@ -612,6 +613,7 @@ class PeiRepository
             V_PEI_VISITE_DATE.PEI_NEXT_ROP.getSortField(peiNextRop),
             V_PEI_VISITE_DATE.PEI_NEXT_CTP.getSortField(peiNextCtp),
             DIAMETRE.LIBELLE.getSortField(diametreNominalLibelle),
+            DSL.field("adresse", String::class.java).getSortField(adresse),
         )
     }
 
