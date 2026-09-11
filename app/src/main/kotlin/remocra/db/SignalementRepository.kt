@@ -41,7 +41,8 @@ class SignalementRepository @Inject constructor(private val dsl: DSLContext) : A
                     SIGNALEMENT_SOUS_TYPE_ELEMENT.TYPE_GEOMETRIE,
                 )
                     .from(SIGNALEMENT_SOUS_TYPE_ELEMENT)
-                    .where(SIGNALEMENT_SOUS_TYPE_ELEMENT.TYPE_ELEMENT.eq(SIGNALEMENT_TYPE_ELEMENT.ID)),
+                    .where(SIGNALEMENT_SOUS_TYPE_ELEMENT.TYPE_ELEMENT.eq(SIGNALEMENT_TYPE_ELEMENT.ID))
+                    .and(SIGNALEMENT_SOUS_TYPE_ELEMENT.ACTIF.isTrue),
             ).convertFrom { record ->
                 record?.map { r ->
                     SousTypeForMap(
@@ -55,7 +56,8 @@ class SignalementRepository @Inject constructor(private val dsl: DSLContext) : A
         )
             .from(
                 SIGNALEMENT_TYPE_ELEMENT,
-            ).orderBy(SIGNALEMENT_TYPE_ELEMENT.LIBELLE)
+            ).where(SIGNALEMENT_TYPE_ELEMENT.ACTIF.isTrue)
+            .orderBy(SIGNALEMENT_TYPE_ELEMENT.LIBELLE)
             .fetchInto()
 
     fun getType(): Collection<GlobalData.IdCodeLibelleData> =
