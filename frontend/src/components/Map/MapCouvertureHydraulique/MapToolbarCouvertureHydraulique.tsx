@@ -23,7 +23,6 @@ import {
 } from "../../Icon/Icon.tsx";
 import EditModal from "../../Modal/EditModal.tsx";
 import useModal from "../../Modal/ModalUtils.tsx";
-import TooltipCustom from "../../Tooltip/Tooltip.tsx";
 import Volet from "../../Volet/Volet.tsx";
 import toggleDeplacerPoint, { refreshLayerGeoserver } from "../MapUtils.tsx";
 import ToolbarButton from "../ToolbarButton.tsx";
@@ -40,26 +39,24 @@ const ButtonWithTooltipIfDisabled = ({
   ...buttonProps
 }: {
   tooltipId: string;
-  tooltipText?: string;
+  tooltipText: string;
   children: React.ReactNode;
   disabled: boolean;
   [key: string]: any;
 }) => {
-  if (disabled) {
-    return (
-      <TooltipCustom tooltipText={tooltipText} tooltipId={tooltipId}>
-        <span className="d-inline-block">
-          <Button disabled style={{ pointerEvents: "none" }} {...buttonProps}>
-            {children}
-          </Button>
-        </span>
-      </TooltipCustom>
-    );
-  }
+  const nativeTooltip =
+    disabled && tooltipText.trim().length > 0 ? tooltipText : undefined;
+
   return (
-    <Button disabled={disabled} {...buttonProps}>
-      {children}
-    </Button>
+    <span className="d-inline-block" id={tooltipId} title={nativeTooltip}>
+      <Button
+        disabled={disabled}
+        style={disabled ? { pointerEvents: "none" } : undefined}
+        {...buttonProps}
+      >
+        {children}
+      </Button>
+    </span>
   );
 };
 
@@ -117,29 +114,40 @@ export const useToolbarCouvertureHydrauliqueContext = ({
 
   // Base pour la future logique de création de topologie
   const handleCreerTopologie = async () => {
+    if (busy) {
+      return;
+    }
+
     setBusy(true);
-    (
-      await fetch(
+    try {
+      const response = await fetch(
         url`/api/couverture-hydraulique/calcul/create-topologie/` + etudeId,
         getFetchOptions({
           method: "POST",
           headers: { "Content-Type": "application/json" },
         }),
-      )
-    )
-      .text()
-      .then(() => {
-        successToast("Topologie créée avec succès");
-        if (workingLayer && map) {
-          refreshLayerGeoserver(map);
-        }
-      })
-      .catch((reason: string) => {
-        errorToast(reason || "Erreur lors de la création de la topologie");
-      })
-      .finally(() => {
-        setBusy(false);
-      });
+      );
+
+      if (!response.ok) {
+        const message = await response.text();
+        throw new Error(
+          message || "Erreur lors de la création de la topologie",
+        );
+      }
+
+      successToast("Topologie créée avec succès");
+      if (workingLayer && map) {
+        refreshLayerGeoserver(map);
+      }
+    } catch (reason) {
+      const message =
+        reason instanceof Error
+          ? reason.message
+          : "Erreur lors de la création de la topologie";
+      errorToast(message);
+    } finally {
+      setBusy(false);
+    }
   };
 
   /**
