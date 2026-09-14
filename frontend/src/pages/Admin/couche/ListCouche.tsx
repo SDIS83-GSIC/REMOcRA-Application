@@ -105,6 +105,9 @@ const ListCouche = () => {
             accessor: "coucheCode",
             sortField: "coucheCode",
             Filter: <FilterInput type="text" name="coucheCode" />,
+            Cell: (cell: { value: string }) => (
+              <CellTooltip maxWidth={150} value={cell.value} />
+            ),
           },
           {
             Header: "Libellé",
@@ -156,6 +159,9 @@ const ListCouche = () => {
             accessor: "coucheNom",
             sortField: "coucheNom",
             Filter: <FilterInput type="text" name="coucheNom" />,
+            Cell: (cell: { value: string }) => (
+              <CellTooltip maxWidth={150} value={cell.value} />
+            ),
           },
           {
             Header: "EPSG",
@@ -173,7 +179,7 @@ const ListCouche = () => {
             Header: "Modules",
             accessor: "moduleList",
             sortField: "moduleList",
-
+            Cell: CellTooltip,
             Filter: (
               <MultiSelectFilterFromList
                 name={"moduleList"}
@@ -205,17 +211,7 @@ const ListCouche = () => {
                 listIdCodeLibelle={groupeFonctionnalitesState.data}
               />
             ),
-            Cell: (row: any) => {
-              return (
-                <TooltipCustom
-                  tooltipText={row.value}
-                  tooltipId={row.value}
-                  maxWidth={100}
-                >
-                  {row.value}
-                </TooltipCustom>
-              );
-            },
+            Cell: CellTooltip,
           },
           {
             Header: (
@@ -237,17 +233,7 @@ const ListCouche = () => {
                 listIdCodeLibelle={groupeFonctionnalitesState.data}
               />
             ),
-            Cell: (row: any) => {
-              return (
-                <TooltipCustom
-                  tooltipText={row.value}
-                  tooltipId={row.value}
-                  maxWidth={100}
-                >
-                  {row.value}
-                </TooltipCustom>
-              );
-            },
+            Cell: CellTooltip,
           },
           BooleanColumn({
             Header: "Publique",
@@ -310,3 +296,15 @@ const ListCouche = () => {
 };
 
 export default ListCouche;
+
+const CellTooltip = ({
+  value,
+  maxWidth = 100,
+}: {
+  value: string;
+  maxWidth?: number;
+}) => (
+  <TooltipCustom tooltipText={value} tooltipId={value} maxWidth={maxWidth}>
+    <>{value}</>
+  </TooltipCustom>
+);

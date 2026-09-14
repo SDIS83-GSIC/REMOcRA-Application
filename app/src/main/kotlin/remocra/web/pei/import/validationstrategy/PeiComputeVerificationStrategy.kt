@@ -13,7 +13,7 @@ class PeiComputeVerificationStrategy : VerificationStrategy, AbstractCUDPeiUseCa
     override fun validate(row: ImportPeiParametre, data: LigneImportPeiData, userInfo: WrappedUserInfo) {
         if (!userInfo.isSuperAdmin) {
             data.currentPeiData?.let { peiData ->
-                if (needComputeNumero(peiData)) {
+                if (calculNumerotationUseCase.needComputeNumero(peiData)) {
                     data.addInfos(ErreurImportPei.ERR_COMPUTE_NUMERO.libelleLong)
                 }
             }

@@ -15,6 +15,7 @@ import remocra.data.enums.ParametreEnum
 import remocra.db.PeiRepository
 import remocra.db.PenaRepository
 import remocra.db.PibiRepository
+import remocra.db.TourneeRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -24,6 +25,7 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDGeometrieUseCase
 import remocra.usecase.zoneintegration.ComputeZoneSpecialeUseCase
+import kotlin.text.isNullOrBlank
 
 /**
  * Classe mère des useCases des opérations C, U, D des PEI.
@@ -46,6 +48,8 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
 
     @Inject
     lateinit var visiteRepository: VisiteRepository
+
+    @Inject lateinit var tourneeRepository: TourneeRepository
 
     @Inject
     lateinit var dataCacheProvider: DataCacheProvider
@@ -73,22 +77,50 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
         eventBus.post(PeiModifiedEvent(element.peiId, typeOperation))
     }
 
-    /**
-     * Fonction permettant de savoir s'il faut recalculer le numéro interne du PEI car un de ses attributs structurants a été modifié. <br />
-     *
-     * Cela ne veut pas dire que le numéro interne sera différent, c'est le calcul qui le déterminera.
-     */
-    fun needComputeNumero(element: PeiData): Boolean {
-        return element.peiNumeroInterne != element.peiNumeroInterneInitial ||
-            calculNumerotationUseCase.needComputeNumeroInterneCommune(element.peiCommuneId, element.peiCommuneIdInitial, element.peiZoneSpecialeId, element.peiZoneSpecialeIdInitial) ||
-            calculNumerotationUseCase.needComputeNumeroInterneNatureDeci(element.peiNatureDeciId, element.peiNatureDeciIdInitial) ||
-            calculNumerotationUseCase.needComputeNumeroInterneDomaine(element.peiDomaineId, element.peiDomaineIdInitial) ||
-            calculNumerotationUseCase.needComputeNumeroInterneGestionnaire(element.peiGestionnaireId, element.peiGestionnaireIdInitial) ||
-            if (element is PibiData) {
-                calculNumerotationUseCase.needComputeNumeroInternePibiIdentifiantGestionnaire(element.pibiIdentifiantGestionnaire, element.pibiIdentifiantGestionnaireInitial)
-            } else {
-                false
+    private fun applyNumerotationRules(element: PeiData) {
+        val autoRenum = parametresProvider.get()
+            .getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true
+
+        val isInsert = typeOperation == TypeOperation.INSERT
+        val isUpdate = typeOperation == TypeOperation.UPDATE
+
+        val manualInterneOnInsert = isInsert && !autoRenum && element.peiNumeroInterne != null
+        if (manualInterneOnInsert) {
+            val pair = getNumerotationPeiUseCase.execute(
+                element = element,
+                mustComputeComplet = true,
+                mustComputeInterne = false,
+            )
+            element.peiNumeroComplet = pair.first
+
+            val existing = peiRepository.getPeiFromNumero(element.peiNumeroComplet!!)
+            if (existing != null) {
+                throw RemocraResponseException(ErrorType.PEI_NUMERO_COMPLET_EXISTS)
             }
+            return
+        }
+
+        val (mustComputeComplet, mustComputeInterne) = calculNumerotationUseCase.getMustComputeFlags(element, isInsert, isUpdate)
+
+        if (mustComputeComplet || mustComputeInterne) {
+            val pair = getNumerotationPeiUseCase.execute(
+                element = element,
+                mustComputeComplet = mustComputeComplet,
+                mustComputeInterne = mustComputeInterne,
+            )
+
+            if (mustComputeInterne) {
+                element.peiNumeroInterne = pair.second
+            }
+            if (mustComputeComplet) {
+                element.peiNumeroComplet = pair.first
+            }
+        }
+
+        val existing = peiRepository.getPeiFromNumero(element.peiNumeroComplet!!)
+        if (existing != null && (isInsert || existing.peiId != element.peiId)) {
+            throw RemocraResponseException(ErrorType.PEI_NUMERO_COMPLET_EXISTS)
+        }
     }
 
     override fun getListGeometrie(element: PeiData): Collection<Geometry> {
@@ -110,30 +142,18 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
     override fun execute(userInfo: WrappedUserInfo, element: PeiData): PeiData {
         if (typeOperation != TypeOperation.DELETE) {
             // Calcul de la zone spéciale
-            val computedPeiZoneSpecialeId = computeZoneSpecialeUseCase.computeZoneSpeciale(element.peiGeometrie)
-            element.peiZoneSpecialeId = computedPeiZoneSpecialeId
-            // Si on est en création OU si on autorise la renumérotation, et qu'elle est nécessaire
-            if (element.peiNumeroInterne == null || element.peiNumeroComplet == null ||
-                parametresProvider.get().getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true &&
-                needComputeNumero(element)
+            element.peiZoneSpecialeId = computeZoneSpecialeUseCase.computeZoneSpeciale(element.peiGeometrie)
+
+            // Numérotation (création / modification selon les règles métier)
+            applyNumerotationRules(element)
+
+            // Règle métier création avec reco init obligatoire
+            if (typeOperation == TypeOperation.INSERT &&
+                parametresProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name) == true
             ) {
-                val pair = getNumerotationPeiUseCase.execute(element)
-
-                element.peiNumeroInterne = pair.second
-                element.peiNumeroComplet = pair.first
-            }
-
-            // Vérification unicité du numéro complet
-            val existingPei = peiRepository.getPeiFromNumero(element.peiNumeroComplet!!)
-            if (existingPei != null && (typeOperation == TypeOperation.INSERT || existingPei.peiId != element.peiId)) {
-                throw RemocraResponseException(ErrorType.PEI_NUMERO_COMPLET_EXISTS)
-            }
-
-            // Si c'est une insertion, on met directement le PEI indisponible si les visite reception et reco init sont obligatoires
-            // (Il n'est pas encore présent en base et n'a pas de visites)
-            if (typeOperation == TypeOperation.INSERT && parametresProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name) == true) {
                 element.peiDisponibiliteTerrestre = Disponibilite.INDISPONIBLE
             } else if (typeOperation != TypeOperation.INSERT) {
+                // En modification, la disponibilité est recalculée à partir des visites/état courant
                 val result = getDisponibilitePeiUseCase.execute(element)
                 element.peiDisponibiliteTerrestre = result.terrestre
                 if (element is PenaData && result.hbe != null) {
@@ -142,14 +162,18 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
             }
         }
 
+        // Date de changement de dispo
         if (element.peiDisponibiliteTerrestre != element.peiDisponibiliteTerrestreInitiale) {
             element.peiDateChangementDispo = dateUtils.now()
         }
 
-        // Tout est à jour, on peut enregistrer l'élément :
+        // Traitements spécifiques insert/update/delete
         executeSpecific(userInfo, element)
 
-        if (typeOperation == TypeOperation.INSERT && parametresProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name) == false) {
+        // Cas particulier INSERT sans reco init obligatoire
+        if (typeOperation == TypeOperation.INSERT &&
+            parametresProvider.get().getParametreBoolean(ParametreEnum.RECEPTION_RECO_INIT_OBLIGATOIRE.name) == false
+        ) {
             val result = getDisponibilitePeiUseCase.execute(element)
             element.peiDisponibiliteTerrestre = result.terrestre
             if (element is PenaData && result.hbe != null) {
@@ -157,7 +181,7 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
             }
             peiRepository.upsert(element)
         }
-        // On rend la main au parent pour la logique d'événements
+
         return element
     }
 
@@ -206,6 +230,44 @@ abstract class AbstractCUDPeiUseCase(typeOperation: TypeOperation) : AbstractCUD
         // On ne veut pas les 2 champs en même temps (XOR non nullable)
         if (!element.peiVoieTexte.isNullOrBlank() && element.peiVoieId != null) {
             throw RemocraResponseException(ErrorType.PEI_VOIE_XOR)
+        }
+
+        // Si la nature DECI à été modifiée
+        if (element.peiNatureDeciId != element.peiNatureDeciIdInitial) {
+            // alors on verifie si le changement est autorisé
+            if (!autorisedNatureDeciChange(element)) {
+                throw RemocraResponseException(ErrorType.PEI_UNAUTHORIZED_CHANGEMENT_DECI)
+            }
+        }
+    }
+
+    /**
+     * Vérifie si le changement de nature DECI d'un PEI est autorisé au regard de ses tournées.
+     *
+     * Nativement, il est possible de mélanger les natures DECI dans une tournée uniquement pour
+     * les natures [GlobalConstants.NATURE_DECI_ICPE] et [GlobalConstants.NATURE_DECI_ICPE_CONVENTIONNE].
+     * Pour toutes les autres natures, le mélange est interdit.
+     *
+     * La logique appliquée est la suivante :
+     * - Si le PEI ne partage aucune tournée avec d'autres PEI, le changement est toujours autorisé
+     *   (aucun impact sur les tournées existantes).
+     * - Sinon, le changement n'est toléré que si la nature DECI initiale **et** la nouvelle nature DECI
+     *   appartiennent toutes les deux au pool ICPE (passage de ICPE à ICPE_CONVENTIONNE et inversement).
+     *
+     * @param element Le PEI dont on souhaite modifier la nature DECI.
+     * @return `true` si le changement est autorisé, `false` sinon.
+     */
+    private fun autorisedNatureDeciChange(element: PeiData): Boolean {
+        // TODO 3.1 : prendre en compte le paramètre CREATION_TOURNEE_DECI_DIFFERENTES :
+        // Si le paramètre autorise les tournées panachées, retourner TRUE directement
+        // Sinon, ce sont ces conditions qui valident ou non le changement de nature DECI
+        if (!tourneeRepository.shareTourneeWithOtherPeis(element.peiId)) {
+            return true
+        } else {
+            val icpePool = setOf(GlobalConstants.NATURE_DECI_ICPE, GlobalConstants.NATURE_DECI_ICPE_CONVENTIONNE)
+            val listeNaturesDeci = dataCacheProvider.getNaturesDeci()
+            return listOf(element.peiNatureDeciId, element.peiNatureDeciIdInitial)
+                .all { listeNaturesDeci[it]?.natureDeciCode in icpePool }
         }
     }
 }

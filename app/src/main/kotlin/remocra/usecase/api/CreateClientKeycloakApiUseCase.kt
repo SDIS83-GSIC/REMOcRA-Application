@@ -24,8 +24,10 @@ class CreateClientKeycloakApiUseCase @Inject constructor(
     private val organismeRepository: OrganismeRepository,
     private val keycloakToken: KeycloakToken,
     private val keycloakClient: AuthModule.KeycloakClient,
+    private val keycloakAudienceScopeUseCase: KeycloakAudienceScopeUseCase,
 ) :
     AbstractCUDUseCase<Organisme>(TypeOperation.INSERT) {
+
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(Droit.ADMIN_API)) {
             throw RemocraResponseException(ErrorType.DROIT_API_CLIENT_FORBIDDEN)
@@ -72,6 +74,8 @@ class CreateClientKeycloakApiUseCase @Inject constructor(
                     }"
                 throw RemocraResponseException(ErrorType.DROIT_API_INSERT_CLIENT_KEYCLOAK, replacement)
             }
+
+            keycloakAudienceScopeUseCase.associateAudienceScope(token, idTechnique, ErrorType.DROIT_API_INSERT_CLIENT_KEYCLOAK)
 
             // On update l'organisme
             organismeRepository.updateKeycloakClientId(idTechnique, element.organismeId)

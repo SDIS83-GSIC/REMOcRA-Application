@@ -101,6 +101,15 @@ class PeiRepository
             PEI.PERENNE,
             PEI.ROTATION_6_CCF.`as`("peiRotation6Ccf"),
             PEI.DATE_RELEVE_GPS,
+            // Attributs supplémentaires pour le recalcul de la numérotation à l'enregistrement ; non modifiables
+            PEI.NUMERO_INTERNE.`as`("peiNumeroInterneInitial"),
+            PEI.COMMUNE_ID.`as`("peiCommuneIdInitial"),
+            PEI.ZONE_SPECIALE_ID.`as`("peiZoneSpecialeIdInitial"),
+            PEI.NATURE_DECI_ID.`as`("peiNatureDeciIdInitial"),
+            PEI.NATURE_ID.`as`("peiNatureIdInitial"),
+            PEI.DOMAINE_ID.`as`("peiDomaineIdInitial"),
+            PEI.GESTIONNAIRE_ID.`as`("peiGestionnaireIdInitial"),
+            PEI.DISPONIBILITE_TERRESTRE.`as`("peiDisponibiliteTerrestreInitiale"),
         )
     }
 
@@ -879,8 +888,33 @@ class PeiRepository
             .where(if (listPei.isEmpty()) DSL.noCondition() else PEI.ID.`in`(listPei))
             .fetchInto()
 
-    fun getListIdNumeroCompletInZoneCompetence(userInfo: WrappedUserInfo): Collection<IdNumeroComplet> =
-        dsl.select(PEI.ID, PEI.NUMERO_COMPLET)
+    fun getListIdNumeroCompletInZoneCompetenceIndisposTempActive(
+        userInfo: WrappedUserInfo,
+        idIndisponibiliteTemporaire: UUID?,
+    ): Collection<IdNumeroCompletWithIndispoTempActive> {
+        val hasIndispoTempActive = DSL.exists(
+            DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID)
+                .from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+                .join(INDISPONIBILITE_TEMPORAIRE)
+                .on(INDISPONIBILITE_TEMPORAIRE.ID.eq(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID))
+                .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(PEI.ID))
+                .and(
+                    INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.gt(dateUtils.now())
+                        .or(
+                            INDISPONIBILITE_TEMPORAIRE.DATE_DEBUT.le(dateUtils.now())
+                                .and(
+                                    INDISPONIBILITE_TEMPORAIRE.DATE_FIN.ge(dateUtils.now())
+                                        .or(INDISPONIBILITE_TEMPORAIRE.DATE_FIN.isNull),
+                                ),
+                        ),
+                ).and(
+                    idIndisponibiliteTemporaire?.let {
+                        INDISPONIBILITE_TEMPORAIRE.ID.ne(it)
+                    } ?: DSL.noCondition(),
+                ),
+        ).`as`("hasIndispoTempActive")
+
+        return dsl.select(PEI.ID, PEI.NUMERO_COMPLET, hasIndispoTempActive)
             .from(
                 userInfo.isSuperAdmin.let {
                     if (it) {
@@ -892,6 +926,7 @@ class PeiRepository
             )
             .orderBy(PEI.NUMERO_COMPLET)
             .fetchInto()
+    }
 
     fun getListIdNumeroCompletInZoneCompetenceIndisposTemp(userInfo: WrappedUserInfo): Collection<IdNumeroComplet> =
         dsl.selectDistinct(PEI.ID, PEI.NUMERO_COMPLET)
@@ -1087,25 +1122,31 @@ class PeiRepository
         servicePublicDeciId: UUID?,
         maintenanceDeciId: UUID?,
         serviceEauxId: UUID?,
-    ): Collection<PeiDataForApi> =
-        getListPeiForApiRequete()
-            .where(
-                DSL.and(
-                    listOfNotNull(
-                        codeInsee?.let { DSL.and(COMMUNE.CODE_INSEE.contains(it)) },
-                        type?.let { DSL.and(PEI.TYPE_PEI.eq(it)) },
-                        codeNatureDECI?.let { DSL.and(NATURE_DECI.CODE.eq(it)) },
-                        codeNature?.let { DSL.and(NATURE.CODE.eq(it)) },
-                        servicePublicDeciId?.let { DSL.and(PEI.SERVICE_PUBLIC_DECI_ID.eq(it)) },
-                        maintenanceDeciId?.let { DSL.and(PEI.MAINTENANCE_DECI_ID.eq(it)) },
-                        serviceEauxId?.let { DSL.and(PIBI.SERVICE_EAU_ID.eq(it)) },
-                    ),
+    ): Collection<PeiDataForApi> {
+        val conditionsGenerales = listOfNotNull(
+            codeInsee?.let { COMMUNE.CODE_INSEE.contains(it) },
+            type?.let { PEI.TYPE_PEI.eq(it) },
+            codeNatureDECI?.let { NATURE_DECI.CODE.eq(it) },
+            codeNature?.let { NATURE.CODE.eq(it) },
+        )
 
-                ),
-            )
+        val conditionsOrganisme = listOfNotNull(
+            servicePublicDeciId?.let { PEI.SERVICE_PUBLIC_DECI_ID.eq(it) },
+            maintenanceDeciId?.let { PEI.MAINTENANCE_DECI_ID.eq(it) },
+            serviceEauxId?.let { PIBI.SERVICE_EAU_ID.eq(it) },
+        )
+
+        val whereClause = DSL.and(
+            if (conditionsGenerales.isEmpty()) DSL.noCondition() else DSL.and(conditionsGenerales),
+            if (conditionsOrganisme.isEmpty()) DSL.noCondition() else DSL.or(conditionsOrganisme),
+        )
+
+        return getListPeiForApiRequete()
+            .where(whereClause)
             .limit(limit)
             .offset(offset)
             .fetchInto()
+    }
 
     fun getPeiIdIndisponibles(zoneCompetenceId: UUID?, isSuperAdmin: Boolean): Collection<UUID> =
         dsl.select(PEI.ID)
@@ -1295,6 +1336,12 @@ data class PeiIndispoTemp(
 data class IdNumeroComplet(
     val peiId: UUID,
     val peiNumeroComplet: String,
+)
+
+data class IdNumeroCompletWithIndispoTempActive(
+    val peiId: UUID,
+    val peiNumeroComplet: String,
+    val hasIndispoTempActive: Boolean,
 )
 
 data class ApiPeiAccessibility(

@@ -78,6 +78,31 @@
       ]
     }
   ],
+  "clientScopes": [
+    {
+      "name": "audience-remocra",
+      "description": "Audience scope partage pour les clients API organismes",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience-remocra",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "userinfo.token.claim": "false",
+            "included.client.audience": "remocra"
+          }
+        }
+      ]
+    }
+  ],
   "users": [
     {
       "username": "service-account-remocra",

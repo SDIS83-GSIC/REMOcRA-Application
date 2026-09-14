@@ -46,7 +46,8 @@ const ListGestionnaire = () => {
       icon: <IconGererContact />,
       textEnable: "Afficher les contacts",
       textDisable: "Aucun contact pour ce gestionnaire",
-      disable: (row) => !row.original.hasContact,
+      disable: (row) =>
+        !row.original.listContact || row.original.listContact.length === 0,
       classEnable: "warning",
     });
   }
@@ -64,11 +65,11 @@ const ListGestionnaire = () => {
       row: (row) => {
         return row;
       },
-      textDisable:
-        "Ce gestionnaire a des contacts ou est rattaché à un ou plusieurs PEI.",
-      disable: (row) => row.original.hasContact || row.original.hasPei,
       type: TYPE_BUTTON.DELETE,
       pathname: url`/api/gestionnaire/delete/`,
+      header: (row) =>
+        "Suppression du gestionnaire " + row.original.gestionnaireLibelle,
+      content: (row) => <DeleteContent row={row} />,
     });
 
     if (hasDroit(user, TYPE_DROIT.GEST_CONTACT_A)) {
@@ -146,3 +147,56 @@ const ListGestionnaire = () => {
 };
 
 export default ListGestionnaire;
+
+const DeleteContent = ({ row }: { row: any }) => {
+  const peis: string[] = row.original.listPei ?? [];
+  const contacts: string[] = row.original.listContact ?? [];
+
+  return (
+    <>
+      {peis.length === 0 ? (
+        <p>
+          Êtes-vous sûr de vouloir supprimer le gestionnaire{" "}
+          {row.original.gestionnaireLibelle} ?
+        </p>
+      ) : peis.length === 1 ? (
+        <p>
+          Ce gestionnaire est lié au PEI {peis[0]}.
+          <br />
+          Le lien sera supprimé mais le PEI sera conservé.
+        </p>
+      ) : (
+        <p>
+          Ce gestionnaire est lié aux PEI suivants.
+          <br />
+          Les liens seront supprimés mais les PEI seront conservés :
+          <ul>
+            {peis.map((pei, index) => (
+              <li key={index}>{pei}</li>
+            ))}
+          </ul>
+        </p>
+      )}
+      {contacts.length === 1 ? (
+        <p>
+          Ce gestionnaire est lié au contact {contacts[0]}.
+          <br />
+          La suppression du gestionnaire entraînera la suppression du contact et
+          ses courriers.
+        </p>
+      ) : contacts.length > 1 ? (
+        <p>
+          Ce gestionnaire est lié aux contacts suivants.
+          <br />
+          La suppression du gestionnaire entraînera la suppression de ces
+          contacts, et leurs courriers :
+          <ul>
+            {contacts.map((contact, index) => (
+              <li key={index}>{contact}</li>
+            ))}
+          </ul>
+        </p>
+      ) : null}
+    </>
+  );
+};

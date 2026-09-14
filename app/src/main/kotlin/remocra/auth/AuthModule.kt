@@ -46,13 +46,14 @@ class AuthModule(
         fun create(config: Config, oidcProviderMetadata: ReadOnlyOIDCProviderMetadata) =
             AuthModule(
                 AuthnSettings(
-                    config.getString("client-id"),
-                    config.getString("client-secret"),
-                    config.getString("base-uri"),
-                    config.getString("realm"),
-                    config.getString("token-introspection-cache-spec"),
-                    config.getString("client-id-apache-hop"),
-                    config.getString("client-secret-apache-hop"),
+                    clientId = config.getString("client-id"),
+                    clientSecret = config.getString("client-secret"),
+                    baseUri = config.getString("base-uri"),
+                    realm = config.getString("realm"),
+                    tokenIntrospectionCacheSpec = config.getString("token-introspection-cache-spec"),
+                    clientIdApacheHop = config.getString("client-id-apache-hop"),
+                    clientSecreteApacheHop = config.getString("client-secret-apache-hop"),
+                    clientScopeApiAudience = config.getString("client-scope-api-audience"),
                 ),
                 oidcProviderMetadata,
             )
@@ -113,6 +114,7 @@ class AuthModule(
         val tokenIntrospectionCacheSpec: String,
         val clientIdApacheHop: String,
         val clientSecreteApacheHop: String,
+        val clientScopeApiAudience: String,
     )
 
     /**

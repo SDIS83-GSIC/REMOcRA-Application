@@ -11,6 +11,7 @@ import remocra.db.CourrierRepository
 import remocra.db.DocumentRepository
 import remocra.db.ModeleCourrierRepository
 import remocra.db.ThematiqueRepository
+import remocra.db.UtilisateurRepository
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
@@ -25,6 +26,7 @@ import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
 import remocra.usecase.document.DocumentUtils
+import kotlin.io.path.Path
 
 class CreateCourrierUseCase
 @Inject
@@ -34,6 +36,7 @@ constructor(
     private val documentRepository: DocumentRepository,
     private val courrierRepository: CourrierRepository,
     private val thematiqueRepository: ThematiqueRepository,
+    private val utilisateurRepository: UtilisateurRepository,
 ) :
     AbstractCUDUseCase<CourrierData>(TypeOperation.INSERT) {
 
@@ -51,7 +54,7 @@ constructor(
         userInfo: WrappedUserInfo,
         element: CourrierData,
     ): CourrierData {
-        // On va chercher le le modeleCourrier
+        // On va chercher le modeleCourrier
         val modeleCourrier = modeleCourrierRepository.getById(element.modeleCourrierId)
         val thematiques = thematiqueRepository.getAll()
 
@@ -101,13 +104,13 @@ constructor(
                         accuseReception = null,
                     ),
                 )
-                TypeDestinataire.CONTACT_GESTIONNAIRE.libelle -> courrierRepository.insertLCourrierContactOrganisme(
+                TypeDestinataire.CONTACT_ORGANISME.libelle -> courrierRepository.insertLCourrierContactOrganisme(
                     LCourrierContactOrganisme(
                         courrierId = element.courrierId,
                         contactId = it.destinataireId,
                     ),
                 )
-                TypeDestinataire.CONTACT_ORGANISME.libelle -> courrierRepository.insertLCourrierContactGestionnaire(
+                TypeDestinataire.CONTACT_GESTIONNAIRE.libelle -> courrierRepository.insertLCourrierContactGestionnaire(
                     LCourrierContactGestionnaire(
                         courrierId = element.courrierId,
                         contactId = it.destinataireId,
@@ -119,7 +122,7 @@ constructor(
     }
 
     override fun postEvent(element: CourrierData, userInfo: WrappedUserInfo) {
-        // On va chercher le le modeleCourrier
+        // On va chercher le modeleCourrier
         val modeleCourrier = modeleCourrierRepository.getById(element.modeleCourrierId)
         eventBus.post(
             TracabiliteEvent(
@@ -133,17 +136,51 @@ constructor(
         )
 
         // Puis on post les notificationEvent pour chaque destinataire
-        eventBus.post(
-            NotificationEvent(
-                notificationData =
-                NotificationMailData(
-                    destinataires = element.listeDestinataire.map { it.emailDestinataire }.toSet(),
-                    objet = modeleCourrier.modeleCourrierObjetEmail,
-                    corps = modeleCourrier.modeleCourrierCorpsEmail,
-                    documentId = element.documentId,
+        val utilisateurs = element.listeDestinataire
+            .filter { it.typeDestinataire == TypeDestinataire.UTILISATEUR.libelle || utilisateurRepository.isEmailUsedByAnActiveUser(it.emailDestinataire) }
+            .map { it.emailDestinataire }
+            .toSet()
+
+        val autres = element.listeDestinataire
+            .filter { it.typeDestinataire != TypeDestinataire.UTILISATEUR.libelle && !utilisateurRepository.isEmailUsedByAnActiveUser(it.emailDestinataire) }
+            .map { it.emailDestinataire }
+            .toSet()
+
+        if (utilisateurs.isNotEmpty()) {
+            eventBus.post(
+                NotificationEvent(
+                    notificationData = NotificationMailData(
+                        destinataires = utilisateurs,
+                        objet = modeleCourrier.modeleCourrierObjetEmail,
+                        corps = modeleCourrier.modeleCourrierCorpsEmailUtilisateur,
+                        documentId = element.documentId,
+                        attachment = null,
+                    ),
+                    idJob = null,
                 ),
-                idJob = null,
-            ),
-        )
+            )
+        }
+
+        if (autres.isNotEmpty()) {
+            val document = documentRepository.getById(element.documentId)
+            val file = if (document != null) {
+                Path(document.documentRepertoire).resolve(document.documentNomFichier).toFile()
+            } else {
+                null
+            }
+
+            eventBus.post(
+                NotificationEvent(
+                    notificationData = NotificationMailData(
+                        destinataires = autres,
+                        objet = modeleCourrier.modeleCourrierObjetEmail,
+                        corps = modeleCourrier.modeleCourrierCorpsEmailPieceJointe,
+                        documentId = null,
+                        attachment = file,
+                    ),
+                    idJob = null,
+                ),
+            )
+        }
     }
 }

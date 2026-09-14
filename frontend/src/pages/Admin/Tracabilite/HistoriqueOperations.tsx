@@ -2,7 +2,7 @@ import { isValid, parseISO } from "date-fns";
 import { Formik, useFormikContext } from "formik";
 import { useEffect, useMemo } from "react";
 import { Button, Col, Container, Row, Stack, Table } from "react-bootstrap";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import Loading from "../../../components/Elements/Loading/Loading.tsx";
 import PageTitle from "../../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGetRun } from "../../../components/Fetch/useFetch.tsx";
@@ -34,6 +34,7 @@ const HistoriqueOperations = () => {
   const { typeOperations, typeObjets, typeUtilisateurs, isLoading } = useRefs();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { run, data } = useGetRun(
     url`/api/tracabilite/search?${searchParams}`,
     {},
@@ -84,7 +85,9 @@ const HistoriqueOperations = () => {
 
   const handleSubmit = (values: FormValues) => {
     //@ts-expect-error url n'est pas content si on passe une variable string et non object 🤔
-    navigate(url`${URLS.HISTORIQUE_OPERATIONS}?${nullifyEmptyValue(values)}`);
+    navigate(url`${URLS.HISTORIQUE_OPERATIONS}?${nullifyEmptyValue(values)}`, {
+      state: location.state,
+    });
   };
 
   return (
@@ -160,9 +163,10 @@ const SearchForm = ({
 }: SearchFormProps) => {
   const { values, setFieldValue } = useFormikContext<FormValues>();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleReset = () => {
-    navigate(URLS.HISTORIQUE_OPERATIONS);
+    navigate(URLS.HISTORIQUE_OPERATIONS, { state: location.state });
   };
 
   return (

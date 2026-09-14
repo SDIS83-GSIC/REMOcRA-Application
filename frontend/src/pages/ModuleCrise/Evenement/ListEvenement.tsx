@@ -39,17 +39,19 @@ enum EvenementStatutEnum {
 const ListEvenement = ({
   criseId,
   map,
-  stateEvent,
+  evenementStatutMode,
+  onEvenementIdsFiltresChange,
 }: {
   criseId: string;
   map: any;
-  stateEvent: string;
+  evenementStatutMode: string;
+  onEvenementIdsFiltresChange?: (uuids: string[]) => void;
 }) => {
   const [params, setSearchParam] = useState<FilterEvenement>({});
   const [buttonClicked, setButtonClick] = useState<boolean>(false);
 
   const { data, run } = useGetRun(
-    url`/api/crise/${criseId}/evenement/${stateEvent}/?${params}`,
+    url`/api/crise/${criseId}/evenement/${evenementStatutMode}/?${params}`,
     {},
   );
 
@@ -58,6 +60,14 @@ const ListEvenement = ({
       run();
     }
   }, [data, run]);
+
+  // On récupère les id des évènements pour les passer à la carte et donc pouvoir passer le filtre à la couche
+  useEffect(() => {
+    if (onEvenementIdsFiltresChange && data) {
+      const uuids = data.map((e: { evenementId: string }) => e.evenementId);
+      onEvenementIdsFiltresChange(uuids);
+    }
+  }, [data, onEvenementIdsFiltresChange]);
 
   const { user } = useAppContext();
   const { visible, show, close } = useModal();
@@ -150,7 +160,7 @@ const ListEvenement = ({
 
       {buttonClicked && (
         <FilterEvent
-          statut={stateEvent}
+          statut={evenementStatutMode}
           setSearchParam={setSearchParam}
           run={run}
           criseId={criseId}

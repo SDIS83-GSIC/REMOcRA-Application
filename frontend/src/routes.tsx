@@ -32,6 +32,7 @@ import CreateAnomalieCategorie from "./pages/Admin/anomalieCategorie/CreateAnoma
 import ListAnomalieCategorie from "./pages/Admin/anomalieCategorie/ListAnomalieCategorie.tsx";
 import SortAnomalieCategorie from "./pages/Admin/anomalieCategorie/SortAnomalieCategorie.tsx";
 import UpdateAnomalieCategorie from "./pages/Admin/anomalieCategorie/UpdateAnomalieCategorie.tsx";
+import { AtlasManagement } from "./pages/Admin/atlas/AtlasManagement.tsx";
 import CreateContact from "./pages/Admin/contact/CreateContact.tsx";
 import ListContact from "./pages/Admin/contact/ListContact.tsx";
 import UpdateContact from "./pages/Admin/contact/UpdateContact.tsx";
@@ -166,6 +167,7 @@ import UpdateUtilisateur from "./pages/Admin/utilisateur/UpdateUtilisateur.tsx";
 import ListZoneIntegration from "./pages/Admin/zoneIntegration/ListZoneIntegration.tsx";
 import UpdateZoneIntegration from "./pages/Admin/zoneIntegration/UpdateZoneIntegration.tsx";
 import GenereCourrier from "./pages/Courrier/GenereCourrier.tsx";
+import TelechargerCourrier from "./pages/Courrier/TelechargerCourrier.tsx";
 import ViewCourrier from "./pages/Courrier/ViewCourrier.tsx";
 import CreateEtude from "./pages/CouvertureHydraulique/Etude/CreateEtude.tsx";
 import ImportShapeEtude from "./pages/CouvertureHydraulique/Etude/ImportShapeEtude.tsx";
@@ -549,6 +551,8 @@ export const URLS = {
   LIST_TASK_SPECIFIQUE: url`/admin/tache-specifique`,
   ADMIN_EXECUTE_TASK_MANUELLE: url`/admin/tasks-manuelles/`,
 
+  ADMIN_GESTION_ATLAS: url`/admin/gestion-atlas`,
+
   LIST_MODULE_DOCUMENT_COURRIER: (moduleType: string, moduleId: string) =>
     url`/documents/` +
     moduleType.toLocaleLowerCase() +
@@ -615,9 +619,17 @@ export default [
     element: <Authorization Component={Accueil} isPublic />,
   },
   {
+    //Doit toujours être correspondre au returnTo dans le backend de DocumentEndpoit -> telechargerRessource
+    path: "/telecharger-courrier/:documentId",
+    element: <Authorization Component={TelechargerCourrier} isPublic />,
+  },
+  {
     path: "/dfci/",
     element: (
-      <Authorization Component={ModuleDfci} droits={[TYPE_DROIT.DFCI_R]} />
+      <Authorization
+        Component={ModuleDfci}
+        droits={[TYPE_DROIT.DFCI_R, TYPE_DROIT.DFCI_RECEPTRAVAUX_C]}
+      />
     ),
     children: [
       {
@@ -765,7 +777,7 @@ export default [
         element: (
           <Authorization
             Component={TourneePei}
-            droits={[TYPE_DROIT.TOURNEE_A]}
+            droits={[TYPE_DROIT.TOURNEE_A, TYPE_DROIT.TOURNEE_ORDRE_PEIS_U]}
           />
         ),
       },
@@ -1272,6 +1284,19 @@ export default [
           <Authorization
             Component={ImportRessources}
             droits={[TYPE_DROIT.ADMIN_PARAM_APPLI]}
+          />
+        ),
+      },
+      {
+        path: "/admin/gestion-atlas",
+        element: (
+          <Authorization
+            Component={AtlasManagement}
+            droits={[
+              TYPE_DROIT.ATLAS_A,
+              TYPE_DROIT.ATLAS_C,
+              TYPE_DROIT.ATLAS_D,
+            ]}
           />
         ),
       },

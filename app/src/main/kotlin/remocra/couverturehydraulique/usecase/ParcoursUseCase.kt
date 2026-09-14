@@ -2,81 +2,88 @@ package remocra.couverturehydraulique.usecase
 
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Geometry
-import org.locationtech.jts.geom.LineString
 import org.locationtech.jts.geom.Point
 import org.locationtech.jts.geom.Polygon
 import org.slf4j.LoggerFactory
 import remocra.app.AppSettings
+import remocra.couverturehydraulique.GeometrieUtils
 import remocra.couverturehydraulique.db.CouvertureTraceePeiRepository
-import remocra.couverturehydraulique.db.ReseauRepository
-import remocra.couverturehydraulique.db.SommetRepository
-import remocra.couverturehydraulique.db.TempDistanceRepository
+import remocra.couverturehydraulique.db.PeiRepository.PeiCouvertureHydraulique
+import remocra.couverturehydraulique.graphe.AngleOrdre
+import remocra.couverturehydraulique.graphe.BUFFER_ENDCAP_FLAT
+import remocra.couverturehydraulique.graphe.BUFFER_ENDCAP_ROUND
+import remocra.couverturehydraulique.graphe.BUFFER_SIDE_BOTH
+import remocra.couverturehydraulique.graphe.BUFFER_SIDE_LEFT
+import remocra.couverturehydraulique.graphe.BUFFER_SIDE_RIGHT
+import remocra.couverturehydraulique.graphe.Chemin
+import remocra.couverturehydraulique.graphe.CheminManager
+import remocra.couverturehydraulique.graphe.Graphe
+import remocra.couverturehydraulique.graphe.GrapheManager
+import remocra.couverturehydraulique.graphe.MULTIPOLYGON_TYPE
+import remocra.couverturehydraulique.graphe.ReseauManager
+import remocra.couverturehydraulique.graphe.SommetManager
+import remocra.couverturehydraulique.graphe.Voie
+import remocra.couverturehydraulique.graphe.VoieLateraleGraphe
 import remocra.db.jooq.couverturehydraulique.enums.TypeSide
-import remocra.db.jooq.couverturehydraulique.tables.pojos.TempDistance
-import remocra.db.jooq.couverturehydraulique.tables.pojos.VoieLaterale
 import remocra.usecase.AbstractUseCase
-import remocra.usecase.couverturehydraulique.GeometrieUseCase
+import java.util.ArrayDeque
+import java.util.PriorityQueue
 import java.util.UUID
+import kotlin.collections.get
 
 /**
  * Service pour le parcours du réseau et calcul des couvertures hydrauliques
  * Équivalent de la fonction parcours_couverture_hydraulique
  */
 class ParcoursUseCase @Inject constructor(
-    private val sommetRepository: SommetRepository,
-    private val reseauRepository: ReseauRepository,
-    private val geometrieUseCase: GeometrieUseCase,
+    private val sommetManager: SommetManager,
+    private val reseauManager: ReseauManager,
+    private val geometrieUtils: GeometrieUtils,
     private val appSettings: AppSettings,
     private val voiesLateralesUseCase: VoiesLateralesUseCase,
-    private val tempDistanceRepository: TempDistanceRepository,
     private val couvertureTraceePeiRepository: CouvertureTraceePeiRepository,
+    private val cheminManager: CheminManager,
+    private val grapheManager: GrapheManager,
 ) : AbstractUseCase() {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
-
     companion object {
-        const val BUFFER_SIZE_RESTREINT = 5 // Buffer pour les voies restreintes (niveau != 0)
-        const val BUFFER_SIDE_BOTH = "both"
+        const val BUFFER_SIZE_RESTREINT = 5
+        const val POLYGON_TYPE = "Polygon"
         const val BUFFER_DELTA_POS = 0.001
         const val BUFFER_DELTA_NEG = -0.001
     }
+
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     /**
      * Exécution du parcours principal
      */
     fun executeParcours(
-        depart: UUID,
+        listePeis: List<PeiCouvertureHydraulique>,
         idEtude: UUID,
-        idReseauImporte: UUID?,
-        tabDistances: IntArray,
+        distance: Int,
         profondeurCouverture: Int,
-        useReseauImporteWithCourant: Boolean,
+        graphe: Graphe,
     ): Int {
         try {
-            tempDistanceRepository.emptyTable()
-
-            for (dist in tabDistances) {
+            for (pei in listePeis) {
                 try {
-                    executeParcoursDistance(
-                        depart,
+                    executeParcoursPei(
+                        pei,
                         idEtude,
-                        idReseauImporte,
-                        dist,
+                        distance,
                         profondeurCouverture,
-                        useReseauImporteWithCourant,
-                        tabDistances,
+                        listePeis,
+                        graphe,
                     )
                 } catch (e: Exception) {
-                    logger.error("ERREUR lors du parcours: ${e.message}")
+                    logger.warn("ERREUR lors du parcours du pei ${pei.peiId}: ${e.message}")
                 }
             }
 
-            emptyTablesTemporaires()
-            // Nettoyage systématique des champs reseau_pei_troncon pour ce PEI
-            cleanupPeiTroncon(depart)
             return 1
         } catch (e: Exception) {
-            logger.error("ERREUR: ${e.message}")
+            logger.warn("ERREUR dans executeParcours: ${e.message}")
             return 0
         }
     }
@@ -84,70 +91,129 @@ class ParcoursUseCase @Inject constructor(
     /**
      * Parcours pour une distance donnée
      */
-    private fun executeParcoursDistance(
-        depart: UUID,
+    private fun executeParcoursPei(
+        pei: PeiCouvertureHydraulique,
         idEtude: UUID,
-        idReseauImporte: UUID?,
         distance: Int,
         profondeurCouverture: Int,
-        useReseauImporteWithCourant: Boolean,
-        tabDistances: IntArray,
+        listePeis: List<PeiCouvertureHydraulique>,
+        graphe: Graphe,
     ) {
-        try {
-            val noeudsAVisiter = mutableListOf<UUID>()
-            val noeudsVisites = mutableListOf<UUID>()
-            var debutChemin = true
+        val noeudsAVisiter = PriorityQueue<Pair<UUID, Double>>(compareBy { it.second })
+        val noeudsVisites = mutableSetOf<UUID>()
+        var debutChemin = true
+        val index = listePeis.indexOf(pei)
+        var tree = Chemin.Exploration.trees.getOrNull(index)
+        val depart = pei.peiId
 
-            // Initialisation du parcours
-            if (tabDistances[0] == distance) {
+        // Initialisation du parcours
+        if (tree == null) {
+            if (listePeis[0] == pei) {
                 // Premier parcours depuis ce PEI
-                tempDistanceRepository.deleteByPeiDepart(depart)
-                val premierNoeud = reseauRepository.getSommetSourcePei(depart)
+                val premierNoeud = reseauManager.getSommetSourcePei(depart, graphe)
                 if (premierNoeud != null) {
-                    noeudsAVisiter.add(premierNoeud)
+                    // Vérifier la connectivité du sommet dans le graphe
+                    tree = cheminManager.initializeChemin(depart, distance.toDouble(), null)
+                    if (index >= 0 && index < Chemin.Exploration.trees.size) {
+                        Chemin.Exploration.trees[index] = tree
+                    } else {
+                        Chemin.Exploration.trees.add(tree)
+                    }
+                    noeudsAVisiter.add(Pair(premierNoeud, 0.0))
                 } else {
                     return // Pas de nœud de départ, on ne peut pas continuer
                 }
             } else {
-                // Parcours suivants : reprendre les données du parcours précédent
-                val distancePrecedente = tabDistances[tabDistances.indexOf(distance) - 1]
-                val noeudsFromPrevious = tempDistanceRepository.getNoeudsFromPreviousParcours(distancePrecedente)
-                noeudsAVisiter.addAll(noeudsFromPrevious)
-
-                if (noeudsAVisiter.isEmpty()) {
-                    return
-                }
-
-                tempDistanceRepository.deleteByPeiAndDistance(depart, distancePrecedente)
-            }
-
-            // Parcours des nœuds
-            while (noeudsAVisiter.isNotEmpty()) {
-                val noeudCourant = noeudsAVisiter[0]
-                noeudsVisites.add(noeudCourant)
-                try {
-                    val courantRecord = tempDistanceRepository.getByPeiAndSommet(depart, noeudCourant)
-                    var voieCourante: UUID? = null
-                    if (courantRecord == null) {
-                        voieCourante = reseauRepository.getIdTronconPei(depart)
+                // Avant de commencer un nouveau parcours, on regarde si notre point de départ est inclu dans un arbre déjà parcouru
+                var arbre: Int = index
+                var distanceMin: Double = distance.toDouble()
+                Chemin.Exploration.trees.forEach {
+                    val nodeList = it.nodes[pei.peiId]
+                    nodeList?.forEach { node ->
+                        if (node.distance < distanceMin) {
+                            distanceMin = node.distance
+                            arbre = Chemin.Exploration.trees.indexOf(it)
+                        }
                     }
-                    exploreVoisins(
-                        noeudCourant, voieCourante, depart, idReseauImporte,
-                        distance, profondeurCouverture, useReseauImporteWithCourant,
-                        courantRecord, noeudsAVisiter, noeudsVisites, debutChemin,
-                    )
-                } catch (_: Exception) {
-                    // Continue avec le nœud suivant au lieu d'arrêter tout le parcours
-                    logger.info("Pas de voisin à visiter pour le noeud: $noeudCourant")
                 }
-                debutChemin = false
-                noeudsAVisiter.removeAt(0)
+                val premierNoeud = reseauManager.getSommetSourcePei(depart, graphe)
+                if (premierNoeud != null) {
+                    // Vérifier la connectivité du sommet dans le graphe
+                    tree = cheminManager.initializeChemin(depart, distance.toDouble(), null)
+                    if (index >= 0 && index < Chemin.Exploration.trees.size) {
+                        Chemin.Exploration.trees[index] = tree
+                    } else {
+                        Chemin.Exploration.trees.add(tree)
+                    }
+                    noeudsAVisiter.add(Pair(premierNoeud, 0.0))
+                } else {
+                    return // Pas de nœud de départ, on ne peut pas continuer
+                }
+                // Si à ce point, on a arbre différent d'index alors le nœud est contenu dans un arbre donc on recalcule.
+                if (arbre != index) {
+                    recalculateArbrePartiel(
+                        noeudsAVisiter,
+                        Chemin.Exploration.trees[index],
+                        index,
+                        Chemin.Exploration.trees[arbre],
+                    )
+                }
+                // Sinon, on commence un parcours de zéro
             }
-            // Sauvegarde de la couverture calculée
-            saveCouverture(depart, idEtude, distance)
-        } catch (e: Exception) {
-            throw e
+        } else {
+            // Si l'arbre n'est pas null, on vérifie si on a les mêmes paramètres
+            if (tree.start != depart || tree.distanceMax != distance.toDouble()) {
+                val premierNoeud = reseauManager.getSommetSourcePei(depart, graphe)
+                if (premierNoeud != null) {
+                    tree = cheminManager.initializeChemin(depart, distance.toDouble(), null)
+                    if (index >= 0 && index < Chemin.Exploration.trees.size) {
+                        Chemin.Exploration.trees[index] = tree
+                    } else {
+                        Chemin.Exploration.trees.add(tree)
+                    }
+                    noeudsAVisiter.add(Pair(premierNoeud, 0.0))
+                } else {
+                    return // Pas de nœud de départ, on ne peut pas continuer
+                }
+            } else {
+                return
+            }
         }
+
+        // Parcours des nœuds
+        while (noeudsAVisiter.isNotEmpty()) {
+            val noeudCourant = noeudsAVisiter.poll().first // <-- FIFO (file)
+            noeudsVisites.add(noeudCourant)
+
+            try {
+                val courantRecordList = tree.nodes[noeudCourant]
+                val courantRecord = courantRecordList?.minByOrNull { it.distance }
+
+                var voieCourante: UUID? = null
+
+                if (courantRecord == null) {
+                    voieCourante = reseauManager.getIdTronconPei(depart, graphe)
+                }
+                exploreVoisins(
+                    noeudCourant, voieCourante, courantRecord,
+                    distance, profondeurCouverture,
+                    noeudsAVisiter, noeudsVisites, debutChemin, tree, graphe, index,
+                )
+            } catch (e: Exception) {
+                logger.warn(
+                    "Anomalie ignorée sur un noeud du parcours (peiId={}, noeudCourant={}) : {}",
+                    depart,
+                    noeudCourant,
+                    e.message,
+                )
+                // Continue avec le nœud suivant au lieu d'arrêter tout le parcours
+            }
+
+            debutChemin = false // <-- File déjà initialisée
+        }
+
+        // Sauvegarde de la couverture calculée
+        saveCouverture(depart, idEtude, distance)
     }
 
     /**
@@ -156,71 +222,37 @@ class ParcoursUseCase @Inject constructor(
     private fun exploreVoisins(
         noeudCourant: UUID,
         voieCourante: UUID?,
-        depart: UUID,
-        idReseauImporte: UUID?,
+        courantRecord: Chemin.CheminNode?,
         distance: Int,
         profondeurCouverture: Int,
-        useReseauImporteWithCourant: Boolean,
-        courantRecord: TempDistance?,
-        noeudsAVisiter: MutableList<UUID>,
-        noeudsVisites: List<UUID>,
+        noeudsAVisiter: PriorityQueue<Pair<UUID, Double>>,
+        noeudsVisites: MutableSet<UUID>,
         debutChemin: Boolean,
+        tree: Chemin.CheminTree,
+        graphe: Graphe,
+        index: Int,
     ) {
-        val voieCalcul = courantRecord?.tempDistanceVoieCourante ?: voieCourante
+        val voieCalcul = courantRecord?.voieId ?: voieCourante
         if (voieCalcul == null) {
-            logger.warn("WARN: Pas de voie courante pour calculer les voies latérales")
             return
         }
+
         voiesLateralesUseCase.computeVoiesLaterales(
             voieCalcul,
             noeudCourant,
-            idReseauImporte,
-            useReseauImporteWithCourant,
-        )
-        val voieGauche = voiesLateralesUseCase.getVoieGauche()
-        val voieDroite = voiesLateralesUseCase.getVoieDroite()
-        // Récupération des voisins exactement comme dans le SQL
-        val voisinsSortants = reseauRepository.getTronconsSortants(
-            noeudCourant,
-            idReseauImporte,
-            useReseauImporteWithCourant,
+            graphe,
         )
 
-        val voisinsEntrants = reseauRepository.getTronconsEntrants(
-            noeudCourant,
-            idReseauImporte,
-            useReseauImporteWithCourant,
-        )
+        val voieGauche = voiesLateralesUseCase.getVoieGauche(graphe)
+        val voieDroite = voiesLateralesUseCase.getVoieDroite(graphe)
 
         // Mapper exactement comme le SQL avec inversion de géométrie pour les entrants
-        val voisins = voisinsSortants.map { record ->
-            VoisinInfo(
-                reseauId = record.reseauId,
-                destination = record.reseauSommetDestination,
-                source = record.reseauSommetSource,
-                distance = (record.reseauGeometrie as LineString).length,
-                geometrie = record.reseauGeometrie as LineString,
-                peiTroncon = record.reseauPeiTroncon,
-                traversable = record.reseauTraversable ?: true,
-                niveau = record.reseauNiveau ?: 0,
-            )
-        } + voisinsEntrants.map { record ->
-            VoisinInfo(
-                reseauId = record.reseauId,
-                destination = record.reseauSommetSource, // source devient destination
-                source = record.reseauSommetSource, // garder source comme source (comme dans SQL)
-                distance = (record.reseauGeometrie as LineString).length,
-                geometrie = geometrieUseCase.reverseLineString(record.reseauGeometrie as LineString), // Inverser la géométrie
-                peiTroncon = record.reseauPeiTroncon,
-                traversable = record.reseauTraversable ?: true,
-                niveau = record.reseauNiveau ?: 0,
-            )
-        }
+        val voisins = grapheManager.getVoiesNormalisees(graphe.sommets[noeudCourant])
 
-        // Filtrer selon voies latérales
+        // Filtrer selon voies latérales APRÈS le mapping
         val voisinsFiltres = voisins.filter { voisin ->
-            val estVoieLaterale = voiesLateralesUseCase.isVoieLaterale(voisin.reseauId)
-            val aucuneVoieLaterale = voiesLateralesUseCase.aucuneVoieLaterale()
+            val estVoieLaterale = voiesLateralesUseCase.isVoieLaterale(voisin.id, graphe)
+            val aucuneVoieLaterale = voiesLateralesUseCase.hasNoVoieLaterale(graphe)
             estVoieLaterale || aucuneVoieLaterale
         }
 
@@ -228,102 +260,92 @@ class ParcoursUseCase @Inject constructor(
         var debutCheminLocal = debutChemin
 
         for (voisin in voisinsFiltres) {
-            if (shouldIgnoreVoisin(voisin, courantRecord, debutCheminLocal)) {
+            if (shouldIgnoreVoisin(voisin, courantRecord?.voieId, debutCheminLocal)) {
                 continue
             }
-
-            val voisinLateral = voiesLateralesUseCase.getVoieLaterale(voisin.reseauId)
-
-            if (voisinLateral != null && voisinLateral.voieLateraleAccessible == false) {
+            val voisinLateral = voiesLateralesUseCase.getVoieLaterale(voisin.id, graphe)
+            if (voisinLateral != null && voisinLateral.accessible == false) {
                 continue
             }
-
-            if (voieGauche != null && voieDroite != null && voieGauche.voieLateraleVoieVoisine != voieDroite.voieLateraleVoieVoisine) {
-                // Si c'est une voie à gauche, que la voie courante est non traversable,
-                // qu'on trace le buffer sur la droite et que ce n'est pas la première voie non traversable à droite
-                val premiereVoieNonTraversableDroite = voiesLateralesUseCase.getFirstVoieNonTraversable("DESC")
-                if (voisinLateral?.voieLateraleGauche == true &&
-                    courantRecord?.tempDistanceTraversable == false &&
-                    courantRecord.tempDistanceSide == TypeSide.RIGHT &&
-                    premiereVoieNonTraversableDroite?.voieLateraleVoieVoisine != voisinLateral.voieLateraleVoieVoisine
+            if (voieGauche != null && voieDroite != null && voieGauche.voieVoisine != voieDroite.voieVoisine) {
+                val premiereVoieNonTraversableDroite = voiesLateralesUseCase.getFirstVoieNonTraversable(AngleOrdre.DESC, graphe)
+                if (voisinLateral?.gauche == true &&
+                    graphe.voies[courantRecord?.voieId]?.traversable == false &&
+                    courantRecord?.side == TypeSide.RIGHT &&
+                    premiereVoieNonTraversableDroite?.voieVoisine != voisinLateral.voieVoisine
                 ) {
                     continue
                 }
-
-                // Si c'est une voie à droite, que la voie courante est non traversable,
-                // qu'on trace le buffer sur la gauche et que ce n'est pas la première voie non traversable à gauche
-                val premiereVoieNonTraversableGauche = voiesLateralesUseCase.getFirstVoieNonTraversable("ASC")
-                if (voisinLateral?.voieLateraleDroite == true &&
-                    courantRecord?.tempDistanceTraversable == false &&
-                    courantRecord.tempDistanceSide == TypeSide.LEFT &&
-                    premiereVoieNonTraversableGauche?.voieLateraleVoieVoisine != voisinLateral.voieLateraleVoieVoisine
+                val premiereVoieNonTraversableGauche = voiesLateralesUseCase.getFirstVoieNonTraversable(AngleOrdre.ASC, graphe)
+                if (voisinLateral?.droite == true &&
+                    graphe.voies[courantRecord?.voieId]?.traversable == false &&
+                    courantRecord?.side == TypeSide.LEFT &&
+                    premiereVoieNonTraversableGauche?.voieVoisine != voisinLateral.voieVoisine
                 ) {
                     continue
                 }
             }
-
             val distanceParcourue = computeDistanceParcourue(voisin, courantRecord)
-
-            // Gestion des voies trop longues : troncature (équivalent SQL v2)
             var voisinAjuste = voisin
             var distanceFinale = distanceParcourue
             var bufferEndPoint: Point? = null
-
-            if (distanceParcourue > distance && (courantRecord?.tempDistanceDistance ?: 0.0) < distance) {
-                // La voie dépasse la limite mais on peut en parcourir une partie
+            if (distanceParcourue > distance && (courantRecord?.distance ?: 0.0) < distance) {
                 val fraction = when {
                     distanceParcourue <= distance -> 1.0
-                    else -> (1.0 - ((distanceParcourue - distance) / voisin.distance))
+                    else -> (1.0 - ((distanceParcourue - distance) / voisin.geometrie.length))
                 }
-
-                val geometrieTronquee = geometrieUseCase.lineSubstring(voisin.geometrie, 0.0, fraction)
+                val geometrieTronquee = geometrieUtils.lineSubstring(voisin.geometrie, 0.0, fraction)
                 voisinAjuste = voisin.copy(
                     geometrie = geometrieTronquee,
-                    distance = geometrieTronquee.length,
                 )
-                // Pour la géométrie tronquée, on prend le dernier point
                 bufferEndPoint = geometrieTronquee.endPoint
                 distanceFinale = distance.toDouble()
             } else {
-                // Récupérer le point de fin seulement si pas début de chemin ET destination non null
                 if (!debutCheminLocal && voisin.destination != null) {
-                    bufferEndPoint = sommetRepository.getPoint(voisin.destination)
+                    bufferEndPoint = sommetManager.getGeometrie(voisin.destination!!, graphe)
                 }
             }
 
-            // Vérification de l'existence du trajet et de la distance
-            val existeDeja = tempDistanceRepository.checkIfExistTrajet(
-                depart,
-                voisin.destination,
-                voisin.reseauId,
-            )
-
-            if (!existeDeja && distanceFinale <= distance) {
+            val nodeList = tree.nodes[voisin.destination]
+            var updated = false
+            if (nodeList != null) {
+                for (node in nodeList) {
+                    if (node.voieId == voisin.id) {
+                        if (distanceFinale < node.distance) {
+                            // Mise à jour de la distance et du parent
+                            node.distance = distanceFinale
+                            node.parent = courantRecord
+                            node.geometry = null // sera mis à jour par sauvegarderChemin
+                            node.voieGeom = voisin.geometrie
+                            updated = true
+                        }
+                        // Si la distance n'est pas meilleure, on ne fait rien
+                    }
+                }
+            }
+            if (!updated && distanceFinale <= distance) {
                 val buffer = createBuffer(
                     voisinAjuste, // Utiliser voisinAjuste au lieu de voisin
-                    courantRecord,
                     voieGauche,
                     voieDroite,
+                    courantRecord,
                     profondeurCouverture,
-                    idReseauImporte,
-                    useReseauImporteWithCourant,
                     bufferEndPoint,
+                    graphe,
                 )
-
-                saveTempDistance(
-                    depart,
+                saveChemin(
                     voisinAjuste,
                     distanceFinale,
+                    courantRecord,
                     buffer,
-                    courantRecord?.tempDistanceVoieCourante ?: voieCourante!!,
-                    courantRecord?.tempDistanceSide ?: TypeSide.BOTH,
+                    courantRecord?.side ?: TypeSide.BOTH,
+                    tree,
+                    index,
                 )
             }
-
             if (!noeudsVisites.contains(voisin.destination) && distanceFinale < distance && voisin.destination != null) {
-                noeudsAVisiter.add(voisin.destination)
+                noeudsAVisiter.add(Pair(voisin.destination!!, distanceFinale))
             }
-
             debutCheminLocal = false
         }
     }
@@ -332,28 +354,29 @@ class ParcoursUseCase @Inject constructor(
      * Création du buffer pour une voie
      */
     private fun createBuffer(
-        voisin: VoisinInfo,
-        courantRecord: TempDistance?,
-        voieGauche: VoieLaterale?,
-        voieDroite: VoieLaterale?,
+        voisin: Voie,
+        voieGauche: VoieLateraleGraphe?,
+        voieDroite: VoieLateraleGraphe?,
+        courantRecord: Chemin.CheminNode?,
         profondeurCouverture: Int,
-        idReseauImporte: UUID?,
-        useReseauImporteWithCourant: Boolean,
         bufferEndPoint: Point? = null,
+        graphe: Graphe,
     ): Geometry {
         // Détermination du côté du buffer
         val (bufferSide, bufferEndCap) = determineParametresBuffer(
             voisin,
-            courantRecord,
             voieGauche,
             voieDroite,
+            courantRecord,
+            graphe,
         )
 
         // Taille du buffer selon le niveau
-        val tailleBuffer = if (voisin.niveau != 0) BUFFER_SIZE_RESTREINT else profondeurCouverture
+        val tailleBuffer =
+            if (voisin.niveau != 0) BUFFER_SIZE_RESTREINT else profondeurCouverture
 
         // Création du buffer initial
-        var buffer = geometrieUseCase.createBuffer(
+        var buffer = geometrieUtils.createBuffer(
             voisin.geometrie,
             tailleBuffer.toDouble(),
             bufferSide,
@@ -364,134 +387,108 @@ class ParcoursUseCase @Inject constructor(
         buffer = splitByVoiesNonTraversables(
             buffer,
             voisin,
-            idReseauImporte,
-            useReseauImporteWithCourant,
+            graphe,
         ).getGeometryN(0) as Polygon
 
         // Ajout du buffer des sommets si nécessaire et si bufferEndPoint est fourni
         if (bufferSide != BUFFER_SIDE_BOTH && bufferEndPoint != null) {
-            buffer = addBufferSommets(buffer, bufferEndPoint, profondeurCouverture, idReseauImporte, useReseauImporteWithCourant)
+            buffer = addBufferSommets(buffer, bufferEndPoint, profondeurCouverture, graphe)
         }
 
         buffer.srid = appSettings.srid
         return buffer
     }
 
-    private data class VoisinInfo(
-        val reseauId: UUID,
-        val destination: UUID?,
-        val source: UUID?,
-        val distance: Double,
-        val geometrie: LineString,
-        val peiTroncon: UUID?,
-        val traversable: Boolean,
-        val niveau: Int,
-    )
-
     private fun determineParametresBuffer(
-        voisin: VoisinInfo,
-        courantRecord: TempDistance?,
-        voieGauche: VoieLaterale?,
-        voieDroite: VoieLaterale?,
+        voisin: Voie,
+        voieGauche: VoieLateraleGraphe?,
+        voieDroite: VoieLateraleGraphe?,
+        courantRecord: Chemin.CheminNode?,
+        graphe: Graphe,
     ): Pair<String, String> {
         val bufferSide: String
         val bufferEndCap: String
-
         when {
-            courantRecord?.tempDistanceTraversable == false && !voisin.traversable -> {
-                bufferSide = courantRecord.tempDistanceSide?.name ?: "both"
-                bufferEndCap = "round"
+            graphe.voies[courantRecord?.voieId]?.traversable == false && !voisin.traversable -> {
+                bufferSide = courantRecord?.side?.name ?: BUFFER_SIDE_BOTH
+                bufferEndCap = BUFFER_ENDCAP_ROUND
             }
             voisin.traversable -> {
-                bufferSide = "both"
-                bufferEndCap = "round"
+                bufferSide = BUFFER_SIDE_BOTH
+                bufferEndCap = BUFFER_ENDCAP_ROUND
             }
-            voieGauche?.voieLateraleVoieVoisine == voieDroite?.voieLateraleVoieVoisine -> {
-                bufferSide = courantRecord?.tempDistanceSide?.name ?: "both"
-                bufferEndCap = "round"
+            voieGauche?.voieVoisine == voieDroite?.voieVoisine -> {
+                bufferSide = courantRecord?.side?.name ?: BUFFER_SIDE_BOTH
+                bufferEndCap = BUFFER_ENDCAP_ROUND
             }
-            voisin.reseauId == voieGauche?.voieLateraleVoieVoisine -> {
-                bufferSide = if (courantRecord?.tempDistanceSide?.name == BUFFER_SIDE_BOTH) {
-                    "left"
-                } else courantRecord?.tempDistanceSide?.name ?: "left"
-                bufferEndCap = "flat"
+            voisin.id == voieGauche?.voieVoisine -> {
+                bufferSide = if (courantRecord?.side?.name == BUFFER_SIDE_BOTH) {
+                    BUFFER_SIDE_LEFT
+                } else courantRecord?.side?.name ?: BUFFER_SIDE_LEFT
+                bufferEndCap = BUFFER_ENDCAP_FLAT
             }
-            voisin.reseauId == voieDroite?.voieLateraleVoieVoisine -> {
-                bufferSide = if (courantRecord?.tempDistanceSide?.name == BUFFER_SIDE_BOTH) {
-                    "right"
-                } else courantRecord?.tempDistanceSide?.name ?: "right"
-                bufferEndCap = "flat"
+            voisin.id == voieDroite?.voieVoisine -> {
+                bufferSide = if (courantRecord?.side?.name == BUFFER_SIDE_BOTH) {
+                    BUFFER_SIDE_RIGHT
+                } else courantRecord?.side?.name ?: BUFFER_SIDE_RIGHT
+                bufferEndCap = BUFFER_ENDCAP_FLAT
             }
             else -> {
-                bufferSide = "both"
-                bufferEndCap = "round"
+                bufferSide = BUFFER_SIDE_BOTH
+                bufferEndCap = BUFFER_ENDCAP_ROUND
             }
         }
-
         return Pair(bufferSide, bufferEndCap)
     }
 
-    private fun saveCouverture(depart: UUID, idEtude: UUID, distance: Int) {
+    fun saveCouverture(depart: UUID, idEtude: UUID, distance: Int, tree: Chemin.CheminTree? = null) {
         // Suppression de l'ancienne couverture
         couvertureTraceePeiRepository.delete(distance, depart, idEtude)
-
-        // Union incrémentale des géométries temporaires (comme en SQL)
-        val geometries = tempDistanceRepository.getGeometries(depart)
+        // Utiliser l'arbre fourni si présent, sinon l'arbre global
+        val geometries = (tree ?: Chemin.Exploration.trees.find { it.start == depart })
+            ?.nodes
+            ?.values
+            ?.flatten()
+            ?.filter { it.distance <= distance }
+            ?.mapNotNull { it.geometry }
+            ?: emptyList()
         var geometrieUnion: Geometry? = null
-
         for (geom in geometries) {
-            geometrieUnion = geometrieUseCase.safeUnion(geometrieUnion, geom)
+            geometrieUnion = geometrieUtils.safeUnion(geometrieUnion, geom)
         }
-
         // Traitement des MultiPolygon vers Polygon (équivalent SQL v2)
-        if (geometrieUnion != null && geometrieUnion.geometryType == "MultiPolygon") {
+        if (geometrieUnion != null && geometrieUnion.geometryType == MULTIPOLYGON_TYPE) {
             try {
-                val buffered = geometrieUseCase.createBuffer(geometrieUnion, BUFFER_DELTA_POS)
-                geometrieUnion = geometrieUseCase.createBuffer(buffered, BUFFER_DELTA_NEG)
+                val buffered = geometrieUtils.createBuffer(geometrieUnion, BUFFER_DELTA_POS)
+                geometrieUnion = geometrieUtils.createBuffer(buffered, BUFFER_DELTA_NEG)
             } catch (e: Exception) {
-                logger.warn("WARN: Échec de conversion MultiPolygon vers Polygon: ${e.message}")
+                logger.warn("WARN: Échec de conversion MultiPolygon vers Polygon: " + e.message)
             }
         }
-
-        if (geometrieUnion != null && geometrieUnion.geometryType == "Polygon") {
+        if (geometrieUnion != null && (geometrieUnion.geometryType == POLYGON_TYPE || geometrieUnion.geometryType == MULTIPOLYGON_TYPE)) {
             geometrieUnion.srid = appSettings.srid
             couvertureTraceePeiRepository.insert(distance, depart, idEtude, geometrieUnion)
         }
     }
 
-    private fun emptyTablesTemporaires() {
-        voiesLateralesUseCase.emptyTable()
-        tempDistanceRepository.emptyTable()
-    }
-
-    /**
-     * Nettoie tous les champs reseau_pei_troncon pour un PEI donné à la fin d'un parcours.
-     */
-    private fun cleanupPeiTroncon(peiId: UUID) {
-        reseauRepository.resetPeiTronconByPei(peiId)
-    }
-
-    // Méthodes utilitaires simplifiées pour l'exemple
-    private fun shouldIgnoreVoisin(voisin: VoisinInfo, courantRecord: TempDistance?, debutChemin: Boolean): Boolean {
+    private fun shouldIgnoreVoisin(voisin: Voie, voieCourante: UUID?, debutChemin: Boolean): Boolean {
         return (voisin.peiTroncon != null && !debutChemin) ||
-            (courantRecord != null && voisin.reseauId == courantRecord.tempDistanceVoieCourante)
+            (voieCourante != null && voisin.id == voieCourante)
     }
 
-    private fun computeDistanceParcourue(voisin: VoisinInfo, courantRecord: TempDistance?): Double {
-        return voisin.distance + (courantRecord?.tempDistanceDistance ?: 0.0)
+    private fun computeDistanceParcourue(voisin: Voie, node: Chemin.CheminNode?): Double {
+        return voisin.geometrie.length + (node?.distance ?: 0.0)
     }
 
     private fun splitByVoiesNonTraversables(
         buffer: Geometry,
-        voisin: VoisinInfo,
-        idReseauImporte: UUID?,
-        useReseauImporteWithCourant: Boolean,
+        voisin: Voie,
+        graphe: Graphe,
     ): Geometry {
-        val voiesNonTraversables = reseauRepository.getTronconsNonTraversablesIntersectant(
+        val voiesNonTraversables = reseauManager.getTronconsNonTraversablesIntersectant(
             buffer,
-            voisin.reseauId,
-            idReseauImporte,
-            useReseauImporteWithCourant,
+            voisin.id,
+            graphe,
         )
 
         if (voiesNonTraversables.isEmpty()) {
@@ -499,14 +496,14 @@ class ParcoursUseCase @Inject constructor(
         }
 
         // Union de toutes les voies non traversables qui intersectent le buffer
-        val bladeGeometries = voiesNonTraversables.map { it.reseauGeometrie }
+        val bladeGeometries = voiesNonTraversables.map { it.geometrie }
         var blade: Geometry? = null
 
         for (voieGeom in bladeGeometries) {
             blade = if (blade == null) {
                 voieGeom
             } else {
-                geometrieUseCase.safeUnion(blade, voieGeom) ?: blade
+                geometrieUtils.safeUnion(blade, voieGeom) ?: blade
             }
         }
 
@@ -515,12 +512,10 @@ class ParcoursUseCase @Inject constructor(
         }
 
         // Découpage du buffer par les voies non traversables (équivalent ST_SPLIT du SQL)
-        val splitResult = geometrieUseCase.split(buffer, blade)
-
-        // Si le split a créé plusieurs géométries, on prend celle la plus proche du début de la voie
-        return if (geometrieUseCase.getNumGeometries(splitResult) > 1) {
-            val pointRef = geometrieUseCase.lineInterpolatePoint(voisin.geometrie, BUFFER_DELTA_POS)
-            geometrieUseCase.getClosestGeometry(splitResult, pointRef) ?: buffer
+        val splitResult = geometrieUtils.split(buffer, blade)
+        return if (geometrieUtils.getNumGeometries(splitResult) > 1) {
+            val pointRef = geometrieUtils.lineInterpolatePoint(voisin.geometrie, BUFFER_DELTA_POS)
+            geometrieUtils.getClosestGeometry(splitResult, pointRef) ?: buffer
         } else {
             splitResult
         }
@@ -530,49 +525,44 @@ class ParcoursUseCase @Inject constructor(
         buffer: Geometry,
         endPoint: Point,
         profondeurCouverture: Int,
-        idReseauImporte: UUID?,
-        useReseauImporteWithCourant: Boolean,
+        graphe: Graphe,
     ): Geometry {
-        val bufferSommets = geometrieUseCase.createBuffer(endPoint, profondeurCouverture.toDouble())
+        val bufferSommets = geometrieUtils.createBuffer(endPoint, profondeurCouverture.toDouble())
 
         // Récupération des voies non traversables qui intersectent le buffer du sommet
-        val voiesNonTraversables = reseauRepository.getTronconsNonTraversablesIntersectant(
+        val voiesNonTraversables = reseauManager.getTronconsNonTraversablesIntersectant(
             bufferSommets,
             UUID.randomUUID(),
-            idReseauImporte,
-            useReseauImporteWithCourant,
+            graphe,
         )
 
         if (voiesNonTraversables.isEmpty()) {
-            return geometrieUseCase.safeUnion(buffer, bufferSommets) ?: buffer
+            return geometrieUtils.safeUnion(buffer, bufferSommets) ?: buffer
         }
 
         // Union de toutes les voies non traversables
-        val bladeGeometries = voiesNonTraversables.map { it.reseauGeometrie }
+        val bladeGeometries = voiesNonTraversables.map { it.geometrie }
         var bladeSommets: Geometry? = null
 
         for (voieGeom in bladeGeometries) {
             bladeSommets = if (bladeSommets == null) {
                 voieGeom
             } else {
-                geometrieUseCase.safeUnion(bladeSommets, voieGeom) ?: bladeSommets
+                geometrieUtils.safeUnion(bladeSommets, voieGeom) ?: bladeSommets
             }
         }
 
         if (bladeSommets == null) {
-            return geometrieUseCase.safeUnion(buffer, bufferSommets) ?: buffer
+            return geometrieUtils.safeUnion(buffer, bufferSommets) ?: buffer
         }
 
         // Découpage du buffer des sommets
-        val splitResult = geometrieUseCase.split(bufferSommets, bladeSommets)
-
-        // On prend la partie qui a le plus d'intersection avec le buffer principal
+        val splitResult = geometrieUtils.split(bufferSommets, bladeSommets)
         var bestGeom: Geometry? = null
         var maxIntersectionRatio = 0.0
-
-        for (i in 0 until geometrieUseCase.getNumGeometries(splitResult)) {
+        for (i in 0 until geometrieUtils.getNumGeometries(splitResult)) {
             val geom = splitResult.getGeometryN(i)
-            val intersection = geometrieUseCase.safeIntersection(geom, buffer)
+            val intersection = geometrieUtils.safeIntersection(geom, buffer)
             if (intersection != null && geom.area > 0) {
                 val ratio = intersection.area / geom.area
                 if (ratio > maxIntersectionRatio) {
@@ -581,38 +571,88 @@ class ParcoursUseCase @Inject constructor(
                 }
             }
         }
-
         return if (bestGeom != null) {
-            geometrieUseCase.safeUnion(buffer, bestGeom) ?: buffer
+            geometrieUtils.safeUnion(buffer, bestGeom) ?: buffer
         } else {
             buffer
         }
     }
 
-    private fun saveTempDistance(
-        depart: UUID,
-        voisin: VoisinInfo,
+    private fun saveChemin(
+        voisin: Voie,
         distanceParcourue: Double,
+        courantRecord: Chemin.CheminNode?,
         buffer: Geometry,
-        voiePrecedente: UUID,
         side: TypeSide,
+        tree: Chemin.CheminTree,
+        index: Int,
     ) {
-        // Gérer le cast MultiPolygon -> Polygon comme dans le SQL
         var bufferFinal = buffer
-        if (buffer.geometryType == "MultiPolygon") {
-            // Le SQL utilise ST_Dump pour prendre le premier polygon
+        if (buffer.geometryType == MULTIPOLYGON_TYPE) {
             bufferFinal = buffer.getGeometryN(0)
         }
-
-        tempDistanceRepository.insert(
-            peiDepart = depart,
-            sommet = voisin.destination!!,
-            voieCourante = voisin.reseauId,
-            voiePrecedente = voiePrecedente, // Utiliser voiePrecedente passée en paramètre
+        val node = Chemin.CheminNode(
+            sommetId = voisin.destination!!,
             distance = distanceParcourue,
-            geometrie = bufferFinal,
-            traversable = voisin.traversable,
+            parent = courantRecord,
+            voieId = voisin.id,
             side = side,
+            geometry = bufferFinal,
+            voieGeom = voisin.geometrie,
         )
+        tree.addNode(node)
+        if (index >= 0 && index < Chemin.Exploration.trees.size) {
+            Chemin.Exploration.trees[index] = tree
+        } else {
+            Chemin.Exploration.trees.add(tree)
+        }
+    }
+
+    private fun recalculateArbrePartiel(
+        noeudsAVisiter: PriorityQueue<Pair<UUID, Double>>,
+        tree: Chemin.CheminTree,
+        index: Int,
+        oldTree: Chemin.CheminTree,
+    ) {
+        val s2 = tree.start
+        val distFromS2 = mutableMapOf<UUID, Double>()
+        distFromS2[s2] = 0.0
+
+        val stack = ArrayDeque<Chemin.CheminNode>()
+        val startNodeList = oldTree.nodes[s2] ?: return
+        startNodeList.forEach { startNode ->
+            stack.add(startNode)
+            noeudsAVisiter.add(Pair(s2, 0.0))
+        }
+        while (stack.isNotEmpty()) {
+            val node = stack.removeLast()
+
+            val children = tree.nodes.values.flatten().filter { it.parent?.sommetId == node.sommetId }
+
+            for (child in children) {
+                val newDist = distFromS2[node.sommetId]!! + (child.distance - node.distance)
+
+                if (newDist > tree.distanceMax) continue
+
+                val oldChildList = oldTree.nodes[child.sommetId]
+                val oldChild = oldChildList?.minByOrNull { it.distance }
+                val newNode = Chemin.CheminNode(
+                    sommetId = child.sommetId,
+                    distance = newDist,
+                    parent = tree.nodes[node.sommetId]?.minByOrNull { it.distance },
+                    voieId = child.voieId,
+                    side = child.side,
+                    geometry = child.geometry,
+                    voieGeom = oldChild?.voieGeom,
+                )
+
+                tree.addNode(newNode)
+                distFromS2[child.sommetId] = newDist
+
+                stack.add(child)
+                noeudsAVisiter.add(Pair(child.sommetId, newDist))
+            }
+        }
+        Chemin.Exploration.trees[index] = tree
     }
 }

@@ -31,6 +31,7 @@ const UpdateIndisponibiliteTemporaire = () => {
     >
       <IndisponibiliteTemporaireForm
         title={"Modifier une indisponibilité temporaire"}
+        indisponibiliteTemporaireId={indisponibiliteTemporaireId}
       />
     </MyFormik>
   );

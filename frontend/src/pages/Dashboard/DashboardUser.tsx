@@ -27,21 +27,15 @@ const ComponentBoardList = () => {
     {},
   );
 
-  // Tri les composants par leur position actuelle `y` (du plus haut au plus bas)
+  // Calcule le nombre de lignes nécessaires = bord bas du composant le plus bas
   const calculateRows = useCallback((componentList: ComponentDashboard[]) => {
-    const sortedComponents = [...componentList]
-      .sort(
-        (a, b) =>
-          (a.configPosition ? a.configPosition.y : 0) -
-          (b.configPosition ? b.configPosition.y : 0),
-      )
-      .reverse();
-    setNumberRowGrid(
-      sortedComponents[0].configPosition
-        ? sortedComponents[0].configPosition.y +
-            sortedComponents[0].configPosition.hauteur
-        : 0,
-    );
+    const maxBottom = componentList.reduce((acc, component) => {
+      const bottom = component.configPosition
+        ? component.configPosition.y + component.configPosition.hauteur
+        : 0;
+      return bottom > acc ? bottom : acc;
+    }, 0);
+    setNumberRowGrid(maxBottom);
   }, []);
 
   useEffect(() => {
@@ -103,7 +97,10 @@ const ComponentBoardList = () => {
             title={dashboardUser?.title}
           />
           {/* Grid Layout */}
-          <Row className="position-relative">
+          <Row
+            className="position-relative"
+            style={{ minHeight: `${numberRowGrid * heightRow}px` }}
+          >
             {!componentsListDashboard && (
               <div className="alert alert-primary" role="alert">
                 Ce dashboard n&apos;a aucun composant pour le moment.

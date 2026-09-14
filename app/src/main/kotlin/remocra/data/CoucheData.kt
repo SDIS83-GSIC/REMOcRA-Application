@@ -46,6 +46,7 @@ data class ResponseCouche(
     val groupeCoucheLibelle: String,
 
     val coucheId: UUID,
+    val coucheCode: String,
     val coucheLibelle: String,
 
     val coucheMetadataId: UUID,

@@ -1,0 +1,69 @@
+= Utilisation des points d'entrée cartographiques WMS/WFS
+:toc:
+:toclevels: 2
+
+== Préambule
+
+Les endpoints `/api/geoserver/wms` et `/api/geoserver/wfs` sont principalement prévus pour un usage *non authentifié* (prestataires externes).
+
+IMPORTANT: sans authentification, les couches demandées doivent être *publiques* dans REMOcRA.
+
+== Endpoints
+
+* `GET /api/geoserver/wms`
+* `GET /api/geoserver/wms/{suffix}`
+* `GET /api/geoserver/wfs`
+* `GET /api/geoserver/wfs/{suffix}`
+
+Le `suffix` est optionnel et permet de cibler un chemin GeoServer spécifique.
+
+== Règles d'accès
+
+Pour les requêtes qui ciblent des couches (`GetMap`, `GetFeatureInfo`, `GetFeature`), REMOcRA contrôle l'accès sur les couches demandées.
+
+Conséquences pratiques :
+
+* **Utilisateur non authentifié** : seules les couches publiques sont accessibles.
+* **Couche privée demandée sans droits** : requête refusée (`403`).
+* **Couche inconnue** : requête refusée (`404`).
+
+Donc, pour un usage public/non authentifié, il faut requêter uniquement des couches marquées publiques (case à cocher dans la gestion des couches dans REMOcRA).
+
+== Exemples d'utilisation (non authentifié)
+
+=== WMS - capacités du service
+
+[source,bash]
+----
+curl -X GET \
+  "https://<remocra>/api/geoserver/wms?SERVICE=WMS&REQUEST=GetCapabilities"
+----
+
+=== WMS - image de carte (couche publique)
+
+[source,bash]
+----
+curl -X GET \
+  "https://<remocra>/api/geoserver/wms?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&LAYERS=remocra:ma_couche_publique&STYLES=&FORMAT=image/png&SRS=EPSG:4326&BBOX=5.2,43.1,6.0,43.8&WIDTH=1024&HEIGHT=768" \
+  --output carte.png
+----
+
+=== WFS - capacités du service
+
+[source,bash]
+----
+curl -X GET \
+  "https://<remocra>/api/geoserver/wfs?SERVICE=WFS&REQUEST=GetCapabilities"
+----
+
+=== WFS - récupération d'entités (couche publique)
+
+[source,bash]
+----
+curl -X GET \
+  "https://<remocra>/api/geoserver/wfs?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetFeature&TYPENAMES=remocra:ma_couche_publique&LAYERS=remocra:ma_couche_publique&OUTPUTFORMAT=application/json&COUNT=100"
+----
+
+== Cas authentifié (optionnel)
+
+Un utilisateur authentifié peut accéder à des couches non publiques uniquement si ses droits REMOcRA le permettent.

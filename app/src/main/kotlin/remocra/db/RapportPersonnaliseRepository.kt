@@ -3,6 +3,7 @@ package remocra.db
 import jakarta.inject.Inject
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.SQL
 import org.jooq.SortField
 import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
@@ -207,6 +208,9 @@ class RapportPersonnaliseRepository @Inject constructor(private val dsl: DSLCont
         dsl.fetch(requete).into(IdLibelleRapportPersonnalise::class.java)
 
     fun executeSqlRapport(requete: String) =
+        dsl.fetch(requete)
+
+    fun executeSqlRapport(requete: SQL) =
         dsl.fetch(requete)
 
     fun insertRapportPersonnalise(rapportPersonnalise: RapportPersonnalise) =

@@ -218,7 +218,7 @@ class RapportPersonnaliseEndpoint : AbstractEndpoint() {
     fun exportShp(
         element: GenererRapportPersonnaliseData,
     ): Response =
-        Response.ok(exportDataCarteRapportPersonnaliseUseCase.execute(element))
+        Response.ok(exportDataCarteRapportPersonnaliseUseCase.execute(element, securityContext.userInfo))
             .header(CONTENT_DISPOSITION, "attachment; filename=\"rapport-personnalise-${dateUtils.now()}.zip")
             .build()
 

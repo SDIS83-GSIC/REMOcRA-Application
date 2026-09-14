@@ -32,7 +32,7 @@ const BaseBarChart = ({
     return null;
   }
 
-  const barColor = config?.barColor || "#8884d8";
+  const barColor = config?.barColor || "#00293e";
   const convertedData = mapAndConvertData(data, config);
   const useThresholdColors = shouldUseThresholdColors(config);
   const sections = buildSections(config, useThresholdColors);

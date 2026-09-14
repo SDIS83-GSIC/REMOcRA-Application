@@ -53,7 +53,11 @@ const UpdatePei = ({
         }
       }}
     >
-      <Pei returnBouton={!peiIdUpdate} close={close} />
+      <Pei
+        returnBouton={!peiIdUpdate}
+        close={close}
+        isFromMap={peiIdUpdate !== undefined}
+      />
     </MyFormik>
   );
 };

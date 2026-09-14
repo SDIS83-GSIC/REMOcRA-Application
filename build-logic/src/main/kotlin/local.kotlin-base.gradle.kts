@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.packaging.defaultExcludes
+
 plugins {
     id("local.base")
     id("local.dependency-management")
@@ -53,3 +55,14 @@ spotless {
         ktlint(versionCatalogs.named("libs").findVersion("ktlint").orElseThrow().requiredVersion)
     }
 }
+// Évite une race condition entre Spotless (qui crée/supprime des fichiers
+// temporaires dans build/spotless/spotlessKotlin/) et Android Lint qui scanne
+// les sources Kotlin en parallèle : cf.
+// > A failure occurred while executing com.android.build.gradle.internal.lint.AndroidLintWorkAction
+//   > java.io.FileNotFoundException: /var/lib/jenkins/jenkins-agent-linux-02-atolsi-prod/workspace/team--kfc/atolcd--remocra
+//   /atolcd--remocra-v3--gerrit-trigger/db/build/spotless/spotlessKotlin/src/main/jooq/remocra/db/jooq/
+//   couverturehydraulique/Couverturehydraulique.kt (No such file or directory)
+tasks.matching { it.name.startsWith("lintAnalyze") || it.name.startsWith("lintReport") || it.name == "lint" }
+    .configureEach {
+        mustRunAfter(tasks.matching { it.name.startsWith("spotless") })
+    }

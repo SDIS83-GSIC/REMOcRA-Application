@@ -15,6 +15,7 @@ export const getInitialValues = () => ({
   logo: null,
   symbologie: null,
   templateExportCtp: null,
+  favicon: null,
 });
 
 export const validationSchema = object({});
@@ -24,6 +25,7 @@ export const prepareVariables = (values) => {
   formData.append("logo", values.logo);
   formData.append("symbologie", values.symbologie);
   formData.append("templateExportCtp", values.templateExportCtp);
+  formData.append("favicon", values.favicon);
   return formData;
 };
 
@@ -93,6 +95,29 @@ export const ImportRessources = () => {
                   redirectUrl={URLS.ADMIN_IMPORT_RESSOURCES}
                 >
                   <FormImportLogo />
+                </MyFormik>
+              </>
+            ),
+          },
+          {
+            header: "Importer le favicon",
+            content: (
+              <>
+                <p>
+                  Permet d&apos;importer le fichier image correspondant au
+                  favicon, La taille recommandée est de 32x32 pixels.
+                </p>
+                <MyFormik
+                  initialValues={getInitialValues()}
+                  validationSchema={validationSchema}
+                  isPost={false}
+                  isMultipartFormData={true}
+                  submitUrl={`/api/admin/import-favicon`}
+                  prepareVariables={(values) => prepareVariables(values)}
+                  redirectUrl={URLS.ADMIN_IMPORT_RESSOURCES}
+                  onSubmit={() => window.location.reload()}
+                >
+                  <FormImportFavicon />
                 </MyFormik>
               </>
             ),
@@ -238,6 +263,28 @@ const FormImportTemplateExportCTP = () => {
         <Col className="text-center">
           <Button type="submit" variant="primary">
             Importer le support
+          </Button>
+        </Col>
+      </Row>
+    </FormContainer>
+  );
+};
+
+const FormImportFavicon = () => {
+  const { setFieldValue } = useFormikContext();
+
+  return (
+    <FormContainer>
+      <FileInput
+        name="favicon"
+        accept=".png"
+        required={true}
+        onChange={(e) => setFieldValue("favicon", e.target.files[0])}
+      />
+      <Row className="mt-3">
+        <Col className="text-center">
+          <Button type="submit" variant="primary">
+            Importer le favicon
           </Button>
         </Col>
       </Row>

@@ -1,5 +1,6 @@
 package remocra.data
 
+import java.io.File
 import java.util.UUID
 
 /**
@@ -12,6 +13,7 @@ data class NotificationMailData(
     val objet: String,
     val corps: String,
     val documentId: UUID? = null,
+    val attachment: File? = null,
 ) {
     override fun toString(): String {
         return "Destinataires: ${destinataires.joinToString()}, Objet : $objet, Corps : $corps" + documentId?.let { ", DocumentId: $documentId" }

@@ -118,8 +118,8 @@ constructor(
             )
         }
 
-        if (!element.rapportCourrierSourceSql.startsWith("SELECT", ignoreCase = true) &&
-            !element.rapportCourrierSourceSql.startsWith("WITH", ignoreCase = true)
+        if (!element.rapportCourrierSourceSql.trim().startsWith("SELECT", ignoreCase = true) &&
+            !element.rapportCourrierSourceSql.trim().startsWith("WITH", ignoreCase = true)
         ) {
             throw RemocraResponseException(
                 ErrorType.ADMIN_RAPPORT_PERSO_REQUETE_INVALID,
@@ -145,9 +145,9 @@ constructor(
                 TypeParametreRapportCourrier.POINT ->
                     requete = requete.replace("'${it.rapportCourrierParametreCode}'", "ST_SetSRID('POINT EMPTY'::geometry, ${appSettings.srid})")
                 TypeParametreRapportCourrier.POLYGON ->
-                    requete = requete.replace("'${it.rapportCourrierParametreCode}'", "ST_SetSRID('POLYGON EMPTY'::geometry, ${appSettings.srid}")
+                    requete = requete.replace("'${it.rapportCourrierParametreCode}'", "ST_SetSRID('POLYGON EMPTY'::geometry, ${appSettings.srid})")
                 TypeParametreRapportCourrier.LINESTRING ->
-                    requete = requete.replace("'${it.rapportCourrierParametreCode}'", "ST_SetSRID('LINESTRING EMPTY'::geometry, ${appSettings.srid}")
+                    requete = requete.replace("'${it.rapportCourrierParametreCode}'", "ST_SetSRID('LINESTRING EMPTY'::geometry, ${appSettings.srid})")
             }
         }
 

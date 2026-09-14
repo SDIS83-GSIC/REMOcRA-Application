@@ -45,18 +45,6 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             .where(MODELE_COURRIER.ID.eq(modeleCourrierId))
             .fetchSingleInto()
 
-    fun getAll(utilisateurId: UUID): Collection<ModeleCourrier> =
-        dsl.select(*MODELE_COURRIER.fields())
-            .from(MODELE_COURRIER)
-            .join(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES)
-            .on(MODELE_COURRIER.ID.eq(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.MODELE_COURRIER_ID))
-            .join(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES)
-            .on(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID.eq(L_MODELE_COURRIER_GROUPE_FONCTIONNALITES.GROUPE_FONCTIONNALITES_ID))
-            .join(UTILISATEUR)
-            .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES.PROFIL_UTILISATEUR_ID))
-            .where(UTILISATEUR.ID.eq(utilisateurId))
-            .fetchInto()
-
     /**
      * Retourne les paramètres groupés par courrier
      */
@@ -224,7 +212,8 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             MODELE_COURRIER.SOURCE_SQL,
             MODELE_COURRIER.DESCRIPTION,
             MODELE_COURRIER.MODULE,
-            MODELE_COURRIER.CORPS_EMAIL,
+            MODELE_COURRIER.CORPS_EMAIL_UTILISATEUR,
+            MODELE_COURRIER.CORPS_EMAIL_PIECE_JOINTE,
             MODELE_COURRIER.OBJET_EMAIL,
             MODELE_COURRIER.TYPE,
             multiset(
@@ -415,9 +404,27 @@ class ModeleCourrierRepository @Inject constructor(private val dsl: DSLContext) 
             .where(MODELE_COURRIER.TYPE.eq(TypeCourrier.RAPPORT_POST_ROP)),
     )
 
+    fun getByType(typeCourrier: TypeCourrier): ModeleCourrier? = dsl.selectFrom(MODELE_COURRIER)
+        .where(MODELE_COURRIER.TYPE.eq(typeCourrier)).fetchOneInto()
+
+    // On factorise la condition pour éviter de la dupliquer dans existsCanevasRop et getCanevasRop
+    private fun canevasRopCondition() = MODELE_COURRIER.TYPE.eq(TypeCourrier.CANEVAS_ROP).and(MODELE_COURRIER.ACTIF.isTrue)
+
+    fun existsCanevasRop(): Boolean = dsl.fetchExists(
+        dsl.select(MODELE_COURRIER.ID)
+            .from(MODELE_COURRIER)
+            .where(canevasRopCondition()),
+    )
+
     /**
      * Retourne le modèle de courrier de type RAPPORT_POST_ROP s'il existe, null sinon
      */
     fun getRapportPostRop(): ModeleCourrier? = dsl.selectFrom(MODELE_COURRIER)
         .where(MODELE_COURRIER.TYPE.eq(TypeCourrier.RAPPORT_POST_ROP)).fetchOneInto()
+
+    /**
+     * Retourne le modèle de courrier de type CANEVAS_ROP s'il existe, null sinon
+     */
+    fun getCanevasRop(): ModeleCourrier? = dsl.selectFrom(MODELE_COURRIER)
+        .where(canevasRopCondition()).fetchOneInto()
 }

@@ -78,6 +78,12 @@ const ListCoucheMetadata = () => {
             Filter: <FilterInput type="text" name="groupeCoucheLibelle" />,
           },
           {
+            Header: "Code de la couche",
+            accessor: "coucheCode",
+            sortField: "coucheCode",
+            Filter: <FilterInput type="text" name="coucheCode" />,
+          },
+          {
             Header: "Nom de la couche",
             accessor: "coucheLibelle",
             sortField: "coucheLibelle",

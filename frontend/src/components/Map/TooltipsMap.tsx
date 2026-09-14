@@ -1187,7 +1187,9 @@ export const TooltipMapRisque = ({
           </TooltipCustom>
           <DeleteModal
             visible={visible}
-            closeModal={close}
+            onCancel={close}
+            onSuccess={close}
+            onError={close}
             query={url`/api/risque/delete/`}
             ref={ref}
             header={"Risque"}

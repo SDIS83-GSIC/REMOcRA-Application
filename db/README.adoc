@@ -35,14 +35,14 @@ Il est nécessaire que l'utilisateur `remocra` existe en base de données, il fa
 . se connecter avec l'utilisateur `remocra` via Keycloak
 . initialiser les données (cette tâche `:db:flywayMigrateData`)
 
+`:db:flywayMigrateStandalone`:: permet de jouer les migrations Flyway sur une autre base de données autonome qui est réinitialisée à chaque fois.
+
 == Régénérer le mapping des classes par rapport à la base de données
 
-[source]
-----
-./gradlew :db:jooq
-----
-
-Ceci lancera également la migration Flyway (tâche `:db:flywayMigrate`)
+`:db:jooq`:: Ceci lancera également la migration Flyway (tâche `:db:flywayMigrate`)
 pour s'assurer que le code Kotlin généré correspond aux scripts de migration.
-
++
 La connexion à la base de données est configurable de la même façon que pour les tâches Flyway.
+
+
+`:db:jooqStandalone`:: Génère le code Kotlin jOOQ à partir du schéma de la base de données, sur une autre base de données autonome qui est réinitialisée à chaque fois. Cela simplifie le développement, car on génère le code jOOQ à partir de cette base de données locale sans pour autant modifier la base de données de développement.

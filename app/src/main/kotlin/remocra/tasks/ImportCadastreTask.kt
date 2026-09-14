@@ -24,7 +24,11 @@ import java.nio.file.Path
 import java.util.UUID
 import kotlin.collections.mutableMapOf
 
-class ImportCadastreParameters() : TaskParameters(notification = null)
+class ImportCadastreParameters() : TaskParameters(notification = null) {
+    var millesime: String? = null
+    var supprimerDonneesCadastreNonUtilisees: Boolean = false
+    var remplacerDonneesCadastre: Boolean = false
+}
 
 class ImportCadastreTask @Inject constructor(
     private val appSettings: AppSettings,
@@ -38,7 +42,7 @@ class ImportCadastreTask @Inject constructor(
         private const val BASE_URL_CADASTRE = "https://files.data.gouv.fr/cadastre/etalab-cadastre/"
         private const val FICHIER_PARCELLES_SUFFIX = "-parcelles-shp.zip"
         private const val FICHIER_SECTIONS_SUFFIX = "-sections-shp.zip"
-        private const val MILLESIME = "2023-01-01"
+        private const val DEFAULT_MILLESIME = "2023-01-01"
 
         private const val CODE_SDIS_PREFIX = "SDIS_"
         private const val PROPERTY_GEO = "the_geom"
@@ -52,6 +56,9 @@ class ImportCadastreTask @Inject constructor(
         private const val NUMERO_LENGTH = 2
         private val CODE_SDIS_BSPP = setOf("75", "92", "93", "94")
         private val CODE_SDIS_SDMIS = setOf("69")
+
+        lateinit var parcelles: MutableSet<Pair<UUID, String>>
+        lateinit var sections: MutableMap<Pair<UUID, String>, UUID>
     }
 
     private fun checkDroits(userInfo: WrappedUserInfo) {
@@ -101,6 +108,7 @@ class ImportCadastreTask @Inject constructor(
         feature: SimpleFeature,
         mapCommuneIdByCodeInsee: MutableMap<String, UUID>,
         mapSectionByCode: MutableMap<SectionIdMetier, UUID>,
+        remplacerDonneesCadastre: Boolean,
     ) {
         val geometrie = extractGeometry(feature) ?: return
         val codeInseeCommune = extractStringProperty(feature, PROPERTY_COMMUNE) ?: return
@@ -109,12 +117,15 @@ class ImportCadastreTask @Inject constructor(
 
         // TODO vérifier, typiquement on n'utilise pas le préfixe...
         // l'id est code insee + préfixe + code (avec le pad sur 2 car), voir si on veut stocker seulement le numéro ou le code complet
-        val numero = extractStringProperty(feature, PROPERTY_CODE)?.padStart(NUMERO_LENGTH, '0') ?: logManager.error("Numéro non trouvé pour la section pour la section $id").let { return }
+        val numero = extractStringProperty(feature, PROPERTY_CODE)?.padStart(NUMERO_LENGTH, '0')
+            ?: logManager.error("Numéro non trouvé pour la section $id").let { return }
 
         val communeId = if (mapCommuneIdByCodeInsee.contains(codeInseeCommune)) {
             mapCommuneIdByCodeInsee[codeInseeCommune]!!
         } else {
-            val commune = communeRepository.getByCodeInsee(codeInseeCommune) ?: logManager.error("Commune introuvable pour la section $id et le code INSEE $codeInseeCommune").let { return }
+            val commune = communeRepository.getByCodeInsee(codeInseeCommune)
+                ?: logManager.error("Commune introuvable pour la section $id et le code INSEE $codeInseeCommune")
+                    .let { return }
             mapCommuneIdByCodeInsee[codeInseeCommune] = commune.communeId
             commune.communeId
         }
@@ -125,24 +136,40 @@ class ImportCadastreTask @Inject constructor(
             cadastreSectionNumero = numero,
             cadastreSectionCommuneId = communeId,
         )
-
-        mapSectionByCode[SectionIdMetier(codeInseeCommune, prefixe, numero)] = section.cadastreSectionId
-        cadastreRepository.insertSection(section)
+        val sectionKey = communeId to numero
+        val existingSectionId = sections[sectionKey]
+        if (existingSectionId == null) {
+            cadastreRepository.insertSection(section)
+            sections[sectionKey] = section.cadastreSectionId
+            mapSectionByCode[SectionIdMetier(codeInseeCommune, prefixe, numero)] = section.cadastreSectionId
+        } else if (remplacerDonneesCadastre) {
+            cadastreRepository.updateGeometrieSection(
+                section.copy(cadastreSectionId = existingSectionId),
+            )
+            mapSectionByCode[SectionIdMetier(codeInseeCommune, prefixe, numero)] = existingSectionId
+        } else {
+            mapSectionByCode[SectionIdMetier(codeInseeCommune, prefixe, numero)] = existingSectionId
+        }
     }
 
     private fun importCadastreParcelle(
         feature: SimpleFeature,
         mapSectionByCode: MutableMap<SectionIdMetier, UUID>,
+        remplacerDonneesCadastre: Boolean,
     ) {
         val geometrie = extractGeometry(feature) ?: return
         val codeInseeCommune = extractStringProperty(feature, PROPERTY_COMMUNE) ?: return
         val prefixe = extractStringProperty(feature, PROPERTY_PREFIXE) ?: END_PROPERTY
         val id = extractStringProperty(feature, PROPERTY_ID)
 
-        val numero = extractStringProperty(feature, PROPERTY_NUMERO) ?: logManager.error("Numéro non trouvé pour la section pour la section $id").let { return }
+        val numero = extractStringProperty(feature, PROPERTY_NUMERO) ?: logManager.error("Numéro non trouvé pour la section $id").let { return }
 
-        val sectionNumero = extractStringProperty(feature, PROPERTY_SECTION)?.padStart(NUMERO_LENGTH, '0') ?: logManager.error("Numéro non trouvé pour la section pour la section $id").let { return }
-        val sectionId = mapSectionByCode[SectionIdMetier(codeInsee = codeInseeCommune, prefixe = prefixe, numero = sectionNumero)] ?: throw RemocraResponseException(ErrorType.SECTION_NOT_FOUND)
+        val sectionNumero = extractStringProperty(feature, PROPERTY_SECTION)?.padStart(NUMERO_LENGTH, '0') ?: logManager.error("Numéro non trouvé pour la section $id").let { return }
+        val sectionId = mapSectionByCode[SectionIdMetier(codeInsee = codeInseeCommune, prefixe = prefixe, numero = sectionNumero)]
+            ?: throw RemocraResponseException(
+                "${ErrorType.SECTION_NOT_FOUND} (commune=$codeInseeCommune, section=$sectionNumero, prefixe=$prefixe)",
+                ErrorType.SECTION_NOT_FOUND.status,
+            )
 
         val parcelle = CadastreParcelle(
             cadastreParcelleId = UUID.randomUUID(),
@@ -151,11 +178,18 @@ class ImportCadastreTask @Inject constructor(
             cadastreParcelleCadastreSectionId = sectionId,
         )
 
-        cadastreRepository.insertParcelle(parcelle)
+        val parcelleKey = sectionId to numero
+        if (!parcelles.contains(parcelleKey)) {
+            cadastreRepository.insertParcelle(parcelle)
+            parcelles.add(parcelleKey)
+        } else if (remplacerDonneesCadastre) {
+            cadastreRepository.updateGeometrieParcelle(parcelle)
+        }
     }
 
-    private fun downloadAndImportCadastreFiles(departement: String) {
-        val departementUrl = "$BASE_URL_CADASTRE/$MILLESIME/shp/departements/$departement/"
+    private fun downloadAndImportCadastreFiles(millesime: String, remplacerDonneesCadastre: Boolean, departement: String) {
+        val primaryUrl = "$BASE_URL_CADASTRE/$millesime/shp/departements/$departement/"
+        val fallbackUrl = "$BASE_URL_CADASTRE/$DEFAULT_MILLESIME/shp/departements/$departement/"
 
         val fichierSections = "cadastre-$departement$FICHIER_SECTIONS_SUFFIX"
         val fichierParcelles = "cadastre-$departement$FICHIER_PARCELLES_SUFFIX"
@@ -163,15 +197,27 @@ class ImportCadastreTask @Inject constructor(
         val mapCommuneIdByCodeInsee = mutableMapOf<String, UUID>()
         val mapSectionByCode = mutableMapOf<SectionIdMetier, UUID>()
 
-        URI(departementUrl.plus(fichierSections)).toURL().openStream().use {
+        /** Gestion des données Section */
+        try {
+            URI(primaryUrl.plus(fichierSections)).toURL().openStream()
+        } catch (e: Exception) {
+            logManager.warn("Les données demandées sont inaccessible pour $fichierSections ($millesime) [${e::class.simpleName}: ${e.message}], utilisation des données $DEFAULT_MILLESIME")
+            URI(fallbackUrl.plus(fichierSections)).toURL().openStream()
+        }.use {
             processShpFile(it) { feature ->
-                importCadastreSection(feature, mapCommuneIdByCodeInsee, mapSectionByCode)
+                importCadastreSection(feature, mapCommuneIdByCodeInsee, mapSectionByCode, remplacerDonneesCadastre)
             }
         }
 
-        URI(departementUrl.plus(fichierParcelles)).toURL().openStream().use {
+        /** Gestion des données Parcelle */
+        try {
+            URI(primaryUrl.plus(fichierParcelles)).toURL().openStream()
+        } catch (e: Exception) {
+            logManager.warn("Les données demandées sont inaccessible pour $fichierParcelles ($millesime) [${e::class.simpleName}: ${e.message}], utilisation des données $DEFAULT_MILLESIME")
+            URI(fallbackUrl.plus(fichierParcelles)).toURL().openStream()
+        }.use {
             processShpFile(it) { feature ->
-                importCadastreParcelle(feature, mapSectionByCode)
+                importCadastreParcelle(feature, mapSectionByCode, remplacerDonneesCadastre)
             }
         }
 
@@ -185,20 +231,30 @@ class ImportCadastreTask @Inject constructor(
     override fun execute(parameters: ImportCadastreParameters?, userInfo: WrappedUserInfo): JobResults {
         checkDroits(userInfo)
 
+        if (parameters?.supprimerDonneesCadastreNonUtilisees == true) {
+            cadastreRepository.deleteUnusedParcelles()
+            cadastreRepository.deleteUnusedSections()
+        }
+
+        sections = cadastreRepository.getAllSections().toMutableMap()
+        parcelles = cadastreRepository.getAllParcelles().toMutableSet()
+
         getDepartementsForSdis().forEach { departement ->
             try {
-                downloadAndImportCadastreFiles(departement)
+                downloadAndImportCadastreFiles(parameters?.millesime ?: DEFAULT_MILLESIME, parameters!!.remplacerDonneesCadastre, departement)
             } catch (e: Exception) {
                 logManager.error("Erreur lors du traitement des départements $departement: ${e.message}")
             }
         }
-
         // On ne retourne pas de résultats spécifiques pour cette tâche
         return JobResults()
     }
 
     override fun checkParameters(parameters: ImportCadastreParameters?) {
-        // no-op
+        if (parameters == null) {
+            logManager.error("Erreur : les paramètres de la tâche sont null")
+            throw IllegalArgumentException("Les paramètres de la tâche ne peuvent pas être null")
+        }
     }
 
     override fun getType(): TypeTask {

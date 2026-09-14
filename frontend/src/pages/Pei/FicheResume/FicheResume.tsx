@@ -199,6 +199,7 @@ const ElementResumeAnomalie = ({
     anomalieLibelle: string;
     valIndispoTerrestre: number;
     valIndispoHbe: number;
+    rendNonConforme: boolean;
   }[];
 }) => {
   return value.length > 0 ? (
@@ -209,6 +210,7 @@ const ElementResumeAnomalie = ({
           className={classNames(
             e.valIndispoTerrestre === 5 && "fw-bold",
             e.valIndispoHbe === 5 && "text-decoration-underline",
+            e.rendNonConforme && "text-warning fw-bold",
           )}
         >
           {e.anomalieLibelle}

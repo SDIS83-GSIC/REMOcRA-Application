@@ -1,7 +1,7 @@
 import { setSimpleValueMapped } from "../../MappedValueComponent.tsx";
 
 const CounterComponent = (data: any) => {
-  const valueColor = "#8884d8";
+  const valueColor = "#00293e";
   const valueSize = "40px";
   const labelSize = "20px";
 

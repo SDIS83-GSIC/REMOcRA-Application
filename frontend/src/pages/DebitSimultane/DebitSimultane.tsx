@@ -78,7 +78,9 @@ export const prepareVariables = (values: DebitSimultaneType) => {
         debitSimultaneMesureDebitRequis: e.debitSimultaneMesureDebitRequis,
         debitSimultaneMesureDebitMesure: e.debitSimultaneMesureDebitMesure,
         debitSimultaneMesureDebitRetenu: e.debitSimultaneMesureDebitRetenu,
-        debitSimultaneMesureDateMesure: e.debitSimultaneMesureDateMesure,
+        debitSimultaneMesureDateMesure: e.debitSimultaneMesureDateMesure
+          ? new Date(e.debitSimultaneMesureDateMesure).toISOString()
+          : null,
         debitSimultaneMesureCommentaire: e.debitSimultaneMesureCommentaire,
         debitSimultaneMesureIdentiqueReseauVille:
           e.debitSimultaneMesureIdentiqueReseauVille ?? false,

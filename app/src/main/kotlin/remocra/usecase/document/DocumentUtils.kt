@@ -71,9 +71,22 @@ class DocumentUtils {
      * @param chemin chemin sur le serveur
      */
     fun saveFile(inputStream: InputStream, nomFichier: String, chemin: Path) {
-        ensureDirectory(chemin).resolve(nomFichier).outputStream().use {
-            inputStream.copyTo(it)
+        ensureDirectory(chemin)
+            .resolve(nomFichier)
+            .normalize()
+            .requireStartsWith(chemin)
+            .outputStream()
+            .use {
+                inputStream.copyTo(it)
+            }
+    }
+
+    private fun Path.requireStartsWith(chemin: Path): Path {
+        require(this.startsWith(chemin)) {
+            logger.info("Le chemin du fichier est invalide : ${this.pathString} ne commence pas par ${chemin.pathString}")
+            "Le chemin du fichier est invalide."
         }
+        return this
     }
 
     /**
@@ -82,13 +95,14 @@ class DocumentUtils {
      * @param nomFichier : Nom du fichier
      * @param repertoire : Nom du répertoire
      */
-    fun deleteFile(nomFichier: String, repertoire: Path) = repertoire.resolve(nomFichier).deleteExisting()
+    fun deleteFile(nomFichier: String, repertoire: Path) = repertoire.resolve(nomFichier).normalize().deleteExisting()
 
     fun deleteFileIfExists(nomFichier: String, repertoire: Path) {
-        if (repertoire.resolve(nomFichier).exists()) {
-            repertoire.resolve(nomFichier).deleteExisting()
+        val file = repertoire.resolve(nomFichier).normalize().requireStartsWith(repertoire)
+        if (file.exists()) {
+            file.deleteExisting()
         } else {
-            logger.warn("Fichier ${repertoire.resolve(nomFichier).pathString} non présent sur le disque")
+            logger.warn("Fichier ${file.pathString} non présent sur le disque")
         }
     }
 
@@ -102,16 +116,17 @@ class DocumentUtils {
      */
     @Throws(Exception::class)
     fun moveFile(nomFichier: String, repertoireSource: Path, repertoireDestination: Path) {
-        val fichierPath = repertoireSource.resolve(nomFichier)
+        val fichierPath = repertoireSource.resolve(nomFichier).normalize().requireStartsWith(repertoireSource)
 
         if (fichierPath.exists()) {
-            fichierPath.moveTo(ensureDirectory(repertoireDestination).resolve(nomFichier))
+            fichierPath.moveTo(ensureDirectory(repertoireDestination).resolve(nomFichier).normalize())
         } else {
             logger.warn("Fichier ${fichierPath.pathString} non présent sur le disque")
         }
     }
 
-    fun checkFile(file: Path): Response {
+    fun checkFile(fichier: Path): Response {
+        val file = fichier.normalize()
         // Si l'utilisateur cherche à remonter l'arborescence, même combat que si le fichier n'existe pas
         if (!file.exists() || !file.startsWith(DOSSIER_DATA)) {
             logger.error("Le document ${file.pathString} est introuvable.")
@@ -129,7 +144,7 @@ class DocumentUtils {
      * @throws Exception
      */
     fun deleteDirectory(repertoire: Path) {
-        repertoire.toFile().deleteRecursively()
+        repertoire.normalize().toFile().deleteRecursively()
     }
 
     fun cleanDirectoryFileOlderThan(repertoireFile: Path, fileOlderThan: ZonedDateTime) {

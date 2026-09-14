@@ -3,19 +3,60 @@ import { Geometry } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { useMemo, useRef } from "react";
+import { Button } from "react-bootstrap";
+import { hasDroit } from "../../../droits.tsx";
 import { DFCI_LISTE_COUCHE } from "../../../enums/DfciListeCoucheEnum.tsx";
+import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import PARAMETRE from "../../../enums/ParametreEnum.tsx";
 import url from "../../../module/fetch.tsx";
+import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
+import { downloadOutputFile } from "../../../utils/fonctionsUtils.tsx";
+import { useAppContext } from "../../App/AppProvider.tsx";
 import PageTitle from "../../Elements/PageTitle/PageTitle.tsx";
 import { useGet } from "../../Fetch/useFetch.tsx";
-import { IconDFCI } from "../../Icon/Icon.tsx";
+import { IconDFCI, IconExport } from "../../Icon/Icon.tsx";
 import { TypeModuleRemocra } from "../../ModuleRemocra/ModuleRemocra.tsx";
+import TooltipCustom from "../../Tooltip/Tooltip.tsx";
 import MapComponent, { useMapComponent } from "../Map.tsx";
 import { useToolbarContext } from "../MapToolbar.tsx";
 import { createPointLayer } from "../MapUtils.tsx";
 import MapToolbarDFCI from "./MapToolbarDFCI.tsx";
 
+const AtlasManagment = () => {
+  const { success: successToast, error: errorToast } = useToastContext();
+  const { data: hasElements = false } = useGet("/api/atlas/has-element", {});
+
+  return (
+    <>
+      {hasElements && (
+        <TooltipCustom
+          tooltipText={"Télécharger l'atlas en PDF"}
+          tooltipId={"afficher-docs-dfci"}
+        >
+          <Button
+            variant="outline-primary"
+            onClick={() =>
+              downloadOutputFile(
+                `/api/atlas/download-atlas`,
+                null,
+                `atlas.zip`,
+                "Téléchargement terminé",
+                successToast,
+                errorToast,
+              )
+            }
+            className="rounded m-2"
+          >
+            <IconExport />
+          </Button>
+        </TooltipCustom>
+      )}
+    </>
+  );
+};
+
 const MapDFCI = () => {
+  const { user } = useAppContext();
   const mapElement = useRef<HTMLDivElement>();
 
   const {
@@ -39,15 +80,16 @@ const MapDFCI = () => {
     }}`,
   );
 
-  const listeCouche: DFCI_LISTE_COUCHE[] = useMemo<DFCI_LISTE_COUCHE[]>(() => {
-    if (!parametreCouche.isResolved) {
-      return [];
-    }
+  const listeCouche: DFCI_LISTE_COUCHE[] =
+    useMemo<DFCI_LISTE_COUCHE[]>(() => {
+      if (!parametreCouche.isResolved) {
+        return [];
+      }
 
-    return JSON.parse(
-      parametreCouche?.data[PARAMETRE.DFCI_LISTE_COUCHE].parametreValeur,
-    );
-  }, [parametreCouche]);
+      return JSON.parse(
+        parametreCouche?.data[PARAMETRE.DFCI_LISTE_COUCHE].parametreValeur,
+      );
+    }, [parametreCouche]) ?? [];
 
   const dataDfciAireLayer:
     | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
@@ -128,8 +170,12 @@ const MapDFCI = () => {
   return (
     <>
       <PageTitle
-        title={"Défense de la Forêt Contre les Incendies"}
+        title="Défense de la Forêt Contre les Incendies"
         icon={<IconDFCI />}
+        right={
+          (hasDroit(user, TYPE_DROIT.DFCI_EXPORTATLAS_C) ||
+            hasDroit(user, TYPE_DROIT.ATLAS_A)) && <AtlasManagment />
+        }
       />
       <MapComponent
         map={map}

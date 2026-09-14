@@ -42,6 +42,8 @@ import { useGet } from "../Fetch/useFetch.tsx";
 import { TypeModuleRemocra } from "../ModuleRemocra/ModuleRemocra.tsx";
 import MapLegend from "./MapLegend.tsx";
 import {
+  createAbortableImageLoadFunction,
+  createAbortableTileLoadFunction,
   debounce,
   optimizeMap,
   optimizeTileLayer,
@@ -82,7 +84,8 @@ export function toOpenLayer(
   layer: any,
   etudeId?: string,
   criseId?: string,
-  criseStatutMode?: string,
+  evenementStatutMode?: string,
+  viewParamsExtras?: Record<string, string>,
 ): TileSource | WMTS | VectorSource | ImageWMS | TileWMS | undefined {
   switch (layer.source) {
     case SOURCE_CARTO.WMS: {
@@ -91,8 +94,7 @@ export function toOpenLayer(
         TILED: true,
         projection: layer.projection,
         matrixSet: "PM",
-        format: layer.format ?? "image/png",
-        tileGrid: tileGrid,
+        FORMAT: layer.format ?? "image/png",
         style: "normal",
       };
 
@@ -103,10 +105,21 @@ export function toOpenLayer(
       if (etudeId) {
         viewParamsArray.push(`idEtude:${encodeURIComponent(etudeId)}`);
       }
-      if (criseStatutMode) {
+      if (evenementStatutMode) {
         viewParamsArray.push(
-          `statutMode:${encodeURIComponent(criseStatutMode)}`,
+          `statutMode:${encodeURIComponent(evenementStatutMode)}`,
         );
+      }
+      // Ajouter les viewParams supplémentaires passés en paramètre
+      if (viewParamsExtras) {
+        Object.entries(viewParamsExtras).forEach(([key, value]) => {
+          // Ne pas encoder les listes d'IDs (séparées par ;) pour préserver les séparateurs
+          if (key === "evenementIds") {
+            viewParamsArray.push(`${key}:${value}`);
+          } else {
+            viewParamsArray.push(`${key}:${encodeURIComponent(value)}`);
+          }
+        });
       }
       wmsParams.viewParams = viewParamsArray.join(";");
 
@@ -114,23 +127,23 @@ export function toOpenLayer(
         ? new ImageWMS({
             url: layer.url,
             params: wmsParams,
+            imageLoadFunction: createAbortableImageLoadFunction(),
           })
         : new TileWMS({
             url: layer.url,
             params: wmsParams,
             // Optimisations de performance
-            cacheSize: 512, // Cache plus important pour les tuiles
-            transition: 0, // Désactive les transitions pour un affichage plus rapide
-            tileLoadFunction: (tile: any, src: string) => {
-              const image = tile.getImage();
-              image.crossOrigin = layer.crossOrigin ?? "anonymous";
-              image.src = src;
-            },
+            cacheSize: 512,
+            transition: 0,
+            tileGrid: tileGrid,
+            tileLoadFunction: createAbortableTileLoadFunction(
+              layer.crossOrigin,
+            ),
           });
     }
     case SOURCE_CARTO.WMTS:
       return new WMTS({
-        crossOrigin: layer.crossOrigin ?? "anonymous",
+        crossOrigin: layer.crossOrigin,
         url: layer.url,
         layer: layer.layer,
         projection: layer.projection,
@@ -141,11 +154,7 @@ export function toOpenLayer(
         // Optimisations de performance
         cacheSize: 512,
         transition: 0,
-        tileLoadFunction: (tile: any, src: string) => {
-          const image = tile.getImage();
-          image.crossOrigin = layer.crossOrigin ?? "anonymous";
-          image.src = src;
-        },
+        tileLoadFunction: createAbortableTileLoadFunction(layer.crossOrigin),
       });
     case SOURCE_CARTO.GEOJSON:
       return new VectorSource({
@@ -164,23 +173,26 @@ export function toOpenLayer(
         // Optimisations de performance
         cacheSize: 512,
         transition: 0,
-        tileLoadFunction: (tile: any, src: string) => {
-          const image = tile.getImage();
-          image.crossOrigin = layer.crossOrigin ?? null;
-          image.src = src;
-        },
+        tileLoadFunction: createAbortableTileLoadFunction(layer.crossOrigin),
       });
 
     case SOURCE_CARTO.WFS:
       return new VectorSource({
-        url:
-          layer.url +
-          "&request=GetFeature&typename=" +
-          layer.layer +
-          "&outputFormat=" +
-          (layer.format ?? "application/json") +
-          "&srsname=" +
-          layer.projection,
+        url: (extent) => {
+          return (
+            layer.url +
+            "?service=WFS&request=GetFeature&typename=" +
+            layer.layer +
+            "&outputFormat=" +
+            (layer.format ?? "application/json") +
+            "&srsname=" +
+            layer.projection +
+            "&bbox=" +
+            extent.join(",") +
+            "," +
+            layer.projection
+          );
+        },
         format: new GeoJSON({}),
         strategy: bbox,
       });
@@ -254,12 +266,15 @@ const MapComponent = ({
 
   return (
     <div
-      className={classNames("map-wrapper", printable ? "isPrintable" : "")}
+      className={classNames(
+        "map-component-wrapper",
+        printable ? "isPrintable" : "",
+      )}
       id={"map-container"}
     >
       {map && mapElement && (
         <Row className={"map-toolbar noprint"}>
-          <Col xs={"auto"}>
+          <Col xs={"auto"} className={"map-toolbar-main-col"}>
             {/* Commun à toutes les cartes */}
             <MapToolbar
               ref={mapToolbarRef}
@@ -274,7 +289,11 @@ const MapComponent = ({
               availableLayers={availableLayers}
             />
           </Col>
-          <Col xs={"auto"}>{toolbarElement && toolbarElement}</Col>
+          <Col xs={"auto"} className={"map-toolbar-extra-col"}>
+            {toolbarElement && (
+              <div className={"map-toolbar-extra"}>{toolbarElement}</div>
+            )}
+          </Col>
         </Row>
       )}
       <div ref={mapElement} className={"map-map border border-" + variant} />
@@ -295,14 +314,16 @@ export const useMapComponent = ({
   displayPei = true,
   etudeId,
   criseId,
-  criseStatutMode,
+  evenementStatutMode,
+  viewParamsExtras,
 }: {
   mapElement: MutableRefObject<HTMLDivElement | undefined>;
   typeModule: TypeModuleRemocra;
   displayPei?: boolean;
   etudeId?: string;
   criseId?: string;
-  criseStatutMode?: string;
+  evenementStatutMode?: string;
+  viewParamsExtras?: Record<string, string>;
 }) => {
   const { state, search } = useLocation();
   const navigate = useNavigate();
@@ -493,7 +514,8 @@ export const useMapComponent = ({
                 layer,
                 etudeId,
                 criseId,
-                criseStatutMode,
+                evenementStatutMode,
+                viewParamsExtras,
               ) as ImageWMS,
               zIndex,
               opacity: layer.opacite,
@@ -504,7 +526,8 @@ export const useMapComponent = ({
                 layer,
                 etudeId,
                 criseId,
-                criseStatutMode,
+                evenementStatutMode,
+                viewParamsExtras,
               ) as TileSource,
               zIndex,
               preload: 1,
@@ -525,7 +548,15 @@ export const useMapComponent = ({
         }),
       };
     });
-  }, [layersState.data, map, projection, etudeId, criseId, criseStatutMode]);
+  }, [
+    layersState.data,
+    map,
+    projection,
+    etudeId,
+    criseId,
+    evenementStatutMode,
+    viewParamsExtras,
+  ]);
 
   // Ajout / retrait d'une couche sur la carte
   const addOrRemoveLayer = (layer: any) => {

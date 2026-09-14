@@ -100,11 +100,6 @@ class DashboardEndPoint : AbstractEndpoint() {
     @RequireDroits([Droit.DASHBOARD_R])
     fun getDashboardProfilList(@PathParam("id") dashboardId: UUID): Response = Response.ok(dashboardRepository.getDashboardProfil(dashboardId)).build()
 
-    @POST
-    @Path("/get-list-data-query")
-    @RequireDroits([Droit.DASHBOARD_A, Droit.DASHBOARD_R])
-    fun getDataQueryList(queryIds: QueryIds): Response = Response.ok(getDashboardQueryUseCase.getDataQuerys(queryIds, securityContext.userInfo)).build()
-
     @GET
     @Path("/get-list-data-query/{queryId}")
     @RequireDroits([Droit.DASHBOARD_A, Droit.DASHBOARD_R])

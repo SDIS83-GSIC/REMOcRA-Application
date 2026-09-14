@@ -105,6 +105,9 @@ export function createVectorLayer(
   projection: { name: string },
   style?: Style,
 ) {
+  let activeController: AbortController | null = null;
+  let latestRequestId = 0;
+
   const vectorSource = toOpenLayer({
     source: SOURCE_CARTO.GEOJSON,
     loader: async (
@@ -114,11 +117,24 @@ export function createVectorLayer(
       success: (arg0: any) => void,
       failure: () => void,
     ) => {
+      if (activeController != null) {
+        activeController.abort();
+      }
+
+      const controller = new AbortController();
+      activeController = controller;
+      const requestId = ++latestRequestId;
+
       try {
-        const res = await fetch(
-          url`${urlApi(extent, projection)}`,
-          getFetchOptions({ method: "GET" }),
-        );
+        const res = await fetch(url`${urlApi(extent, projection)}`, {
+          ...getFetchOptions({ method: "GET" }),
+          signal: controller.signal,
+        });
+
+        if (requestId !== latestRequestId) {
+          return;
+        }
+
         if (!res.ok) {
           throw new Error(`HTTP ${res.status}`);
         }
@@ -128,12 +144,20 @@ export function createVectorLayer(
           .getFormat()
           .readFeatures(JSON.parse(text));
 
+        if (requestId !== latestRequestId) {
+          return;
+        }
+
         // Optimisation : batch l'ajout des features
         if (features.length > 0) {
           vectorSource.addFeatures(features);
         }
         success(features);
-      } catch (_error) {
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          vectorSource.removeLoadedExtent(extent);
+          return;
+        }
         vectorSource.removeLoadedExtent(extent);
         failure();
       }

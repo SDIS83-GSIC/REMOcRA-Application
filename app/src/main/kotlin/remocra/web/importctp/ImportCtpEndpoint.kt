@@ -15,6 +15,9 @@ import remocra.auth.RequireDroits
 import remocra.auth.userInfo
 import remocra.data.importctp.ImportCtpData
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.log.LogManagerFactory
+import remocra.tasks.ImportCtpTask
+import remocra.tasks.ImportCtpTaskParameters
 import remocra.usecase.importctp.ExportCtpUseCase
 import remocra.usecase.importctp.ImportCtpUseCase
 import remocra.utils.DateUtils
@@ -30,6 +33,12 @@ class ImportCtpEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var exportCtpUseCase: ExportCtpUseCase
+
+    @Inject
+    lateinit var importCtpTask: ImportCtpTask
+
+    @Inject
+    lateinit var logManagerFactory: LogManagerFactory
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -54,13 +63,16 @@ class ImportCtpEndpoint : AbstractEndpoint() {
     @Path("/enregistrement")
     @RequireDroits([Droit.IMPORT_CTP_A])
     @Consumes(MediaType.APPLICATION_JSON)
-    fun importCtpEnregistrement(importCtpData: ImportCtpData): Response =
-        Response.ok(
-            importCtpUseCase.importCtpEnregistrement(
-                importCtpData,
-                securityContext.userInfo,
-            ),
-        ).build()
+    fun importCtpEnregistrement(importCtpData: ImportCtpData): Response {
+        importCtpTask.start(
+            logManagerFactory.create(),
+            securityContext.userInfo,
+            ImportCtpTaskParameters().apply {
+                this.importCtpData = importCtpData
+            },
+        )
+        return Response.accepted().build()
+    }
 
     @POST
     @Path("/export")

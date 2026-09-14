@@ -1,12 +1,15 @@
 import classNames from "classnames";
 import { FieldArray } from "formik";
 import { Col, Row } from "react-bootstrap";
+import { useGet } from "../../components/Fetch/useFetch.tsx";
 import { MapAnomalieCompleteByPeiId } from "../../Entities/AnomalieEntity.tsx";
 import { PeiVisiteTourneeInformationEntity } from "../../Entities/PeiEntity.tsx";
 import { SimplifiedVisiteEntity } from "../../Entities/VisiteEntity.tsx";
 import DISPONIBILITE_PEI from "../../enums/DisponibiliteEnum.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import TYPE_NATURE_DECI from "../../enums/TypeNatureDeci.tsx";
 import { TYPE_VISITE } from "../../enums/TypeVisiteEnum.tsx";
+import url from "../../module/fetch.tsx";
 import { formatDate } from "../../utils/formatDateUtils.tsx";
 import SimplifiedVisiteForm from "./SimplifiedVisiteForm.tsx";
 
@@ -18,6 +21,19 @@ const IterableVisiteForm = ({
   listPeiInformations,
   results,
 }: IterableVisiteFormType) => {
+  let libelleNonConforme: string = "";
+
+  const listeParametre = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify([PARAMETRE.PEI_LIBELLE_NON_CONFORME]),
+    }}`,
+  );
+  if (listeParametre.isResolved) {
+    libelleNonConforme =
+      listeParametre?.data?.[
+        PARAMETRE.PEI_LIBELLE_NON_CONFORME
+      ].parametreValeur.toUpperCase();
+  }
   return (
     <FieldArray
       name={name}
@@ -50,55 +66,97 @@ const IterableVisiteForm = ({
                 >
                   {results && (
                     <Row className="bg-danger">
-                      {results[currentPeiId]?.message}
+                      <Col>{results[currentPeiId]?.message}</Col>
                     </Row>
                   )}
                   <Row>
                     <Col className="col-6">
                       <Row>
-                        Numéro complet : {currentInformation.peiNumeroComplet}
+                        <Col>
+                          <b>Numéro complet :</b>{" "}
+                          {currentInformation.peiNumeroComplet}
+                        </Col>
                       </Row>
                       <Row>
-                        Nature PEI : {currentInformation.natureLibelle} (
-                        {currentInformation.peiTypePei})
+                        <Col>
+                          <b>Nature PEI :</b> {currentInformation.natureLibelle}{" "}
+                          ({currentInformation.peiTypePei})
+                        </Col>
                       </Row>
                       <Row>
-                        Adresse : {currentInformation.adresse}{" "}
-                        {currentInformation.communeCodePostal}{" "}
-                        {currentInformation.communeLibelle} (
-                        {currentInformation.communeCodeInsee})
+                        <Col>
+                          <b>Adresse :</b> {currentInformation.adresse}{" "}
+                          {currentInformation.communeCodePostal}{" "}
+                          {currentInformation.communeLibelle} (
+                          {currentInformation.communeCodeInsee})
+                        </Col>
                       </Row>
                       <Row>
-                        Nature DECI : {currentInformation.natureDeciLibelle}
+                        <Col>
+                          <b>Nature DECI :</b>{" "}
+                          {currentInformation.natureDeciLibelle}
+                        </Col>
                       </Row>
-                      <Row>Domaine : {currentInformation.domaineLibelle}</Row>
+                      <Row>
+                        <Col>
+                          <b>Domaine :</b> {currentInformation.domaineLibelle}
+                        </Col>
+                      </Row>
                       {canHaveGestionnaire && (
                         <Row>
-                          Propriétaire :{" "}
-                          {currentInformation.gestionnaireLibelle}
+                          <Col>
+                            <b>Propriétaire :</b>{" "}
+                            {currentInformation.gestionnaireLibelle}
+                          </Col>
                         </Row>
                       )}
                       <Row>
-                        Etat :{" "}
-                        {
-                          DISPONIBILITE_PEI[
+                        <Col className="d-flex align-items-center gap-2">
+                          <b>Etat :</b>
+                          {DISPONIBILITE_PEI[
                             currentInformation.peiDisponibiliteTerrestre
-                          ]
-                        }
+                          ] === DISPONIBILITE_PEI.DISPONIBLE ? (
+                            <span className="text-white bg-success rounded px-1 text-nowrap">
+                              DISPONIBLE
+                            </span>
+                          ) : DISPONIBILITE_PEI[
+                              currentInformation.peiDisponibiliteTerrestre
+                            ] === DISPONIBILITE_PEI.INDISPONIBLE ? (
+                            <span className="text-white bg-danger rounded px-1 text-nowrap">
+                              INDISPONIBLE
+                            </span>
+                          ) : DISPONIBILITE_PEI[
+                              currentInformation.peiDisponibiliteTerrestre
+                            ] === DISPONIBILITE_PEI.NON_CONFORME ? (
+                            <span className="text-white bg-warning rounded px-1 text-nowrap">
+                              {libelleNonConforme.toUpperCase()}
+                            </span>
+                          ) : (
+                            ""
+                          )}
+                        </Col>
                       </Row>
                       <Row>
-                        Date dernière ROP :{" "}
-                        {currentInformation.peiLastRop
-                          ? formatDate(currentInformation.peiLastRop)
-                          : ""}
+                        <Col>
+                          <b>Date dernière ROP :</b>{" "}
+                          {currentInformation.peiLastRop
+                            ? formatDate(currentInformation.peiLastRop)
+                            : ""}
+                        </Col>
                       </Row>
                       <Row>
-                        Date dernier CTP :{" "}
-                        {currentInformation.peiLastCtp
-                          ? formatDate(currentInformation.peiLastCtp)
-                          : ""}
+                        <Col>
+                          <b>Date dernier CTP :</b>{" "}
+                          {currentInformation.peiLastCtp
+                            ? formatDate(currentInformation.peiLastCtp)
+                            : ""}
+                        </Col>
                       </Row>
-                      <Row>Anomalies : {currentInformation.listeAnomalies}</Row>
+                      <Row>
+                        <Col>
+                          <b>Anomalies :</b> {currentInformation.listeAnomalies}
+                        </Col>
+                      </Row>
                     </Col>
                     <Col className="col-6">
                       <SimplifiedVisiteForm

@@ -125,11 +125,15 @@ export const validationSchema = object({
   peiNatureDeciId: requiredString,
 
   peiCommuneId: requiredString,
-  //peiVoieId: requiredString,
-  // TODO ici un XOR entre voie et voieText ?
   peiDomaineId: requiredString,
   coordonneeX: requiredNumber,
   coordonneeY: requiredNumber,
+}).test("voie-xor", "", function (values) {
+  const { voieSaisieLibre, peiVoieId, peiVoieTexte } = values;
+  if (voieSaisieLibre) {
+    return peiVoieTexte != null && peiVoieTexte.trim() !== "";
+  }
+  return peiVoieId != null;
 });
 
 export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
@@ -193,6 +197,7 @@ export const prepareVariables = (values: PeiEntity, data?: PeiEntity) => {
     peiCommuneIdInitial: data?.peiCommuneId ?? null,
     peiZoneSpecialeIdInitial: data?.peiZoneSpecialeId ?? null,
     peiNatureDeciIdInitial: data?.peiNatureDeciId ?? null,
+    peiNatureIdInitial: data?.peiNatureId ?? null,
     peiDomaineIdInitial: data?.peiDomaineId ?? null,
     peiGestionnaireIdInitial: data?.peiGestionnaireId ?? null,
     peiDisponibiliteTerrestreInitiale: data?.peiDisponibiliteTerrestre ?? null,
@@ -268,10 +273,12 @@ const Pei = ({
   isNew = false,
   close,
   returnBouton = true,
+  isFromMap = true,
 }: {
   isNew?: boolean;
   close: () => void;
   returnBouton: boolean;
+  isFromMap?: boolean;
 }) => {
   // On récupère l'utilisateur pour prendre en compte les droits
   const { user, srid }: { user: UtilisateurEntity; srid: number } =
@@ -282,12 +289,7 @@ const Pei = ({
     setValues,
     setFieldValue,
   }: {
-    values: PeiEntity & {
-      typeSystemeSrid: { srid: number; nomSystem: string };
-      coordonneeXToDisplay: string;
-      coordonneeYToDisplay: string;
-      voieSaisieLibre: boolean;
-    };
+    values: PeiFormValues;
   } = useFormikContext();
   const selectDataState = useGet(
     url`/api/pei/referentiel-for-upsert-pei?${{
@@ -311,6 +313,8 @@ const Pei = ({
   const parametrePeiDisplayIdentifiantGestionnaire =
     PARAMETRE.PEI_DISPLAY_IDENTIFIANT_GESTIONNAIRE;
   const parametrePeiDisplayTypeEngin = PARAMETRE.PEI_DISPLAY_TYPE_ENGIN;
+  const parametrePeiRenumerotationInterneAuto =
+    PARAMETRE.PEI_RENUMEROTATION_INTERNE_AUTO;
 
   const listeParametre = useGet(
     url`/api/parametres?${{
@@ -318,6 +322,7 @@ const Pei = ({
         parametreVoieSaisieLibre,
         parametrePeiDisplayTypeEngin,
         parametrePeiDisplayIdentifiantGestionnaire,
+        parametrePeiRenumerotationInterneAuto,
       ]),
     }}`,
   );
@@ -348,6 +353,17 @@ const Pei = ({
     // Le résultat est une String, on le parse pour récupérer le tableau
     return JSON.parse(
       listeParametre?.data[parametrePeiDisplayIdentifiantGestionnaire]
+        .parametreValeur,
+    );
+  }, [listeParametre]);
+
+  const renumerotationInterneAuto = useMemo<boolean>(() => {
+    if (!listeParametre.isResolved) {
+      return false;
+    }
+    // Le résultat est une String, on le parse pour récupérer le tableau
+    return JSON.parse(
+      listeParametre?.data[parametrePeiRenumerotationInterneAuto]
         .parametreValeur,
     );
   }, [listeParametre]);
@@ -439,7 +455,10 @@ const Pei = ({
       accordionIndex: index + 1,
     },
     {
-      name: "peiVoieId",
+      name: "voie-xor",
+      constraint: values.voieSaisieLibre
+        ? values.peiVoieTexte == null || values.peiVoieTexte.trim() === ""
+        : values.peiVoieId == null || values.peiVoieId === "",
       accordionIndex: index + 1,
     },
     {
@@ -484,6 +503,8 @@ const Pei = ({
           setValues={setValues}
           setFieldValue={setFieldValue}
           isNew={isNew}
+          renumerotationInterneAuto={renumerotationInterneAuto}
+          isFromMap={isFromMap}
           displayIdentifiantGestionnaire={displayIdentifiantGestionnaire}
           user={user}
         />
@@ -669,30 +690,43 @@ const Pei = ({
  * @param show : fonction d'ouverture d'une section
  * @param listValuesWithConstraints : liste des valeurs qui ont des contraintes avec l'index de l'accordion
  */
+type PeiFormValues = PeiEntity & {
+  typeSystemeSrid: { srid: number; nomSystem: string };
+  coordonneeXToDisplay: string;
+  coordonneeYToDisplay: string;
+  voieSaisieLibre: boolean;
+};
+
 function checkValidity(
-  values: any,
+  values: PeiFormValues,
   show: (e: number) => void,
   listValuesWithConstraints: ValuesWithConstraints[],
 ) {
-  listValuesWithConstraints.map((e: ValuesWithConstraints) => {
-    if (
-      (validationSchema.fields[e.name] != null &&
-        (values[e.name] === null ||
-          values[e.name] === "" ||
-          values[e.name] === undefined)) ||
-      e.constraint === true
-    ) {
+  const schemaFieldNames = new Set(Object.keys(validationSchema.fields));
+  const isFormField = (fieldName: string): fieldName is keyof PeiFormValues =>
+    fieldName in values;
+
+  for (const e of listValuesWithConstraints) {
+    const hasFieldValidationError =
+      schemaFieldNames.has(e.name) &&
+      isFormField(e.name) &&
+      (values[e.name] === null ||
+        values[e.name] === "" ||
+        values[e.name] === undefined);
+
+    const hasConstraintError = e.constraint === true;
+    if (hasFieldValidationError || hasConstraintError) {
       show(e.accordionIndex);
+      break;
     }
-  });
+  }
 }
 
 type ValuesWithConstraints = {
-  name: string;
+  name: keyof PeiFormValues | "voie-xor";
   constraint?: boolean;
   accordionIndex: number;
 };
-
 export default Pei;
 
 const FormEntetePei = ({
@@ -701,6 +735,8 @@ const FormEntetePei = ({
   setValues,
   setFieldValue,
   isNew,
+  renumerotationInterneAuto,
+  isFromMap,
   displayIdentifiantGestionnaire = false,
   user,
 }: {
@@ -709,6 +745,8 @@ const FormEntetePei = ({
   setValues: (e: any) => void;
   setFieldValue: (champ: string, newValue: any | undefined) => void;
   isNew: boolean;
+  renumerotationInterneAuto: boolean;
+  isFromMap: boolean;
   displayIdentifiantGestionnaire: boolean;
   user: UtilisateurEntity;
 }) => {
@@ -749,18 +787,23 @@ const FormEntetePei = ({
   return (
     listNatureDeci && (
       <>
-        <Row>
-          <Col xs={12} sm={5} lg={2}>
+        <Row className="align-items-end">
+          <Col xs={12} sm={isFromMap ? 12 : 5} lg={isFromMap ? 12 : 2}>
             <PositiveNumberInput
               name="peiNumeroInterne"
               label="Numéro interne"
               required={false}
               disabled={
-                !isNew && !hasDroit(user, TYPE_DROIT.PEI_NUMERO_INTERNE_U)
+                renumerotationInterneAuto ||
+                (!isNew && !hasDroit(user, TYPE_DROIT.PEI_NUMERO_INTERNE_U))
               }
             />
           </Col>
-          <Col>
+          <Col
+            xs={12}
+            lg={isFromMap ? 6 : 5}
+            className={isFromMap ? "mt-3 mt-lg-0" : ""}
+          >
             <SelectForm
               name={"peiTypePei"}
               listIdCodeLibelle={listTypePei}
@@ -777,7 +820,11 @@ const FormEntetePei = ({
               }}
             />
           </Col>
-          <Col>
+          <Col
+            xs={12}
+            lg={isFromMap ? 6 : 5}
+            className={isFromMap ? "mt-3 mt-lg-0" : ""}
+          >
             {values.peiTypePei && (
               <SelectNomenclaturesForm
                 name={"peiNatureId"}
@@ -800,7 +847,7 @@ const FormEntetePei = ({
             )}
           </Col>
         </Row>
-        <Row className="mt-3">
+        <Row className="mt-3 align-items-end">
           <Col>
             <SelectForm
               name={"peiAutoriteDeciId"}
@@ -841,7 +888,7 @@ const FormEntetePei = ({
             />
           </Col>
         </Row>
-        <Row className="mt-3">
+        <Row className="mt-3 align-items-end">
           <Col>
             <SelectForm
               name={"peiNatureDeciId"}
@@ -914,7 +961,7 @@ const FormEntetePei = ({
             </Row>
           )}
         {natureParticipeDfci && (
-          <Row className="mt-3">
+          <Row className="mt-3 align-items-end">
             <Col>
               <CheckBoxInput
                 name="peiPerenne"
@@ -1158,16 +1205,16 @@ const FormLocalisationPei = ({
           )}
         </Col>
       </Row>
-      <Row className="mt-3 d-flex align-items-center">
-        <Col>
+      <Row className="mt-3 g-3 align-items-end">
+        <Col xs={6} xxl={2}>
           <TextInput
             name="peiNumeroVoie"
-            label="Numéro de voie"
+            label="N° de voie"
             required={false}
             disabled={!canEdit}
           />
         </Col>
-        <Col>
+        <Col xs={6} xxl={2}>
           <TextInput
             name="peiSuffixeVoie"
             label="Suffixe"
@@ -1175,7 +1222,7 @@ const FormLocalisationPei = ({
             disabled={!canEdit}
           />
         </Col>
-        <Col>
+        <Col xs={8} xxl={5}>
           <SelectForm
             name={"peiVoieId"}
             listIdCodeLibelle={selectData.listVoie.filter(
@@ -1194,37 +1241,12 @@ const FormLocalisationPei = ({
                 values.peiVoieTexte?.trim() !== "")
             }
           />
-          {isSaisieVoieEnabled && (
-            <>
-              <CheckBoxInput
-                name="voieSaisieLibre"
-                label="Voie non trouvée"
-                disabled={!canEdit}
-                onChange={() => {
-                  setFieldValue("voieSaisieLibre", !values.voieSaisieLibre);
-                  if (!values.voieSaisieLibre) {
-                    setFieldValue("peiVoieId", null);
-                  } else {
-                    setFieldValue("peiVoieTexte", null);
-                  }
-                }}
-              />
-              {values.voieSaisieLibre && (
-                <TextInput
-                  name="peiVoieTexte"
-                  label="Voie (saisie libre)"
-                  required={values.voieSaisieLibre}
-                  disabled={
-                    !canEdit ||
-                    (values.peiVoieId != null &&
-                      values.peiVoieId?.trim() !== "")
-                  }
-                />
-              )}
-            </>
-          )}
         </Col>
-        <Col className="d-flex align-items-center">
+        <Col
+          xs={4}
+          xxl={3}
+          className="d-flex align-self-end justify-content-start"
+        >
           <CheckBoxInput
             name="peiEnFace"
             label="Situé en face"
@@ -1232,7 +1254,41 @@ const FormLocalisationPei = ({
           />
         </Col>
       </Row>
-      <Row className="mt-3 d-flex align-items-center">
+      {isSaisieVoieEnabled && (
+        <Row>
+          <Col xs={8} xxl={{ span: 5, offset: 4 }}>
+            <CheckBoxInput
+              name="voieSaisieLibre"
+              label="Voie non trouvée"
+              disabled={!canEdit}
+              onChange={() => {
+                setFieldValue("voieSaisieLibre", !values.voieSaisieLibre);
+                if (!values.voieSaisieLibre) {
+                  setFieldValue("peiVoieId", null);
+                } else {
+                  setFieldValue("peiVoieTexte", null);
+                }
+              }}
+            />
+          </Col>
+        </Row>
+      )}
+      {isSaisieVoieEnabled && values.voieSaisieLibre && (
+        <Row>
+          <Col xs={12} xxl={{ span: 5, offset: 4 }}>
+            <TextInput
+              name="peiVoieTexte"
+              label="Voie (saisie libre)"
+              required={values.voieSaisieLibre}
+              disabled={
+                !canEdit ||
+                (values.peiVoieId != null && values.peiVoieId?.trim() !== "")
+              }
+            />
+          </Col>
+        </Row>
+      )}
+      <Row className="mt-3 d-flex align-items-end">
         <Col>
           <SelectNomenclaturesForm
             name={"peiNiveauId"}

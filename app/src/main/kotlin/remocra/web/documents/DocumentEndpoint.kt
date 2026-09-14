@@ -2,8 +2,8 @@ package remocra.web.documents
 
 import jakarta.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import jakarta.ws.rs.Consumes
-import jakarta.ws.rs.ForbiddenException
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
@@ -13,6 +13,7 @@ import jakarta.ws.rs.core.Context
 import jakarta.ws.rs.core.MediaType
 import jakarta.ws.rs.core.Response
 import jakarta.ws.rs.core.SecurityContext
+import net.ltgt.oidc.servlet.AuthenticationRedirector
 import org.slf4j.LoggerFactory
 import remocra.auth.Public
 import remocra.auth.RequireDroits
@@ -43,6 +44,10 @@ class DocumentEndpoint : AbstractEndpoint() {
 
     @Context lateinit var securityContext: SecurityContext
 
+    @Context lateinit var httpServletRequest: HttpServletRequest
+
+    @Context lateinit var httpServletResponse: HttpServletResponse
+
     /**
      * Télécharge le document.
      * @param documentId l'identifiant du document à télécharger
@@ -68,7 +73,16 @@ class DocumentEndpoint : AbstractEndpoint() {
         // si c'est un courrier, on passe par le EndPoint "Courrier" pour gérer les accusés de la même façon partout
         if (courierId != null) {
             // Il faut être connecté pour télécharger un courrier et set l'accusé réception
-            val idUtilisateur = securityContext.userInfo.utilisateurId ?: throw ForbiddenException()
+            val idUtilisateur = securityContext.userInfo.utilisateurId
+                ?: run {
+                    // redirection vers une page du front qui lance le téléchargement après authentification pour pouvoir fermer la fenêtre après le téléchargement
+                    // doit toujours correspondre à la route du front qui gère le téléchargement de courrier (route.tsx)
+                    val returnTo = "/telecharger-courrier/$documentId"
+                    val redirector = httpServletRequest.servletContext
+                        .getAttribute(AuthenticationRedirector.CONTEXT_ATTRIBUTE_NAME) as AuthenticationRedirector
+                    redirector.redirectToAuthenticationEndpoint(httpServletRequest, httpServletResponse, returnTo)
+                    return Response.status(Response.Status.SEE_OTHER).build()
+                }
             if (response.status == Response.Status.OK.statusCode) {
                 courrierRepository.setAccuse(courierId, idUtilisateur)
             }

@@ -90,6 +90,11 @@ const ConfirmModalBody = ({
     errorToast: errorToast,
     successToast: successToast,
   });
+  const isSubmitting =
+    href === undefined &&
+    (isPost
+      ? usePost.isPending || usePost.isLoading
+      : usePut.isPending || usePut.isLoading);
 
   return (
     <>
@@ -101,6 +106,9 @@ const ConfirmModalBody = ({
         <Button
           variant="primary"
           onClick={async () => {
+            if (isSubmitting) {
+              return;
+            }
             // Si on a un href, on n'est pas en post
             if (href === undefined) {
               try {
@@ -121,6 +129,7 @@ const ConfirmModalBody = ({
             }
           }}
           href={href}
+          disabled={isSubmitting}
         >
           Valider
         </Button>

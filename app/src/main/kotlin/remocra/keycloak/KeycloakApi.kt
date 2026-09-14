@@ -2,6 +2,7 @@ package remocra.keycloak
 
 import com.google.common.net.HttpHeaders
 import remocra.keycloak.representations.ClientRepresentation
+import remocra.keycloak.representations.ClientScopeRepresentation
 import remocra.keycloak.representations.CredentialRepresentation
 import remocra.keycloak.representations.UserRepresentation
 import retrofit2.Call
@@ -96,4 +97,26 @@ interface KeycloakApi {
         @Header(HttpHeaders.AUTHORIZATION) authorization: String?,
         @Query("clientId") clientId: String = "remocra-mobile",
     ): Call<List<ClientRepresentation>>
+
+    @GET("client-scopes")
+    @Headers("Content-Type: application/json")
+    fun getClientScopes(
+        @Header(HttpHeaders.AUTHORIZATION) authorization: String,
+        @Query("search") search: String? = null,
+    ): Call<List<ClientScopeRepresentation>>
+
+    @GET("clients/{id}/default-client-scopes")
+    @Headers("Content-Type: application/json")
+    fun getDefaultClientScopes(
+        @Header(HttpHeaders.AUTHORIZATION) authorization: String,
+        @Path("id") clientId: String,
+    ): Call<List<ClientScopeRepresentation>>
+
+    @PUT("clients/{id}/default-client-scopes/{clientScopeId}")
+    @Headers("Content-Type: application/json")
+    fun addDefaultClientScope(
+        @Header(HttpHeaders.AUTHORIZATION) authorization: String,
+        @Path("id") clientId: String,
+        @Path("clientScopeId") clientScopeId: String,
+    ): Call<Void>
 }

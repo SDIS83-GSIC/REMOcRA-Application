@@ -173,7 +173,7 @@ constructor(
                 val type: String =
                     next.properties.find { it.name.localPart == "type" }?.value?.toString()
                         ?: throw RemocraResponseException(ErrorType.IMPORT_SHP_ETUDE_TYPE_PEI_PROJET)
-                val codeDiametre: String? =
+                val codeDiametre: String =
                     next.properties.find { it.name.localPart == "diametreNo" }?.value.toString()
                 var diametreCanalisation: Int? =
                     next.properties.find { it.name.localPart == "diametreCa" }?.value?.toString()?.toIntOrNull()

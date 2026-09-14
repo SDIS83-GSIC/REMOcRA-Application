@@ -1,4 +1,6 @@
 import net.ltgt.gradle.flyway.tasks.FlywayMigrate
+import net.ltgt.gradle.jooq.tasks.JooqCodegen
+import java.sql.DriverManager
 
 plugins {
     id("local.kotlin-base")
@@ -12,10 +14,20 @@ val dbUrl = providers.gradleProperty("db.url").orElse("jdbc:postgresql://localho
 val dbUser = providers.gradleProperty("db.user").orElse("remocra")
 val dbPassword = providers.gradleProperty("db.password").orElse("remocra")
 
+val dbBaseUrl = dbUrl.get().substringBeforeLast("/")
+val dbJooqStandaloneName = "jooq_gen"
+
 flyway {
     url = dbUrl
     user = dbUser
     password = dbPassword
+}
+
+buildscript {
+    dependencies {
+        classpath(libs.postgresql)
+        classpath(libs.flyway.database.postgresql)
+    }
 }
 
 dependencies {
@@ -53,8 +65,79 @@ tasks {
         user = dbUser
         password = dbPassword
     }
+
+    val initStandalone = register("initStandalone") {
+        description = "Initialise la base de données standalone"
+
+        doFirst {
+            // création de la base de données
+            DriverManager
+                .getConnection(
+                    "$dbBaseUrl/postgres",
+                    dbUser.get(),
+                    dbPassword.get(),
+                ).use { conn ->
+                    conn
+                        .prepareStatement(
+                            """
+                                DROP DATABASE IF EXISTS $dbJooqStandaloneName WITH (FORCE);;
+                                CREATE DATABASE $dbJooqStandaloneName;
+                            """,
+                        ).execute()
+                }
+            // création de l'extension postgis
+            DriverManager
+                .getConnection(
+                    "$dbBaseUrl/$dbJooqStandaloneName",
+                    dbUser.get(),
+                    dbPassword.get(),
+                ).use { conn ->
+                    conn
+                        .prepareStatement("CREATE EXTENSION IF NOT EXISTS postgis;")
+                        .execute()
+                }
+        }
+    }
+
+    val dropStandalone = register("dropStandalone") {
+        description = "Supprime la base de données standalone"
+
+        doFirst {
+            // Suppression de la base de données
+            DriverManager
+                .getConnection(
+                    "$dbBaseUrl/postgres",
+                    dbUser.get(),
+                    dbPassword.get(),
+                ).use { conn ->
+                    conn.prepareStatement("DROP DATABASE $dbJooqStandaloneName;").execute()
+                }
+        }
+    }
+
+    val flywayMigrateStandalone = register<FlywayMigrate>("flywayMigrateStandalone") {
+        description = "Migre la base de données standalone"
+        url = "$dbBaseUrl/$dbJooqStandaloneName"
+
+        dependsOn(initStandalone)
+    }
+
+    val jooqStandalone = register<JooqCodegen>("jooqStandalone") {
+        description = "Génère les fichiers jOOQ en fonction d'une base crée (puis supprimé) spécifiquement pour ça."
+        dependsOn(flywayMigrateStandalone)
+        finalizedBy(spotlessKotlinApply, dropStandalone)
+
+        configurationFile.set(jooq.flatMap { it.configurationFile })
+        outputDirectory.set(jooq.flatMap { it.outputDirectory })
+        classpath.from(configurations.named("jooqCodegenClasspath"))
+
+        url = "$dbBaseUrl/$dbJooqStandaloneName"
+        user = dbUser
+        password = dbPassword
+    }
+
     spotlessKotlin {
-        mustRunAfter(jooq)
+        mustRunAfter(jooq, jooqStandalone)
     }
 }
 

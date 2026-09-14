@@ -5,9 +5,9 @@ FROM docker-registry.priv.atolcd.com/glowroot:$GLOWROOT_VERSION AS glowroot
 # On passe par un stage intermédiaire parce qu'on n'a ni 'unzip' ni 'jar' dans l'image java:17-jre
 FROM docker-registry.priv.atolcd.com/buildtools/base:jammy AS build
 
-ARG GEOSERVER_VERSION=2.28.3
-ARG GEOSERVER_SHA256=8d7bee210be93981a745371d1f06bea7c95b31a6aa8850cc2d1473a71b3ac0b8
-ARG GEOSERVER_QUERYLAYER_SHA256=3ab3dbd8731bc46d7c573dd9baabb06b1bcb2a572de6636cf15c93ee1526e7db
+ARG GEOSERVER_VERSION=2.28.5
+ARG GEOSERVER_SHA256=77cdc75f94c017fd9b8b85273136ebe0056e8436658d610890a24ddb6f3e6620
+ARG GEOSERVER_QUERYLAYER_SHA256=754f1edc3767bc41aff033360ba1d05768094c9ce7b280a7987d94ef00f6ae49
 
 ENV GEOSERVER_HOME=/opt/geoserver
 
@@ -44,9 +44,9 @@ RUN groupadd --system --non-unique --gid 1000 geoserver \
 COPY --link --from=glowroot \
      --exclude=opt/glowroot/lib/*-osx.jar \
      --exclude=opt/glowroot/lib/*-windows.jar \
-     / /
+     /opt/glowroot/ /opt/glowroot/
 
-COPY --from=docker-registry.priv.atolcd.com/opentelemetry-javaagent:latest / /
+COPY --from=docker-registry.priv.atolcd.com/opentelemetry-javaagent:latest /opt/opentelemetry-javaagent/ /opt/opentelemetry-javaagent/
 # Configuration par défaut pour OpenTelemetry
 # OTEL_SERVICE_NAMESPACE, OTEL_SERVICE_INSTANCE_ID et OTEL_SERVICE_VERSION ne sont pas des variables standard OpenTelemetry
 # elles sont utilisées par l'entrypoint pour compléter OTEL_RESOURCE_ATTRIBUTES

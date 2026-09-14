@@ -55,9 +55,7 @@ class SigPostgresQueries @Inject constructor(
         "numeric", "decimal" -> SigPostgreSQLType.NUMERIC
 
         // Types texte
-        "text", "varchar", "character varying" -> SigPostgreSQLType.TEXT
-        "char", "character" -> SigPostgreSQLType.CHAR
-        "bpchar" -> SigPostgreSQLType.CHARACTER
+        "text", "varchar", "character varying", "char", "character", "bpchar" -> SigPostgreSQLType.TEXT
 
         // Types date/heure
         "timestamp", "timestamp without time zone" -> SigPostgreSQLType.TIMESTAMP

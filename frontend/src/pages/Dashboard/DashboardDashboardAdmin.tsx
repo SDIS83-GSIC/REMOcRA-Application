@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import { Outlet } from "react-router-dom";
 import { useGet } from "../../components/Fetch/useFetch.tsx";
@@ -8,7 +8,9 @@ import {
   DashboardItemParam,
   DashboardParam,
 } from "./Constants.tsx";
-import ConfigDynamicDashboard from "./DashboardAdminDynamicConfig/ConfigDynamicDashboard.tsx";
+import ConfigDynamicDashboard, {
+  DashboardCacheEntry,
+} from "./DashboardAdminDynamicConfig/ConfigDynamicDashboard.tsx";
 import QueryComponentList from "./DashboardAdminDynamicConfig/QueryComponentList.tsx";
 
 const ComponentBoardDashboardAdmin = () => {
@@ -19,6 +21,9 @@ const ComponentBoardDashboardAdmin = () => {
   const [editTabIndex, setEditTabIndex] = useState<number | null>(null); // Index du dashboard à éditer
   const [activeDashboard, setActiveDashboard] =
     useState<DashboardItemParam | null>(null); // Dashboard ouvert à l'écran
+
+  // Cache mémoire : survit aux remontages de ConfigDynamicDashboard
+  const dashboardCacheRef = useRef<Map<string, DashboardCacheEntry>>(new Map());
 
   const [componentsListDashboard, setComponentsListDashboard] = useState<
     ComponentDashboard[] | undefined
@@ -93,6 +98,7 @@ const ComponentBoardDashboardAdmin = () => {
             setEditTabIndex={setEditTabIndex}
             componentsListDashboard={componentsListDashboard}
             setComponentsListDashboard={setComponentsListDashboard}
+            dashboardCacheRef={dashboardCacheRef}
           />
         </Col>
         {activeDashboard && editTabIndex !== null && (

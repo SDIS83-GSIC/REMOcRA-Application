@@ -231,7 +231,7 @@ class CarteRepository @Inject constructor(
     /**
      * Récupère les évènements selon la crise et le EvenementStatutMode associé.
      */
-    fun getEvenementProjetFromCrise(criseId: UUID, srid: Int, evenementState: EvenementStatutMode?): Collection<EvenementCarte> {
+    fun getEvenementProjetFromCrise(criseId: UUID, srid: Int, evenementState: EvenementStatutMode?, evenementIds: Set<UUID>?): Collection<EvenementCarte> {
         return dsl.select(ST_Transform(EVENEMENT.GEOMETRIE, srid).`as`("elementGeometrie"), EVENEMENT.ID.`as`("elementId"))
             .from(EVENEMENT)
             .where(
@@ -244,6 +244,8 @@ class CarteRepository @Inject constructor(
                         EVENEMENT.STATUT_MODE.eq(it)
                     }
                 },
+            ).and(
+                evenementIds?.let { EVENEMENT.ID.`in`(it) },
             )
             .fetchInto()
     }
@@ -251,7 +253,7 @@ class CarteRepository @Inject constructor(
     /**
      * Récupère les évènements dans une BBOX selon la crise.
      */
-    fun getEvenementProjetFromCriseAndBbox(criseId: UUID, bbox: Field<Geometry?>, srid: Int, evenementState: EvenementStatutMode?): Collection<EvenementCarte> {
+    fun getEvenementProjetFromCriseAndBbox(criseId: UUID, bbox: Field<Geometry?>, srid: Int, evenementState: EvenementStatutMode?, evenementIds: Set<UUID>?): Collection<EvenementCarte> {
         return dsl.select(ST_Transform(EVENEMENT.GEOMETRIE, srid).`as`("elementGeometrie"), EVENEMENT.ID.`as`("elementId"))
             .from(EVENEMENT)
             .where(
@@ -266,6 +268,8 @@ class CarteRepository @Inject constructor(
                 },
             ).and(
                 ST_Within(EVENEMENT.GEOMETRIE, ST_Transform(bbox, appSettings.srid)),
+            ).and(
+                evenementIds?.let { EVENEMENT.ID.`in`(it) },
             )
             .fetchInto()
     }
@@ -680,7 +684,7 @@ class CarteRepository @Inject constructor(
         override var propertiesToDisplay: String? = "<b>Etat :</b> ${getEtatSignalementLibelle(signalementType)} <br/>" +
             "<b>Description :</b> ${signalementDescription.orEmpty()} " +
             "<br /><b>Date constat :</b> ${signalementDateConstat?.format(DateTimeFormatter.ofPattern(DateUtils.PATTERN_NATUREL, Locale.getDefault()))} " +
-            "<br/><b>Liste des élements :</b> ${
+            "<br/><b>Liste des éléments :</b> ${
                 listSousElementAvecAnomalie.joinToString {
                     "${it.sousElement} (anomalie(s) constatée(s) : ${
                         it.listeAnomalie.takeIf { !it.isNullOrBlank() }.apply { it } ?: "aucune anomalie"
@@ -736,8 +740,8 @@ class CarteRepository @Inject constructor(
     ) : ElementCarte() {
         override val typeElementCarte: TypeElementCarte
             get() = TypeElementCarte.DFCI_AIRE
-        override var propertiesToDisplay: String? = "<b>Type d'aire :</b> ${decorateTypeAire(dfciAireType)} </br>" +
-            "<b>Piste :</b> $dfciPisteLibelle </br>"
+        override var propertiesToDisplay: String? = "<b>Type d'aire :</b> ${decorateTypeAire(dfciAireType)} <br/>" +
+            "<b>Piste :</b> $dfciPisteLibelle <br/>"
         val dfciTypeElement: TypeDfciElement get() = TypeDfciElement.AIRE
 
         private fun decorateTypeAire(type: TypeAire): String =
@@ -757,8 +761,8 @@ class CarteRepository @Inject constructor(
     ) : ElementCarte() {
         override val typeElementCarte: TypeElementCarte
             get() = TypeElementCarte.DFCI_PISTE
-        override var propertiesToDisplay: String? = "<b>Libellé :</b> $dfciPisteLibelle </br>" +
-            "<b>Numéro :</b> $dfciPisteNumero</br>" +
+        override var propertiesToDisplay: String? = "<b>Libellé :</b> $dfciPisteLibelle <br/>" +
+            "<b>Numéro :</b> $dfciPisteNumero<br/>" +
             "<b>Adresse :</b> ${dfciPisteAdresse.takeIf { !it.isNullOrBlank() } ?: "Aucune adresse renseignée" }"
         val dfciTypeElement: TypeDfciElement get() = TypeDfciElement.PISTE
     }
@@ -772,8 +776,8 @@ class CarteRepository @Inject constructor(
     ) : ElementCarte() {
         override val typeElementCarte: TypeElementCarte
             get() = TypeElementCarte.DFCI_DEB
-        override var propertiesToDisplay: String? = "<b>Type :</b> ${decorateTypeDebroussaillement(dfciDebType)} </br>" +
-            "<b>Massif :</b> $dfciMassifLibelle </br>"
+        override var propertiesToDisplay: String? = "<b>Type :</b> ${decorateTypeDebroussaillement(dfciDebType)} <br/>" +
+            "<b>Massif :</b> $dfciMassifLibelle <br/>"
         val dfciTypeElement: TypeDfciElement get() = TypeDfciElement.DEBROUSSAILLEMENT
 
         private fun decorateTypeDebroussaillement(typeDeb: TypeDebroussaillement): String =
@@ -795,8 +799,8 @@ class CarteRepository @Inject constructor(
     ) : ElementCarte() {
         override val typeElementCarte: TypeElementCarte
             get() = TypeElementCarte.DFCI_PANNEAU
-        override var propertiesToDisplay: String? = "<b>Type :</b> ${decorateTypePanneau(dfciPanneauType)} </br>" +
-            "<b>Piste :</b> $dfciPisteLibelle</br>"
+        override var propertiesToDisplay: String? = "<b>Type :</b> ${decorateTypePanneau(dfciPanneauType)} <br/>" +
+            "<b>Piste :</b> $dfciPisteLibelle<br/>"
         val dfciTypeElement: TypeDfciElement get() = TypeDfciElement.PANNEAU
 
         init {
@@ -804,8 +808,8 @@ class CarteRepository @Inject constructor(
             var donneesLibellePiste = "Non"
             if (dfciPanneauNumPiste) donneesNumPiste = "Oui"
             if (dfciPanneauLibellePiste) donneesLibellePiste = "Oui"
-            propertiesToDisplay += "<b>Présence du numéro de piste :</b> $donneesNumPiste </br>" +
-                "<b>Présence du libelle de piste :</b> $donneesLibellePiste </br>"
+            propertiesToDisplay += "<b>Présence du numéro de piste :</b> $donneesNumPiste <br/>" +
+                "<b>Présence du libelle de piste :</b> $donneesLibellePiste <br/>"
         }
 
         private fun decorateTypePanneau(typePanneau: TypePanneau): String =

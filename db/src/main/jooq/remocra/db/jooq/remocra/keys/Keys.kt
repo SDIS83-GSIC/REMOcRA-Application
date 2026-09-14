@@ -14,6 +14,8 @@ import org.jooq.impl.QOM.ForeignKeyRule
 import remocra.db.jooq.remocra.tables.Anomalie
 import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
+import remocra.db.jooq.remocra.tables.AtlasAnnexe
+import remocra.db.jooq.remocra.tables.AtlasDocument
 import remocra.db.jooq.remocra.tables.CadastreParcelle
 import remocra.db.jooq.remocra.tables.CadastreSection
 import remocra.db.jooq.remocra.tables.CarroyageDfci
@@ -181,6 +183,9 @@ val ANOMALIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Anomalie.ANOMALI
 val ANOMALIE_CATEGORIE_ANOMALIE_CATEGORIE_CODE_KEY: UniqueKey<Record> = Internal.createUniqueKey(AnomalieCategorie.ANOMALIE_CATEGORIE, DSL.name("anomalie_categorie_anomalie_categorie_code_key"), arrayOf(AnomalieCategorie.ANOMALIE_CATEGORIE.CODE), true)
 val ANOMALIE_CATEGORIE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(AnomalieCategorie.ANOMALIE_CATEGORIE, DSL.name("anomalie_categorie_pkey"), arrayOf(AnomalieCategorie.ANOMALIE_CATEGORIE.ID), true)
 val API_PKEY: UniqueKey<Record> = Internal.createUniqueKey(Api.API, DSL.name("api_pkey"), arrayOf(Api.API.ORGANISME_ID), true)
+val ATLAS_ANNEXE_ATLAS_ANNEXE_ORDER_KEY: UniqueKey<Record> = Internal.createUniqueKey(AtlasAnnexe.ATLAS_ANNEXE, DSL.name("atlas_annexe_atlas_annexe_order_key"), arrayOf(AtlasAnnexe.ATLAS_ANNEXE.ORDER), true)
+val ATLAS_ANNEXE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(AtlasAnnexe.ATLAS_ANNEXE, DSL.name("atlas_annexe_pkey"), arrayOf(AtlasAnnexe.ATLAS_ANNEXE.ID), true)
+val ATLAS_DOCUMENT_PKEY: UniqueKey<Record> = Internal.createUniqueKey(AtlasDocument.ATLAS_DOCUMENT, DSL.name("atlas_document_pkey"), arrayOf(AtlasDocument.ATLAS_DOCUMENT.ID), true)
 val CADASTRE_PARCELLE_PKEY: UniqueKey<Record> = Internal.createUniqueKey(CadastreParcelle.CADASTRE_PARCELLE, DSL.name("cadastre_parcelle_pkey"), arrayOf(CadastreParcelle.CADASTRE_PARCELLE.ID), true)
 val CADASTRE_SECTION_PKEY: UniqueKey<Record> = Internal.createUniqueKey(CadastreSection.CADASTRE_SECTION, DSL.name("cadastre_section_pkey"), arrayOf(CadastreSection.CADASTRE_SECTION.ID), true)
 val CARROYAGE_DFCI_PKEY: UniqueKey<Record> = Internal.createUniqueKey(CarroyageDfci.CARROYAGE_DFCI, DSL.name("carroyage_dfci_pkey"), arrayOf(CarroyageDfci.CARROYAGE_DFCI.ID), true)
@@ -425,6 +430,8 @@ val ZONE_INTEGRATION_ZONE_INTEGRATION_CODE_KEY: UniqueKey<Record> = Internal.cre
 
 val ANOMALIE__ANOMALIE_ANOMALIE_ANOMALIE_CATEGORIE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Anomalie.ANOMALIE, DSL.name("anomalie_anomalie_anomalie_categorie_id_fkey"), arrayOf(Anomalie.ANOMALIE.ANOMALIE_CATEGORIE_ID), remocra.db.jooq.remocra.keys.ANOMALIE_CATEGORIE_PKEY, arrayOf(AnomalieCategorie.ANOMALIE_CATEGORIE.ID), true, ForeignKeyRule.NO_ACTION, ForeignKeyRule.NO_ACTION)
 val API__API_API_ORGANISME_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Api.API, DSL.name("api_api_organisme_id_fkey"), arrayOf(Api.API.ORGANISME_ID), remocra.db.jooq.remocra.keys.ORGANISME_PKEY, arrayOf(Organisme.ORGANISME.ID), true, ForeignKeyRule.NO_ACTION, ForeignKeyRule.NO_ACTION)
+val ATLAS_ANNEXE__ATLAS_ANNEXE_ATLAS_ANNEXE_DOCUMENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(AtlasAnnexe.ATLAS_ANNEXE, DSL.name("atlas_annexe_atlas_annexe_document_id_fkey"), arrayOf(AtlasAnnexe.ATLAS_ANNEXE.DOCUMENT_ID), remocra.db.jooq.remocra.keys.DOCUMENT_PKEY, arrayOf(Document.DOCUMENT.ID), true, ForeignKeyRule.NO_ACTION, ForeignKeyRule.NO_ACTION)
+val ATLAS_DOCUMENT__ATLAS_DOCUMENT_ATLAS_DOCUMENT_DOCUMENT_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(AtlasDocument.ATLAS_DOCUMENT, DSL.name("atlas_document_atlas_document_document_id_fkey"), arrayOf(AtlasDocument.ATLAS_DOCUMENT.DOCUMENT_ID), remocra.db.jooq.remocra.keys.DOCUMENT_PKEY, arrayOf(Document.DOCUMENT.ID), true, ForeignKeyRule.NO_ACTION, ForeignKeyRule.NO_ACTION)
 val CADASTRE_PARCELLE__CADASTRE_PARCELLE_CADASTRE_PARCELLE_CADASTRE_SECTION_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(CadastreParcelle.CADASTRE_PARCELLE, DSL.name("cadastre_parcelle_cadastre_parcelle_cadastre_section_id_fkey"), arrayOf(CadastreParcelle.CADASTRE_PARCELLE.CADASTRE_SECTION_ID), remocra.db.jooq.remocra.keys.CADASTRE_SECTION_PKEY, arrayOf(CadastreSection.CADASTRE_SECTION.ID), true, ForeignKeyRule.NO_ACTION, ForeignKeyRule.NO_ACTION)
 val CADASTRE_SECTION__CADASTRE_SECTION_CADASTRE_SECTION_COMMUNE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(CadastreSection.CADASTRE_SECTION, DSL.name("cadastre_section_cadastre_section_commune_id_fkey"), arrayOf(CadastreSection.CADASTRE_SECTION.COMMUNE_ID), remocra.db.jooq.remocra.keys.COMMUNE_PKEY, arrayOf(Commune.COMMUNE.ID), true, ForeignKeyRule.NO_ACTION, ForeignKeyRule.NO_ACTION)
 val CONTACT__CONTACT_CONTACT_COMMUNE_ID_FKEY: ForeignKey<Record, Record> = Internal.createForeignKey(Contact.CONTACT, DSL.name("contact_contact_commune_id_fkey"), arrayOf(Contact.CONTACT.COMMUNE_ID), remocra.db.jooq.remocra.keys.COMMUNE_PKEY, arrayOf(Commune.COMMUNE.ID), true, ForeignKeyRule.NO_ACTION, ForeignKeyRule.NO_ACTION)

@@ -20,6 +20,8 @@ import remocra.db.jooq.remocra.tables.references.GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_ORGANISME
 import remocra.db.jooq.remocra.tables.references.L_CONTACT_ROLE
+import remocra.db.jooq.remocra.tables.references.L_COURRIER_CONTACT_GESTIONNAIRE
+import remocra.db.jooq.remocra.tables.references.L_COURRIER_CONTACT_ORGANISME
 import remocra.db.jooq.remocra.tables.references.SITE
 import java.util.UUID
 import kotlin.math.absoluteValue
@@ -264,4 +266,18 @@ class ContactRepository @Inject constructor(private val dsl: DSLContext) : Abstr
             .from(L_CONTACT_GESTIONNAIRE)
             .where(L_CONTACT_GESTIONNAIRE.GESTIONNAIRE_ID.eq(gestionnaireId))
             .fetchInto()
+
+    fun deleteLCourrierContactGestionnaireReturningCourrierId(contactId: UUID): List<UUID> =
+        dsl.deleteFrom(L_COURRIER_CONTACT_GESTIONNAIRE)
+            .where(L_COURRIER_CONTACT_GESTIONNAIRE.CONTACT_ID.eq(contactId))
+            .returning(L_COURRIER_CONTACT_GESTIONNAIRE.COURRIER_ID)
+            .fetch()
+            .mapNotNull { it[L_COURRIER_CONTACT_GESTIONNAIRE.COURRIER_ID] }
+
+    fun deleteLCourrierContactOrganismeReturningCourrierId(contactId: UUID): List<UUID> =
+        dsl.deleteFrom(L_COURRIER_CONTACT_ORGANISME)
+            .where(L_COURRIER_CONTACT_ORGANISME.CONTACT_ID.eq(contactId))
+            .returning(L_COURRIER_CONTACT_ORGANISME.COURRIER_ID)
+            .fetch()
+            .mapNotNull { it[L_COURRIER_CONTACT_ORGANISME.COURRIER_ID] }
 }

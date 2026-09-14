@@ -122,6 +122,7 @@ dependencies {
     api(libs.kotlin.reflect)
     api(libs.commons.email)
     api(libs.caffeine)
+    api(libs.apache.pdfbox)
 
     // Dependency Injection
     api(libs.guice.bom)

@@ -129,6 +129,22 @@ class AdminEndpoint : AbstractEndpoint() {
     }
 
     @PUT
+    @Path("/import-favicon")
+    @RequireDroits([Droit.ADMIN_PARAM_APPLI])
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    fun importFavicon(
+        @Context httpRequest: HttpServletRequest,
+    ): Response {
+        return Response.ok(
+            importRessourcesUseCase.importFavicon(
+                securityContext.userInfo,
+                httpRequest.getPart("favicon"),
+            ),
+        ).build()
+    }
+
+    @PUT
     @Path("/import-symbologie")
     @RequireDroits([Droit.ADMIN_PARAM_APPLI])
     @Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -201,12 +217,23 @@ class AdminEndpoint : AbstractEndpoint() {
     @Path("/importer-cadastre")
     @RequireDroits([Droit.ADMIN_PARAM_APPLI])
     @Produces(MediaType.APPLICATION_JSON)
-    fun importerCadastre(): Response {
+    fun importerCadastre(parametres: ParametreTaskImportCadastreInput): Response {
         if (!securityContext.userInfo.isSuperAdmin) {
             return forbidden().build()
         }
-        importCadastreUseCase.execute(securityContext.userInfo)
+        importCadastreUseCase.execute(
+            securityContext.userInfo,
+            millesime = parametres.millesime,
+            supprimerDonneesCadastreNonUtilisees = parametres.supprimerDonneesCadastreNonUtilisees,
+            remplacerDonneesCadastre = parametres.remplacerDonneesCadastre,
+        )
         return Response.ok().build()
+    }
+
+    class ParametreTaskImportCadastreInput {
+        var millesime: String? = null
+        var supprimerDonneesCadastreNonUtilisees: Boolean = false
+        var remplacerDonneesCadastre: Boolean = false
     }
 
     @POST

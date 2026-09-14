@@ -3,41 +3,58 @@ import { Button } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import ToastAutohide from "../../module/Toast/ToastAutoHide.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
+import Loading from "../Elements/Loading/Loading.tsx";
 import { useDelete } from "../Fetch/useFetch.tsx";
 
 const DeleteModalBody = ({
   query,
   id,
-  closeModal,
+  onCancel,
+  onSuccess,
+  onError,
   onDelete,
   content,
   successLibelle,
 }: DeleteModalBodyType) => {
   const { success: successToast, error: errorToast } = useToastContext();
+
   const del = useDelete(id ? `${query}/${id}` : `${query}`, {
     onResolve: (res: any) => {
       onDelete && onDelete(res);
       successToast(successLibelle ?? "L'élément a bien été supprimé");
-      closeModal();
+      onSuccess();
     },
     onReject: async (error: any) => {
       errorToast(
         `Erreur lors de l'exécution de l'action : ${await error.text()}`,
       );
-      closeModal();
+      onError();
     },
   });
+  const isSubmitting = del.isPending || del.isLoading;
 
   return (
     <>
-      <Modal.Body>{content}</Modal.Body>
+      <Modal.Body>
+        {content}
+        {isSubmitting && (
+          <div className="d-flex flex-column align-items-center mt-3 gap-2">
+            <Loading className="py-2" />
+            <div>Suppression en cours…</div>
+          </div>
+        )}
+      </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={closeModal}>
+        <Button variant="secondary" onClick={onCancel} disabled={isSubmitting}>
           Annuler
         </Button>
         <Button
           variant="primary"
+          disabled={isSubmitting}
           onClick={async () => {
+            if (isSubmitting) {
+              return;
+            }
             try {
               await del.run();
             } catch (e: any) {
@@ -58,7 +75,9 @@ const DeleteModalBody = ({
 const DeleteModal = ({
   ref,
   visible,
-  closeModal,
+  onCancel,
+  onSuccess,
+  onError,
   header = "Suppression d'un élément",
   query,
   id,
@@ -67,14 +86,16 @@ const DeleteModal = ({
   successLibelle,
 }: DeleteModalBodyType & { visible: boolean }) => {
   return (
-    <Modal show={visible} onHide={closeModal} ref={ref}>
+    <Modal show={visible} onHide={onCancel} ref={ref}>
       <Modal.Header>
         <Modal.Title>{header}</Modal.Title>
       </Modal.Header>
       <DeleteModalBody
         query={query}
         id={id}
-        closeModal={closeModal}
+        onCancel={onCancel}
+        onSuccess={onSuccess}
+        onError={onError}
         onDelete={onDelete}
         content={content}
         successLibelle={successLibelle}
@@ -85,7 +106,9 @@ const DeleteModal = ({
 
 type DeleteModalBodyType = {
   header?: ReactNode;
-  closeModal: () => void;
+  onCancel: () => void;
+  onSuccess: () => void;
+  onError: () => void;
   query: string;
   id?: string;
   content?: ReactNode;

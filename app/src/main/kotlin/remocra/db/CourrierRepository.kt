@@ -4,7 +4,9 @@ import jakarta.inject.Inject
 import org.jooq.CommonTableExpression
 import org.jooq.Condition
 import org.jooq.DSLContext
+import org.jooq.Record
 import org.jooq.Record3
+import org.jooq.SelectForUpdateStep
 import org.jooq.SortField
 import org.jooq.Table
 import org.jooq.impl.DSL
@@ -34,6 +36,7 @@ import remocra.db.jooq.remocra.tables.references.L_COURRIER_CONTACT_GESTIONNAIRE
 import remocra.db.jooq.remocra.tables.references.L_COURRIER_CONTACT_ORGANISME
 import remocra.db.jooq.remocra.tables.references.L_COURRIER_ORGANISME
 import remocra.db.jooq.remocra.tables.references.L_COURRIER_UTILISATEUR
+import remocra.db.jooq.remocra.tables.references.L_PEI_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_COURRIER
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PROFIL_ORGANISME
@@ -284,6 +287,21 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
     )
 
     fun getAllDestinataires(filterBy: FilterDestinataire?, sortBy: SortDestinataire?, limit: Int?, offset: Int?): Collection<DestinataireData> {
+        return getAllDestinatairesRecord(
+            filterBy = filterBy,
+            sortBy = sortBy,
+            limit = limit,
+            offset = offset,
+        )
+            .fetchInto()
+    }
+
+    private fun getAllDestinatairesRecord(
+        filterBy: FilterDestinataire?,
+        sortBy: SortDestinataire?,
+        limit: Int?,
+        offset: Int?,
+    ): SelectForUpdateStep<Record?> {
         val nomCte = name("LISTE_DESTINATAIRE")
         val cte = nomCte.fields(
             "destinataireId",
@@ -292,7 +310,7 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
             "fonctionDestinataire",
             "typeDestinataire",
         )
-            .`as`(getRequestDestinataire())
+            .`as`(getRequestDestinataire(filterBy?.listeIdOrganismeByZC))
 
         return dsl.with(cte).selectFrom(table(nomCte))
             .where(filterBy?.toCondition() ?: DSL.noCondition())
@@ -305,13 +323,19 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
             )
             .limit(limit)
             .offset(offset)
-            .fetchInto()
     }
 
-    fun countDestinataire(): Int =
-        dsl.fetchCount(getRequestDestinataire())
+    fun countDestinataire(filterDestinataire: FilterDestinataire?): Int =
+        dsl.fetchCount(
+            getAllDestinatairesRecord(
+                filterDestinataire,
+                sortBy = null,
+                limit = null,
+                offset = null,
+            ),
+        )
 
-    private fun getRequestDestinataire() =
+    private fun getRequestDestinataire(listeIdOrganismeByZC: List<UUID>?) =
         dsl.select(
             UTILISATEUR.ID.`as`("destinataireId"),
             DSL.concat(UTILISATEUR.NOM, DSL.value(" "), UTILISATEUR.PRENOM)
@@ -321,11 +345,12 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
             DSL.value(TypeDestinataire.UTILISATEUR.libelle).`as`("typeDestinataire"),
         )
             .from(UTILISATEUR)
-            .join(PROFIL_UTILISATEUR)
+            .leftJoin(PROFIL_UTILISATEUR)
             .on(UTILISATEUR.PROFIL_UTILISATEUR_ID.eq(PROFIL_UTILISATEUR.ID))
             .where(UTILISATEUR.ACTIF.isTrue)
             .and(UTILISATEUR.CAN_BE_NOTIFIED.isTrue)
             .and(UTILISATEUR.EMAIL.isNotNull)
+            .and(listeIdOrganismeByZC?.let { DSL.and(UTILISATEUR.ORGANISME_ID.`in`(it)) } ?: DSL.noCondition())
             .union(
                 dsl.select(
                     ORGANISME.ID.`as`("destinataireId"),
@@ -338,7 +363,8 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
                     .join(PROFIL_ORGANISME)
                     .on(ORGANISME.PROFIL_ORGANISME_ID.eq(PROFIL_ORGANISME.ID))
                     .where(ORGANISME.ACTIF.isTrue)
-                    .and(ORGANISME.EMAIL_CONTACT.isNotNull),
+                    .and(ORGANISME.EMAIL_CONTACT.isNotNull)
+                    .and(listeIdOrganismeByZC?.let { DSL.and(ORGANISME.ID.`in`(it)) } ?: DSL.noCondition()),
             )
             .union(
                 dsl.select(
@@ -355,7 +381,8 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
                     .join(L_CONTACT_ORGANISME)
                     .on(L_CONTACT_ORGANISME.CONTACT_ID.eq(CONTACT.ID))
                     .where(CONTACT.ACTIF.isTrue)
-                    .and(CONTACT.EMAIL.isNotNull),
+                    .and(CONTACT.EMAIL.isNotNull)
+                    .and(listeIdOrganismeByZC?.let { DSL.and(L_CONTACT_ORGANISME.ORGANISME_ID.`in`(it)) } ?: DSL.noCondition()),
             )
             .union(
                 dsl.select(
@@ -389,6 +416,8 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
         val emailDestinataire: String?,
         val fonctionDestinataire: String?,
         val listeTypeDestinataire: List<TypeDestinataire>?,
+        val listeIdOrganismeByZC: List<UUID>?, // est utilisé directement dans la requête car dépend du type de destinataire
+        val useZoneCompetence: Boolean = false,
     ) {
         fun toCondition(): Condition =
             DSL.and(
@@ -441,4 +470,60 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
         dsl.insertInto(L_COURRIER_CONTACT_GESTIONNAIRE)
             .set(dsl.newRecord(L_COURRIER_CONTACT_GESTIONNAIRE, lCourrierContactGestionnaire))
             .execute()
+
+    /**
+     * Vérifie si un courrier est toujours référencé pour au moins un destinataire.
+     *
+     * Un courrier est considéré comme référencé s'il possède au moins un lien dans
+     * l'une des tables de liaison suivantes :
+     * - [L_COURRIER_CONTACT_GESTIONNAIRE]
+     * - [L_COURRIER_CONTACT_ORGANISME]
+     * - [L_COURRIER_ORGANISME]
+     * - [L_COURRIER_UTILISATEUR]
+     *
+     * @param courrierId l'identifiant unique du courrier à vérifier
+     * @return `true` si le courrier possède au moins une référence, `false` sinon
+     */
+    fun isCourrierStillReferenced(courrierId: UUID): Boolean =
+        dsl.fetchExists(
+            dsl.select(COURRIER.ID)
+                .from(COURRIER)
+                .where(COURRIER.ID.eq(courrierId))
+                .and(
+                    COURRIER.ID.`in`(
+                        DSL.select(L_COURRIER_CONTACT_GESTIONNAIRE.COURRIER_ID).from(L_COURRIER_CONTACT_GESTIONNAIRE)
+                            .union(DSL.select(L_COURRIER_CONTACT_ORGANISME.COURRIER_ID).from(L_COURRIER_CONTACT_ORGANISME))
+                            .union(DSL.select(L_COURRIER_ORGANISME.COURRIER_ID).from(L_COURRIER_ORGANISME))
+                            .union(DSL.select(L_COURRIER_UTILISATEUR.COURRIER_ID).from(L_COURRIER_UTILISATEUR)),
+                    ),
+                ),
+        )
+
+    fun deleteLCourrierThematique(courrierId: UUID) =
+        dsl.deleteFrom(L_THEMATIQUE_COURRIER)
+            .where(L_THEMATIQUE_COURRIER.COURRIER_ID.eq(courrierId))
+            .execute()
+
+    fun deleteCourrierById(courrierId: UUID): UUID =
+        dsl.deleteFrom(COURRIER)
+            .where(COURRIER.ID.eq(courrierId))
+            .returning(COURRIER.DOCUMENT_ID)
+            .fetchOne(COURRIER.DOCUMENT_ID)!!
+
+    fun getCourriersNonReferencesDansPei(courriersIds: List<UUID>): List<UUID> =
+        dsl.select(COURRIER.ID)
+            .from(COURRIER)
+            .where(
+                COURRIER.ID.`in`(courriersIds)
+                    .and(
+                        DSL.notExists(
+                            DSL.selectOne()
+                                .from(L_PEI_DOCUMENT)
+                                .where(
+                                    L_PEI_DOCUMENT.DOCUMENT_ID.eq(COURRIER.DOCUMENT_ID),
+                                ),
+                        ),
+                    ),
+            )
+            .fetchInto()
 }

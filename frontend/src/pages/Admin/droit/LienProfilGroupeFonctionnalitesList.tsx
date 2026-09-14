@@ -11,6 +11,7 @@ import { IconInfo, IconUtilisateurs } from "../../../components/Icon/Icon.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import {
   SECTION_DROIT,
+  TypeDroitInfobulle,
   TypeDroitLabel,
   TypeDroitSection,
 } from "../../../enums/DroitEnum.tsx";
@@ -125,10 +126,25 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                         tooltipText={typeDroit}
                                         nowrap={false}
                                       >
-                                        {TypeDroitLabel.get(typeDroit)
-                                          ? TypeDroitLabel.get(typeDroit)
-                                          : ""}{" "}
+                                        <>
+                                          {TypeDroitLabel.get(typeDroit)
+                                            ? TypeDroitLabel.get(typeDroit)
+                                            : ""}{" "}
+                                        </>
                                       </TooltipCustom>
+                                      {TypeDroitInfobulle.get(typeDroit) && (
+                                        <TooltipCustom
+                                          tooltipId={`infobulle-${idxTD}`}
+                                          tooltipText={TypeDroitInfobulle.get(
+                                            typeDroit,
+                                          )}
+                                          nowrap={false}
+                                        >
+                                          <span className="ps-1">
+                                            <IconInfo />
+                                          </span>
+                                        </TooltipCustom>
+                                      )}
                                     </td>
                                     {values.map(
                                       (groupeFonctionnalites, idxPD) => (
@@ -157,10 +173,28 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                                   0,
                                                   value.lastIndexOf("_"),
                                                 );
-
                                                 if (
                                                   event.currentTarget.checked
                                                 ) {
+                                                  const droitsActuels =
+                                                    values[idxPD]
+                                                      .groupeFonctionnalitesDroits;
+
+                                                  if (
+                                                    ((value === "ATLAS_C" &&
+                                                      droitsActuels.includes(
+                                                        "ATLAS_D",
+                                                      )) ||
+                                                      (value === "ATLAS_D" &&
+                                                        droitsActuels.includes(
+                                                          "ATLAS_C",
+                                                        ))) &&
+                                                    !droitsActuels.includes(
+                                                      "ATLAS_A",
+                                                    )
+                                                  ) {
+                                                    arrayVal.push("ATLAS_A");
+                                                  }
                                                   // si un droit _A est coché, on rajoute les droits équivalents
                                                   if (
                                                     right === "A" &&
@@ -244,6 +278,14 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                                     ],
                                                   );
                                                 } else {
+                                                  // Si on décoche "Administrer l'atlas", on décoche automatique éditer les documents et supprimer les documents.
+                                                  if (value === "ATLAS_A") {
+                                                    arrayVal.push(
+                                                      "ATLAS_C",
+                                                      "ATLAS_D",
+                                                    );
+                                                  }
+
                                                   if (
                                                     value ===
                                                     "ADMIN_UTILISATEURS_ORGA_A"
@@ -277,6 +319,20 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                                   ) {
                                                     arrayVal.push(
                                                       "ORGANISME_CONTACT_A",
+                                                    );
+                                                  }
+                                                  if (value === "TOURNEE_A") {
+                                                    arrayVal.push(
+                                                      "TOURNEE_ORDRE_PEIS_U",
+                                                    );
+                                                  }
+                                                  if (value === "TOURNEE_R") {
+                                                    arrayVal.push(
+                                                      "TOURNEE_ORDRE_PEIS_U",
+                                                      "TOURNEE_RESERVATION_D",
+                                                      "TOURNEE_FORCER_POURCENTAGE_E",
+                                                      "RAZ_MES_ROP_E",
+                                                      "ADMIN_ROP_A",
                                                     );
                                                   }
                                                   // si un droit _CRUD est décoché, on tente de retirer le droit _A s'il existe

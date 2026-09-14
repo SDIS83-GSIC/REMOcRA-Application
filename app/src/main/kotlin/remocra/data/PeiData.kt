@@ -48,13 +48,14 @@ open class PeiData(
     open val peiRotation6Ccf: Boolean?,
 
     // Attributs supplémentaires pour le recalcul de la numérotation à l'enregistrement ; non modifiables
-    open val peiNumeroInterneInitial: Int? = peiNumeroInterne,
-    open val peiCommuneIdInitial: UUID? = peiCommuneId,
-    open val peiZoneSpecialeIdInitial: UUID? = peiZoneSpecialeId,
-    open val peiNatureDeciIdInitial: UUID? = peiNatureDeciId,
-    open val peiDomaineIdInitial: UUID? = peiDomaineId,
-    open val peiGestionnaireIdInitial: UUID? = peiGestionnaireId,
-    open val peiDisponibiliteTerrestreInitiale: Disponibilite? = peiDisponibiliteTerrestre,
+    open val peiNumeroInterneInitial: Int?,
+    open val peiCommuneIdInitial: UUID?,
+    open val peiZoneSpecialeIdInitial: UUID?,
+    open val peiNatureDeciIdInitial: UUID?,
+    open val peiNatureIdInitial: UUID?,
+    open val peiDomaineIdInitial: UUID?,
+    open val peiGestionnaireIdInitial: UUID?,
+    open val peiDisponibiliteTerrestreInitiale: Disponibilite?,
 ) {
     val coordonneeX: Double
         get() = peiGeometrie.coordinate.x
@@ -98,13 +99,16 @@ data class PibiData(
     override val peiObservation: String?,
     override val peiPerenne: Boolean?,
     override val peiRotation6Ccf: Boolean?,
-
-    override val peiNumeroInterneInitial: Int? = peiNumeroInterne,
-    override val peiCommuneIdInitial: UUID? = peiCommuneId,
-    override val peiZoneSpecialeIdInitial: UUID? = peiZoneSpecialeId,
-    override val peiNatureDeciIdInitial: UUID? = peiNatureDeciId,
-    override val peiDomaineIdInitial: UUID? = peiDomaineId,
     override var peiDateChangementDispo: ZonedDateTime?,
+
+    override val peiNumeroInterneInitial: Int?,
+    override val peiCommuneIdInitial: UUID?,
+    override val peiZoneSpecialeIdInitial: UUID?,
+    override val peiNatureDeciIdInitial: UUID?,
+    override val peiNatureIdInitial: UUID?,
+    override val peiDomaineIdInitial: UUID?,
+    override val peiGestionnaireIdInitial: UUID?,
+    override val peiDisponibiliteTerrestreInitiale: Disponibilite?,
 
     var pibiDiametreId: UUID?,
     val pibiServiceEauId: UUID?,
@@ -159,7 +163,10 @@ data class PibiData(
     peiCommuneIdInitial,
     peiZoneSpecialeIdInitial,
     peiNatureDeciIdInitial,
+    peiNatureIdInitial,
     peiDomaineIdInitial,
+    peiGestionnaireIdInitial,
+    peiDisponibiliteTerrestreInitiale,
 )
 
 data class PenaData(
@@ -197,11 +204,15 @@ data class PenaData(
     override val peiPerenne: Boolean?,
     override val peiRotation6Ccf: Boolean?,
 
-    override val peiNumeroInterneInitial: Int? = peiNumeroInterne,
-    override val peiCommuneIdInitial: UUID? = peiCommuneId,
-    override val peiZoneSpecialeIdInitial: UUID? = peiZoneSpecialeId,
-    override val peiNatureDeciIdInitial: UUID? = peiNatureDeciId,
-    override val peiDomaineIdInitial: UUID? = peiDomaineId,
+    override val peiNumeroInterneInitial: Int?,
+    override val peiCommuneIdInitial: UUID?,
+    override val peiZoneSpecialeIdInitial: UUID?,
+    override val peiNatureDeciIdInitial: UUID?,
+    override val peiNatureIdInitial: UUID?,
+    override val peiDomaineIdInitial: UUID?,
+    override val peiGestionnaireIdInitial: UUID?,
+    override val peiDisponibiliteTerrestreInitiale: Disponibilite?,
+
     override var peiDateChangementDispo: ZonedDateTime?,
 
     var penaDisponibiliteHbe: Disponibilite,
@@ -248,5 +259,8 @@ data class PenaData(
     peiCommuneIdInitial,
     peiZoneSpecialeIdInitial,
     peiNatureDeciIdInitial,
+    peiNatureIdInitial,
     peiDomaineIdInitial,
+    peiGestionnaireIdInitial,
+    peiDisponibiliteTerrestreInitiale,
 )

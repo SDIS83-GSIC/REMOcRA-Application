@@ -254,23 +254,26 @@ export const useToolbarContext = ({
         .getLayers()
         .getArray()
         .filter(
-          (l) =>
-            (l instanceof ImageLayer && l.getSource() instanceof ImageWMS) ||
-            (l instanceof TileLayer && l.getSource() instanceof TileWMS),
+          (l): l is ImageLayer<ImageWMS> | TileLayer<TileWMS> =>
+            l.getVisible() &&
+            ((l instanceof ImageLayer && l.getSource() instanceof ImageWMS) ||
+              (l instanceof TileLayer && l.getSource() instanceof TileWMS)),
         )
         .forEach((wmsLayer) => {
           const view = map!.getView();
-          const url = wmsLayer
-            .getSource()
-            ?.getFeatureInfoUrl(
-              coords,
-              view.getResolution()!,
-              view.getProjection(),
-              {
-                INFO_FORMAT: "application/json",
-                FEATURE_COUNT: 5,
-              },
-            );
+          const source = wmsLayer.getSource();
+          if (!source) {
+            return;
+          }
+          const url = source.getFeatureInfoUrl(
+            coords,
+            view.getResolution()!,
+            view.getProjection(),
+            {
+              INFO_FORMAT: "application/json",
+              FEATURE_COUNT: 5,
+            },
+          );
 
           if (url) {
             fetch(url)
@@ -281,15 +284,35 @@ export const useToolbarContext = ({
                 return r.json();
               })
               .then((data) => {
-                if (data.features.length > 0) {
-                  data.id = findIdByLayerCode(
+                const features = Array.isArray(data?.features)
+                  ? data.features
+                  : [];
+
+                // Pour les aggrégations, on inverse l'ordre pour que les couches les plus hautes soient affichées en premier
+                // Les id des features sont de la forme "layerName.uuid", on peut donc récupérer le nom de la couche en prenant la première partie de l'id
+                const sourceLayerNames = new Set(
+                  features
+                    .map((feature: { id: string }) =>
+                      String(feature?.id ?? "")
+                        .split(".")
+                        .at(0),
+                    )
+                    .filter(Boolean),
+                );
+                const isAggregationLayerUsed = sourceLayerNames.size > 1;
+                const dataTriees = isAggregationLayerUsed
+                  ? { ...data, features: [...features].reverse() }
+                  : data;
+
+                if (dataTriees.features.length > 0) {
+                  dataTriees.id = findIdByLayerCode(
                     availableLayers,
-                    wmsLayer.getSource().params_.LAYERS,
+                    source.getParams().LAYERS,
                   );
                 }
                 setInfoOutilI((e) => ({
                   show: true,
-                  data: [...e.data, { ...data }],
+                  data: [...e.data, { ...dataTriees }],
                 }));
               })
               .catch(() => {
@@ -563,19 +586,19 @@ const MapToolbar = forwardRef(
               activeTool={activeTool}
               variant={variant}
             />
-            {showOutilI &&
-              ((metadata && metadata.length > 0) || user?.isSuperAdmin) && (
-                <ToolbarButton
-                  toolName={"info-outil-i"}
-                  toolIcon={<IconInfo />}
-                  toolLabelTooltip={
-                    "Obtenir des informations sur un point de la carte"
-                  }
-                  toggleTool={toggleTool}
-                  activeTool={activeTool}
-                  variant={variant}
-                />
-              )}
+            {(user?.isSuperAdmin ||
+              (showOutilI && metadata && metadata.length > 0)) && (
+              <ToolbarButton
+                toolName={"info-outil-i"}
+                toolIcon={<IconInfo />}
+                toolLabelTooltip={
+                  "Obtenir des informations sur un point de la carte"
+                }
+                toggleTool={toggleTool}
+                activeTool={activeTool}
+                variant={variant}
+              />
+            )}
           </ButtonGroup>
         </ButtonToolbar>
 

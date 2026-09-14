@@ -9,7 +9,9 @@ import {
 } from "../../../components/Icon/Icon.tsx";
 import url from "../../../module/fetch.tsx";
 import { useToastContext } from "../../../module/Toast/ToastProvider.tsx";
-import GenererForm from "../../../utils/buildDynamicForm.tsx";
+import GenererForm, {
+  DynamicFormParametreFront,
+} from "../../../utils/buildDynamicForm.tsx";
 import { downloadOutputFile } from "../../../utils/fonctionsUtils.tsx";
 import {
   getInitialValues,
@@ -27,6 +29,9 @@ const ExecuteCriseRapportPersonnalise = ({
   const { data: criseReports } = useGet(url`/api/crise/rapports-personnalises`);
   const { success: successToast, error: errorToast } = useToastContext();
   const [valuesFormik, setValuesFormik] = useState<any>();
+  const [listeParametres, setListeParametres] = useState<
+    DynamicFormParametreFront[]
+  >([]);
 
   const [tableau, setTableau] = useState<{
     headers: string[];
@@ -53,20 +58,30 @@ const ExecuteCriseRapportPersonnalise = ({
         successToastMessage="La requête a bien été exécutée"
         submitUrl={`/api/rapport-personnalise/generer`}
         prepareVariables={(values) => {
-          const geometryValues = Object.keys(geometry).reduce(
-            (acc: any, key: any) => {
-              acc[key] = geometry[key];
-              return acc;
-            },
-            {},
-          );
+          const finalValues = prepareVariables(values, listeParametres);
 
-          const finalValues = prepareVariables({
-            ...values,
-            ...geometryValues,
-          });
+          // Transformer la géométrie en paramètres
+          if (geometry && Object.keys(geometry).length > 0) {
+            Object.entries(geometry).forEach(([key, value]) => {
+              // Chercher si ce paramètre existe déjà
+              const existingIndex = finalValues.listeParametre.findIndex(
+                (p) => p.rapportPersonnaliseParametreCode === key,
+              );
+
+              if (existingIndex !== -1) {
+                // Remplacer la valeur existante
+                finalValues.listeParametre[existingIndex].value = value;
+              } else {
+                // Ajouter le nouveau paramètre
+                finalValues.listeParametre.push({
+                  rapportPersonnaliseParametreCode: key,
+                  value: value,
+                });
+              }
+            });
+          }
+
           setValuesFormik(finalValues);
-
           return finalValues;
         }}
         onSubmit={(e) => {
@@ -77,6 +92,7 @@ const ExecuteCriseRapportPersonnalise = ({
           listeIdLibelleDescription={criseReports}
           contexteLibelle="Executer un rapport personnalisé"
           url="/api/rapport-personnalise/parametres/"
+          onParametresChange={setListeParametres}
           onGeometrySelect={onGeometrySelect}
         />
       </MyFormik>

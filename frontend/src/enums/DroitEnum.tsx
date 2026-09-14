@@ -20,6 +20,9 @@ enum TYPE_DROIT {
   ADMIN_UTILISATEURS_ORGA_R = "ADMIN_UTILISATEURS_ORGA_R",
   ADMIN_UTILISATEURS_R = "ADMIN_UTILISATEURS_R",
   ADMIN_ZONE_COMPETENCE = "ADMIN_ZONE_COMPETENCE",
+  ATLAS_A = "ATLAS_A",
+  ATLAS_C = "ATLAS_C",
+  ATLAS_D = "ATLAS_D",
   SIGNALEMENTS_C = "SIGNALEMENTS_C",
   CARTOGRAPHIES_E = "CARTOGRAPHIES_E",
   CARTO_METADATA_A = "CARTO_METADATA_A",
@@ -52,6 +55,7 @@ enum TYPE_DROIT {
   ETUDE_D = "ETUDE_D",
   ETUDE_R = "ETUDE_R",
   ETUDE_U = "ETUDE_U",
+  GENERER_CANEVAS_ROP_A = "GENERER_CANEVAS_ROP_A",
   GEST_CONTACT_A = "GEST_CONTACT_A",
   GEST_SITE_A = "GEST_SITE_A",
   GEST_SITE_R = "GEST_SITE_R",
@@ -92,6 +96,7 @@ enum TYPE_DROIT {
   TOURNEE_A = "TOURNEE_A",
   TOURNEE_DESAFFECTER_U = "TOURNEE_DESAFFECTER_U",
   TOURNEE_FORCER_POURCENTAGE_E = "TOURNEE_FORCER_POURCENTAGE_E",
+  TOURNEE_ORDRE_PEIS_U = "TOURNEE_ORDRE_PEIS_U",
   TOURNEE_R = "TOURNEE_R",
   TOURNEE_RESERVATION_D = "TOURNEE_RESERVATION_D",
   TRAITEMENTS_E = "TRAITEMENTS_E",
@@ -151,6 +156,9 @@ export const TypeDroitSection = new Map<TYPE_DROIT, SECTION_DROIT>([
   [TYPE_DROIT.ADMIN_UTILISATEURS_ORGA_R, SECTION_DROIT.GENERAL],
   [TYPE_DROIT.IMPORT_UTILISATEUR_A, SECTION_DROIT.GENERAL],
   [TYPE_DROIT.ADMIN_ZONE_COMPETENCE, SECTION_DROIT.GENERAL],
+  [TYPE_DROIT.ATLAS_A, SECTION_DROIT.DFCI],
+  [TYPE_DROIT.ATLAS_C, SECTION_DROIT.DFCI],
+  [TYPE_DROIT.ATLAS_D, SECTION_DROIT.DFCI],
   [TYPE_DROIT.SIGNALEMENTS_C, SECTION_DROIT.SIGNALEMENT],
   [TYPE_DROIT.CARTOGRAPHIES_E, SECTION_DROIT.CARTO],
   [TYPE_DROIT.CARTO_METADATA_A, SECTION_DROIT.CARTO],
@@ -183,6 +191,7 @@ export const TypeDroitSection = new Map<TYPE_DROIT, SECTION_DROIT>([
   [TYPE_DROIT.ETUDE_D, SECTION_DROIT.COUVERTURE_HYDRAULIQUE],
   [TYPE_DROIT.ETUDE_R, SECTION_DROIT.COUVERTURE_HYDRAULIQUE],
   [TYPE_DROIT.ETUDE_U, SECTION_DROIT.COUVERTURE_HYDRAULIQUE],
+  [TYPE_DROIT.GENERER_CANEVAS_ROP_A, SECTION_DROIT.TOURNEE],
   [TYPE_DROIT.GEST_CONTACT_A, SECTION_DROIT.GESTIONNAIRE],
   [TYPE_DROIT.GEST_SITE_A, SECTION_DROIT.GESTIONNAIRE],
   [TYPE_DROIT.GEST_SITE_R, SECTION_DROIT.GESTIONNAIRE],
@@ -222,6 +231,7 @@ export const TypeDroitSection = new Map<TYPE_DROIT, SECTION_DROIT>([
   [TYPE_DROIT.TOURNEE_A, SECTION_DROIT.TOURNEE],
   [TYPE_DROIT.TOURNEE_DESAFFECTER_U, SECTION_DROIT.TOURNEE],
   [TYPE_DROIT.TOURNEE_FORCER_POURCENTAGE_E, SECTION_DROIT.TOURNEE],
+  [TYPE_DROIT.TOURNEE_ORDRE_PEIS_U, SECTION_DROIT.TOURNEE],
   [TYPE_DROIT.TOURNEE_R, SECTION_DROIT.TOURNEE],
   [TYPE_DROIT.TOURNEE_RESERVATION_D, SECTION_DROIT.TOURNEE],
   [TYPE_DROIT.TRAITEMENTS_E, SECTION_DROIT.GENERAL],
@@ -282,7 +292,9 @@ export const TypeDroitLabel = new Map<string, string>([
     TYPE_DROIT.ADMIN_ZONE_COMPETENCE,
     "Importer, éditer les zones de compétences",
   ],
-
+  [TYPE_DROIT.ATLAS_A, "Administrer l'Atlas"],
+  [TYPE_DROIT.ATLAS_C, "Éditer les documents de l'Atlas"],
+  [TYPE_DROIT.ATLAS_D, "Supprimer des documents dans l'Atlas"],
   [TYPE_DROIT.SIGNALEMENTS_C, "Créer, éditer les signalements"],
   [TYPE_DROIT.CARTOGRAPHIES_E, "Accéder au module cartographie"],
   [TYPE_DROIT.CARTO_METADATA_A, "Administrer les métadonnées des couches"],
@@ -324,6 +336,7 @@ export const TypeDroitLabel = new Map<string, string>([
   [TYPE_DROIT.ETUDE_D, "Clore une étude"],
   [TYPE_DROIT.ETUDE_R, "Consulter une étude"],
   [TYPE_DROIT.ETUDE_U, "Modifier une étude"],
+  [TYPE_DROIT.GENERER_CANEVAS_ROP_A, "Générer les canevas de ROP"],
   [TYPE_DROIT.GEST_CONTACT_A, "Administrer les contacts des gestionnaires"],
   [TYPE_DROIT.GEST_SITE_A, "Administrer les gestionnaires et leurs sites"],
   [TYPE_DROIT.GEST_SITE_R, "Consulter les gestionnaires et leurs sites"],
@@ -397,6 +410,10 @@ export const TypeDroitLabel = new Map<string, string>([
     TYPE_DROIT.TOURNEE_FORCER_POURCENTAGE_E,
     "Forcer le pourcentage des tournées",
   ],
+  [
+    TYPE_DROIT.TOURNEE_ORDRE_PEIS_U,
+    "Modifier l'ordre des PEI dans une tournée",
+  ],
   [TYPE_DROIT.TOURNEE_R, "Consulter les tournées"],
   [TYPE_DROIT.TOURNEE_RESERVATION_D, "Supprimer la réservation d'une tournée"],
   [TYPE_DROIT.TRAITEMENTS_E, "Exécuter des traitements  "],
@@ -427,6 +444,14 @@ export const TypeDroitLabel = new Map<string, string>([
     "Supprimer des visites de reconnaissance opérationnelle initiale",
   ],
   [TYPE_DROIT.ZOOM_LIEU_R, "Zoomer sur un lieu"],
+]);
+
+// Map des infobulles pour les droits (à compléter si nécessaire)
+export const TypeDroitInfobulle = new Map<string, string>([
+  [
+    TYPE_DROIT.PEI_NUMERO_INTERNE_U,
+    "Si le paramètre 'Activer la renumérotation interne automatique des PEI' est activé, l'utilisateur ne pourra pas modifier le numéro interne d'un PEI même si le droit est coché.",
+  ],
 ]);
 
 export enum TYPE_DROIT_API {

@@ -1,9 +1,12 @@
 package remocra.usecase.visites
 
 import jakarta.inject.Inject
+import jakarta.inject.Provider
+import remocra.app.ParametresProvider
 import remocra.auth.WrappedUserInfo
 import remocra.data.VisiteData
 import remocra.data.enums.ErrorType
+import remocra.data.enums.ParametreEnum
 import remocra.db.AnomalieRepository
 import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
@@ -24,11 +27,14 @@ import remocra.usecase.pei.UpdatePeiUseCase
 import java.time.Clock
 
 class CreateVisiteUseCase @Inject constructor(
+    private val parametres: Provider<ParametresProvider>,
     private val visiteRepository: VisiteRepository,
     private val anomalieRepository: AnomalieRepository,
     private val updatePeiUseCase: UpdatePeiUseCase,
     private val peiRepository: PeiRepository,
     private val clock: Clock,
+    private val genererRapportVisiteReceptionUseCase: GenererRapportVisiteReceptionUseCase,
+    private val genererRapportVisiteROIUseCase: GenererRapportVisiteROIUseCase,
 ) : AbstractCUDUseCase<VisiteData>(TypeOperation.INSERT) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
@@ -157,6 +163,7 @@ class CreateVisiteUseCase @Inject constructor(
     }
 
     override fun execute(userInfo: WrappedUserInfo, element: VisiteData): VisiteData {
+        val parametres = parametres.get()
         // Insertion de la visite : remocra.visite
         visiteRepository.insertVisite(
             Visite(
@@ -220,6 +227,17 @@ class CreateVisiteUseCase @Inject constructor(
             peiId = element.visitePeiId,
             userInfo = userInfo,
         )
+
+        when {
+            (parametres.getParametreBoolean(ParametreEnum.AUTORISER_MAIL_VISITE_RECEPTION.name) == true) &&
+                (element.visiteTypeVisite == TypeVisite.RECEPTION) ->
+                genererRapportVisiteReceptionUseCase.execute(element, userInfo, transactionManager)
+
+            (parametres.getParametreBoolean(ParametreEnum.AUTORISER_MAIL_ROI.name) == true) &&
+                (element.visiteTypeVisite == TypeVisite.RECO_INIT) ->
+                genererRapportVisiteROIUseCase.execute(element, userInfo, transactionManager)
+        }
+
         return element
     }
 }

@@ -39,6 +39,7 @@ import remocra.GlobalConstants
 import remocra.auth.AuthnConstants
 import remocra.auth.RemocraUserPrincipalFactory
 import remocra.auth.UserInfoFilter
+import remocra.favicon.FaviconServlet
 import remocra.healthcheck.HealthServlet
 import remocra.resteasy.GuiceInjectorFactory
 import remocra.security.CsrfServletFilter
@@ -180,7 +181,6 @@ constructor(
         )
 
         // Servlets par défaut pour les ressources statiques
-        context.addServlet(ResourceServlet::class.java, "/favicon.ico")
         context.addServlet(
             ServletHolder(AuthnConstants.IMAGES_SERVLET_NAME, ResourceServlet::class.java).apply {
                 setInitParameter("dirAllowed", "false")
@@ -189,6 +189,8 @@ constructor(
             },
             "/images/*",
         )
+        // Favicon
+        context.addServlet(FaviconServlet::class.java, "/images/favicon")
         context.addServlet(
             ServletHolder(
                 AuthnConstants.DEFAULT_SERVLET_NAME,

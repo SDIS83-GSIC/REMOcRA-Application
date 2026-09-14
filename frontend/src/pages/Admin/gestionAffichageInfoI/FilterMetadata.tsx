@@ -1,5 +1,6 @@
 type FilterMetadataType = {
   groupeCoucheLibelle?: string;
+  coucheCode?: string;
   coucheLibelle?: string;
   groupeFonctionnaliteList?: string;
   coucheMetadataActif?: string;
@@ -8,6 +9,7 @@ type FilterMetadataType = {
 
 const filterValuesToVariable = ({
   groupeCoucheLibelle,
+  coucheCode,
   coucheLibelle,
   groupeFonctionnaliteList,
   coucheMetadataActif: coucheMetadataActif,
@@ -16,6 +18,7 @@ const filterValuesToVariable = ({
   const filter: FilterMetadataType = {};
 
   filterPropertyStyle(filter, groupeCoucheLibelle, "groupeCoucheLibelle");
+  filterPropertyStyle(filter, coucheCode, "coucheCode");
   filterPropertyStyle(filter, coucheLibelle, "coucheLibelle");
   filterPropertyStyle(
     filter,

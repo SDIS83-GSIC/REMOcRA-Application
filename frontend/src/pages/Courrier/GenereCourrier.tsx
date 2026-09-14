@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { useMemo, useState } from "react";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import {
   Outlet,
   useNavigate,
@@ -20,6 +20,7 @@ import { IconAdd, IconDocument } from "../../components/Icon/Icon.tsx";
 import QueryTable, {
   useFilterContext,
 } from "../../components/Table/QueryTable.tsx";
+import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
@@ -52,6 +53,7 @@ const GenereCourrier = () => {
     modeleCourrierId: string;
     courrierReference: string;
   } | null>(null);
+  const [formKey, setFormKey] = useState(0);
   const navigate = useNavigate();
   const { activesKeys, handleShowClose } = useAccordionState([true, false]);
 
@@ -78,6 +80,7 @@ const GenereCourrier = () => {
               <Row>
                 <Col xs={12} lg={4}>
                   <MyFormik
+                    key={formKey}
                     initialValues={getInitialValues()}
                     validationSchema={validationSchema}
                     isPost={true}
@@ -115,6 +118,10 @@ const GenereCourrier = () => {
                 modeleCourrierId={urlCourrier.modeleCourrierId}
                 courrierReference={urlCourrier.courrierReference}
                 thematique={getThematiqueFromTypeModule(typeModule)}
+                onNotificationSuccess={() => {
+                  setUrlCourrier(null);
+                  setFormKey((prev) => prev + 1);
+                }}
               />
             ) : (
               <Row>Veuillez générer le courrier avant de notifier.</Row>
@@ -138,12 +145,31 @@ const ListDestinataire = ({
   modeleCourrierId,
   courrierReference,
   thematique,
+  onNotificationSuccess,
 }: {
   urlCourrier: string;
   modeleCourrierId: string;
   courrierReference: string;
   thematique: string;
+  onNotificationSuccess: () => void;
 }) => {
+  const parametresState = useGet(
+    url`/api/parametres?${{
+      listeParametreCode: JSON.stringify([PARAMETRE.COURRIER_RESTRICTION_ZC]),
+    }}`,
+  );
+
+  const restrictionActive = useMemo<boolean | undefined>(() => {
+    if (!parametresState.isResolved) {
+      return undefined;
+    }
+
+    return (
+      parametresState?.data[PARAMETRE.COURRIER_RESTRICTION_ZC]
+        .parametreValeur === "true"
+    );
+  }, [parametresState]);
+
   const [listeDestinataire, setListeDestinataire] = useState<
     {
       destinataireId: string;
@@ -175,6 +201,8 @@ const ListDestinataire = ({
       .text()
       .then(() => {
         successToast("Destinataires notifiés");
+        setListeDestinataire([]);
+        onNotificationSuccess();
       })
       .catch((reason: string) => {
         errorToast(reason);
@@ -184,103 +212,15 @@ const ListDestinataire = ({
   return (
     <Row>
       <Col xs={12} lg={6}>
-        <QueryTable
-          query={url`/api/courriers/destinataires`}
-          filterContext={useFilterContext({})}
-          columns={[
-            {
-              Header: "Type",
-              accessor: "typeDestinataire",
-              sortField: "typeDestinataire",
-              Filter: (
-                <MultiSelectFilterFromList
-                  name={"listeTypeDestinataire"}
-                  listIdCodeLibelle={[
-                    {
-                      id: "UTILISATEUR",
-                      code: "UTILISATEUR",
-                      libelle: "Utilisateur",
-                    },
-                    {
-                      id: "ORGANISME",
-                      code: "ORGANISME",
-                      libelle: "Organisme",
-                    },
-                    {
-                      id: "CONTACT_ORGANISME",
-                      code: "CONTACT_ORGANISME",
-                      libelle: "Contact d'organisme",
-                    },
-                    {
-                      id: "CONTACT_GESTIONNAIRE",
-                      code: "CONTACT_GESTIONNAIRE",
-                      libelle: "Contact de gestionnaire",
-                    },
-                  ]}
-                />
-              ),
-            },
-            {
-              Header: "Nom",
-              accessor: "nomDestinataire",
-              sortField: "nomDestinataire",
-              Filter: <FilterInput type="text" name="nomDestinataire" />,
-            },
-            {
-              Header: "Email",
-              accessor: "emailDestinataire",
-              sortField: "emailDestinataire",
-              Filter: <FilterInput type="text" name="emailDestinataire" />,
-            },
-            {
-              Header: "Fonction",
-              accessor: "fonctionDestinataire",
-              sortField: "fonctionDestinataire",
-              Filter: <FilterInput type="text" name="fonctionDestinataire" />,
-            },
-            {
-              accessor: ({
-                destinataireId,
-                nomDestinataire,
-                emailDestinataire,
-                typeDestinataire,
-              }) => {
-                return {
-                  destinataireId,
-                  nomDestinataire,
-                  emailDestinataire,
-                  typeDestinataire,
-                };
-              },
-              Cell: (value) => {
-                return (
-                  <Button
-                    variant="link"
-                    className="btn-link text-decoration-none fw-bold text-nowrap"
-                    disabled={listeDestinataire
-                      .map((e) => e.destinataireId)
-                      .includes(value.value.destinataireId)}
-                    onClick={() => {
-                      setListeDestinataire((liste) => [
-                        ...liste,
-                        {
-                          destinataireId: value.value.destinataireId,
-                          nomDestinataire: value.value.nomDestinataire,
-                          emailDestinataire: value.value.emailDestinataire,
-                          typeDestinataire: value.value.typeDestinataire,
-                        },
-                      ]);
-                    }}
-                  >
-                    <IconAdd /> Ajouter
-                  </Button>
-                );
-              },
-            },
-          ]}
-          filterValuesToVariable={filterValuesToVariable}
-          idName={"tableDestinataireId"}
-        />
+        {restrictionActive === undefined ? (
+          <Loading />
+        ) : (
+          <ListDestinataireFilters
+            restrictionActive={restrictionActive}
+            listeDestinataire={listeDestinataire}
+            setListeDestinataire={setListeDestinataire}
+          />
+        )}
       </Col>
       <Col xs={12} lg={6}>
         <Row>
@@ -323,5 +263,151 @@ const ListDestinataire = ({
         </div>
       </Col>
     </Row>
+  );
+};
+
+const ListDestinataireFilters = ({
+  restrictionActive,
+  listeDestinataire,
+  setListeDestinataire,
+}: {
+  restrictionActive: boolean;
+  listeDestinataire: {
+    destinataireId: string;
+    nomDestinataire: string;
+    emailDestinataire: string;
+    typeDestinataire: string;
+  }[];
+  setListeDestinataire: React.Dispatch<
+    React.SetStateAction<
+      {
+        destinataireId: string;
+        nomDestinataire: string;
+        emailDestinataire: string;
+        typeDestinataire: string;
+      }[]
+    >
+  >;
+}) => {
+  const filterContext = useFilterContext({
+    useZoneCompetence: restrictionActive,
+  });
+  const useZoneCompetence = Boolean(filterContext.values?.useZoneCompetence);
+
+  return (
+    <>
+      {restrictionActive && (
+        <Form.Check
+          type="checkbox"
+          id="restreindre-zone-competence"
+          className="mb-2 fs-6"
+          label="Restreindre à ma zone de compétence"
+          checked={useZoneCompetence}
+          onChange={(event) =>
+            filterContext.setFieldValue(
+              "useZoneCompetence",
+              event.target.checked,
+            )
+          }
+        />
+      )}
+      <QueryTable
+        query={url`/api/courriers/destinataires`}
+        filterContext={filterContext}
+        columns={[
+          {
+            Header: "Type",
+            accessor: "typeDestinataire",
+            sortField: "typeDestinataire",
+            Filter: (
+              <MultiSelectFilterFromList
+                name={"listeTypeDestinataire"}
+                listIdCodeLibelle={[
+                  {
+                    id: "UTILISATEUR",
+                    code: "UTILISATEUR",
+                    libelle: "Utilisateur",
+                  },
+                  {
+                    id: "ORGANISME",
+                    code: "ORGANISME",
+                    libelle: "Organisme",
+                  },
+                  {
+                    id: "CONTACT_ORGANISME",
+                    code: "CONTACT_ORGANISME",
+                    libelle: "Contact d'organisme",
+                  },
+                  {
+                    id: "CONTACT_GESTIONNAIRE",
+                    code: "CONTACT_GESTIONNAIRE",
+                    libelle: "Contact de gestionnaire",
+                  },
+                ]}
+              />
+            ),
+          },
+          {
+            Header: "Nom",
+            accessor: "nomDestinataire",
+            sortField: "nomDestinataire",
+            Filter: <FilterInput type="text" name="nomDestinataire" />,
+          },
+          {
+            Header: "Email",
+            accessor: "emailDestinataire",
+            sortField: "emailDestinataire",
+            Filter: <FilterInput type="text" name="emailDestinataire" />,
+          },
+          {
+            Header: "Fonction",
+            accessor: "fonctionDestinataire",
+            sortField: "fonctionDestinataire",
+            Filter: <FilterInput type="text" name="fonctionDestinataire" />,
+          },
+          {
+            accessor: ({
+              destinataireId,
+              nomDestinataire,
+              emailDestinataire,
+              typeDestinataire,
+            }) => {
+              return {
+                destinataireId,
+                nomDestinataire,
+                emailDestinataire,
+                typeDestinataire,
+              };
+            },
+            Cell: (value) => {
+              return (
+                <Button
+                  variant="link"
+                  className="btn-link text-decoration-none fw-bold text-nowrap"
+                  disabled={listeDestinataire
+                    .map((e) => e.destinataireId)
+                    .includes(value.value.destinataireId)}
+                  onClick={() => {
+                    setListeDestinataire((liste) => [
+                      ...liste,
+                      {
+                        destinataireId: value.value.destinataireId,
+                        nomDestinataire: value.value.nomDestinataire,
+                        emailDestinataire: value.value.emailDestinataire,
+                        typeDestinataire: value.value.typeDestinataire,
+                      },
+                    ]);
+                  }}
+                >
+                  <IconAdd /> Ajouter
+                </Button>
+              );
+            },
+          },
+        ]}
+        filterValuesToVariable={filterValuesToVariable}
+        idName={"tableDestinataireId"}
+      />
+    </>
   );
 };

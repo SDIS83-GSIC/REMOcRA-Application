@@ -1,4 +1,4 @@
-package remocra.usecase.couverturehydraulique
+package remocra.couverturehydraulique
 
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Coordinate
@@ -11,14 +11,13 @@ import org.locationtech.jts.geom.PrecisionModel
 import org.locationtech.jts.operation.buffer.BufferOp
 import org.locationtech.jts.operation.buffer.BufferParameters
 import remocra.app.AppSettings
-import remocra.usecase.AbstractUseCase
 
 /**
  * Service pour les opérations géométriques équivalentes aux fonctions PostGIS
  */
-class GeometrieUseCase @Inject constructor(
+class GeometrieUtils @Inject constructor(
     private val appSettings: AppSettings,
-) : AbstractUseCase() {
+) {
 
     /**
      * Équivalent de safe_union
@@ -316,14 +315,5 @@ class GeometrieUseCase @Inject constructor(
         }
 
         return closestGeometry
-    }
-
-    fun normalizePoint(point: Point, srid: Int = appSettings.srid): Point {
-        val coordinateCopy = Coordinate(point.coordinate)
-        return GeometryFactory(PrecisionModel(), srid).createPoint(coordinateCopy)
-    }
-
-    fun distanceBetween(geometryA: Geometry, geometryB: Geometry): Double {
-        return geometryA.distance(geometryB)
     }
 }

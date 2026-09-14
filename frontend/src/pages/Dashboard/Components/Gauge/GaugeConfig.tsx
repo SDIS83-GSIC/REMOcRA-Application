@@ -169,7 +169,7 @@ const GaugeConfig = ({ config, setConfig, fieldOptions }: GaugeConfigProps) => {
           <div style={{ marginBottom: "10px" }}>
             <Form.Control
               type="color"
-              defaultValue={config.barColor || "#8884d8"}
+              defaultValue={config.barColor || "#00293e"}
               onBlur={(e) => handleChange("barColor", e.target.value)}
               style={{ width: "100px", height: "40px" }}
             />

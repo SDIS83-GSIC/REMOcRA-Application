@@ -16,7 +16,11 @@ class GetNumerotationPeiUseCase @Inject constructor(
     private val parametresProvider: Provider<ParametresProvider>,
 ) : AbstractUseCase() {
 
-    fun execute(element: PeiData): Pair<String, Int> {
+    fun execute(
+        element: PeiData,
+        mustComputeComplet: Boolean,
+        mustComputeInterne: Boolean,
+    ): Pair<String, Int> {
         // Création de l'objet data pour le calcul
         val peiForNumerotationData = PeiForNumerotationData(
             peiNumeroInterne = element.peiNumeroInterne,
@@ -32,15 +36,24 @@ class GetNumerotationPeiUseCase @Inject constructor(
         )
 
         // Calcul du numéro *interne*
-        val numeroInterne = numerotationUseCase.computeNumeroInterne(
-            peiForNumerotationData,
-            parametresProvider.get().getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true,
-        )
+        val numeroInterne = if (mustComputeInterne) {
+            numerotationUseCase.computeNumeroInterne(
+                peiForNumerotationData,
+                parametresProvider.get().getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true,
+            )
+        } else {
+            element.peiNumeroInterne
+        }
+
         peiForNumerotationData.peiNumeroInterne = numeroInterne
 
         // Calcul du numéro *complet*, avec un numéro interne mis à jour
-        val numeroComplet = numerotationUseCase.computeNumero(peiForNumerotationData)
+        val numeroComplet = if (mustComputeComplet) {
+            numerotationUseCase.computeNumero(peiForNumerotationData)
+        } else {
+            element.peiNumeroComplet
+        }
 
-        return Pair(numeroComplet, numeroInterne)
+        return Pair(numeroComplet!!, numeroInterne!!)
     }
 }

@@ -162,3 +162,30 @@ export function calculerBilan(values: {
     nbRejetesNR,
   };
 }
+
+/**
+ * Extrait le nom du fichier depuis l'en-tête HTTP Content-Disposition.
+ *
+ * @param disposition - La valeur de l'en-tête Content-Disposition
+ * @param nomFichierParDefaut - Le nom de fichier par défaut si l'extraction échoue
+ * @returns Le nom du fichier extrait ou le nom par défaut
+ *
+ * @example
+ * const disposition = 'attachment; filename="rapport.pdf"; charset=utf-8';
+ * const filename = recupererNomFichierDepuisEntete(disposition, "document.pdf");
+ * // Retourne: "rapport.pdf"
+ */
+export function recupererNomFichierDepuisEntete(
+  disposition: string | null,
+  nomFichierParDefaut: string,
+): string {
+  if (!disposition || !disposition.includes("filename=")) {
+    return nomFichierParDefaut;
+  }
+
+  return disposition
+    .split("filename=")[1]
+    .split(";")[0]
+    .replace(/["']/g, "")
+    .trim();
+}

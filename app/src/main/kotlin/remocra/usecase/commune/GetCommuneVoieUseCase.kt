@@ -1,13 +1,14 @@
-package remocra.utils
+package remocra.usecase.commune
 
 import jakarta.inject.Inject
 import org.locationtech.jts.geom.Geometry
 import remocra.GlobalConstants
 import remocra.app.ParametresProvider
-import remocra.data.GlobalData.IdCodeLibelleData
+import remocra.data.GlobalData
 import remocra.db.CommuneRepository
 import remocra.db.VoieRepository
 import remocra.usecase.AbstractUseCase
+import remocra.utils.toGeomFromText
 
 class GetCommuneVoieUseCase @Inject constructor(
     private val parametresProvider: ParametresProvider,
@@ -24,7 +25,7 @@ class GetCommuneVoieUseCase @Inject constructor(
         val toleranceVoie = parametresProvider.getParametreInt(GlobalConstants.TOLERANCE_VOIES_METRES)
             ?: throw IllegalArgumentException("Le paramètre TOLERANCE_VOIES_METRES est nul, veuillez renseigner une valeur")
 
-        var listCommune: Collection<IdCodeLibelleData> = listOf()
+        var listCommune: Collection<GlobalData.IdCodeLibelleData> = listOf()
         var listVoie: Collection<VoieRepository.VoieWithCommune> = listOf()
 
         if (geometrie != null) {
@@ -40,7 +41,7 @@ class GetCommuneVoieUseCase @Inject constructor(
     }
 
     data class CommuneVoieResult(
-        val listCommunes: Collection<IdCodeLibelleData>,
+        val listCommunes: Collection<GlobalData.IdCodeLibelleData>,
         val listVoies: Collection<VoieRepository.VoieWithCommune>,
     )
 }

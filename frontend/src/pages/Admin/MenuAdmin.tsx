@@ -16,6 +16,9 @@ const MenuAdmin = () => {
     TYPE_DROIT.ADMIN_RAPPORTS_PERSO,
     TYPE_DROIT.ADMIN_PARAM_TRAITEMENTS,
     TYPE_DROIT.ADMIN_ANOMALIES,
+    TYPE_DROIT.ATLAS_A,
+    TYPE_DROIT.ATLAS_C,
+    TYPE_DROIT.ATLAS_D,
   ]);
   const hasDroitGererLesDroits = isAuthorized(user, [
     TYPE_DROIT.ADMIN_DROITS,
@@ -121,6 +124,18 @@ const MenuAdmin = () => {
                       pathname={URLS.ADMIN_IMPORT_RESSOURCES}
                     >
                       Import des ressources
+                    </CustomLinkButton>
+                  </Nav.Item>
+                )}
+                {(hasDroit(user, TYPE_DROIT.ATLAS_A) ||
+                  hasDroit(user, TYPE_DROIT.ATLAS_C) ||
+                  hasDroit(user, TYPE_DROIT.ATLAS_D)) && (
+                  <Nav.Item>
+                    <CustomLinkButton
+                      className="text-underline text-start"
+                      pathname={URLS.ADMIN_GESTION_ATLAS}
+                    >
+                      Gestion de l&apos;Atlas
                     </CustomLinkButton>
                   </Nav.Item>
                 )}

@@ -50,7 +50,7 @@ const ExecuteRapportPersonnalise = () => {
 
   const [offset, setOffset] = useState<number>(0);
   const [limit, setLimit] = useState<number>(
-    localStorage.getItem("itemsPerPage") || DEFAULT_PAGINATION,
+    Number(localStorage.getItem("itemsPerPage")) || DEFAULT_PAGINATION,
   );
   const [activeTab, setActiveTab] = useState<string>("data");
   const [valuesFormik, setValuesFormik] = useState<any>();
@@ -64,6 +64,7 @@ const ExecuteRapportPersonnalise = () => {
   const tableRef = useRef<HTMLTableElement>(null);
   const formikRef = useRef<any>(null);
   const [hasAutoExecuted, setHasAutoExecuted] = useState(false);
+  const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
 
   const table = tableRef.current;
 
@@ -159,41 +160,20 @@ const ExecuteRapportPersonnalise = () => {
     listeParametres.length,
   ]);
 
+  useEffect(() => {
+    setSelectedRowIndex(null);
+  }, [offset, limit]);
+
   const getColumnStyle = (index: number) => {
     const width = columnWidths[index];
     if (width) {
-      return { width: `${width}px`, minWidth: `${width}px` };
+      return { width: `${width}px`, maxWidth: `${width}px` };
     }
 
-    // Calculer la largeur basée sur la longueur du header
-    const headerText = tableau?.headers?.[index] || "";
-    const estimatedWidth = Math.max(100, headerText.length * 8 + 40); // 8px par caractère + padding
-
-    return { minWidth: `${estimatedWidth}px` };
+    return undefined;
   };
 
-  const getTableStyle = () => {
-    const totalWidth = Object.values(columnWidths).reduce(
-      (sum, width) => sum + width,
-      0,
-    );
-
-    // Calculer la largeur des colonnes non redimensionnées basée sur leurs headers
-    let defaultTotalWidth = 0;
-    if (tableau?.headers) {
-      tableau.headers.forEach((header, index) => {
-        if (!(index in columnWidths)) {
-          const estimatedWidth = Math.max(100, header.length * 8 + 40);
-          defaultTotalWidth += estimatedWidth;
-        }
-      });
-    }
-
-    if (totalWidth > 0 || defaultTotalWidth > 0) {
-      return { width: `${totalWidth + defaultTotalWidth}px` };
-    }
-    return { minWidth: "100%" };
-  };
+  const hasManualResize = Object.keys(columnWidths).length > 0;
 
   return (
     <Container fluid style={{ maxWidth: "95vw" }}>
@@ -278,6 +258,7 @@ const ExecuteRapportPersonnalise = () => {
               setActiveTab("data");
               // Réinitialiser les largeurs de colonnes pour le nouveau tableau
               setColumnWidths({});
+              setSelectedRowIndex(null);
               setOffset(0);
             }}
           >
@@ -294,58 +275,60 @@ const ExecuteRapportPersonnalise = () => {
         </Col>
         <Col xs={12} lg={9}>
           <Tabs activeKey={activeTab} onSelect={(k) => k && setActiveTab(k)}>
-            <Tab
-              eventKey="data"
-              title={"Données"}
-              className="overflow-scroll h-75"
-            >
+            <Tab eventKey="data" title={"Données"}>
               {tableau === null ? (
                 <Row className="m-3 text-center">
                   <Col className="text-center">Aucune donnée à afficher</Col>
                 </Row>
               ) : (
                 <div>
-                  <Table
-                    bordered
-                    striped
-                    ref={tableRef}
-                    className="resizable-table"
-                    style={getTableStyle()}
-                  >
-                    <thead>
-                      <tr>
-                        {tableau?.headers?.map((e, index) => (
-                          <th
-                            key={index}
-                            style={getColumnStyle(index)}
-                            title={e}
-                          >
-                            {e}
-                            <div className="column-resizer" />
-                          </th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {tableau?.values
-                        ?.slice(offset, offset + limit)
-                        ?.map((ligne, index) => {
-                          return (
-                            <tr key={index} className={"fw-normal"}>
-                              {ligne.map((e: any, key: number) => (
-                                <td
-                                  key={key}
-                                  style={getColumnStyle(key)}
-                                  title={e?.toString()}
-                                >
-                                  {e?.toString()}
-                                </td>
-                              ))}
-                            </tr>
-                          );
-                        })}
-                    </tbody>
-                  </Table>
+                  <div className="rapport-table-scroll">
+                    <Table
+                      bordered
+                      striped
+                      ref={tableRef}
+                      className={`resizable-table ${hasManualResize ? "manual" : "auto"}`}
+                    >
+                      <thead>
+                        <tr>
+                          {tableau?.headers?.map((e, index) => (
+                            <th
+                              key={index}
+                              style={getColumnStyle(index)}
+                              title={e}
+                            >
+                              {e}
+                              <div className="column-resizer" />
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {tableau?.values
+                          ?.slice(offset, offset + limit)
+                          ?.map((ligne, index) => {
+                            const rowIndex = offset + index;
+                            return (
+                              <tr
+                                key={index}
+                                className={`fw-normal ${selectedRowIndex === rowIndex ? "selected-row" : ""}`}
+                                onClick={() => setSelectedRowIndex(rowIndex)}
+                              >
+                                {ligne.map((e: any, key: number) => (
+                                  <td
+                                    key={key}
+                                    style={getColumnStyle(key)}
+                                    title={e?.toString()}
+                                  >
+                                    {e?.toString()}
+                                  </td>
+                                ))}
+                              </tr>
+                            );
+                          })}
+                      </tbody>
+                    </Table>
+                  </div>
                   {tableau?.values && (
                     <PaginationFront
                       key={tableau?.values?.length}

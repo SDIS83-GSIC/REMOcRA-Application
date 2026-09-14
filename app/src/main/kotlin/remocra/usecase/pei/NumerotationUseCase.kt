@@ -5,10 +5,12 @@ import remocra.GlobalConstants
 import remocra.GlobalConstants.NATURE_DECI_ICPE
 import remocra.GlobalConstants.NATURE_DECI_ICPE_CONVENTIONNE
 import remocra.app.AppSettings
+import remocra.app.ParametresProvider
+import remocra.data.PeiData
 import remocra.data.PeiForNumerotationData
+import remocra.data.PibiData
 import remocra.data.enums.CodeSdis
 import remocra.db.CommuneRepository
-import remocra.db.DomaineRepository
 import remocra.db.GestionnaireRepository
 import remocra.db.NumerotationRepository
 import remocra.db.ZoneIntegrationRepository
@@ -81,7 +83,7 @@ constructor(
     private val communeRepository: CommuneRepository,
     private val zoneIntegrationRepository: ZoneIntegrationRepository,
     private val gestionnaireRepository: GestionnaireRepository,
-    private val domaineRepository: DomaineRepository,
+    private val parametresProvider: ParametresProvider,
 ) :
     AbstractUseCase() {
 
@@ -966,18 +968,18 @@ constructor(
     }
 
     /**
-     * Retourne TRUE si on a besoin de recalculer le numéro interne à cause d'un changement de gestionnaire. <br />
+     * Retourne TRUE si on a besoin de recalculer le numéro interne à cause d'un changement de gestionnaire.
      *
      *
-     * @param gestionnaireId id du domaine courante
-     * @param gestionnaireIdInitial id du domaine en BDD
+     * @param peiGestionnaireId id du gestionnaire courant
+     * @param peiGestionnaireIdInitial id du gestionnaire initial
      *
      * @return Boolean : doit-on recalculer le numéro interne ?
      */
-    fun needComputeNumeroInterneGestionnaire(gestionnaireId: UUID?, gestionnaireIdInitial: UUID?): Boolean {
+    fun needComputeNumeroInterneGestionnaire(peiGestionnaireId: UUID?, peiGestionnaireIdInitial: UUID?): Boolean {
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_59 ->
-                gestionnaireId != gestionnaireIdInitial
+                peiGestionnaireId != peiGestionnaireIdInitial
             else -> false
         }
     }
@@ -1016,6 +1018,29 @@ constructor(
             CodeSdis.SDIS_95,
             ->
                 natureDeciId != natureDeciIdInitial
+            else -> false
+        }
+    }
+
+    /**
+     * Retourne TRUE si on a besoin de recalculer le numéro interne à cause d'un changement de nature. <br />
+     *
+     *
+     * @param netureId id de la nature courante
+     * @param natureIdInitial id de la nature en BDD
+     *
+     * @return Boolean : doit-on recalculer le numéro interne ?
+     */
+    fun needComputeNumeroInterneNature(natureId: UUID, natureIdInitial: UUID?): Boolean {
+        return when (appSettings.codeSdis) {
+            CodeSdis.SDIS_39,
+            CodeSdis.SDIS_53,
+            CodeSdis.SDIS_58,
+            CodeSdis.SDIS_71,
+            CodeSdis.SDIS_83,
+            CodeSdis.SDIS_973,
+            ->
+                natureId != natureIdInitial
             else -> false
         }
     }
@@ -1062,6 +1087,63 @@ constructor(
             -> communeId != communeIdInitial || zoneSpecialeId != zoneSpecialeIdInitial
             CodeSdis.SDIS_49 -> false
         }
+    }
+
+    fun getMustComputeFlags(
+        element: PeiData,
+        isInsert: Boolean = false,
+        isUpdate: Boolean = false,
+    ): Pair<Boolean, Boolean> {
+        val autoRenum = parametresProvider.getParametreBoolean(GlobalConstants.PARAM_PEI_RENUMEROTATION_INTERNE_AUTO) == true
+
+        val needCompute = needComputeNumero(element)
+
+        val mustComputeComplet = element.peiNumeroComplet == null || (isInsert || isUpdate) && needCompute
+        val mustComputeInterne =
+            element.peiNumeroInterne == null ||
+                isInsert ||
+                (isUpdate && needCompute && autoRenum)
+
+        return Pair(mustComputeComplet, mustComputeInterne)
+    }
+
+    /**
+     * Fonction permettant de savoir s'il faut recalculer le numéro interne du PEI car un de ses attributs structurants a été modifié. <br />
+     *
+     * Cela ne veut pas dire que le numéro interne sera différent, c'est le calcul qui le déterminera.
+     */
+    fun needComputeNumero(element: PeiData): Boolean {
+        return element.peiNumeroInterne != element.peiNumeroInterneInitial ||
+            needComputeNumeroInterneCommune(
+                element.peiCommuneId,
+                element.peiCommuneIdInitial,
+                element.peiZoneSpecialeId,
+                element.peiZoneSpecialeIdInitial,
+            ) ||
+            needComputeNumeroInterneNature(
+                element.peiNatureId,
+                element.peiNatureIdInitial,
+            ) ||
+            needComputeNumeroInterneNatureDeci(
+                element.peiNatureDeciId,
+                element.peiNatureDeciIdInitial,
+            ) ||
+            needComputeNumeroInterneDomaine(
+                element.peiDomaineId,
+                element.peiDomaineIdInitial,
+            ) ||
+            needComputeNumeroInterneGestionnaire(
+                element.peiGestionnaireId,
+                element.peiGestionnaireIdInitial,
+            ) ||
+            if (element is PibiData) {
+                needComputeNumeroInternePibiIdentifiantGestionnaire(
+                    element.pibiIdentifiantGestionnaire,
+                    element.pibiIdentifiantGestionnaireInitial,
+                )
+            } else {
+                false
+            }
     }
 }
 

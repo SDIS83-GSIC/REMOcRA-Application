@@ -1,4 +1,4 @@
-import { getIn, useFormikContext } from "formik";
+import { getIn, useField, useFormikContext } from "formik";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { Badge, Col, Container, Row } from "react-bootstrap";
 import { object } from "yup";
@@ -35,7 +35,11 @@ import typeAffichageCoordonnees from "../../../enums/TypeAffichageCoordonnees.ts
 import typeRouteHistoriquePei from "../../../enums/TypeRouteHistoriquePei.tsx";
 import TYPE_PARAMETRE from "../../../enums/TypesParametres.tsx";
 import url from "../../../module/fetch.tsx";
-import { requiredNumber, requiredString } from "../../../module/validators.tsx";
+import {
+  requiredBoolean,
+  requiredNumber,
+  requiredString,
+} from "../../../module/validators.tsx";
 import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 import TypeOrganismeMultiSelectParam from "./TypeOrganismeMultiSelectParam.tsx";
 
@@ -113,9 +117,13 @@ type ParametresSectionPei = {
   declarationPeiObjetEmail: string;
   declarationPeiCorpsEmail: string;
   receptionRecoInitObligatoire: boolean;
+  autoriserMailVisiteReception: boolean;
+  autoriserMailRoi: boolean;
   peiRouteHistorique: string;
   valeurMinimaleHistogramme: number | undefined;
   conserverObservationVisite: boolean;
+  peiOrganismeNotificationVisiteReception: string[] | undefined;
+  peiOrganismeNotificationRoi: string[] | undefined;
 };
 
 type ParametresSectionPeiLongueIndispo = {
@@ -134,6 +142,11 @@ type ParametresSectionRcci = {
 type ParametresSectionUtilisateur = {
   organismeDefaut: string;
   profilUtilisateurDefaut: string;
+  organismeProfilMajSynchro: boolean;
+};
+
+type ParametresSectionCourrier = {
+  courrierRestrictionZC: boolean;
 };
 
 type AdminParametresValue = {
@@ -148,6 +161,7 @@ type AdminParametresValue = {
   peiLongueIndispo: ParametresSectionPeiLongueIndispo;
   rcci: ParametresSectionRcci;
   utilisateur: ParametresSectionUtilisateur;
+  courrier: ParametresSectionCourrier;
 };
 
 export const getInitialValues = (
@@ -164,6 +178,7 @@ export const getInitialValues = (
   peiLongueIndispo: ParametresSectionPeiLongueIndispo;
   rcci: ParametresSectionRcci;
   utilisateur: ParametresSectionUtilisateur;
+  courrier: ParametresSectionCourrier;
 } => ({
   general: data?.general,
   signalement: data?.signalement,
@@ -206,6 +221,7 @@ export const getInitialValues = (
   peiLongueIndispo: data?.peiLongueIndispo,
   rcci: data?.rcci,
   utilisateur: data?.utilisateur,
+  courrier: data?.courrier,
 });
 
 export const validationSchema = object({
@@ -270,6 +286,9 @@ export const validationSchema = object({
   mobile: object({
     dureeValiditeToken: requiredNumber,
   }),
+  courrier: object({
+    courrierRestrictionZC: requiredBoolean,
+  }),
 });
 
 export const prepareVariables = (values: AdminParametresValue) => {
@@ -302,6 +321,7 @@ export const prepareVariables = (values: AdminParametresValue) => {
     peiLongueIndispo: values?.peiLongueIndispo,
     rcci: values?.rcci,
     utilisateur: values?.utilisateur,
+    courrier: values?.courrier,
   };
 };
 
@@ -540,6 +560,17 @@ export const AdminParametresInterne = () => {
                     },
                   ]
                 : []),
+              ...[
+                {
+                  header: "Courrier",
+                  content: (
+                    <AdminCourrier
+                      values={values.courrier}
+                      setFieldValue={setFieldValue}
+                    />
+                  ),
+                },
+              ],
             ]}
             handleShowClose={handleShowClose}
           />
@@ -1500,6 +1531,9 @@ const AdminPei = ({
             name="pei.peiRenumerotationInterneAuto"
             label="Activer la renumérotation interne automatique des PEI"
             checked={values?.peiRenumerotationInterneAuto}
+            tooltipText={
+              "Si le paramètre est activé, la saisie du numéro interne d'un PEI sera impossible même si l'utilisateur a le droit 'Saisir le numéro interne d'un PEI' (PEI_NUMERO_INTERNE_U)."
+            }
           />
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
@@ -1557,6 +1591,33 @@ const AdminPei = ({
               </>
             }
           />
+          {values?.receptionRecoInitObligatoire && (
+            <>
+              <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+                <CheckBoxInput
+                  name="pei.autoriserMailVisiteReception"
+                  label="Notification - Visite de réception"
+                  checked={values?.autoriserMailVisiteReception}
+                />
+              </AdminParametre>
+
+              {values?.autoriserMailVisiteReception && (
+                <ActiveOrganismTypes recipientsField="pei.peiOrganismeNotificationVisiteReception" />
+              )}
+
+              <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+                <CheckBoxInput
+                  name="pei.autoriserMailRoi"
+                  label="Notification - Reconnaissance opérationnelle initiale (ROI)"
+                  checked={values?.autoriserMailRoi}
+                />
+              </AdminParametre>
+
+              {values?.autoriserMailRoi && (
+                <ActiveOrganismTypes recipientsField="pei.peiOrganismeNotificationRoi" />
+              )}
+            </>
+          )}
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
           <CheckBoxInput
@@ -1851,6 +1912,34 @@ const AdminRcci = ({
   );
 };
 
+type ActiveOrganismTypesProps = {
+  recipientsField: string;
+};
+
+const ActiveOrganismTypes = ({ recipientsField }: ActiveOrganismTypesProps) => {
+  const [{ value: listeTypeOrganismeIds }, , { setValue }] =
+    useField(recipientsField);
+  const { data: allOrganismType } = useGet(url`/api/type-organisme/get-active`);
+
+  return (
+    <Multiselect
+      name={recipientsField}
+      label="Types d'organismes concernés qui recevront le courrier"
+      options={allOrganismType}
+      getOptionValue={(o) => o.typeOrganismeId}
+      getOptionLabel={(o) => o.typeOrganismeLibelle}
+      value={allOrganismType?.filter((o: { typeOrganismeId: string }) =>
+        listeTypeOrganismeIds?.includes(o.typeOrganismeId),
+      )}
+      onChange={(selection) =>
+        setValue(
+          selection.map((o: { typeOrganismeId: string }) => o.typeOrganismeId),
+        )
+      }
+    />
+  );
+};
+
 const AdminUtilisateur = ({
   values,
   setFieldValue,
@@ -1963,6 +2052,33 @@ const AdminUtilisateur = ({
             "Aucun groupe de fonctionnalités trouvé."
           )}
         </div>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="utilisateur.organismeProfilMajSynchro"
+            label="Mettre à jour l'organisme et le profil de l'utilisateur lors de la synchronisation utilisateur"
+            checked={values?.organismeProfilMajSynchro}
+            tooltipText="Si activé, l'organisme et le profil de l'utilisateur seront mis à jour lors de chaque synchronisation à partir du LDAP. Les attributs Keycloak 'organismeCode' et 'profilUtilisateurCode' doivent être présents (configurez un mapper LDAP dans Keycloak pour mapper vos attributs LDAP vers 'organismeCode' et 'profilUtilisateurCode'). Si l'un de ces attributs est absent, l'utilisateur sera désactivé. Si le paramètre est désactivé, seules les données personnelles (nom, prénom, email) seront mises à jour, tout en conservant l'organisme et le profil affectés dans REMOcRA."
+          ></CheckBoxInput>
+        </AdminParametre>
+      </>
+    )
+  );
+};
+
+const AdminCourrier = ({ values }: { values: ParametresSectionCourrier }) => {
+  return (
+    values && (
+      <>
+        <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+          <CheckBoxInput
+            name="courrier.courrierRestrictionZC"
+            label="Permettre à l'utilisateur de restreindre la recherche des destinataires sur sa zone de compétence"
+            checked={values?.courrierRestrictionZC}
+            tooltipText={
+              "Si ce paramètre est activé, la notification d’un courrier affichera une case à cocher permettant de limiter la recherche des destinataires à la zone de compétence de l’utilisateur connecté."
+            }
+          />
+        </AdminParametre>
       </>
     )
   );

@@ -38,6 +38,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     PEI_VOIE_OBLIGATOIRE(1008, "La saisie d'une voie est obligatoire"),
     PEI_VOIE_XOR(1009, "Vous ne pouvez pas à la fois sélectionner une voie et saisir une valeur textuelle"),
     PEI_NUMERO_COMPLET_EXISTS(1011, "Un PEI existe déjà avec ce numéro"),
+    PEI_UNAUTHORIZED_CHANGEMENT_DECI(1018, "Ce changement de nature DECI rompt les conditions de création d'une tournée."),
 
     // Modification en masse des positions de PEI
     ERR_PEI_MANQUANT(1012, "Le numéro du PEI est manquant"),
@@ -45,6 +46,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ERR_COORD_MANQUANTE(1014, "Les coordonnées du PEI doivent être renseignées"),
     ERR_EPSG_MANQUANT(1015, "L'EPSG du PEI doit être renseigné"),
     ERR_PEI_TYPE(1016, "Type PEI non supporté"),
+    ERR_PEI_VOIE(1017, "Aucune voie trouvée pour le pei après son déplacement."),
 
     /*
         Erreur si on essaie de supprimer une IT en cascade de la suppression d'un PEI mais qu'on n'a pas les droits de suppresion
@@ -304,6 +306,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ),
     INDISPONIBILITE_TEMPORAIRE_STATUT(6007, "Le statut renseigné n'est pas valide. Il doit correspondre à une de ces valeurs : EN_COURS, PLANIFIEE ou TERMINEE"),
     INDISPONIBILITE_TEMPORAIRE_PAS_DE_PEI(6008, "Impossible de créer une indisponibilité temporaire de PEI sans fournir de PEI valide."),
+    INDISPONIBILITE_TEMPORAIRE_ERROR_ON_UPDATE_PEI(6009, "Erreur lors de la mise à jour du PEI à la création de l'indisponibilité temporaire : $PLACEHOLDER_ERROR_TYPE"),
 
     /*************************************************************************************
      * Carte
@@ -399,8 +402,8 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     GESTIONNAIRE_FORBIDDEN_UPDATE(9103, "Vous n'avez pas les droits de modification des gestionnaires", Status.FORBIDDEN),
     GESTIONNAIRE_FORBIDDEN_INSERT(9104, "Vous n'avez pas les droits de création des gestionnaires", Status.FORBIDDEN),
     GESTIONNAIRE_FORBIDDEN_DELETE(9105, "Vous n'avez pas les droits de suppression des gestionnaires", Status.FORBIDDEN),
-    GESTIONNAIRE_USED_IN_PEI(9106, "Un ou plusieurs PEI sont rattachés à ce gestionnaire"),
-    GESTIONNAIRE_USED_IN_SITE(9107, "Un ou plusieurs sites sont rattachés à ce gestionnaire"),
+    GESTIONNAIRE_ERROR_ON_DELETE(9106, "Impossible de supprimer le gestionnaire : $PLACEHOLDER_ERROR_TYPE"),
+    SITE_ERROR_ON_UPDATE(9107, "Impossible de mettre à jour le site : $PLACEHOLDER_ERROR_TYPE"),
 
     IMPORT_SITES_SHP_INTROUVABLE(9108, AUCUN_SHAPEFILE),
     IMPORT_SITES_GEOMETRIE_NULLE(9109, GEOMETRIE_NULLE),
@@ -440,6 +443,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     DOCUMENT_FORBIDDEN_INSERT(10015, "Vous n'avez pas les droits pour déclarer un PEI.", Status.FORBIDDEN),
     DFCI_FORBIDDEN_RECEPTION_TRAVAUX(10016, "Vous n'avez pas les droits pour réceptionner des travaux.", Status.FORBIDDEN),
     DOCUMENT_FORBIDDEN_SYSTEM(10017, "L'application REMOcRA n'a pas les droits de modifier ce repertoire."),
+    DOCUMENT_NOT_FOUND(10018, "Le document n'a pas été trouvé."),
 
     //
     // ********************************************************************************
@@ -611,11 +615,11 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     DROIT_API_DEJA_CLIENT_KEYCLOAK(26005, "L'organisme a déjà un accès API."),
     DROIT_API_INSERT_CLIENT_KEYCLOAK(
         26006,
-        "Erreur lors de l'insertion dans keyclaok : $PLACEHOLDER_ERROR_TYPE.",
+        "Erreur lors de l'insertion dans keycloak : $PLACEHOLDER_ERROR_TYPE.",
     ),
     DROIT_API_UPDATE_CLIENT_KEYCLOAK(
         26007,
-        "Erreur lors de la mise à jour dans keyclaok : $PLACEHOLDER_ERROR_TYPE.",
+        "Erreur lors de la mise à jour dans keycloak : $PLACEHOLDER_ERROR_TYPE.",
     ),
     DROIT_API_REGENERE_CLIENT_KEYCLOAK(
         26008,
@@ -679,6 +683,14 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     RAPPORT_POST_ROP_NO_PEI(31011, "Aucun PEI dans la tournée"),
     RAPPORT_POST_ROP_ERREUR_GENERATION(31012, "Erreur lors de la création du courrier pour le rapport post ROP de la tournée"),
 
+    RAPPORT_VISITE_RECEPTION_MODEL_INEXISTANT(31013, "Modèle de courrier pour rapport visite de réception introuvable"),
+    COURRIER_VISITE_RECEPTION_ERREUR(31014, "Erreur lors de la création du courrier pour la visite de réception : aucun destinataire trouvé."),
+    RAPPORT_VISITE_ROI_MODEL_INEXISTANT(31015, "Modèle de courrier pour rapport visite ROI introuvable."),
+    COURRIER_VISITE_ROI_ERREUR(31016, "Erreur lors de la création du courrier pour la visite ROI : aucun destinataire trouvé."),
+
+    CANEVAS_ROP_MODELE_INEXISTANT(31017, "Modèle de courrier pour canevas ROP introuvable"),
+    CANEVAS_ROP_ERREUR_GENERATION(31018, "Erreur lors de la génération du canevas ROP de la tournée"),
+
     //
     // ********************************************************************************
     // Image
@@ -694,17 +706,20 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     //
     REQUETE_SQL_CREATION_INVALIDE(33001, "La requête de création est invalide"),
 
+    ATLAS_ANNEXES_FORBIDDEN_UPDATE(34001, "Vous n'avez pas les droits de modification de l'ordre des annexes"),
+    ATLAS_DOCUMENTS_NOT_FOUND(34002, "Aucun fichier existant pour l'atlas"),
+
     //
     // ********************************************************************************
     // DFCI
     // ********************************************************************************
     //
-    DFCI_AIRE_U_FORBIDDEN(34001, "Vous n'avez le droit de modification des aires DFCI."),
-    DFCI_PISTE_U_FORBIDDEN(34002, "Vous n'avez le droit de modification des pistes DFCI."),
-    DFCI_DEB_U_FORBIDDEN(34003, "Vous n'avez le droit de modification des débroussaillements DFCI."),
-    DFCI_PANNEAU_U_FORBIDDEN(34004, "Vous n'avez le droit de modification des panneaux DFCI."),
-    DFCI_GESTION_CONFLIT_A_FORBIDDEN(34005, "Vous n'avez pas la permission pour résoudre les conflits"),
-    DFCI_RESOLVE_CONFLIT_NOT_SAME_VALUE(34006, "Les valeurs du SIG et de REMOcRA ne sont pas les mêmes."),
+    DFCI_AIRE_U_FORBIDDEN(35001, "Vous n'avez le droit de modification des aires DFCI."),
+    DFCI_PISTE_U_FORBIDDEN(35002, "Vous n'avez le droit de modification des pistes DFCI."),
+    DFCI_DEB_U_FORBIDDEN(35003, "Vous n'avez le droit de modification des débroussaillements DFCI."),
+    DFCI_PANNEAU_U_FORBIDDEN(35004, "Vous n'avez le droit de modification des panneaux DFCI."),
+    DFCI_GESTION_CONFLIT_A_FORBIDDEN(35005, "Vous n'avez pas la permission pour résoudre les conflits"),
+    DFCI_RESOLVE_CONFLIT_NOT_SAME_VALUE(35006, "Les valeurs du SIG et de REMOcRA ne sont pas les mêmes."),
     ;
 
     override fun toString(): String {

@@ -1,5 +1,6 @@
 package remocra.usecase.rapportpersonnalise
 
+import RapportPersonnaliseUtils
 import jakarta.inject.Inject
 import jakarta.ws.rs.core.StreamingOutput
 import org.geotools.api.data.DataStoreFactorySpi
@@ -17,6 +18,7 @@ import org.locationtech.jts.geom.MultiPolygon
 import org.locationtech.jts.io.WKTReader
 import remocra.GlobalConstants
 import remocra.app.AppSettings
+import remocra.auth.WrappedUserInfo
 import remocra.data.GenererRapportPersonnaliseData
 import remocra.data.enums.ErrorType
 import remocra.db.RapportPersonnaliseRepository
@@ -37,6 +39,7 @@ class ExportDataCarteRapportPersonnaliseUseCase
 @Inject
 constructor(
     private val rapportPersonnaliseRepository: RapportPersonnaliseRepository,
+    private val rapportPersonnaliseUtils: RapportPersonnaliseUtils,
     private val documentUtils: DocumentUtils,
     private val appSettings: AppSettings,
 ) :
@@ -47,7 +50,7 @@ constructor(
         private const val FILE_NAME = "rapport_personnalise_shapefile"
     }
 
-    fun execute(genererRapportPersonnaliseData: GenererRapportPersonnaliseData): StreamingOutput {
+    fun execute(genererRapportPersonnaliseData: GenererRapportPersonnaliseData, userInfo: WrappedUserInfo): StreamingOutput {
         // Fichiers qui vont être créés
         val files: Array<String> = arrayOf(
             "$FILE_NAME.dbf",
@@ -59,15 +62,7 @@ constructor(
         documentUtils.ensureDirectory(DOSSIER_TMP_RAPPORT_PERONNALISE)
 
         try {
-            var requete =
-                rapportPersonnaliseRepository.getSqlRequete(genererRapportPersonnaliseData.rapportPersonnaliseId)
-
-            // On remplace avec les données paramètres fournies
-            genererRapportPersonnaliseData.listeParametre.forEach {
-                requete = requete.replace(it.rapportPersonnaliseParametreCode, it.value.toString())
-            }
-
-            val result = rapportPersonnaliseRepository.executeSqlRapport(requete)
+            val result = rapportPersonnaliseUtils.buildRapportPersonnaliseData(genererRapportPersonnaliseData, userInfo)
 
             // On construit l'objet qui contient une liste de clé valeur
             val data: MutableList<Map<String, Any?>> = mutableListOf()

@@ -192,7 +192,8 @@ export const TextAreaInput = ({
   tooltipText,
   onChange,
   rows = 3,
-}: InputType & { rows?: number }) => {
+  hint,
+}: InputType & { rows?: number; hint?: ReactNode }) => {
   const [field, meta] = useField(name);
   const error = meta.touched ? meta.error : null;
   return (
@@ -203,6 +204,7 @@ export const TextAreaInput = ({
         tooltipText={tooltipText}
         name={name}
       />
+      {hint && <div className="mb-1">{hint}</div>}
       <Form.Control
         id={name}
         required={required}
@@ -255,7 +257,7 @@ export const CheckBoxInput = ({
       />
       <label
         htmlFor={id ?? name}
-        className={classNames("mx-2 mt-2", disabled ? "text-muted" : "")}
+        className={classNames("mx-0 mt-0 p-0", disabled ? "text-muted" : "")}
       >
         {label}
         {tooltipText && (

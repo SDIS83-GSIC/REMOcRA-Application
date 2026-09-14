@@ -15,7 +15,7 @@
   top: -120px;
 }
 
-#papersheet .isPrintable.map-wrapper {
+#papersheet .isPrintable.map-component-wrapper {
   max-height: none;
   min-height: 0;
   height: 100%;

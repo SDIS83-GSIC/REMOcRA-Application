@@ -2,6 +2,7 @@ import { SetStateAction, useCallback, useEffect, useState } from "react";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ReactSelect from "react-select";
+import { useAppContext } from "../../components/App/AppProvider.tsx";
 import CreateButton from "../../components/Button/CreateButton.tsx";
 import SortableTableTourneePei from "../../components/DragNDrop/SortableItem.tsx";
 import Loading from "../../components/Elements/Loading/Loading.tsx";
@@ -9,7 +10,9 @@ import PageTitle from "../../components/Elements/PageTitle/PageTitle.tsx";
 import { useGet, usePut } from "../../components/Fetch/useFetch.tsx";
 import SubmitFormButtons from "../../components/Form/SubmitFormButtons.tsx";
 import { IconCreate, IconTournee } from "../../components/Icon/Icon.tsx";
+import { hasDroit } from "../../droits.tsx";
 import { PeiInfoEntity } from "../../Entities/PeiEntity.tsx";
+import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import url from "../../module/fetch.tsx";
 import { useToastContext } from "../../module/Toast/ToastProvider.tsx";
 import { URLS } from "../../routes.tsx";
@@ -25,8 +28,10 @@ const TourneePei = ({
   closeVolet: () => void;
 }) => {
   const { tourneeId } = useParams();
+  const { user } = useAppContext();
 
   const tourneeIdToUse = tourneeMapId ?? tourneeId;
+  const canManageTournee = hasDroit(user, TYPE_DROIT.TOURNEE_A);
 
   const tourneePeiInfo = useGet(
     url`/api/tournee/listPeiTournee/${tourneeIdToUse}?${{
@@ -36,7 +41,7 @@ const TourneePei = ({
 
   // TODO ajouter la liste des PEI en plus
   const allPeiInfoSource = useGet(
-    url`/api/tournee/listPei/` + tourneeIdToUse,
+    canManageTournee ? `/api/tournee/listPei/` + tourneeIdToUse : "",
     {},
   );
 
@@ -86,6 +91,10 @@ const TourneePei = ({
   );
 
   const filterOptions = useCallback(() => {
+    if (!canManageTournee) {
+      return [];
+    }
+
     let filteredList: PeiInfoEntity[] = allPeiInfoSource.data;
     if (data.length > 0) {
       if (
@@ -117,7 +126,7 @@ const TourneePei = ({
         tourneeId: tourneeIdToUse,
       };
     });
-  }, [allPeiInfoSource.data, data, tourneeIdToUse]);
+  }, [allPeiInfoSource.data, data, tourneeIdToUse, canManageTournee]);
 
   useEffect(() => {
     if (allPeiInfoSource.isResolved && data) {
@@ -167,10 +176,12 @@ const TourneePei = ({
             </>
           }
           right={
-            <CreateButton
-              title={"Ajouter un PEI"}
-              onClick={showAddPeiSection}
-            />
+            hasDroit(user, TYPE_DROIT.TOURNEE_A) && (
+              <CreateButton
+                title={"Ajouter un PEI"}
+                onClick={showAddPeiSection}
+              />
+            )
           }
           displayReturnButton={tourneeMapId ? false : true}
         />

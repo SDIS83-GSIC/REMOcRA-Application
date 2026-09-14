@@ -88,9 +88,11 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
                 .and(ORGANISME.ID.ne(organismeId)),
         )
 
-    fun getOrganismeForSelect(): List<IdCodeLibelleData> = getIdLibelleByCondition(DSL.noCondition())
+    fun getOrganismeForSelect(affiliatedOrganismeIds: Set<UUID>?): List<IdCodeLibelleData> = getIdLibelleByCondition(
+        DSL.condition(affiliatedOrganismeIds?.let { ORGANISME.ID.`in`(it) } ?: DSL.noCondition()),
+    )
 
-    fun getOrganismeFilterWithPeiForSelect(listePei: Set<UUID>): List<IdCodeLibelleData> =
+    fun getOrganismeFilterWithPeiForSelect(listePei: Set<UUID>, affiliatedOrganismeIds: Set<UUID>?): List<IdCodeLibelleData> =
         getIdLibelleByCondition(
             DSL.condition(
                 ORGANISME.ID.`notIn`(
@@ -98,7 +100,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
                         .from(L_TOURNEE_PEI)
                         .leftJoin(TOURNEE).on(L_TOURNEE_PEI.TOURNEE_ID.eq(TOURNEE.ID))
                         .where(L_TOURNEE_PEI.PEI_ID.`in`(listePei)),
-                ),
+                ).and(affiliatedOrganismeIds?.let { ORGANISME.ID.`in`(it) } ?: DSL.noCondition()),
             ),
         )
 
@@ -388,7 +390,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
     fun getByCode(organismeCode: String): OrganismeData? =
         dsl.selectFrom(ORGANISME).where(ORGANISME.CODE.eq(organismeCode)).fetchOneInto()
 
-    fun getDestinataireContactOrganisme(listePeiId: List<UUID>, typeOrganisme: List<UUID>, contactRole: String): Map<Destinataire, List<UUID?>> =
+    fun getDestinatairesContactOrganisme(listePeiId: List<UUID>, typeOrganisme: List<UUID>, contactRole: String): Map<Destinataire, List<UUID?>> =
         dsl.select(
             PEI.ID,
             CONTACT.ID,
@@ -458,4 +460,77 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             .orderBy(ORGANISME.LIBELLE)
             .fetchInto()
     }
+
+    fun getAllOrganismesByZoneCompetence(zoneIntegrationId: UUID): List<UUID> =
+        dsl.select(ORGANISME.ID)
+            .from(ORGANISME)
+            .join(ZONE_INTEGRATION)
+            .on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))
+            .where(
+                ST_Within(
+                    ZONE_INTEGRATION.GEOMETRIE,
+                    field(
+                        DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
+                            .where(ZONE_INTEGRATION.ID.eq(zoneIntegrationId)),
+                    ),
+                ),
+            )
+            .fetchInto()
+
+    fun getProfilOrganismeId(organismeId: UUID): UUID? =
+        dsl.select(ORGANISME.PROFIL_ORGANISME_ID)
+            .from(ORGANISME)
+            .where(ORGANISME.ID.eq(organismeId))
+            .fetchOneInto()
+
+    fun getDestinatairesContactOrganisme(
+        peiId: UUID,
+        listTypeOrganismeId: List<UUID>,
+        contactRole: String,
+    ): List<Destinataire> =
+        dsl.select(
+            CONTACT.ID,
+            CONTACT.CIVILITE,
+            FONCTION_CONTACT.LIBELLE,
+            CONTACT.NOM,
+            CONTACT.PRENOM,
+            CONTACT.EMAIL,
+        )
+            .from(ORGANISME)
+            .join(TYPE_ORGANISME)
+            .on(ORGANISME.TYPE_ORGANISME_ID.eq(TYPE_ORGANISME.ID))
+            .join(ZONE_INTEGRATION)
+            .on(ORGANISME.ZONE_INTEGRATION_ID.eq(ZONE_INTEGRATION.ID))
+            .join(PEI)
+            .on(
+                ST_Within(
+                    PEI.GEOMETRIE,
+                    ZONE_INTEGRATION.GEOMETRIE,
+                ),
+            )
+            .join(L_CONTACT_ORGANISME)
+            .on(ORGANISME.ID.eq(L_CONTACT_ORGANISME.ORGANISME_ID))
+            .join(CONTACT)
+            .on(L_CONTACT_ORGANISME.CONTACT_ID.eq(CONTACT.ID))
+            .join(L_CONTACT_ROLE).on(CONTACT.ID.eq(L_CONTACT_ROLE.CONTACT_ID))
+            .join(ROLE_CONTACT).on(L_CONTACT_ROLE.ROLE_ID.eq(ROLE_CONTACT.ID))
+            .leftJoin(FONCTION_CONTACT)
+            .on(CONTACT.FONCTION_CONTACT_ID.eq(FONCTION_CONTACT.ID))
+            .where(PEI.ID.eq(peiId))
+            .and(TYPE_ORGANISME.ID.`in`(listTypeOrganismeId))
+            .and(CONTACT.EMAIL.isNotNull)
+            .and(CONTACT.ACTIF.isTrue)
+            .and(ORGANISME.ACTIF.isTrue)
+            .and(TYPE_ORGANISME.ACTIF.isTrue)
+            .and(ROLE_CONTACT.CODE.eq(contactRole))
+            .fetch { record ->
+                Destinataire(
+                    destinataireId = record[CONTACT.ID],
+                    destinataireCivilite = record[CONTACT.CIVILITE],
+                    destinataireFonction = record[FONCTION_CONTACT.LIBELLE],
+                    destinataireNom = record[CONTACT.NOM],
+                    destinatairePrenom = record[CONTACT.PRENOM],
+                    destinataireEmail = requireNotNull(record[CONTACT.EMAIL]),
+                )
+            }
 }

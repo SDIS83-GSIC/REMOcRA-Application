@@ -9,7 +9,6 @@ import remocra.db.AnomalieRepository
 import remocra.db.DebitSimultaneRepository
 import remocra.db.DocumentRepository
 import remocra.db.IndisponibiliteTemporaireRepository
-import remocra.db.TourneeRepository
 import remocra.db.jooq.historique.enums.TypeOperation
 import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.enums.TypePei
@@ -24,14 +23,13 @@ import java.util.UUID
 class DeletePeiUseCase
 @Inject
 constructor(
-    private val indisponibiliteTemporaireUseCase: IndisponibiliteTemporaireRepository,
+    private val indisponibiliteTemporaireRepository: IndisponibiliteTemporaireRepository,
     private val debitSimultaneRepository: DebitSimultaneRepository,
-    private val deleIndisponibiliteTemporaireUseCase: DeleteIndisponibiliteTemporaireUseCase,
+    private val deleteIndisponibiliteTemporaireUseCase: DeleteIndisponibiliteTemporaireUseCase,
     private val updateIndisponibiliteTemporaireUseCase: UpdateIndisponibiliteTemporaireUseCase,
-    private val tourneeRepository: TourneeRepository,
     private val anomalieRepository: AnomalieRepository,
     private val aireAspirationRepository: AireAspirationRepository,
-    private val upsertDocument: UpsertDocumentPeiUseCase,
+    private val upsertDocumentPeiUseCase: UpsertDocumentPeiUseCase,
     private val documentRepository: DocumentRepository,
     private val deleteVisiteUseCase: DeleteVisiteUseCase,
 ) :
@@ -39,7 +37,7 @@ constructor(
 
     override fun executeSpecific(userInfo: WrappedUserInfo, element: PeiData) {
         // Gestion des Indisponibilités temporaires
-        val listeIndisponibiliteTemporaire = indisponibiliteTemporaireUseCase.getWithListPeiByPei(element.peiId)
+        val listeIndisponibiliteTemporaire = indisponibiliteTemporaireRepository.getWithListPeiByPei(element.peiId)
         listeIndisponibiliteTemporaire.forEach { indisponibiliteTemporaire ->
 
             /* Si un seul PEI dans l'indisponibilité temporaire un supprimer l'IT
@@ -50,7 +48,7 @@ constructor(
                 ) {
                     throw RemocraResponseException(ErrorType.PEI_INDISPONIBILITE_TEMPORAIRE_EN_COURS)
                 }
-                deleIndisponibiliteTemporaireUseCase.execute(userInfo, indisponibiliteTemporaire, transactionManager)
+                deleteIndisponibiliteTemporaireUseCase.execute(userInfo, indisponibiliteTemporaire, transactionManager)
             } else {
                 updateIndisponibiliteTemporaireUseCase.execute(
                     userInfo = userInfo,
@@ -81,7 +79,7 @@ constructor(
             listeDocsToRemove.add(it.documentId)
         }
 
-        upsertDocument.deleteLDocument(listeDocsToRemove, transactionManager)
+        upsertDocumentPeiUseCase.deleteLDocument(listeDocsToRemove, transactionManager)
 
         // Suppression des visites
         visiteRepository.getAllVisiteByIdPei(element.peiId).forEach {
@@ -109,18 +107,15 @@ constructor(
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.PEI_D)) {
             throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D)
+        } else if (!userInfo.hasDroit(droitWeb = Droit.INDISPO_TEMP_D)) {
+            throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D_INDISPONIBILITE_TEMPORAIRE)
+        } else if (!userInfo.hasDroit(droitWeb = Droit.TOURNEE_A)) {
+            throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D_TOURNEE)
         }
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: PeiData) {
         super.checkContraintes(userInfo, element)
-
-        if (!userInfo.hasDroit(droitWeb = Droit.INDISPO_TEMP_D)) {
-            throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D_INDISPONIBILITE_TEMPORAIRE)
-        }
-        if (!userInfo.hasDroit(droitWeb = Droit.TOURNEE_A)) {
-            throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D_TOURNEE)
-        }
 
         // Si le PEI a un débit simultané, on n'autorise pas sa suppression
         if (debitSimultaneRepository.existDebitSimultaneWithPibi(element.peiId) && element.peiTypePei == TypePei.PIBI) {

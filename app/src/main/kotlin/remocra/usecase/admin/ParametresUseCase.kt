@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
 import remocra.data.ParametresAdminData
 import remocra.data.ParametresSectionCartographie
+import remocra.data.ParametresSectionCourrier
 import remocra.data.ParametresSectionCouvertureHydraulique
 import remocra.data.ParametresSectionDfci
 import remocra.data.ParametresSectionGeneral
@@ -150,6 +151,17 @@ constructor(
             valeurMinimaleHistogramme = mapParametres.getIntOrNull(ParametreEnum.VALEUR_HAUTE_MINIMALE_HISTOGRAMME.name),
             peiRouteHistorique = mapParametres.getString(ParametreEnum.PEI_ROUTE_HISTORIQUE.name),
             conserverObservationVisite = mapParametres.getBoolean(ParametreEnum.CONSERVER_OBSERVATION_VISITE.name),
+            peiOrganismeNotificationVisiteReception = mapParametres.getListOfString(
+                ParametreEnum.PEI_ORGANISME_NOTIFICATION_VISITE_RECEPTION.name,
+                objectMapper,
+            ),
+            peiOrganismeNotificationRoi = mapParametres.getListOfString(
+                ParametreEnum.PEI_ORGANISME_NOTIFICATION_ROI.name,
+                objectMapper,
+            ),
+            autoriserMailRoi = mapParametres.getBoolean(ParametreEnum.AUTORISER_MAIL_ROI.name),
+            autoriserMailVisiteReception = mapParametres.getBoolean(ParametreEnum.AUTORISER_MAIL_VISITE_RECEPTION.name),
+
         )
 
         val peiLongueIndispo = ParametresSectionPeiLongueIndispo(
@@ -161,6 +173,11 @@ constructor(
         val utilisateur = ParametresSectionUtilisateur(
             organismeDefaut = mapParametres.getStringOrNull(ParametreEnum.ORGANISME_DEFAUT.name),
             profilUtilisateurDefaut = mapParametres.getStringOrNull(ParametreEnum.PROFIL_UTILISATEUR_DEFAUT.name),
+            organismeProfilMajSynchro = mapParametres.getBoolean(ParametreEnum.ORGANISME_PROFIL_MAJ_SYNCHRO.name),
+        )
+
+        val courrier = ParametresSectionCourrier(
+            courrierRestrictionZC = mapParametres.getBoolean(ParametreEnum.COURRIER_RESTRICTION_ZC.name),
         )
 
         return ParametresAdminData(
@@ -175,6 +192,7 @@ constructor(
             peiLongueIndispo = peiLongueIndispo,
             utilisateur = utilisateur,
             rcci = rcci,
+            courrier = courrier,
         )
     }
 }
