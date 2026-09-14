@@ -141,4 +141,14 @@ class ReseauRepository @Inject constructor(
             },
         ).execute()
     }
+
+    /***
+     * Vérification des sommets source et destination pour les réseaux
+     */
+    fun isTopologyComplete(etudeId: UUID?) =
+        dsl.fetchExists(
+            dsl.selectOne()
+                .from(RESEAU)
+                .where((RESEAU.ETUDE_ID.eq(etudeId).or(RESEAU.ETUDE_ID.isNull)).and(RESEAU.SOMMET_SOURCE.isNull.or(RESEAU.SOMMET_DESTINATION.isNull))),
+        )
 }
