@@ -26,6 +26,8 @@ import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.DocumentUtils
 import java.nio.charset.StandardCharsets
+import java.text.Normalizer
+import java.util.Locale
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.inputStream
@@ -48,6 +50,34 @@ constructor(
     companion object {
         private val DOSSIER_TMP_RAPPORT_PERONNALISE = GlobalConstants.DOSSIER_DATA.resolve("rapport_personnalise")
         private const val FILE_NAME = "rapport_personnalise_shapefile"
+        private const val DBF_MAX_FIELD_NAME_LENGTH = 10
+    }
+
+    // On transforme le nom de la colonne pour qu'il soit compatible avec le format DBF
+    // <10 caractères, pas d'espace, pas de caractère accentué, pas de caractère spécial
+    private fun toDbfFieldName(original: String, used: MutableSet<String>): String {
+        val ascii = Normalizer.normalize(original, Normalizer.Form.NFD)
+            .replace("\\p{M}+".toRegex(), "")
+            .lowercase(Locale.ROOT)
+            .replace("[^a-z0-9_]".toRegex(), "_")
+            .replace("_+".toRegex(), "_")
+            .trim('_')
+
+        var base = if (ascii.isBlank()) "field" else ascii
+        if (base.length > DBF_MAX_FIELD_NAME_LENGTH) {
+            base = base.substring(0, DBF_MAX_FIELD_NAME_LENGTH)
+        }
+
+        var candidate = base
+        var i = 1
+        while (used.contains(candidate)) {
+            val suffix = i.toString()
+            val maxBaseLength = DBF_MAX_FIELD_NAME_LENGTH - suffix.length
+            candidate = base.take(maxBaseLength.coerceAtLeast(1)) + suffix
+            i++
+        }
+        used.add(candidate)
+        return candidate
     }
 
     fun execute(genererRapportPersonnaliseData: GenererRapportPersonnaliseData, userInfo: WrappedUserInfo): StreamingOutput {
@@ -99,9 +129,13 @@ constructor(
             }
 
             // Ajouter les autres colonnes
+            val usedFieldNames = mutableSetOf("the_geom") // pour éviter les doublons avec le nom de la géométrie
+            val dbfToOriginalFieldName = mutableMapOf<String, String>()
             result.fields().forEach { field ->
                 if (field.name != "geometrie") {
-                    builder.add(field.name, field.type)
+                    val dbfFieldName = toDbfFieldName(field.name, usedFieldNames)
+                    dbfToOriginalFieldName[dbfFieldName] = field.name
+                    builder.add(dbfFieldName, field.type)
                 }
             }
 
@@ -134,7 +168,11 @@ constructor(
                     // On boucle sur les autres attributs
                     featureType.attributeDescriptors.map { attr -> attr.localName }
                         .filter { attr -> attr != "the_geom" }
-                        .forEach { featureBuilder.add(row.getOrDefault(it, null)) }
+                        .forEach { dbfFieldName ->
+                            val originalFieldName = dbfToOriginalFieldName[dbfFieldName]
+                                ?: throw RemocraResponseException(ErrorType.RAPPORT_PERSO_DBF_MAPPING_INVALID, dbfFieldName)
+                            featureBuilder.add(row.getOrDefault(originalFieldName, null))
+                        }
 
                     val feature = featureBuilder.buildFeature(null)
                     features.add(feature)

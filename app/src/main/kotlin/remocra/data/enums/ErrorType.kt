@@ -513,6 +513,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     RAPPORT_PERSO_FORBIDDEN(15006, "Vous n'avez pas les droits pour générer ce rapport", Status.FORBIDDEN),
     RAPPORT_PERSO_SHP(15007, "Impossible de générer le fichier shape : $PLACEHOLDER_ERROR_TYPE"),
     RAPPORT_PERSO_IS_PROTECTED(15008, "Ce rapport personnalisé est protégé"),
+    RAPPORT_PERSO_DBF_MAPPING_INVALID(15009, "Mapping DBF introuvable : $PLACEHOLDER_ERROR_TYPE"),
 
     ADMIN_TASK_FORBIDDEN(16000, "Vous n'avez pas les droits d'administration des tâches planifiées.", Status.FORBIDDEN),
     ADMIN_TASK_SYNCHRO_SIG_SCRIPT_VUE(16001, "Le script de création de vue est nécessaire pour le type de synchronisation  $PLACEHOLDER_ERROR_TYPE"),
