@@ -113,6 +113,7 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
             DOCUMENT.ID.`as`("id"),
             DOCUMENT.NOM_FICHIER.`as`("libelle"),
             DOCUMENT.DATE.`as`("date"),
+            COURRIER.REFERENCE.`as`("reference"),
         )
             .from(COURRIER)
             .join(DOCUMENT)

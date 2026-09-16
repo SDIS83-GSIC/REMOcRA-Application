@@ -7,4 +7,5 @@ data class DocumentCourrierData(
     val id: UUID,
     val libelle: String?,
     val date: ZonedDateTime?,
+    val reference: String? = null,
 )

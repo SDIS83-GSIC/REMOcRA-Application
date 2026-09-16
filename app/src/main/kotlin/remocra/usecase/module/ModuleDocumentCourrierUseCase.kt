@@ -56,6 +56,7 @@ constructor(
                         id = it.id,
                         libelle = it.libelle,
                         date = it.date,
+                        reference = it.reference,
                     )
                 }
         }
