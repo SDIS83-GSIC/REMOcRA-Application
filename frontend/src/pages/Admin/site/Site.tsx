@@ -9,6 +9,7 @@ import {
 import SelectForm from "../../../components/Form/SelectForm.tsx";
 import SubmitFormButtons from "../../../components/Form/SubmitFormButtons.tsx";
 import url from "../../../module/fetch.tsx";
+import { IdCodeLibelleType } from "../../../utils/typeUtils.tsx";
 
 type SiteType = {
   siteGestionnaireId: string | null;
@@ -34,8 +35,15 @@ export const prepareVariables = (values: SiteType) => ({
 });
 
 const Site = () => {
-  const { setValues } = useFormikContext<SiteType>();
+  const { values, setValues } = useFormikContext<SiteType>();
   const { data } = useGet(url`/api/gestionnaire/get`);
+
+  if (!data) {
+    return;
+  }
+  const defaultGestionnaireId = data.find((gestionnaire: IdCodeLibelleType) => {
+    return gestionnaire.id === values.siteGestionnaireId;
+  });
 
   return (
     <FormContainer>
@@ -48,6 +56,7 @@ const Site = () => {
         label={"Gestionnaire"}
         listIdCodeLibelle={data}
         setValues={setValues}
+        defaultValue={defaultGestionnaireId}
       />
       <SubmitFormButtons returnLink={true} />
     </FormContainer>

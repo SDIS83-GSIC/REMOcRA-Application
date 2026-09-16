@@ -1,4 +1,4 @@
-import { getIn, useFormikContext } from "formik";
+import { getIn, useField, useFormikContext } from "formik";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { Badge, Col, Container, Row } from "react-bootstrap";
 import { object } from "yup";
@@ -112,9 +112,13 @@ type ParametresSectionPei = {
   declarationPeiObjetEmail: string;
   declarationPeiCorpsEmail: string;
   receptionRecoInitObligatoire: boolean;
+  autoriserMailVisiteReception: boolean;
+  autoriserMailRoi: boolean;
   peiRouteHistorique: string;
   valeurMinimaleHistogramme: number | undefined;
   conserverObservationVisite: boolean;
+  peiOrganismeNotificationVisiteReception: string[] | undefined;
+  peiOrganismeNotificationRoi: string[] | undefined;
 };
 
 type ParametresSectionPeiLongueIndispo = {
@@ -1543,6 +1547,33 @@ const AdminPei = ({
               </>
             }
           />
+          {values?.receptionRecoInitObligatoire && (
+            <>
+              <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+                <CheckBoxInput
+                  name="pei.autoriserMailVisiteReception"
+                  label="Notification - Visite de réception"
+                  checked={values?.autoriserMailVisiteReception}
+                />
+              </AdminParametre>
+
+              {values?.autoriserMailVisiteReception && (
+                <ActiveOrganismTypes recipientsField="pei.peiOrganismeNotificationVisiteReception" />
+              )}
+
+              <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
+                <CheckBoxInput
+                  name="pei.autoriserMailRoi"
+                  label="Notification - Reconnaissance opérationnelle initiale (ROI)"
+                  checked={values?.autoriserMailRoi}
+                />
+              </AdminParametre>
+
+              {values?.autoriserMailRoi && (
+                <ActiveOrganismTypes recipientsField="pei.peiOrganismeNotificationRoi" />
+              )}
+            </>
+          )}
         </AdminParametre>
         <AdminParametre type={TYPE_PARAMETRE.BOOLEAN}>
           <CheckBoxInput
@@ -1834,6 +1865,34 @@ const AdminRcci = ({
         />
       </>
     )
+  );
+};
+
+type ActiveOrganismTypesProps = {
+  recipientsField: string;
+};
+
+const ActiveOrganismTypes = ({ recipientsField }: ActiveOrganismTypesProps) => {
+  const [{ value: listeTypeOrganismeIds }, , { setValue }] =
+    useField(recipientsField);
+  const { data: allOrganismType } = useGet(url`/api/type-organisme/get-active`);
+
+  return (
+    <Multiselect
+      name={recipientsField}
+      label="Types d'organismes concernés qui recevront le courrier"
+      options={allOrganismType}
+      getOptionValue={(o) => o.typeOrganismeId}
+      getOptionLabel={(o) => o.typeOrganismeLibelle}
+      value={allOrganismType?.filter((o: { typeOrganismeId: string }) =>
+        listeTypeOrganismeIds?.includes(o.typeOrganismeId),
+      )}
+      onChange={(selection) =>
+        setValue(
+          selection.map((o: { typeOrganismeId: string }) => o.typeOrganismeId),
+        )
+      }
+    />
   );
 };
 

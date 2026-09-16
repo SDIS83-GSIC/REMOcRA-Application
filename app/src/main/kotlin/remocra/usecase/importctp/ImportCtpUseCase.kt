@@ -455,15 +455,7 @@ constructor(
         INT,
     }
 
-    fun importCtpEnregistrement(importCtpData: ImportCtpData, userInfo: WrappedUserInfo) {
-        importCtpData.bilanVerifications?.forEach {
-            if (it.dataVisite != null) {
-                addVisiteFromImportCtp(it.dataVisite!!, userInfo)
-            }
-        }
-    }
-
-    private fun addVisiteFromImportCtp(visitesData: LigneImportCtpVisiteData, userInfo: WrappedUserInfo) {
+    internal fun addVisiteFromImportCtp(visitesData: LigneImportCtpVisiteData, userInfo: WrappedUserInfo) {
         transactionManager.transactionResult {
             createVisiteUseCase.execute(
                 userInfo,

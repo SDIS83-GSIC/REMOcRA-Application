@@ -164,6 +164,11 @@ data class ParametresSectionPei(
     val receptionRecoInitObligatoire: Boolean,
     val valeurMinimaleHistogramme: Int?,
     val conserverObservationVisite: Boolean,
+
+    val peiOrganismeNotificationVisiteReception: List<String>?,
+    val peiOrganismeNotificationRoi: List<String>?,
+    val autoriserMailRoi: Boolean?,
+    val autoriserMailVisiteReception: Boolean?,
 )
 
 data class ParametresSectionUtilisateur(

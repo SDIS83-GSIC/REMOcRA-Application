@@ -29,6 +29,8 @@ import remocra.db.jooq.couverturehydraulique.keys.L_ETUDE_DOCUMENT__L_ETUDE_DOCU
 import remocra.db.jooq.couverturehydraulique.tables.Etude.EtudePath
 import remocra.db.jooq.couverturehydraulique.tables.LEtudeDocument.LEtudeDocumentPath
 import remocra.db.jooq.remocra.Remocra
+import remocra.db.jooq.remocra.keys.ATLAS_ANNEXE__ATLAS_ANNEXE_ATLAS_ANNEXE_DOCUMENT_ID_FKEY
+import remocra.db.jooq.remocra.keys.ATLAS_DOCUMENT__ATLAS_DOCUMENT_ATLAS_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.COURRIER__COURRIER_COURRIER_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.DEBIT_SIMULTANE_MESURE__DEBIT_SIMULTANE_MESURE_DEBIT_SIMULTANE_MESURE_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.DOCUMENT_HABILITABLE__DOCUMENT_HABILITABLE_DOCUMENT_ID_FKEY
@@ -41,6 +43,8 @@ import remocra.db.jooq.remocra.keys.L_SIGNALEMENT_DOCUMENT__L_SIGNALEMENT_DOCUME
 import remocra.db.jooq.remocra.keys.MODELE_COURRIER__MODELE_COURRIER_MODELE_COURRIER_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB_VISITE_DOCUMENT__OLDEB_VISITE_DOCUMENT_OLDEB_VISITE_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI_DOCUMENT__RCCI_DOCUMENT_RCCI_DOCUMENT_DOCUMENT_ID_FKEY
+import remocra.db.jooq.remocra.tables.AtlasAnnexe.AtlasAnnexePath
+import remocra.db.jooq.remocra.tables.AtlasDocument.AtlasDocumentPath
 import remocra.db.jooq.remocra.tables.Courrier.CourrierPath
 import remocra.db.jooq.remocra.tables.Crise.CrisePath
 import remocra.db.jooq.remocra.tables.DebitSimultaneMesure.DebitSimultaneMesurePath
@@ -182,6 +186,40 @@ open class Document(
 
     val lEtudeDocument: LEtudeDocumentPath
         get(): LEtudeDocumentPath = lEtudeDocument()
+
+    private lateinit var _atlasAnnexe: AtlasAnnexePath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.atlas_annexe</code> table
+     */
+    fun atlasAnnexe(): AtlasAnnexePath {
+        if (!this::_atlasAnnexe.isInitialized) {
+            _atlasAnnexe = AtlasAnnexePath(this, null, ATLAS_ANNEXE__ATLAS_ANNEXE_ATLAS_ANNEXE_DOCUMENT_ID_FKEY.inverseKey)
+        }
+
+        return _atlasAnnexe
+    }
+
+    val atlasAnnexe: AtlasAnnexePath
+        get(): AtlasAnnexePath = atlasAnnexe()
+
+    private lateinit var _atlasDocument: AtlasDocumentPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.atlas_document</code> table
+     */
+    fun atlasDocument(): AtlasDocumentPath {
+        if (!this::_atlasDocument.isInitialized) {
+            _atlasDocument = AtlasDocumentPath(this, null, ATLAS_DOCUMENT__ATLAS_DOCUMENT_ATLAS_DOCUMENT_DOCUMENT_ID_FKEY.inverseKey)
+        }
+
+        return _atlasDocument
+    }
+
+    val atlasDocument: AtlasDocumentPath
+        get(): AtlasDocumentPath = atlasDocument()
 
     private lateinit var _courrier: CourrierPath
 

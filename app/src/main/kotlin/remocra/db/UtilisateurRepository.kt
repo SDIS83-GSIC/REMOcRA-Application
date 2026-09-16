@@ -45,11 +45,12 @@ class UtilisateurRepository @Inject constructor(
             .where(UTILISATEUR.KEYCLOAK_ID.`in`(keycloakId))
             .fetchInto()
 
-    fun isEmailUsedByAnUser(email: String): Boolean =
+    fun isEmailUsedByAnActiveUser(email: String): Boolean =
         dsl.fetchExists(
             dsl.select(UTILISATEUR.ID)
                 .from(UTILISATEUR)
-                .where(UTILISATEUR.EMAIL.eq(email)),
+                .where(UTILISATEUR.EMAIL.eq(email))
+                .and(UTILISATEUR.ACTIF.isTrue),
         )
 
     fun setActif(actif: Boolean, idUtilisateur: UUID) {

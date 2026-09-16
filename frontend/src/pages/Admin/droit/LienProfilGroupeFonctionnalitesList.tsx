@@ -173,10 +173,28 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                                   0,
                                                   value.lastIndexOf("_"),
                                                 );
-
                                                 if (
                                                   event.currentTarget.checked
                                                 ) {
+                                                  const droitsActuels =
+                                                    values[idxPD]
+                                                      .groupeFonctionnalitesDroits;
+
+                                                  if (
+                                                    ((value === "ATLAS_C" &&
+                                                      droitsActuels.includes(
+                                                        "ATLAS_D",
+                                                      )) ||
+                                                      (value === "ATLAS_D" &&
+                                                        droitsActuels.includes(
+                                                          "ATLAS_C",
+                                                        ))) &&
+                                                    !droitsActuels.includes(
+                                                      "ATLAS_A",
+                                                    )
+                                                  ) {
+                                                    arrayVal.push("ATLAS_A");
+                                                  }
                                                   // si un droit _A est coché, on rajoute les droits équivalents
                                                   if (
                                                     right === "A" &&
@@ -260,6 +278,14 @@ const LienProfilInner = ({ typeDroitList }: { typeDroitList: any[] }) => {
                                                     ],
                                                   );
                                                 } else {
+                                                  // Si on décoche "Administrer l'atlas", on décoche automatique éditer les documents et supprimer les documents.
+                                                  if (value === "ATLAS_A") {
+                                                    arrayVal.push(
+                                                      "ATLAS_C",
+                                                      "ATLAS_D",
+                                                    );
+                                                  }
+
                                                   if (
                                                     value ===
                                                     "ADMIN_UTILISATEURS_ORGA_A"

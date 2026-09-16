@@ -300,10 +300,13 @@ const Visite = ({
 
                             <DeleteModal
                               visible={visible}
-                              closeModal={close}
+                              onCancel={close}
+                              onSuccess={close}
+                              onError={close}
                               query={url`/api/visite/` + element.visiteId}
                               ref={ref}
                               onDelete={() => {
+                                close();
                                 refreshLayerGeoserver(map);
                                 visiteInformations.reload();
                                 listeAnomaliesAssignable.reload();

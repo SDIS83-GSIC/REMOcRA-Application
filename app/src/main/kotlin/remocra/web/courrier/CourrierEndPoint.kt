@@ -298,4 +298,12 @@ class CourrierEndPoint : AbstractEndpoint() {
     fun existsRapportPostRop(): Response {
         return Response.ok(modeleCourrierRepository.existsRapportPostRop()).build()
     }
+
+    @GET
+    @Path("/modeles/exists-canevas-rop")
+    @RequireDroits([Droit.TOURNEE_R])
+    @Produces(MediaType.APPLICATION_JSON)
+    fun existsCanevasRop(): Response {
+        return Response.ok(modeleCourrierRepository.existsCanevasRop()).build()
+    }
 }

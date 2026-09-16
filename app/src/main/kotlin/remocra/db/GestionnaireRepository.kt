@@ -224,7 +224,9 @@ class GestionnaireRepository @Inject constructor(private val dsl: DSLContext) : 
     fun getPeiIdByGestionnaireId(gestionnaireId: UUID): List<UUID> =
         dsl.select(PEI.ID)
             .from(PEI)
-            .where(PEI.GESTIONNAIRE_ID.eq(gestionnaireId))
+            .leftJoin(SITE).on(PEI.SITE_ID.eq(SITE.ID))
+            .leftJoin(GESTIONNAIRE).on(PEI.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID).or(SITE.GESTIONNAIRE_ID.eq(GESTIONNAIRE.ID)))
+            .where(GESTIONNAIRE.ID.eq(gestionnaireId))
             .fetchInto()
 
     fun getSiteIdByGestionnaireId(gestionnaireId: UUID): List<UUID> =

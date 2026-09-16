@@ -84,7 +84,8 @@ export function toOpenLayer(
   layer: any,
   etudeId?: string,
   criseId?: string,
-  criseStatutMode?: string,
+  evenementStatutMode?: string,
+  viewParamsExtras?: Record<string, string>,
 ): TileSource | WMTS | VectorSource | ImageWMS | TileWMS | undefined {
   switch (layer.source) {
     case SOURCE_CARTO.WMS: {
@@ -104,10 +105,21 @@ export function toOpenLayer(
       if (etudeId) {
         viewParamsArray.push(`idEtude:${encodeURIComponent(etudeId)}`);
       }
-      if (criseStatutMode) {
+      if (evenementStatutMode) {
         viewParamsArray.push(
-          `statutMode:${encodeURIComponent(criseStatutMode)}`,
+          `statutMode:${encodeURIComponent(evenementStatutMode)}`,
         );
+      }
+      // Ajouter les viewParams supplémentaires passés en paramètre
+      if (viewParamsExtras) {
+        Object.entries(viewParamsExtras).forEach(([key, value]) => {
+          // Ne pas encoder les listes d'IDs (séparées par ;) pour préserver les séparateurs
+          if (key === "evenementIds") {
+            viewParamsArray.push(`${key}:${value}`);
+          } else {
+            viewParamsArray.push(`${key}:${encodeURIComponent(value)}`);
+          }
+        });
       }
       wmsParams.viewParams = viewParamsArray.join(";");
 
@@ -302,14 +314,16 @@ export const useMapComponent = ({
   displayPei = true,
   etudeId,
   criseId,
-  criseStatutMode,
+  evenementStatutMode,
+  viewParamsExtras,
 }: {
   mapElement: MutableRefObject<HTMLDivElement | undefined>;
   typeModule: TypeModuleRemocra;
   displayPei?: boolean;
   etudeId?: string;
   criseId?: string;
-  criseStatutMode?: string;
+  evenementStatutMode?: string;
+  viewParamsExtras?: Record<string, string>;
 }) => {
   const { state, search } = useLocation();
   const navigate = useNavigate();
@@ -500,7 +514,8 @@ export const useMapComponent = ({
                 layer,
                 etudeId,
                 criseId,
-                criseStatutMode,
+                evenementStatutMode,
+                viewParamsExtras,
               ) as ImageWMS,
               zIndex,
               opacity: layer.opacite,
@@ -511,7 +526,8 @@ export const useMapComponent = ({
                 layer,
                 etudeId,
                 criseId,
-                criseStatutMode,
+                evenementStatutMode,
+                viewParamsExtras,
               ) as TileSource,
               zIndex,
               preload: 1,
@@ -532,7 +548,15 @@ export const useMapComponent = ({
         }),
       };
     });
-  }, [layersState.data, map, projection, etudeId, criseId, criseStatutMode]);
+  }, [
+    layersState.data,
+    map,
+    projection,
+    etudeId,
+    criseId,
+    evenementStatutMode,
+    viewParamsExtras,
+  ]);
 
   // Ajout / retrait d'une couche sur la carte
   const addOrRemoveLayer = (layer: any) => {

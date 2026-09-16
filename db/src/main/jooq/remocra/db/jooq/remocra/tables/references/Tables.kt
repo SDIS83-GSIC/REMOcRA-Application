@@ -8,6 +8,8 @@ package remocra.db.jooq.remocra.tables.references
 import remocra.db.jooq.remocra.tables.Anomalie
 import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
+import remocra.db.jooq.remocra.tables.AtlasAnnexe
+import remocra.db.jooq.remocra.tables.AtlasDocument
 import remocra.db.jooq.remocra.tables.CadastreParcelle
 import remocra.db.jooq.remocra.tables.CadastreSection
 import remocra.db.jooq.remocra.tables.CarroyageDfci
@@ -182,6 +184,16 @@ val ANOMALIE_CATEGORIE: AnomalieCategorie = AnomalieCategorie.ANOMALIE_CATEGORIE
  * The table <code>remocra.api</code>.
  */
 val API: Api = Api.API
+
+/**
+ * The table <code>remocra.atlas_annexe</code>.
+ */
+val ATLAS_ANNEXE: AtlasAnnexe = AtlasAnnexe.ATLAS_ANNEXE
+
+/**
+ * The table <code>remocra.atlas_document</code>.
+ */
+val ATLAS_DOCUMENT: AtlasDocument = AtlasDocument.ATLAS_DOCUMENT
 
 /**
  * The table <code>remocra.cadastre_parcelle</code>.

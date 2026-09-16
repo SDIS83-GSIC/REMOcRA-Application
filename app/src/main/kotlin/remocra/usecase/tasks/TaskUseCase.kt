@@ -20,7 +20,7 @@ constructor(
     fun getDestinataireByListPei(listPeiId: List<UUID>, contactRole: String, typeDestinataire: TypeDestinataire): MutableMap<Destinataire, List<UUID?>> {
         val destinataireContactOrganisme: Map<Destinataire, List<UUID?>> =
             if (typeDestinataire.contactOrganisme.isNotEmpty()) {
-                organismeRepository.getDestinataireContactOrganisme(
+                organismeRepository.getDestinatairesContactOrganisme(
                     listePeiId = listPeiId,
                     typeOrganisme = typeDestinataire.contactOrganisme.toList(),
                     contactRole = contactRole,

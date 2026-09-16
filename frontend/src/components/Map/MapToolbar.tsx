@@ -255,8 +255,9 @@ export const useToolbarContext = ({
         .getArray()
         .filter(
           (l): l is ImageLayer<ImageWMS> | TileLayer<TileWMS> =>
-            (l instanceof ImageLayer && l.getSource() instanceof ImageWMS) ||
-            (l instanceof TileLayer && l.getSource() instanceof TileWMS),
+            l.getVisible() &&
+            ((l instanceof ImageLayer && l.getSource() instanceof ImageWMS) ||
+              (l instanceof TileLayer && l.getSource() instanceof TileWMS)),
         )
         .forEach((wmsLayer) => {
           const view = map!.getView();

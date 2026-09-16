@@ -66,17 +66,25 @@ class RawSqlQueryBuilder private constructor(
     }
 
     /**
-     * On essaie de convertir la valeur en Int si c'est une String, car sinon les bind parame
-     * tres sont toujours considérés comme des String et ça peut poser problème pour certaines requêtes.
+     * On essaie de convertir la valeur en Int si c'est une String, car sinon les bind parametres
+     * sont toujours considérés comme des String et ça peut poser problème pour certaines requêtes.
+     *
+     * On ne convertit pas les UUID qui nous sont passé sous forme de string, car c'est pas forcément
+     * compatible avec ce qui existe déjà pour certain rapport, car ils n'ont pas était écrit comme ça (on cast
+     * les uuid en text directement dans la requete du rapport).
+     * Par contre, si on veut mettre un UUID en bind param on peut il suffit en kotlin de le passer directement en
+     * "vraie" UUID ce qui est fait pour [remocra.utils.RequestUtils.replaceGlobalParameters] par exemple ; où on donne
+     * un UUID à [withBindParam].
      */
-    private fun Any.tryConvert(): Any = try {
+    private fun Any.tryConvert(): Any =
         when (this) {
-            is String -> this.toInt()
+            is String -> runCatching { this.toInt() }
+                .fold(
+                    onSuccess = { it },
+                    onFailure = { this },
+                )
             else -> this
         }
-    } catch (_: NumberFormatException) {
-        this
-    }
 
     private sealed interface Substitution {
         data class BindParam(val token: String, val value: Any) : Substitution

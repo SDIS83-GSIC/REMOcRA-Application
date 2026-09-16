@@ -11,6 +11,8 @@ import remocra.db.jooq.DefaultCatalog
 import remocra.db.jooq.remocra.tables.Anomalie
 import remocra.db.jooq.remocra.tables.AnomalieCategorie
 import remocra.db.jooq.remocra.tables.Api
+import remocra.db.jooq.remocra.tables.AtlasAnnexe
+import remocra.db.jooq.remocra.tables.AtlasDocument
 import remocra.db.jooq.remocra.tables.CadastreParcelle
 import remocra.db.jooq.remocra.tables.CadastreSection
 import remocra.db.jooq.remocra.tables.CarroyageDfci
@@ -206,6 +208,16 @@ open class Remocra : SchemaImpl(DSL.name("remocra"), DefaultCatalog.DEFAULT_CATA
      * The table <code>remocra.api</code>.
      */
     val API: Api get() = Api.API
+
+    /**
+     * The table <code>remocra.atlas_annexe</code>.
+     */
+    val ATLAS_ANNEXE: AtlasAnnexe get() = AtlasAnnexe.ATLAS_ANNEXE
+
+    /**
+     * The table <code>remocra.atlas_document</code>.
+     */
+    val ATLAS_DOCUMENT: AtlasDocument get() = AtlasDocument.ATLAS_DOCUMENT
 
     /**
      * The table <code>remocra.cadastre_parcelle</code>.
@@ -1012,6 +1024,8 @@ open class Remocra : SchemaImpl(DSL.name("remocra"), DefaultCatalog.DEFAULT_CATA
         Anomalie.ANOMALIE,
         AnomalieCategorie.ANOMALIE_CATEGORIE,
         Api.API,
+        AtlasAnnexe.ATLAS_ANNEXE,
+        AtlasDocument.ATLAS_DOCUMENT,
         CadastreParcelle.CADASTRE_PARCELLE,
         CadastreSection.CADASTRE_SECTION,
         CarroyageDfci.CARROYAGE_DFCI,

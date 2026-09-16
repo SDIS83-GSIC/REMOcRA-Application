@@ -187,7 +187,9 @@ const AnomalieList = () => {
       {visible && anomalieidToDelete && (
         <DeleteModal
           visible={visible}
-          closeModal={close}
+          onCancel={close}
+          onSuccess={close}
+          onError={close}
           query={url`/api/anomalie/delete/` + anomalieidToDelete}
           ref={ref}
           onDelete={() => {

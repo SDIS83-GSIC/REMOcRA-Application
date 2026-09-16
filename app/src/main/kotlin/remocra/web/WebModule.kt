@@ -14,6 +14,7 @@ import remocra.security.CsrfFeature
 import remocra.web.admin.AdminModule
 import remocra.web.anomalie.AnomalieModule
 import remocra.web.appsettings.AppSettingsModule
+import remocra.web.atlas.AtlasModule
 import remocra.web.carto.CartoModule
 import remocra.web.commune.CommuneModule
 import remocra.web.courrier.CourrierModule
@@ -65,6 +66,7 @@ object WebModule : RemocraModule() {
 
     override fun configure() {
         install(PeiModule)
+        install(AtlasModule)
         install(CommuneModule)
         install(NatureModule)
         install(OrganismeModule)

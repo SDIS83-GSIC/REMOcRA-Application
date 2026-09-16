@@ -38,15 +38,15 @@ class RequestUtils {
 
     fun RawSqlQueryBuilder.replaceGlobalParameters(userInfo: WrappedUserInfo) {
         mapOf(
-            VariableContextUtilisateur.ZONE_COMPETENCE_ID to userInfo.let { if (it.zoneCompetence != null) it.zoneCompetence!!.zoneIntegrationId else dummyUUID }.toString(),
-            VariableContextUtilisateur.UTILISATEUR_ID to userInfo.utilisateur?.utilisateurId.toString(),
-            VariableContextUtilisateur.ORGANISME_ID to userInfo.utilisateur?.let { if (it.utilisateurOrganismeId != null) it.utilisateurOrganismeId else dummyUUID }.toString(),
+            VariableContextUtilisateur.ZONE_COMPETENCE_ID to userInfo.let { if (it.zoneCompetence != null) it.zoneCompetence!!.zoneIntegrationId else null },
+            VariableContextUtilisateur.UTILISATEUR_ID to userInfo.utilisateur?.utilisateurId,
+            VariableContextUtilisateur.ORGANISME_ID to userInfo.utilisateur?.let { if (it.utilisateurOrganismeId != null) it.utilisateurOrganismeId else null },
         ).forEach { (cle, valeur) ->
-            if (valeur == dummyUUID) {
+            if (valeur == null) {
                 val regex = Regex("=\\s*\\$PLACEHOLDER_DELIMITER${cle.varName}\\$PLACEHOLDER_DELIMITER")
                 this withRawReplace (regex to "IS NOT NULL")
             } else {
-                this withBindParam ("$PLACEHOLDER_DELIMITER${cle.varName}$PLACEHOLDER_DELIMITER" to "'$valeur'")
+                this withBindParam ("$PLACEHOLDER_DELIMITER${cle.varName}$PLACEHOLDER_DELIMITER" to valeur)
             }
         }
     }

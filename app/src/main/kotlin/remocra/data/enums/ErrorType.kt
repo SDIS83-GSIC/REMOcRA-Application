@@ -306,6 +306,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ),
     INDISPONIBILITE_TEMPORAIRE_STATUT(6007, "Le statut renseigné n'est pas valide. Il doit correspondre à une de ces valeurs : EN_COURS, PLANIFIEE ou TERMINEE"),
     INDISPONIBILITE_TEMPORAIRE_PAS_DE_PEI(6008, "Impossible de créer une indisponibilité temporaire de PEI sans fournir de PEI valide."),
+    INDISPONIBILITE_TEMPORAIRE_ERROR_ON_UPDATE_PEI(6009, "Erreur lors de la mise à jour du PEI à la création de l'indisponibilité temporaire : $PLACEHOLDER_ERROR_TYPE"),
 
     /*************************************************************************************
      * Carte
@@ -402,6 +403,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     GESTIONNAIRE_FORBIDDEN_INSERT(9104, "Vous n'avez pas les droits de création des gestionnaires", Status.FORBIDDEN),
     GESTIONNAIRE_FORBIDDEN_DELETE(9105, "Vous n'avez pas les droits de suppression des gestionnaires", Status.FORBIDDEN),
     GESTIONNAIRE_ERROR_ON_DELETE(9106, "Impossible de supprimer le gestionnaire : $PLACEHOLDER_ERROR_TYPE"),
+    SITE_ERROR_ON_UPDATE(9107, "Impossible de mettre à jour le site : $PLACEHOLDER_ERROR_TYPE"),
 
     IMPORT_SITES_SHP_INTROUVABLE(9108, AUCUN_SHAPEFILE),
     IMPORT_SITES_GEOMETRIE_NULLE(9109, GEOMETRIE_NULLE),
@@ -441,6 +443,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     DOCUMENT_FORBIDDEN_INSERT(10015, "Vous n'avez pas les droits pour déclarer un PEI.", Status.FORBIDDEN),
     DFCI_FORBIDDEN_RECEPTION_TRAVAUX(10016, "Vous n'avez pas les droits pour réceptionner des travaux.", Status.FORBIDDEN),
     DOCUMENT_FORBIDDEN_SYSTEM(10017, "L'application REMOcRA n'a pas les droits de modifier ce repertoire."),
+    DOCUMENT_NOT_FOUND(10018, "Le document n'a pas été trouvé."),
 
     //
     // ********************************************************************************
@@ -680,6 +683,14 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     RAPPORT_POST_ROP_NO_PEI(31011, "Aucun PEI dans la tournée"),
     RAPPORT_POST_ROP_ERREUR_GENERATION(31012, "Erreur lors de la création du courrier pour le rapport post ROP de la tournée"),
 
+    RAPPORT_VISITE_RECEPTION_MODEL_INEXISTANT(31013, "Modèle de courrier pour rapport visite de réception introuvable"),
+    COURRIER_VISITE_RECEPTION_ERREUR(31014, "Erreur lors de la création du courrier pour la visite de réception : aucun destinataire trouvé."),
+    RAPPORT_VISITE_ROI_MODEL_INEXISTANT(31015, "Modèle de courrier pour rapport visite ROI introuvable."),
+    COURRIER_VISITE_ROI_ERREUR(31016, "Erreur lors de la création du courrier pour la visite ROI : aucun destinataire trouvé."),
+
+    CANEVAS_ROP_MODELE_INEXISTANT(31017, "Modèle de courrier pour canevas ROP introuvable"),
+    CANEVAS_ROP_ERREUR_GENERATION(31018, "Erreur lors de la génération du canevas ROP de la tournée"),
+
     //
     // ********************************************************************************
     // Image
@@ -694,6 +705,10 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     // ********************************************************************************
     //
     REQUETE_SQL_CREATION_INVALIDE(33001, "La requête de création est invalide"),
+
+    ATLAS_ANNEXES_FORBIDDEN_UPDATE(34001, "Vous n'avez pas les droits de modification de l'ordre des annexes"),
+    ATLAS_DOCUMENTS_NOT_FOUND(34002, "Aucun fichier existant pour l'atlas"),
+
     ;
 
     override fun toString(): String {

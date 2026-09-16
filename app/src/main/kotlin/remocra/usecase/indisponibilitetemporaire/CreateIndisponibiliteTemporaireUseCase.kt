@@ -72,7 +72,10 @@ class CreateIndisponibiliteTemporaireUseCase
             // C'est une indisponibilité immédiate, on met à jour les PEI concernés dès la création de l'indisponibilité temporaire
             // pour que l'utilisateur puisse voir que les PEI passent en indispo
             element.indisponibiliteTemporaireListePeiId.forEach { peiId ->
-                updatePeiUseCase.updatePeiWithId(peiId, userInfo)
+                val result = updatePeiUseCase.updatePeiWithId(peiId, userInfo)
+                if (result !is Result.Success) {
+                    throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_ERROR_ON_UPDATE_PEI, "$peiId : ${if (result is Result.Error) result.message else ""}")
+                }
             }
         }
 
