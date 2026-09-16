@@ -82,4 +82,13 @@ class NumerotationRepository @Inject constructor(private val dsl: DSLContext) : 
             .fetchOneInto()
 
     fun getMaxPeiNumeroInterne(): Int = dsl.select(DSL.max(PEI.NUMERO_INTERNE)).from(PEI).fetchSingleInto()
+
+    fun getMaxPeiNumeroInterneByCommuneBetween(communeId: UUID, min: Int, max: Int): Int =
+        dsl.select(DSL.max(PEI.NUMERO_INTERNE))
+            .from(PEI)
+            .where(
+                PEI.COMMUNE_ID.eq(communeId)
+                    .and(PEI.NUMERO_INTERNE.between(min, max)),
+            )
+            .fetchSingleInto()
 }

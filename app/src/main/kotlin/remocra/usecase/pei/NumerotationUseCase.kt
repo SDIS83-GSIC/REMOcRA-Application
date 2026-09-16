@@ -283,15 +283,11 @@ constructor(
             }
         }
 
-        val listPeiNumeroInterne = numerotationRepository.getListPeiNumeroInterne(
-            typePei = null, // On ne filtre pas par type pour avoir tous les numéros de la commune
-            peiNatureId = null,
-            peiCommuneId = pei.peiCommuneId,
-            peiZoneSpecialeId = pei.peiZoneSpecialeId,
-            peiNatureDeciId = null,
-        )
-
-        return listPeiNumeroInterne.getNextNumeroInterneWhile(seed, maxValue)
+        return numerotationRepository.getMaxPeiNumeroInterneByCommuneBetween(
+            communeId = pei.peiCommuneId!!,
+            min = seed,
+            max = maxValue,
+        ).plus(1)
     }
 
     /**
