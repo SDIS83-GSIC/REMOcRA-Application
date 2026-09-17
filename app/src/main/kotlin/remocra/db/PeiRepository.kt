@@ -1151,7 +1151,20 @@ class PeiRepository
     fun getPeiIdIndisponibles(zoneCompetenceId: UUID?, isSuperAdmin: Boolean): Collection<UUID> =
         dsl.select(PEI.ID)
             .from(PEI)
-            .where(PEI.DISPONIBILITE_TERRESTRE.eq(Disponibilite.INDISPONIBLE))
+            .where(
+                PEI.DISPONIBILITE_TERRESTRE.eq(Disponibilite.INDISPONIBLE),
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    ST_Within(
+                        PEI.GEOMETRIE,
+                        DSL.field(
+                            dsl.select(ZONE_INTEGRATION.GEOMETRIE)
+                                .from(ZONE_INTEGRATION)
+                                .where(ZONE_INTEGRATION.ID.eq(zoneCompetenceId)),
+                        ),
+                    ).isTrue,
+                    isSuperAdmin,
+                ),
+            )
             .fetchInto()
 
     fun getPeiForApi(
