@@ -142,6 +142,7 @@ class CalculDispoUseCase @Inject constructor(
 
         // On construit un set contenant toutes les anomalies possibles
         val setGlobalAnomalies: MutableSet<Anomalie> = mutableSetOf()
+
         if (anomaliesDebitPression.isNotEmpty()) {
             setGlobalAnomalies.addAll(
                 anomaliesDebitPression.map {
@@ -176,24 +177,34 @@ class CalculDispoUseCase @Inject constructor(
 
             val disponibiliteTerrestre = when {
                 noteTerrestre >= 5 -> Disponibilite.INDISPONIBLE
-                setGlobalAnomalies.any { it.anomalieRendNonConforme } -> Disponibilite.NON_CONFORME
+                setGlobalAnomalies.any { it.anomalieRendNonConforme } || isNatureSpecialeSdis38(pei) -> Disponibilite.NON_CONFORME
                 else -> Disponibilite.DISPONIBLE
             }
 
             // Pour HBE
             val disponibiliteHbe = when {
                 noteHbe >= 5 -> Disponibilite.INDISPONIBLE
-                setGlobalAnomalies.any { it.anomalieRendNonConforme } -> Disponibilite.NON_CONFORME
+                setGlobalAnomalies.any { it.anomalieRendNonConforme } || isNatureSpecialeSdis38(pei) -> Disponibilite.NON_CONFORME
                 else -> Disponibilite.DISPONIBLE
             }
 
             return DisponibiliteResult(terrestre = disponibiliteTerrestre, hbe = disponibiliteHbe)
         }
-        // Le PEI est disponible, on n'a rien à faire de particulier
-        return DisponibiliteResult(
-            terrestre = Disponibilite.DISPONIBLE,
-            hbe = Disponibilite.DISPONIBLE,
-        )
+
+        // Si pas d'anomalies
+        return if (isNatureSpecialeSdis38(pei)) {
+            // SDIS38 spécial : NON_CONFORME par défaut
+            DisponibiliteResult(
+                terrestre = Disponibilite.NON_CONFORME,
+                hbe = Disponibilite.NON_CONFORME,
+            )
+        } else {
+            // Logique standard : DISPONIBLE
+            DisponibiliteResult(
+                terrestre = Disponibilite.DISPONIBLE,
+                hbe = Disponibilite.DISPONIBLE,
+            )
+        }
     }
 
     /**
@@ -303,7 +314,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_22 -> pei.penaCapacite != null && pei.penaCapacite in 61..<100
-            CodeSdis.SDIS_38 -> pei.penaCapaciteIncertaine == true || (pei.penaCapacite != null && pei.penaCapacite < 30)
+            CodeSdis.SDIS_38 -> !isNatureSpecialeSdis38(pei) && (pei.penaCapaciteIncertaine == true || (pei.penaCapacite != null && pei.penaCapacite < 30))
             CodeSdis.SDIS_39 -> pei.penaCapacite != null && pei.penaCapacite in 60..119
             CodeSdis.SDIS_42 -> pei.penaCapaciteIncertaine == true || pei.penaCapacite != null && pei.penaCapacite < 30
             CodeSdis.SDIS_49 -> false
@@ -333,7 +344,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_16 -> pei.pression == null || pei.pression < 1.0
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_22 -> false
-            CodeSdis.SDIS_38 -> isPressionInsuffisanteDefault(pei)
+            CodeSdis.SDIS_38 -> !isNatureSpecialeSdis38(pei) && isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_39 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_42 -> false
             CodeSdis.SDIS_49 -> false
@@ -591,7 +602,7 @@ class CalculDispoUseCase @Inject constructor(
                     pei.debit == null || pei.debit < 27
                 }
             }
-            CodeSdis.SDIS_38 -> pei.debit == null || pei.debit < 15
+            CodeSdis.SDIS_38 -> !isNatureSpecialeSdis38(pei) && (pei.debit == null || pei.debit < 15)
             CodeSdis.SDIS_39 -> (pei.debit == null || pei.debit <= 29)
             CodeSdis.SDIS_42 -> pei.debit == null
             CodeSdis.SDIS_49 -> {
@@ -738,7 +749,7 @@ class CalculDispoUseCase @Inject constructor(
                     pei.debit != null && pei.debit in 27..<30
                 }
             }
-            CodeSdis.SDIS_38 -> pei.debit != null && pei.debit in 15..29
+            CodeSdis.SDIS_38 -> !isNatureSpecialeSdis38(pei) && pei.debit != null && pei.debit in 15..29
             CodeSdis.SDIS_39 -> pei.debit != null && (pei.debit in 30..59)
             CodeSdis.SDIS_42 -> pei.debit != null && pei.debit < 30
             CodeSdis.SDIS_49 -> {
@@ -979,6 +990,18 @@ class CalculDispoUseCase @Inject constructor(
      */
     private fun isNatureBI(pei: PeiForCalculDispoData) =
         GlobalConstants.NATURE_BI == ensureNature(pei).natureCode
+
+    /**
+     * Retourne TRUE si le PEI est d'une nature spéciale pour le SDIS 38
+     */
+    private fun isNatureSpecialeSdis38(pei: PeiForCalculDispoData): Boolean {
+        if (appSettings.codeSdis != CodeSdis.SDIS_38) return false
+        val nature = ensureNature(pei)
+        return nature.natureCode in listOf(
+            GlobalConstants.NATURE_38_RESEAU_PRODUCTION_NEIGE,
+            GlobalConstants.NATURE_38_RESEAU_IRRIGATION,
+        )
+    }
 
     /**
      * Retourne TRUE si le PEI est d'une nature différente des suivantes (SDIS 59) :
