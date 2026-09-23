@@ -593,6 +593,7 @@ class PeiRepository
         val peiNextCtp: Int?,
         var ordreTournee: Int?,
         val diametreNominalLibelle: Int?,
+        val adresse: Int?,
     ) {
         fun toCondition(): List<SortField<*>> = listOfNotNull(
             PEI.NUMERO_INTERNE.getSortField(peiNumeroInterne),
@@ -612,6 +613,7 @@ class PeiRepository
             V_PEI_VISITE_DATE.PEI_NEXT_ROP.getSortField(peiNextRop),
             V_PEI_VISITE_DATE.PEI_NEXT_CTP.getSortField(peiNextCtp),
             DIAMETRE.LIBELLE.getSortField(diametreNominalLibelle),
+            DSL.field("adresse", String::class.java).getSortField(adresse),
         )
     }
 
@@ -1151,7 +1153,20 @@ class PeiRepository
     fun getPeiIdIndisponibles(zoneCompetenceId: UUID?, isSuperAdmin: Boolean): Collection<UUID> =
         dsl.select(PEI.ID)
             .from(PEI)
-            .where(PEI.DISPONIBILITE_TERRESTRE.eq(Disponibilite.INDISPONIBLE))
+            .where(
+                PEI.DISPONIBILITE_TERRESTRE.eq(Disponibilite.INDISPONIBLE),
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    ST_Within(
+                        PEI.GEOMETRIE,
+                        DSL.field(
+                            dsl.select(ZONE_INTEGRATION.GEOMETRIE)
+                                .from(ZONE_INTEGRATION)
+                                .where(ZONE_INTEGRATION.ID.eq(zoneCompetenceId)),
+                        ),
+                    ).isTrue,
+                    isSuperAdmin,
+                ),
+            )
             .fetchInto()
 
     fun getPeiForApi(

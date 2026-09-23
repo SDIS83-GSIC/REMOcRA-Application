@@ -41,7 +41,8 @@ class SignalementRepository @Inject constructor(private val dsl: DSLContext) : A
                     SIGNALEMENT_SOUS_TYPE_ELEMENT.TYPE_GEOMETRIE,
                 )
                     .from(SIGNALEMENT_SOUS_TYPE_ELEMENT)
-                    .where(SIGNALEMENT_SOUS_TYPE_ELEMENT.TYPE_ELEMENT.eq(SIGNALEMENT_TYPE_ELEMENT.ID)),
+                    .where(SIGNALEMENT_SOUS_TYPE_ELEMENT.TYPE_ELEMENT.eq(SIGNALEMENT_TYPE_ELEMENT.ID))
+                    .and(SIGNALEMENT_SOUS_TYPE_ELEMENT.ACTIF.isTrue),
             ).convertFrom { record ->
                 record?.map { r ->
                     SousTypeForMap(
@@ -55,7 +56,8 @@ class SignalementRepository @Inject constructor(private val dsl: DSLContext) : A
         )
             .from(
                 SIGNALEMENT_TYPE_ELEMENT,
-            ).orderBy(SIGNALEMENT_TYPE_ELEMENT.LIBELLE)
+            ).where(SIGNALEMENT_TYPE_ELEMENT.ACTIF.isTrue)
+            .orderBy(SIGNALEMENT_TYPE_ELEMENT.LIBELLE)
             .fetchInto()
 
     fun getType(): Collection<GlobalData.IdCodeLibelleData> =
@@ -135,7 +137,7 @@ class SignalementRepository @Inject constructor(private val dsl: DSLContext) : A
         val signalementSousTypeElementCode: Int?,
         val signalementSousTypeElementLibelle: Int?,
         val signalementSousTypeElementActif: Int?,
-        val signalementTypeElementId: Int?,
+        val signalementTypeElementLibelle: Int?,
         val signalementSousTypeElementTypeGeometrie: Int?,
     ) {
         fun toCondition(): List<SortField<*>> =
@@ -143,7 +145,7 @@ class SignalementRepository @Inject constructor(private val dsl: DSLContext) : A
                 SIGNALEMENT_SOUS_TYPE_ELEMENT.CODE.getSortField(signalementSousTypeElementCode),
                 SIGNALEMENT_SOUS_TYPE_ELEMENT.LIBELLE.getSortField(signalementSousTypeElementLibelle),
                 SIGNALEMENT_SOUS_TYPE_ELEMENT.ACTIF.getSortField(signalementSousTypeElementActif),
-                SIGNALEMENT_SOUS_TYPE_ELEMENT.TYPE_ELEMENT.getSortField(signalementTypeElementId),
+                SIGNALEMENT_TYPE_ELEMENT.LIBELLE.getSortField(signalementTypeElementLibelle),
                 SIGNALEMENT_SOUS_TYPE_ELEMENT.TYPE_GEOMETRIE.getSortField(signalementSousTypeElementTypeGeometrie),
             )
     }

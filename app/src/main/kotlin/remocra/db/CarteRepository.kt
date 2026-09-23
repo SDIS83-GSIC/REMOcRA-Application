@@ -12,6 +12,7 @@ import org.locationtech.jts.geom.Point
 import remocra.app.AppSettings
 import remocra.data.enums.TypeDfciElement
 import remocra.data.enums.TypeElementCarte
+import remocra.db.jooq.couverturehydraulique.enums.TypePeiProjet
 import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
 import remocra.db.jooq.remocra.enums.EtatSignalement
 import remocra.db.jooq.remocra.enums.EvenementStatutMode
@@ -30,6 +31,7 @@ import remocra.db.jooq.remocra.tables.references.DFCI_DEB
 import remocra.db.jooq.remocra.tables.references.DFCI_MASSIF
 import remocra.db.jooq.remocra.tables.references.DFCI_PANNEAU
 import remocra.db.jooq.remocra.tables.references.DFCI_PISTE
+import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.EVENEMENT
 import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
 import remocra.db.jooq.remocra.tables.references.L_DEBIT_SIMULTANE_MESURE_PEI
@@ -154,8 +156,19 @@ class CarteRepository @Inject constructor(
      * Récupère les PEI en projet dans une BBOX selon l'étude
      */
     fun getPeiProjetWithinEtudeAndBbox(etudeId: UUID, bbox: Field<Geometry?>, srid: Int): Collection<PeiProjetCarte> {
-        return dsl.select(ST_Transform(PEI_PROJET.GEOMETRIE, srid).`as`("elementGeometrie"), PEI_PROJET.ID.`as`("elementId"))
+        return dsl.select(
+            ST_Transform(PEI_PROJET.GEOMETRIE, srid).`as`("elementGeometrie"),
+            PEI_PROJET.ID.`as`("elementId"),
+            PEI_PROJET.TYPE_PEI_PROJET,
+            NATURE_DECI.LIBELLE.`as`("peiProjetNatureDeciLibelle"),
+            PEI_PROJET.DIAMETRE_CANALISATION,
+            DIAMETRE.LIBELLE.`as`("peiProjetDiametreLibelle"),
+            PEI_PROJET.DEBIT,
+            PEI_PROJET.CAPACITE,
+        )
             .from(PEI_PROJET)
+            .join(NATURE_DECI).on(PEI_PROJET.NATURE_DECI_ID.eq(NATURE_DECI.ID))
+            .leftJoin(DIAMETRE).on(PEI_PROJET.DIAMETRE_ID.eq(DIAMETRE.ID))
             .where(
                 PEI_PROJET.ETUDE_ID.eq(etudeId),
             ).and(
@@ -168,8 +181,19 @@ class CarteRepository @Inject constructor(
      * Récupère les PEI en projet selon l'étude
      */
     fun getPeiProjetWithinEtude(etudeId: UUID, srid: Int): Collection<PeiProjetCarte> {
-        return dsl.select(ST_Transform(PEI_PROJET.GEOMETRIE, srid).`as`("elementGeometrie"), PEI_PROJET.ID.`as`("elementId"))
+        return dsl.select(
+            ST_Transform(PEI_PROJET.GEOMETRIE, srid).`as`("elementGeometrie"),
+            PEI_PROJET.ID.`as`("elementId"),
+            PEI_PROJET.TYPE_PEI_PROJET,
+            NATURE_DECI.LIBELLE.`as`("peiProjetNatureDeciLibelle"),
+            PEI_PROJET.DIAMETRE_CANALISATION,
+            DIAMETRE.LIBELLE.`as`("peiProjetDiametreLibelle"),
+            PEI_PROJET.DEBIT,
+            PEI_PROJET.CAPACITE,
+        )
             .from(PEI_PROJET)
+            .join(NATURE_DECI).on(PEI_PROJET.NATURE_DECI_ID.eq(NATURE_DECI.ID))
+            .leftJoin(DIAMETRE).on(PEI_PROJET.DIAMETRE_ID.eq(DIAMETRE.ID))
             .where(
                 PEI_PROJET.ETUDE_ID.eq(etudeId),
             )
@@ -604,11 +628,32 @@ class CarteRepository @Inject constructor(
     data class PeiProjetCarte(
         override val elementGeometrie: Point,
         override val elementId: UUID,
-        override var propertiesToDisplay: String? = null,
+        val peiProjetTypePeiProjet: TypePeiProjet,
+        val peiProjetNatureDeciLibelle: String?,
+        val peiProjetDiametreCanalisation: Int?,
+        val peiProjetDiametreLibelle: String?,
+        val peiProjetDebit: Int?,
+        val peiProjetCapacite: Int?,
 
     ) : ElementCarte() {
         override val typeElementCarte: TypeElementCarte
             get() = TypeElementCarte.PEI_PROJET
+
+        override var propertiesToDisplay: String? =
+            "<b>Type du PEI en projet :</b> ${peiProjetTypePeiProjet.name}<br/>" +
+                "<b>Nature DECI :</b> ${peiProjetNatureDeciLibelle.orEmpty()}<br/>" +
+                when (peiProjetTypePeiProjet) {
+                    TypePeiProjet.PIBI ->
+                        "<b>Diamètre :</b> ${peiProjetDiametreLibelle.orEmpty()}<br/>" +
+                            "<b>Diamètre de canalisation :</b> ${peiProjetDiametreCanalisation?.toString().orEmpty()}<br/>"
+
+                    TypePeiProjet.RESERVE ->
+                        "<b>Capacité (m³) :</b> ${peiProjetCapacite?.toString().orEmpty()}<br/>" +
+                            "<b>Débit (m³/h) :</b> ${peiProjetDebit?.toString().orEmpty()}<br/>"
+
+                    TypePeiProjet.PA ->
+                        "<b>Débit (m³/h) :</b> ${peiProjetDebit?.toString().orEmpty()}<br/>"
+                }
     }
 
     data class EvenementCarte(
