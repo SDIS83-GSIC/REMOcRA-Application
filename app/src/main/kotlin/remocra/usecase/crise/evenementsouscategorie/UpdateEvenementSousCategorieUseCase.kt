@@ -15,12 +15,14 @@ import remocra.db.jooq.remocra.tables.pojos.LEvenementCriseEvenementComplement
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
+import remocra.utils.RequeteSqlUtils
 
 class UpdateEvenementSousCategorieUseCase
 @Inject
 constructor(
     private val evenementSousCategorieRepository: EvenementSousCategorieRepository,
     private val evenementRepository: EvenementRepository,
+    private val requeteSqlUtils: RequeteSqlUtils,
 ) :
     AbstractCUDUseCase<EvenementSousCategorieWithComplementData>(TypeOperation.UPDATE) {
 
@@ -34,7 +36,7 @@ constructor(
         userInfo: WrappedUserInfo,
         element: EvenementSousCategorieWithComplementData,
     ) {
-        // Pas de contraintes
+        requeteSqlUtils.checkEvenementSousCategorieComplements(userInfo, element.evenementSousCategorieComplement)
     }
 
     override fun execute(

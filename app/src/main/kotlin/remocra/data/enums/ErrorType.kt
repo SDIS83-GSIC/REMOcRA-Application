@@ -371,6 +371,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_NOMENC_SAME_ELEMENT(8204, "Vous ne pouvez pas définir l'objet parent avec la valeur courante"),
     ADMIN_NOMENC_CODE_EXISTS(8205, "Ce code existe déjà pour un autre élément"),
     ADMIN_NOMENC_IMPOSSIBLE_SUPPRIME(8206, "Impossible de supprimer l'élément. Il est toujours référencé vers une autre table."),
+    ADMIN_NOMENC_COMPLEMENT_REQUETE_INVALID(8207, "La requête SQL du complément n'est pas valide $PLACEHOLDER_ERROR_TYPE"),
 
     //
     // ********************************************************************************
@@ -507,7 +508,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_RAPPORT_PERSO_FORBIDDEN(15000, "Vous n'avez pas les droits d'administration des rapports personnalisés.", Status.FORBIDDEN),
     ADMIN_RAPPORT_PERSO_CODE_UNIQUE(15001, "Le code doit être unique."),
     ADMIN_RAPPORT_PERSO_REQUETE_INVALID_CUD(15002, "La requête doit être un SELECT (et non CREATE / UPDATE / DELETE / DROP)."),
-    ADMIN_RAPPORT_PERSO_REQUETE_INVALID(15003, "La requête n'est pas valide : $PLACEHOLDER_ERROR_TYPE"),
+    ADMIN_REQUETE_INVALID(15003, "La requête n'est pas valide : $PLACEHOLDER_ERROR_TYPE"),
     ADMIN_RAPPORT_PERSO_REQUETE_PARAMETRE_INVALID(15004, " La requête du paramètre n'est pas valide : $PLACEHOLDER_ERROR_TYPE"),
     ADMIN_RAPPORT_PERSO_PARAMETRE_CODE_UNIQUE(15005, "Chaque code des paramètres doit être unique."),
     RAPPORT_PERSO_FORBIDDEN(15006, "Vous n'avez pas les droits pour générer ce rapport", Status.FORBIDDEN),
