@@ -300,7 +300,10 @@ export const TypeDroitLabel = new Map<string, string>([
   [TYPE_DROIT.CARTO_METADATA_A, "Administrer les métadonnées des couches"],
   [TYPE_DROIT.COURRIER_ADMIN_R, "Consulter tous les courriers"],
   [TYPE_DROIT.COURRIER_C, "Créer, éditer des courriers"],
-  [TYPE_DROIT.COURRIER_ORGANISME_R, "Consulter les courriers de son organisme"],
+  [
+    TYPE_DROIT.COURRIER_ORGANISME_R,
+    "Consulter les courriers de son organisme et de ses enfants",
+  ],
   [TYPE_DROIT.COURRIER_UTILISATEUR_R, "Consulter ses courriers"],
   [TYPE_DROIT.CRISE_C, "Créer une nouvelle crise"],
   [TYPE_DROIT.CRISE_D, "Supprimer une crise"],
@@ -451,6 +454,18 @@ export const TypeDroitInfobulle = new Map<string, string>([
   [
     TYPE_DROIT.PEI_NUMERO_INTERNE_U,
     "Si le paramètre 'Activer la renumérotation interne automatique des PEI' est activé, l'utilisateur ne pourra pas modifier le numéro interne d'un PEI même si le droit est coché.",
+  ],
+  [
+    TYPE_DROIT.COURRIER_ADMIN_R,
+    "L'utilisateur peut consulter l'ensemble des courriers sans aucun filtre.",
+  ],
+  [
+    TYPE_DROIT.COURRIER_ORGANISME_R,
+    "L'utilisateur peut consulter tous les courriers envoyés et reçus par son organisme ainsi que par ses organismes enfants.",
+  ],
+  [
+    TYPE_DROIT.COURRIER_UTILISATEUR_R,
+    "L'utilisateur connecté peut consulter ses propres courriers reçus. Si un contact de gestionnaire ou d'organisme possède la même adresse mail que l'utilisateur, il peut également consulter les courriers reçus par ce contact.",
   ],
 ]);
 
