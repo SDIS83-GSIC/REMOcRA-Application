@@ -158,7 +158,7 @@ class CalculDispoUseCase @Inject constructor(
 
         if (setGlobalAnomalies.isNotEmpty()) {
             // On va chercher les poids des anomalies concernées
-            val poidsAnomalies = poidsAnomalieRepository.getPoidsAnomalies(setGlobalAnomalies.map { it.anomalieId }, pei.peiNatureId, lastVisite?.visiteTypeVisite)
+            val poidsAnomalies = poidsAnomalieRepository.getPoidsAnomalies(setGlobalAnomalies.map { it.anomalieId }, pei.peiNatureId)
 
             // Calcul pour terrestre
             val noteTerrestre = setGlobalAnomalies.mapNotNull { ano ->
