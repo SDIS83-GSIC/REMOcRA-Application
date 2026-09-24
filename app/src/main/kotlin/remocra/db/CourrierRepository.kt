@@ -47,7 +47,7 @@ import java.time.ZonedDateTime
 import java.util.UUID
 import kotlin.math.absoluteValue
 
-class CourrierRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
+class CourrierRepository @Inject constructor(private val dsl: DSLContext, private val courrierUtils: CourrierUtils) : AbstractRepository() {
 
     companion object {
         private val expediteurAlias: Table<*> = ORGANISME.`as`("EXPEDITEUR")
@@ -143,19 +143,19 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
             .join(DOCUMENT).on(COURRIER.DOCUMENT_ID.eq(DOCUMENT.ID))
             .join(L_THEMATIQUE_COURRIER).on(COURRIER.ID.eq(L_THEMATIQUE_COURRIER.COURRIER_ID))
             .leftJoin(L_COURRIER_UTILISATEUR).on(COURRIER.ID.eq(L_COURRIER_UTILISATEUR.COURRIER_ID))
+            .leftJoin(L_COURRIER_ORGANISME).on(COURRIER.ID.eq(L_COURRIER_ORGANISME.COURRIER_ID))
+            .leftJoin(L_COURRIER_CONTACT_ORGANISME).on(COURRIER.ID.eq(L_COURRIER_CONTACT_ORGANISME.COURRIER_ID))
+            .leftJoin(L_COURRIER_CONTACT_GESTIONNAIRE).on(COURRIER.ID.eq(L_COURRIER_CONTACT_GESTIONNAIRE.COURRIER_ID))
             .join(destinataireCte).on(destinataireCte.field("courrier_id", UUID::class.java)!!.eq(COURRIER.ID))
             .where(L_THEMATIQUE_COURRIER.THEMATIQUE_ID.`in`(listeThematiqueId))
             /**
-             Si superAdmin
-             ou que tu es expéditeur == Mon organisme est l'expéditeur => userInfo.organismeId == COURRIER.EXPEDITEUR
-             ou que tu es destinataire => L_COURRIER_UTILISATEUR.UTILISATEUR_ID = userInfo.utilisateurId
-             ou que l'organisme d'un des destinataires t'est affilié => COURRIER.EXPEDITEUR.`in`(userInfo.affiliatedOrganismeIds)
+             Si superAdmin ou droit consulter tous les courriers
+             ou droit consulter courriers organisme et l'organisme expéditeur est le sien ou affilié
+             ou droit consulter seulement ses courriers et on est destinataire
              **/
             .and(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    COURRIER.EXPEDITEUR.eq(userInfo.organismeId)
-                        .or(COURRIER.EXPEDITEUR.`in`(userInfo.affiliatedOrganismeIds))
-                        .or(L_COURRIER_UTILISATEUR.UTILISATEUR_ID.eq(userInfo.utilisateurId)),
+                    courrierUtils.getAccessCondition(userInfo),
                     userInfo.isSuperAdmin,
                 ),
             )
@@ -189,13 +189,14 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext) : Abst
             .join(DOCUMENT).on(COURRIER.DOCUMENT_ID.eq(DOCUMENT.ID))
             .join(L_THEMATIQUE_COURRIER).on(COURRIER.ID.eq(L_THEMATIQUE_COURRIER.COURRIER_ID))
             .leftJoin(L_COURRIER_UTILISATEUR).on(COURRIER.ID.eq(L_COURRIER_UTILISATEUR.COURRIER_ID))
+            .leftJoin(L_COURRIER_ORGANISME).on(COURRIER.ID.eq(L_COURRIER_ORGANISME.COURRIER_ID))
+            .leftJoin(L_COURRIER_CONTACT_ORGANISME).on(COURRIER.ID.eq(L_COURRIER_CONTACT_ORGANISME.COURRIER_ID))
+            .leftJoin(L_COURRIER_CONTACT_GESTIONNAIRE).on(COURRIER.ID.eq(L_COURRIER_CONTACT_GESTIONNAIRE.COURRIER_ID))
             .join(destinataireCte).on(destinataireCte.field("courrier_id", UUID::class.java)!!.eq(COURRIER.ID))
             .where(L_THEMATIQUE_COURRIER.THEMATIQUE_ID.`in`(listeThematiqueId))
             .and(
                 repositoryUtils.checkIsSuperAdminOrCondition(
-                    COURRIER.EXPEDITEUR.eq(userInfo.organismeId)
-                        .or(COURRIER.EXPEDITEUR.`in`(userInfo.affiliatedOrganismeIds))
-                        .or(L_COURRIER_UTILISATEUR.COURRIER_ID.`in`(DSL.select(L_COURRIER_UTILISATEUR.COURRIER_ID).from(L_COURRIER_UTILISATEUR).where(L_COURRIER_UTILISATEUR.UTILISATEUR_ID.eq(userInfo.utilisateurId)))),
+                    courrierUtils.getAccessCondition(userInfo),
                     userInfo.isSuperAdmin,
                 ),
             )

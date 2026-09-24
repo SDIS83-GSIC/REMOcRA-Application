@@ -13,6 +13,9 @@ import remocra.db.jooq.remocra.tables.pojos.DocumentHabilitable
 import remocra.db.jooq.remocra.tables.references.COURRIER
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
 import remocra.db.jooq.remocra.tables.references.DOCUMENT_HABILITABLE
+import remocra.db.jooq.remocra.tables.references.L_COURRIER_CONTACT_GESTIONNAIRE
+import remocra.db.jooq.remocra.tables.references.L_COURRIER_CONTACT_ORGANISME
+import remocra.db.jooq.remocra.tables.references.L_COURRIER_ORGANISME
 import remocra.db.jooq.remocra.tables.references.L_COURRIER_UTILISATEUR
 import remocra.db.jooq.remocra.tables.references.L_GROUPE_FONCTIONNALITES_DOCUMENT_HABILITABLE
 import remocra.db.jooq.remocra.tables.references.L_THEMATIQUE_COURRIER
@@ -23,7 +26,7 @@ import remocra.db.jooq.remocra.tables.references.UTILISATEUR
 import java.util.UUID
 import kotlin.math.absoluteValue
 
-class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
+class ThematiqueRepository @Inject constructor(private val dsl: DSLContext, private val courrierUtils: CourrierUtils) : AbstractRepository() {
     fun getAll(actif: Boolean? = null): List<GlobalData.IdCodeLibelleData> =
         dsl.select(
             THEMATIQUE.ID.`as`("id"),
@@ -128,20 +131,22 @@ class ThematiqueRepository @Inject constructor(private val dsl: DSLContext) : Ab
             .or(COURRIER.EXPEDITEUR.eq(UTILISATEUR.ID))
             .leftJoin(ORGANISME)
             .on(ORGANISME.ID.eq(UTILISATEUR.ORGANISME_ID))
+            .leftJoin(L_COURRIER_ORGANISME)
+            .on(L_COURRIER_ORGANISME.COURRIER_ID.eq(COURRIER.ID))
+            .leftJoin(L_COURRIER_CONTACT_GESTIONNAIRE)
+            .on(L_COURRIER_CONTACT_GESTIONNAIRE.COURRIER_ID.eq(COURRIER.ID))
+            .leftJoin(L_COURRIER_CONTACT_ORGANISME)
+            .on(L_COURRIER_CONTACT_ORGANISME.COURRIER_ID.eq(COURRIER.ID))
             .where(L_THEMATIQUE_COURRIER.THEMATIQUE_ID.`in`(listeThematiqueId))
             /**
              Si superAdmin ou que tu es expéditeur ou que tu es destinataire ou que l'organisme d'un des destinataires
              t'es affilié
              **/
             .and(
-                repositoryUtils
-                    .checkIsSuperAdminOrCondition(
-                        UTILISATEUR.ID.eq(userInfo.utilisateurId).or(
-                            ORGANISME.ID
-                                .`in`(userInfo.affiliatedOrganismeIds),
-                        ),
-                        userInfo.isSuperAdmin,
-                    ),
+                repositoryUtils.checkIsSuperAdminOrCondition(
+                    courrierUtils.getAccessCondition(userInfo),
+                    userInfo.isSuperAdmin,
+                ),
             )
             .orderBy(
                 listOf(DOCUMENT.DATE.desc()),
