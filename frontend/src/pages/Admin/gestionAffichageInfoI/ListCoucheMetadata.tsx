@@ -93,15 +93,7 @@ const ListCoucheMetadata = () => {
             accessor: "groupeFonctionnaliteList",
             Cell: (value) => {
               return (
-                <div
-                  style={{
-                    padding: "5px",
-                    borderRadius: "4px",
-                    fontSize: "14px",
-                    color: "#333",
-                    lineHeight: "1.5",
-                  }}
-                >
+                <div>
                   {value?.value
                     .map(
                       (item: GroupeFonctionnalites) =>
