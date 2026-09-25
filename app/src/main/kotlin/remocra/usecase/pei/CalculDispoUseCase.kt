@@ -375,7 +375,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_95 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_971 -> isPressionInsuffisanteDefault(pei)
-            CodeSdis.SDIS_973 -> isPressionInsuffisanteDefault(pei)
+            CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
         }
