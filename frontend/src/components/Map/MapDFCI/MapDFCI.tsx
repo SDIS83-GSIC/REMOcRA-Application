@@ -82,7 +82,11 @@ const MapDFCI = () => {
 
   const listeCouche: DFCI_LISTE_COUCHE[] =
     useMemo<DFCI_LISTE_COUCHE[]>(() => {
-      if (!parametreCouche.isResolved) {
+      if (
+        !parametreCouche.isResolved ||
+        parametreCouche?.data[PARAMETRE.DFCI_LISTE_COUCHE].parametreValeur ==
+          null
+      ) {
         return [];
       }
 
