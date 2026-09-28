@@ -1,5 +1,32 @@
 = Release Notes
 
+== 3.0.11
+
+* https://redmine.atolcd.com/issues/301683[#301683]: Suppression de l'anomalie INDISPONIBILITE_TEMP
+* https://redmine.atolcd.com/issues/301796[#301796]: Module de crise - Filtre sur la carte
+* https://redmine.atolcd.com/issues/301863[#301863]: Module de crise - Rapports personnalisés
+* https://redmine.atolcd.com/issues/302304[#302304]: [PEI - CARTE] Curseur au survol des PEI
+* https://redmine.atolcd.com/issues/302530[#302530]: [CRISE] - outil I
+* https://redmine.atolcd.com/issues/302601[#302601]: Fonds OSM
+* https://redmine.atolcd.com/issues/302980[#302980]: Outil "créer un PEI" reste actif onglet carte
+* https://redmine.atolcd.com/issues/303203[#303203]: [ADMINISTRATION] SIGNALEMENT - SOUS TYPE ELEMENT - Tri de la colonne type élément ne fonctionne pas
+* https://redmine.atolcd.com/issues/303231[#303231]: [POINT D'EAU] LISTE DES POINTS D'EAU - Le tri de la colonne Adresse ne fonctionne pas
+* https://redmine.atolcd.com/issues/303263[#303263]: Couverture hydraulique : Erreur de conversion de géométrie
+* https://redmine.atolcd.com/issues/303312[#303312]: Droits : Consulter les courriers
+* https://redmine.atolcd.com/issues/303342[#303342]: Carte : Affichage plein écran
+* https://redmine.atolcd.com/issues/303422[#303422]: [SIGNALEMENT] TYPE ELEMENT / SOUS-TYPE ELEMENT - Décocher case Actif ne le retire pas des possibilités de signalements
+* https://redmine.atolcd.com/issues/303461[#303461]: [COUVERTURE HYDRAULIQUE] TROUVER LE PEI LE PLUS PROCHE - Ne fonctionne pas
+* https://redmine.atolcd.com/issues/303618[#303618]: [PLANIFICATION DECI] PEI EN PROJET - Infobulle vide
+* https://redmine.atolcd.com/issues/303747[#303747]: [PEI] FICHE PEI - null si champ vide !
+* https://redmine.atolcd.com/issues/303776[#303776]: Module courrier V3 #non iso-V2
+* https://redmine.atolcd.com/issues/303825[#303825]: Synchronisation utilisateur : récupération des groupes d'utilisateurs
+* https://redmine.atolcd.com/issues/303899[#303899]: Rapports personnalisés : colonnes vides à l'export
+* https://redmine.atolcd.com/issues/303931[#303931]: [PAGE D'ACCUEIL] PEI INDISPONIBLES - Le message s'affiche même si la commune n'a pas de PEI indisponible
+* https://redmine.atolcd.com/issues/304003[#304003]: Outil i : Ajout de groupes d'accès sur une couche publique
+* https://redmine.atolcd.com/issues/304885[#304885]: Module de crise - le type d'évènement est vide lorsqu'on dessine
+* https://redmine.atolcd.com/issues/304917[#304917]: Anomalies : Correction du calcul de dispo lors de visites successives
+* https://redmine.atolcd.com/issues/305017[#305017]: [Migration v2 - v3] - Poids des anomalies systèmes
+
 == 3.0.10
 
 * https://redmine.atolcd.com/issues/302308[#302308]: Accès rapide : Suppression de la sélection
