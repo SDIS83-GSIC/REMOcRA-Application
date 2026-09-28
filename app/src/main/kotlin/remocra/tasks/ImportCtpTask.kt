@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.inject.Inject
 import remocra.auth.WrappedUserInfo
 import remocra.data.importctp.ImportCtpData
+import remocra.db.MaterializedViewRepository
+import remocra.db.VisiteRepository
 import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.usecase.importctp.ImportCtpUseCase
 
@@ -14,6 +16,8 @@ import remocra.usecase.importctp.ImportCtpUseCase
  */
 class ImportCtpTask @Inject constructor(
     private val importCtpUseCase: ImportCtpUseCase,
+    private val visiteRepository: VisiteRepository,
+    private val materializedViewRepository: MaterializedViewRepository,
 ) : SimpleTask<ImportCtpTaskParameters, JobResults>() {
 
     override fun execute(parameters: ImportCtpTaskParameters?, userInfo: WrappedUserInfo): JobResults {
@@ -26,16 +30,26 @@ class ImportCtpTask @Inject constructor(
 
         var nbSucces = 0
         var nbErreurs = 0
-        lignesAvecVisite.forEachIndexed { index, ligne ->
-            val peiRef = "PEI ${ligne.codeInsee}-${ligne.numeroInterne}"
-            try {
-                importCtpUseCase.addVisiteFromImportCtp(ligne.dataVisite!!, userInfo)
-                nbSucces++
-                logManager.info("(${index + 1}/$total) Visite intégrée : $peiRef")
-            } catch (e: Exception) {
-                nbErreurs++
-                logManager.error("(${index + 1}/$total) Échec d'intégration : $peiRef — ${e.message}")
+        try {
+            // on désactive les triggers pour éviter le lancer les événements pour chaque insert,
+            // et notament de la vue v_pei_visite_date
+            // on les lancera à la fin
+            visiteRepository.disabledAllTriggerOnVisite()
+
+            lignesAvecVisite.forEachIndexed { index, ligne ->
+                val peiRef = "PEI ${ligne.codeInsee}-${ligne.numeroInterne}"
+                try {
+                    importCtpUseCase.addVisiteFromImportCtp(ligne.dataVisite!!, userInfo)
+                    nbSucces++
+                    logManager.info("(${index + 1}/$total) Visite intégrée : $peiRef")
+                } catch (e: Exception) {
+                    nbErreurs++
+                    logManager.error("(${index + 1}/$total) Échec d'intégration : $peiRef — ${e.message}")
+                }
             }
+        } finally {
+            visiteRepository.enableAllTriggerOnVisite()
+            materializedViewRepository.refreshViewVisites()
         }
         logManager.info("Import CTP terminé : $nbSucces succès, $nbErreurs erreur(s) sur $total visite(s)")
         return JobResults()
