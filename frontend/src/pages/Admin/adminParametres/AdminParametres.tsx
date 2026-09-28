@@ -425,6 +425,7 @@ export const AdminParametresInterne = () => {
       { name: "dfci.dfciTravauxDestinataireEmail", accordionIndex: 4 },
       { name: "dfci.dfciTravauxObjetEmail", accordionIndex: 4 },
       { name: "dfci.dfciTravauxCorpsEmail", accordionIndex: 4 },
+      { name: "dfci.dfciToleranceDfciPisteMetres", accordionIndex: 4 },
       // Permis (5)
       { name: "permis.permisToleranceChargementMetres", accordionIndex: 5 },
       // PEI (6) - dans l'ordre d'affichage
@@ -451,6 +452,22 @@ export const AdminParametresInterne = () => {
       { name: "pei.declarationPeiDestinataireEmail", accordionIndex: 6 },
       { name: "pei.declarationPeiObjetEmail", accordionIndex: 6 },
       { name: "pei.declarationPeiCorpsEmail", accordionIndex: 6 },
+      ...(values?.pei?.autoriserMailVisiteReception
+        ? [
+            {
+              name: "pei.peiOrganismeNotificationVisiteReception",
+              accordionIndex: 6,
+            },
+          ]
+        : []),
+      ...(values?.pei?.autoriserMailRoi
+        ? [
+            {
+              name: "pei.peiOrganismeNotificationRoi",
+              accordionIndex: 6,
+            },
+          ]
+        : []),
       // PEI longue indisponibilité (7)
       {
         name: "peiLongueIndispo.peiLongueIndisponibiliteMessage",
@@ -466,6 +483,7 @@ export const AdminParametresInterne = () => {
       },
       // Application mobile (9)
       { name: "mobile.dureeValiditeToken", accordionIndex: 9 },
+      { name: "mobile.gestionAgent", accordionIndex: 9 },
     ];
 
   return (
