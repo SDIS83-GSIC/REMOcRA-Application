@@ -26,6 +26,9 @@
 * https://redmine.atolcd.com/issues/304885[#304885]: Module de crise - le type d'évènement est vide lorsqu'on dessine
 * https://redmine.atolcd.com/issues/304917[#304917]: Anomalies : Correction du calcul de dispo lors de visites successives
 * https://redmine.atolcd.com/issues/305017[#305017]: [Migration v2 - v3] - Poids des anomalies systèmes
+* https://redmine.atolcd.com/issues/289099[#289099]: DFCI 1.1
+* https://redmine.atolcd.com/issues/305101[#305101]: [SDIS 973] Revoir calcul dispo
+* https://redmine.atolcd.com/issues/300162[#300156]: [SDIS 38] Symbole des réseau d'irrigation et de production de neige
 
 == 3.0.10
 
