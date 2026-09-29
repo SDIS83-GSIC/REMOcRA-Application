@@ -157,7 +157,7 @@
   position: absolute;
   top: 10px;
   left: 50px;
-  right: 50px;
+  right: 320px; /* laisse la place a la legende flottante (largeur 260px + marge 30px) */
   z-index: 1000;
   background: rgba(255, 255, 255, 0.9);
   padding: 0.5rem 1rem;
