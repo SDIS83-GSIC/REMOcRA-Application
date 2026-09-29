@@ -55,9 +55,7 @@ import remocra.utils.DateUtils
 import remocra.utils.ST_Transform
 import remocra.utils.ST_Within
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import java.util.Date
-import java.util.Locale
 import java.util.UUID
 
 class CarteRepository @Inject constructor(
@@ -681,7 +679,7 @@ class CarteRepository @Inject constructor(
         override var propertiesToDisplay: String? =
             "<b>Numéro de dossier :</b> ${peiPrescritNumDossier.orEmpty()}<br/>" +
                 "<b>Débit (m³/h) / Capacité (m³):</b> ${peiPrescritDebit?.toString().orEmpty()}<br/>" +
-                "<b>Date dépot :</b> ${peiPrescritDate?.format(DateTimeFormatter.ofPattern(DateUtils.PATTERN_NATUREL_DATE_ONLY, Locale.getDefault())).orEmpty()}<br/>" +
+                "<b>Date dépot :</b> <time class='date-to-convert' datetime='$peiPrescritDate'></time><br/>" +
                 "<b>Agent :</b> ${peiPrescritAgent.orEmpty()}<br/>" +
                 "<b>Nombre de PEI :</b> ${peiPrescritNbPoteaux?.toString().orEmpty()}<br/>" +
                 "<b>Commentaire :</b> ${peiPrescritCommentaire.orEmpty()}<br/>"
@@ -728,7 +726,7 @@ class CarteRepository @Inject constructor(
 
         override var propertiesToDisplay: String? = "<b>Etat :</b> ${getEtatSignalementLibelle(signalementType)} <br/>" +
             "<b>Description :</b> ${signalementDescription.orEmpty()} " +
-            "<br /><b>Date constat :</b> ${signalementDateConstat?.format(DateTimeFormatter.ofPattern(DateUtils.PATTERN_NATUREL, Locale.getDefault()))} " +
+            "<br /><b>Date constat :</b> <time class='date-time-to-convert' datetime='$signalementDateConstat'></time>" +
             "<br/><b>Liste des éléments :</b> ${
                 listSousElementAvecAnomalie.joinToString {
                     "${it.sousElement} (anomalie(s) constatée(s) : ${

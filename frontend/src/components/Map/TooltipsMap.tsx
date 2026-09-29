@@ -27,6 +27,7 @@ import UpdatePermis from "../../pages/Permis/UpdatePermis.tsx";
 import ListTournee from "../../pages/Tournee/ListTournee.tsx";
 import { URLS } from "../../routes.tsx";
 import { MIN_ZOOM_COUCHE_TRANSPARENTE } from "../../utils/constantsUtils.tsx";
+import { formatHtmlDates } from "../../utils/formatHtmlDateUtils.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import CustomLinkButton from "../Button/CustomLinkButton.tsx";
 import DeleteButtonWithModal from "../Button/DeleteButtonWithModal.tsx";
@@ -604,7 +605,9 @@ const Tooltip = ({
             <div
               className="popover-body-content"
               dangerouslySetInnerHTML={{
-                __html: featureSelect.getProperties().propertiesToDisplay,
+                __html: formatHtmlDates(
+                  featureSelect.getProperties().propertiesToDisplay,
+                ),
               }}
             />
 
