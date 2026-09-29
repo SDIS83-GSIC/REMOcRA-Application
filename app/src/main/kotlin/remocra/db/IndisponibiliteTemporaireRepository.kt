@@ -206,6 +206,21 @@ class IndisponibiliteTemporaireRepository @Inject constructor(private val dsl: D
             ?: throw RemocraResponseException(ErrorType.INDISPONIBILITE_TEMPORAIRE_INEXISTANTE)
     }
 
+    fun getIndisponibiliteTemporaireIdWithOnlyOnePei(idPei: UUID): List<UUID> {
+        return dsl.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID)
+            .from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+            .where(
+                L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.`in`(
+                    DSL.select(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID)
+                        .from(L_INDISPONIBILITE_TEMPORAIRE_PEI)
+                        .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.PEI_ID.eq(idPei)),
+                ),
+            )
+            .groupBy(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID)
+            .having(DSL.count().eq(1))
+            .fetchInto()
+    }
+
     fun deleteLiaisonByIndisponibiliteTemporaire(indisponibiliteTemporaireId: UUID) {
         dsl.deleteFrom(L_INDISPONIBILITE_TEMPORAIRE_PEI)
             .where(L_INDISPONIBILITE_TEMPORAIRE_PEI.INDISPONIBILITE_TEMPORAIRE_ID.eq(indisponibiliteTemporaireId))
