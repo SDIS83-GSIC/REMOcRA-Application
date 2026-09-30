@@ -178,7 +178,11 @@ class SynchroUtilisateurTask @Inject constructor(
                                 try {
                                     val organismeId = if (isLdapUser && ldapFaitFoi && !userRepresentation.organismeCode.isNullOrBlank()) {
                                         // Si LDAP fait foi et qu'on a un code Keycloak, on le prioritise
-                                        organismeRepository.getByCode(userRepresentation.organismeCode)?.organismeId
+                                        organismeRepository.getByCode(
+                                            userRepresentation.organismeCode
+                                                .removePrefix(parameters?.prefixeLdapOrganismeCode ?: "")
+                                                .removeSuffix(parameters?.suffixeLdapOrganismeCode ?: ""),
+                                        )?.organismeId
                                             ?: parametres.getParametreString(ParametreEnum.ORGANISME_DEFAUT.name)
                                                 ?.let { defCode -> organismeRepository.getByCode(defCode)?.organismeId }
                                     } else {
@@ -189,7 +193,13 @@ class SynchroUtilisateurTask @Inject constructor(
 
                                     val profilId = if (isLdapUser && ldapFaitFoi && !userRepresentation.profilUtilisateurCode.isNullOrBlank()) {
                                         // Si LDAP fait foi et qu'on a un code Keycloak, on le prioritise
-                                        profilUtilisateurRepository.getByCode(userRepresentation.profilUtilisateurCode)?.profilUtilisateurId
+                                        profilUtilisateurRepository.getByCode(
+                                            userRepresentation.profilUtilisateurCode.removePrefix(
+                                                parameters?.prefixeLdapProfilUtilisateurCode ?: "",
+                                            ).removeSuffix(
+                                                parameters?.suffixeLdapProfilUtilisateurCode ?: "",
+                                            ),
+                                        )?.profilUtilisateurId
                                             ?: parametres.getParametreString(ParametreEnum.PROFIL_UTILISATEUR_DEFAUT.name)
                                                 ?.let { defCode -> profilUtilisateurRepository.getByCode(defCode)?.profilUtilisateurId }
                                     } else {
@@ -380,4 +390,10 @@ data class SynchroUtilisateurTaskParameters(
     val canSuppressUser: Boolean = false,
     val accepteUserSansEmail: Boolean = false,
     val emailParDefaut: String?,
+
+    // Préfixe ou suffixe à supprimer au moment de la récupération des paramètres organismeCode et profilCode
+    val prefixeLdapOrganismeCode: String?,
+    val prefixeLdapProfilUtilisateurCode: String?,
+    val suffixeLdapOrganismeCode: String?,
+    val suffixeLdapProfilUtilisateurCode: String?,
 ) : SchedulableTaskParameters(notification)
