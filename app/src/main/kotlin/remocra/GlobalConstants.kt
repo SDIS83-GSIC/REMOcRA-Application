@@ -42,6 +42,9 @@ object GlobalConstants {
     const val NATURE_38_RESEAU_PRODUCTION_NEIGE = "RES_PR"
     const val NATURE_38_RESEAU_IRRIGATION = "RES_IR"
 
+    // Propre au SDIS 42
+    const val NATURE_42_POTEAU_RELAIS = "PR"
+
     // Propre au SDIS 59
     const val NATURE_59_ALIMENTATION_POTEAU_RELAIS = "ALI_PR"
     const val NATURE_59_ALIMENTATION_DE_CONDUITE = "ALI_COND"

@@ -272,7 +272,7 @@ class CalculDispoUseCase @Inject constructor(
                 return false
             }
 
-            CodeSdis.SDIS_42 -> pei.penaCapacite == null || pei.penaCapacite < 2
+            CodeSdis.SDIS_42 -> pei.penaCapacite?.let { it < 2 } ?: (pei.nature?.natureCode != GlobalConstants.NATURE_42_POTEAU_RELAIS)
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> pei.penaCapacite != null && pei.penaCapacite < 60
             CodeSdis.SDIS_58 -> pei.penaCapacite != null && pei.penaCapacite < 15
