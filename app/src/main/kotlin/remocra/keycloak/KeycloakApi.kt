@@ -1,6 +1,7 @@
 package remocra.keycloak
 
 import com.google.common.net.HttpHeaders
+import remocra.keycloak.representations.ClientFullScopeAllowedRepresentation
 import remocra.keycloak.representations.ClientRepresentation
 import remocra.keycloak.representations.ClientScopeRepresentation
 import remocra.keycloak.representations.CredentialRepresentation
@@ -75,6 +76,14 @@ interface KeycloakApi {
         @Header(HttpHeaders.AUTHORIZATION) authorization: String?,
         @Path("id") techniqueId: String,
         @Body client: ClientRepresentation,
+    ): Call<Void?>
+
+    @PUT("clients/{id}")
+    @Headers("Content-Type: application/json")
+    fun updateClientFullScopeAllowed(
+        @Header(HttpHeaders.AUTHORIZATION) authorization: String,
+        @Path("id") techniqueId: String,
+        @Body client: ClientFullScopeAllowedRepresentation,
     ): Call<Void?>
 
     @POST("clients/{id}/client-secret")

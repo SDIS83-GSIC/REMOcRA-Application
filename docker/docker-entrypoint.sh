@@ -2,7 +2,7 @@
 
 case "$1" in
   # Argument direct, ou sous-commandes connues gérées par l’application
-  -* | serve | migrate-db | validate-db | info-db | repair-db )
+  -* | serve | migrate-db | validate-db | info-db | repair-db | migrate-fullscopeallowed )
     if [ -n "$GLOWROOT_ENABLED" ] && [ "$GLOWROOT_ENABLED" != "false" ] && [ "$GLOWROOT_ENABLED" != "0" ]; then
       JAVA_OPTS="$JAVA_OPTS -javaagent:/opt/glowroot/glowroot.jar"
       if [ -n "$GLOWROOT_PORT" ]; then

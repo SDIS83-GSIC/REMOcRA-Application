@@ -12,6 +12,7 @@
       "serviceAccountsEnabled": true,
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
+      "fullScopeAllowed": false,
       "baseUrl": "$(env:REMOCRA_URL)",
       "redirectUris": [
         "$(env:REMOCRA_URL)/callback", # pour l'authentification,
@@ -27,6 +28,7 @@
       "serviceAccountsEnabled": false,
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
+      "fullScopeAllowed": false,
       "redirectUris": [
         "fr.sdis83.remocra.mobile:/login"
       ],
@@ -59,6 +61,7 @@
       "serviceAccountsEnabled": true,
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
+      "fullScopeAllowed": false,
       "attributes": {
         "oauth2.device.authorization.grant.enabled": "true"
       },

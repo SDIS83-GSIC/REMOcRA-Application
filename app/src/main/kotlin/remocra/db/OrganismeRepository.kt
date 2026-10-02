@@ -381,6 +381,13 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             .where(ORGANISME.ID.eq(organismeId))
             .execute()
 
+    fun getKeycloakClientIds(): List<String> =
+        dsl.select(ORGANISME.KEYCLOAK_ID)
+            .from(ORGANISME)
+            .where(ORGANISME.KEYCLOAK_ID.isNotNull)
+            .fetch(ORGANISME.KEYCLOAK_ID)
+            .filterNotNull()
+
     fun getById(id: UUID): Organisme =
         dsl.selectFrom(ORGANISME).where(ORGANISME.ID.eq(id)).fetchSingleInto()
 
