@@ -356,7 +356,7 @@ class CalculDispoUseCase @Inject constructor(
                 } else {
                     false
                 }
-            CodeSdis.SDIS_61 -> isPressionInsuffisanteDefault(pei)
+            CodeSdis.SDIS_61 -> pei.pression != null && pei.pression < 1
             CodeSdis.SDIS_62 -> false
             CodeSdis.SDIS_66 -> false
             CodeSdis.SDIS_71 -> false
@@ -647,9 +647,6 @@ class CalculDispoUseCase @Inject constructor(
                     if (pei.pression != null && pei.pression >= 1 && pei.pression <= 8) {
                         return pei.debit != null && pei.debit < 30
                     }
-                }
-                if (pei.debit == null) {
-                    return pei.pressionDynamique == null || pei.pressionDynamique < 1
                 }
                 return false
             }
