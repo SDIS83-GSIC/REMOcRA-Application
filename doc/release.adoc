@@ -27,8 +27,11 @@
 * https://redmine.atolcd.com/issues/304917[#304917]: Anomalies : Correction du calcul de dispo lors de visites successives
 * https://redmine.atolcd.com/issues/305017[#305017]: [Migration v2 - v3] - Poids des anomalies systèmes
 * https://redmine.atolcd.com/issues/289099[#289099]: DFCI 1.1
+* https://redmine.atolcd.com/issues/305254[#305254]: DFCI 1.1
+* https://redmine.atolcd.com/issues/305279[#305279]: Version a 3.0.11 - Validation des paramètres applicatifs impossible
 * https://redmine.atolcd.com/issues/305101[#305101]: [SDIS 973] Revoir calcul dispo
 * https://redmine.atolcd.com/issues/300162[#300156]: [SDIS 38] Symbole des réseau d'irrigation et de production de neige
+* https://redmine.atolcd.com/issues/221479[#221479]: [SDIS 42] Règles de disponibilité des PEI pour le SDIS
 
 == 3.0.10
 
