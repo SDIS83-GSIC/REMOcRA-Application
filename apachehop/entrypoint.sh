@@ -19,6 +19,7 @@ sed -e "s|#DB_NAME|${POSTGRES_DB_NAME}|g" \
     -e "s|#SIG_DBNAME|${SIG_DBNAME:-#SIG_DBNAME}|g" \
     -e "s|#SIG_USERNAME|${SIG_USERNAME:-#SIG_USERNAME}|g" \
     -e "s|#SIG_PASSWORD|${SIG_PASSWORD:-#SIG_PASSWORD}|g" \
+    -e "s|#SIG_PORT_NUMBER|${SIG_PORT_NUMBER:-#SIG_PORT_NUMBER}|g" \
     -e "s|#CLIENT_SECRET_APACHE_HOP|${CLIENT_SECRET_APACHE_HOP}|g" \
     /opt/hop/variables.json \
     > /tmp/variables.json
