@@ -378,4 +378,13 @@ class VisiteRepository
 
     fun enableTriggerOnInsertVisite() =
         dsl.execute("ALTER TABLE ${VISITE.qualifiedName} ENABLE TRIGGER trg_visite_insert_refresh_pei_visite_date;")
+
+    fun visiteTypeExistsAfterSpecifiedDate(peiId: UUID, typeVisite: TypeVisite, visiteDate: ZonedDateTime): Boolean {
+        return dsl.fetchExists(
+            VISITE,
+            VISITE.PEI_ID.eq(peiId)
+                .and(VISITE.TYPE_VISITE.eq(typeVisite))
+                .and(VISITE.DATE.gt(visiteDate)),
+        )
+    }
 }

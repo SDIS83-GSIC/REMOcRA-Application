@@ -131,6 +131,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     VISITE_RECO_INIT_NOT_FIRST(2116, "La visite de type ${TypeVisite.RECO_INIT} doit être la deuxième visite du PEI"),
     VISITE_CDP_PENA(2117, "Il est impossible de saisir un Contrôle Débit Pression pour un PENA"),
     VISITE_DATE_ALREADY_EXIST(2118, "La visite ne peut être renseignée à la même date et heure qu'une visite déjà existante"),
+    VISITE_INVALIDE_ORDER(2119, "Cette visite rompt l'ordre naturel des visites. Veuillez vérifier les dates et heures."),
 
     VISITE_TYPE_FORBIDDEN(
         2200,
