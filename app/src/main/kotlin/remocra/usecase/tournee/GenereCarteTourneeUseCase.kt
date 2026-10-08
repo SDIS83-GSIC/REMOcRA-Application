@@ -10,6 +10,8 @@ import jakarta.inject.Inject
 import jakarta.ws.rs.core.MultivaluedHashMap
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.odftoolkit.odfdom.doc.OdfTextDocument
+import org.odftoolkit.odfdom.dom.element.draw.DrawFrameElement
 import remocra.GlobalConstants
 import remocra.app.AppSettings
 import remocra.app.ParametresProvider
@@ -28,6 +30,8 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.UUID
 import javax.imageio.ImageIO
+import javax.xml.xpath.XPath
+import javax.xml.xpath.XPathConstants
 
 class GenereCarteTourneeUseCase @Inject constructor(
     private val parametresProvider: ParametresProvider,
@@ -58,10 +62,23 @@ class GenereCarteTourneeUseCase @Inject constructor(
         val maxX = coordinates.maxOf { it.x }
         val maxY = coordinates.maxOf { it.y }
 
-        // Génération de la bbox avec buffer et ratio A4
+        // Détermination de l'orientation basée sur les données
+        val xSize = maxX - minX
+        val ySize = maxY - minY
+        val orientation = if (xSize >= ySize) Orientation.PAYSAGE else Orientation.PORTRAIT
+
+        // Charger le template avec la bonne orientation
+        val templatePath = GlobalConstants.DOSSIER_CARTE_TOURNEE_TEMPLATE
+            .resolve("carte-tournee-${orientation.name.lowercase()}.odt")
+            .toFile()
+        val (width, height) = getTemplateImageDimensions(templatePath.absolutePath)
+        val templateRatio = width.toDouble() / height.toDouble()
+
+        // Génération de la bbox avec buffer en utilisant le ratio du template
         val bufferedMapData = addBuffer(
             coordinates = Coordonnee(minX = minX, minY = minY, maxX = maxX, maxY = maxY),
             buffer = bufferCarteParam,
+            templateRatio = templateRatio,
         )
 
         val infoCarteTournee = GenererCarteData(
@@ -71,9 +88,6 @@ class GenereCarteTourneeUseCase @Inject constructor(
             tourneeId = tourneeId,
             orientation = bufferedMapData.orientation,
         )
-
-        // Calcul des dimensions image WMS selon orientation (A4 ratio)
-        val (width, height) = getWMSDimensions(infoCarteTournee.orientation)
 
         // Construction des paramètre WMS GetMap
         val map: Map<String, String> = mapOf(
@@ -107,10 +121,14 @@ class GenereCarteTourneeUseCase @Inject constructor(
         // Renvoi l'image PNG généré par GeoServer
         val image = httpClient.newCall(request).execute().body()?.bytes()
 
-        // Détection dynamique de la taille de l'image
+        if (image == null || image.isEmpty()) {
+            throw RemocraResponseException(ErrorType.IMAGE_PNG_ILLISIBLE)
+        }
+
+        // Création du provider image
         val imageProvider = ByteArrayImageProvider(image)
 
-        // Extraction de la largeur réelle de l'image PNG
+        // Extraction de la largeur et hauteur réelle de l'image PNG
         val imagePNGWidth = getImagePNGDimensions(image)
 
         // Calcul de l'échelle de la carte basée sur la taille réelle de l'image
@@ -119,7 +137,7 @@ class GenereCarteTourneeUseCase @Inject constructor(
 
         // On crée le fichier PDF
         val report = XDocReportRegistry.getRegistry().loadReport(
-            FileInputStream(GlobalConstants.DOSSIER_CARTE_TOURNEE_TEMPLATE.resolve("carte-tournee-${bufferedMapData.orientation.name.lowercase()}.odt").toFile()),
+            FileInputStream(templatePath),
             TemplateEngineKind.Freemarker,
         )
         val context = report.createContext()
@@ -177,46 +195,37 @@ fun List<Double>.toBBOX(): String {
     return this.joinToString(separator = ",") { it.toString() }
 }
 
-fun addBuffer(
+private fun addBuffer(
     coordinates: Coordonnee,
     buffer: Int,
-    tailleMinX: Double = TAILLE_MIN_X_A4_PORTRAIT,
-    tailleMinY: Double = TAILLE_MIN_Y_A4_PORTRAIT,
+    templateRatio: Double = 1.4142, // Ratio par défaut du template (format A4)
 ): GeoserveurData {
-    // Application du buffer brut
-    val xMinRaw = coordinates.minX - buffer
-    val xMaxRaw = coordinates.maxX + buffer
-    val yMinRaw = coordinates.minY - buffer
-    val yMaxRaw = coordinates.maxY + buffer
+    // Application du buffer brut - garder les dimensions buffées
+    val xMinBuffered = coordinates.minX - buffer
+    val xMaxBuffered = coordinates.maxX + buffer
+    val yMinBuffered = coordinates.minY - buffer
+    val yMaxBuffered = coordinates.maxY + buffer
 
-    var xSize = xMaxRaw - xMinRaw
-    var ySize = yMaxRaw - yMinRaw
+    var xSize = xMaxBuffered - xMinBuffered
+    var ySize = yMaxBuffered - yMinBuffered
 
-    val xCentroid = (xMinRaw + xMaxRaw) / 2
-    val yCentroid = (yMinRaw + yMaxRaw) / 2
+    // Garder les tailles buffées comme minimum
+    val xSizeMin = xSize
+    val ySizeMin = ySize
 
-    // Choix du ratio en fonction de l'orientation naturelle de la bbox brute
+    val xCentroid = (xMinBuffered + xMaxBuffered) / 2
+    val yCentroid = (yMinBuffered + yMaxBuffered) / 2
+
+    // Déterminer orientation et forcer le ratio du template
     val isPaysage = xSize > ySize
 
-    // Forçage du ratio A4 (paysage ou portrait)
     if (isPaysage) {
-        ySize = xSize * RATIO_XY_PAYSAGE
-        if (ySize < coordinates.maxY - coordinates.minY) {
-            xSize = ySize * RATIO_XY_PORTRAIT
-        }
+        // Paysage : ajuster ySize pour respecter le ratio, mais jamais en-dessous du buffer
+        ySize = maxOf(xSize / templateRatio, ySizeMin)
     } else {
-        xSize = ySize * RATIO_XY_PAYSAGE
-        if (xSize < coordinates.maxX - coordinates.minX) {
-            ySize = xSize * RATIO_XY_PORTRAIT
-        }
+        // Portrait : ajuster xSize pour respecter le ratio, mais jamais en-dessous du buffer
+        xSize = maxOf(ySize * templateRatio, xSizeMin)
     }
-
-    // Respect des dimensions minimales (A4)
-    val minX = maxOf(xSize, if (isPaysage) tailleMinX else tailleMinY)
-    val minY = maxOf(ySize, if (isPaysage) tailleMinY else tailleMinX)
-
-    xSize = minX
-    ySize = minY
 
     // Recentrage de la bbox après ajustement
     val xMin = xCentroid - xSize / 2
@@ -228,22 +237,6 @@ fun addBuffer(
     val orientation = if (xSize >= ySize) Orientation.PAYSAGE else Orientation.PORTRAIT
 
     return GeoserveurData(bbox = listOf(xMin, yMin, xMax, yMax), orientation = orientation)
-}
-
-// Calcule les dimensions d'image (WMS) selon le ratio A4 et l'orientation
-fun getWMSDimensions(orientation: Orientation, maxSize: Int = 1150): Pair<Int, Int> {
-    return when (orientation) {
-        Orientation.PORTRAIT -> {
-            val height = maxSize
-            val width = (height / RATIO_XY_PORTRAIT).toInt()
-            width to height
-        }
-        Orientation.PAYSAGE -> {
-            val width = maxSize
-            val height = (width * RATIO_XY_PAYSAGE).toInt()
-            width to height
-        }
-    }
 }
 
 data class GeoserveurData(
@@ -263,30 +256,97 @@ enum class Orientation {
     PORTRAIT,
 }
 
-const val RATIO_XY_PORTRAIT = 1.4142
-const val RATIO_XY_PAYSAGE = 0.7070
-const val TAILLE_MIN_X_A4_PORTRAIT = 685.0 // correspond au nombre de pixel d'un A4 a 300 dpi (dixit RAI pour remocra v-2)
-const val TAILLE_MIN_Y_A4_PORTRAIT = 534.0
 const val SCALE_FACTOR = 10 // facteur d'échelle pour convertir les pixels en unités de carte
 
 /**
- * Extrait la largeur réelle d'une image PNG à partir de ses bytes bruts.
+ * Extrait les dimensions de l'image du template ODT via ODFDOM.
+ *
+ * @param templatePath Chemin absolu du fichier ODT
+ * @return Pair(width, height) en pixels
+ * @throws RemocraResponseException si l'image n'est pas trouvée
+ */
+private fun getTemplateImageDimensions(templatePath: String): Pair<Int, Int> {
+    return try {
+        val doc = OdfTextDocument.loadDocument(templatePath)
+        val xpath: XPath = doc.getContentDom().getXPath()
+
+        val requete = "//draw:frame[@draw:name='carte']"
+        val frame = xpath.evaluate(requete, doc.getContentDom(), XPathConstants.NODE) as DrawFrameElement?
+            ?: throw RemocraResponseException(ErrorType.IMAGE_INVALIDE)
+
+        val widthStr = frame.svgWidthAttribute
+        val heightStr = frame.svgHeightAttribute
+        val width = parseUnitToPx(widthStr).toInt()
+        val height = parseUnitToPx(heightStr).toInt()
+
+        width to height
+    } catch (_: RemocraResponseException) {
+        throw RemocraResponseException(ErrorType.IMAGE_PNG_ILLISIBLE)
+    } catch (e: Exception) {
+        throw e
+    }
+}
+
+/**
+ * Parse une valeur avec unité (ex: "10cm", "100px") en pixels.
+ *
+ * @param value La valeur avec unité
+ * @return La valeur en pixels
+ */
+private fun parseUnitToPx(value: String): Double {
+    val raw = value.trim()
+    if (raw.isEmpty())throw RemocraResponseException(ErrorType.IMAGE_CONVERSION_PIXEL_IMPOSSSIBLE)
+
+    val numberPart = raw.takeWhile { it.isDigit() || it == '.' }
+    if (numberPart.isEmpty())throw RemocraResponseException(ErrorType.IMAGE_CONVERSION_PIXEL_IMPOSSSIBLE)
+
+    val number = numberPart.toDoubleOrNull() ?: throw RemocraResponseException(ErrorType.IMAGE_CONVERSION_PIXEL_IMPOSSSIBLE)
+    val unitPart = raw.drop(numberPart.length).trim()
+    val unit = UnitToPx.from(unitPart) ?: throw RemocraResponseException(ErrorType.IMAGE_CONVERSION_PIXEL_IMPOSSSIBLE)
+
+    return UnitValue(number, unit).toPx()
+}
+
+private enum class UnitToPx(val facteur: Double) {
+    PX(1.0),
+    CM(37.8),
+    MM(3.78),
+    IN(96.0),
+    PT(1.333),
+    ;
+
+    fun toPx(value: Double): Double = value * facteur
+
+    companion object {
+        fun from(raw: String): UnitToPx? =
+            entries.firstOrNull { it.name.equals(raw, ignoreCase = true) }
+    }
+}
+
+private data class UnitValue(val value: Double, val unit: UnitToPx) {
+    fun toPx(): Double = unit.toPx(value)
+}
+
+/**
+ * Extrait la largeur ou hauteur réelle d'une image PNG à partir de ses bytes bruts.
  *
  * @param imageBytes Les bytes bruts du fichier PNG
- * @return La largeur de l'image en pixels
+ * @param isHeight Si true, retourne la hauteur, sinon la largeur
+ * @return La dimension de l'image en pixels
  * @throws RemocraResponseException si l'image est invalide ou illisible
  */
-fun getImagePNGDimensions(imageBytes: ByteArray?): Int {
+private fun getImagePNGDimensions(imageBytes: ByteArray?, isHeight: Boolean = false): Int {
     if (imageBytes == null || imageBytes.isEmpty()) {
         throw RemocraResponseException(ErrorType.IMAGE_INVALIDE)
     }
 
     return try {
-        val image = ImageIO.read(ByteArrayInputStream(imageBytes))
+        val bufferedImage = ImageIO.read(ByteArrayInputStream(imageBytes))
             ?: throw RemocraResponseException(ErrorType.IMAGE_PNG_ILLISIBLE)
-        image.width
-    } catch (e: Exception) {
-        if (e is RemocraResponseException) throw e
+        if (isHeight) bufferedImage.height else bufferedImage.width
+    } catch (e: RemocraResponseException) {
+        throw e
+    } catch (_: Exception) {
         throw RemocraResponseException(ErrorType.IMAGE_PNG_ILLISIBLE)
     }
 }

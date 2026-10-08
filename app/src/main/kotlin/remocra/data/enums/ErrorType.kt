@@ -703,6 +703,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     //
     IMAGE_INVALIDE(32001, "L'image générée est invalide ou vide"),
     IMAGE_PNG_ILLISIBLE(32002, "Impossible de lire l'image PNG"),
+    IMAGE_CONVERSION_PIXEL_IMPOSSSIBLE(32003, "Impossible de convertir les dimensions de l'image en pixel"),
 
     //
     // ********************************************************************************
