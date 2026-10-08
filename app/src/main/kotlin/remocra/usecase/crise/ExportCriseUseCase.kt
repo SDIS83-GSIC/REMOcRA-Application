@@ -154,13 +154,13 @@ constructor(
                 <div class="section">
                     <h2>Informations générales</h2>
                     <p><strong>Nom de la crise :</strong> ${data.criseLibelle ?: "Non spécifié"}</p>
-                    <p><strong>Début de la crise :</strong> ${data.dateDebCrise?.let { dateUtils.format(it) } ?: "Aucune"}</p>
-                    <p><strong>Clôture de la crise :</strong> ${data.dateClotureCrise?.let { dateUtils.format(it) } ?: "Aucune"}</p>
-                    <p><strong>Période d'extraction :</strong> ${dateUtils.format(data.dateDebExtraction)} - ${dateUtils.format(data.dateFinExtraction)}</p>
-                    <p><strong>Date d'export :</strong> ${dateUtils.format(data.dateExport)}</p>
+                    <p><strong>Début de la crise :</strong> ${data.dateDebCrise?.let { "<time class='date-time-to-convert' datetime='$it'></time>" } ?: "Aucune"}</p>
+                    <p><strong>Clôture de la crise :</strong> ${data.dateClotureCrise?.let { "<time class='date-time-to-convert' datetime='$it'></time>" } ?: "Aucune"}</p>
+                    <p><strong>Période d'extraction :</strong> <time class='date-time-to-convert' datetime='${data.dateDebExtraction}'></time> - <time class='date-time-to-convert' datetime='${data.dateFinExtraction}'></time></p>
+                    <p><strong>Date d'export :</strong> <time class='date-time-to-convert' datetime='${data.dateExport}'></time></p>
                     <p><strong>Communes concernées :</strong> ${data.listeCommune?.joinToString(", ") ?: "Aucune"}</p>
                 </div>
-   
+
                 <div class="section">
                     <h2>Événements</h2>
                 """.trimIndent(),
@@ -172,12 +172,12 @@ constructor(
                 <div class="event">
                     <h3>${event.evenementLibelle}</h3>
                     <p><strong>Description :</strong> ${event.evenementDescription}</p>
-                    <p><strong>Date constat :</strong> ${event.evenementDateConstat?.let { dateUtils.format(it) } ?: "Aucune"}</p>
+                    <p><strong>Date constat :</strong> ${event.evenementDateConstat?.let { "<time class='date-time-to-convert' datetime='$it'></time>" } ?: "Aucune"}</p>
                     <p><strong>Origine :</strong> ${event.evenementOrigine}</p>
                     <p><strong>Importance :</strong> ${event.evenementImportance?.let { "★".repeat(it) } ?: "Aucune"}</p>
                     <p><strong>Événement clos :</strong> ${if (event.evenementEstFerme == true) "Oui" else "Non"}</p>
-                    ${if (event.evenementDateCloture != null) "<p><strong>Date de clôture :</strong> ${dateUtils.format(event.evenementDateCloture)}</p>" else ""}
-                    
+                    ${if (event.evenementDateCloture != null) "<p><strong>Date de clôture :</strong> <time class='date-time-to-convert' datetime='${event.evenementDateCloture}'></time></p>" else ""}
+
                     <h4>Messages associés :</h4>
                     """.trimIndent(),
                 )
@@ -189,7 +189,7 @@ constructor(
                             """
                     <div class="message">
                         <p><strong>Objet :</strong> ${msg.messageObjet}</p>
-                        <p><strong>Date constat :</strong> ${msg.messageDateConstat?.let { dateUtils.format(it) } ?: "Aucune"}</p>
+                        <p><strong>Date constat :</strong> ${msg.messageDateConstat?.let { "<time class='date-time-to-convert' datetime='$it'></time>" } ?: "Aucune"}</p>
                         <p><strong>Description :</strong> ${msg.messageDescription}</p>
                         <p><strong>Origine :</strong> ${msg.messageOrigine}</p>
                         <p><strong>Auteur :</strong> ${msg.messageUtilisateur }</p>
@@ -208,15 +208,30 @@ constructor(
                 """
                 </div>
                 <div class="footer">
-                    <p>Généré automatiquement - ${dateUtils.now()}</p>
+                    <p>Généré automatiquement - "<time class='date-time-to-convert' datetime='${dateUtils.now()}'></time>"</p>
                 </div>
             </div>
+            <script>
+                function formatDateHeure(date) {
+                    const pad = (n) => String(n).padStart(2, '0');
+                    return pad(date.getDate()) + '/' + pad(date.getMonth() + 1) + '/' + date.getFullYear() + ' à ' + pad(date.getHours()) + ':' + pad(date.getMinutes());
+                }
+                document.querySelectorAll('time.date-time-to-convert').forEach(function(el) {
+                    const datetime = el.getAttribute('datetime');
+                    if (datetime) {
+                        try {
+                            el.textContent = formatDateHeure(new Date(datetime));
+                        } catch(_) {
+                            el.textContent = datetime; // fallback si le parsing échoue
+                        }
+                    }
+                });
+            </script>
         </body>
         </html>
                 """.trimIndent(),
             )
         }
-
         return htmlContent
     }
 }
