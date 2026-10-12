@@ -479,6 +479,7 @@ export const URLS = {
   UPDATE_EVENEMENT_CATEGORIE: (evenementCategorieId: string) =>
     url`/admin/evenement-categorie/update/` + evenementCategorieId,
   LIST_EVENEMENT_CATEGORIE: url`/admin/evenement-categorie`,
+  EVENEMENT_CATEGORIE_LIST: url`/admin/evenement-categorie-list`,
   EVENEMENT_SOUS_CATEGORIE_LIST: url`/admin/evenement-sous-categorie-list`,
 
   ADD_EVENEMENT_SOUS_CATEGORIE: url`/admin/evenement-sous-categorie/create`,
@@ -2224,6 +2225,15 @@ export default [
         element: (
           <Authorization
             Component={EvenementSousCategorieList}
+            droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
+          />
+        ),
+      },
+      {
+        path: "evenement-categorie-list",
+        element: (
+          <Authorization
+            Component={ListEvenementCategorie}
             droits={[TYPE_DROIT.ADMIN_NOMENCLATURE]}
           />
         ),
