@@ -1,5 +1,11 @@
 = Release Notes
 
+== 3.0.12
+
+* https://redmine.atolcd.com/issues/306691[#306691]: Visites : optimisation de l'insertion en masse de visites
+
+Pour plus d'informations, consultez les tickets REDMINE associés.
+
 == 3.0.11
 
 * https://redmine.atolcd.com/issues/301683[#301683]: Suppression de l'anomalie INDISPONIBILITE_TEMP
@@ -32,6 +38,8 @@
 * https://redmine.atolcd.com/issues/305101[#305101]: [SDIS 973] Revoir calcul dispo
 * https://redmine.atolcd.com/issues/300162[#300156]: [SDIS 38] Symbole des réseau d'irrigation et de production de neige
 * https://redmine.atolcd.com/issues/221479[#221479]: [SDIS 42] Règles de disponibilité des PEI pour le SDIS
+
+Pour plus d'informations, consultez les tickets REDMINE associés.
 
 == 3.0.10
 
