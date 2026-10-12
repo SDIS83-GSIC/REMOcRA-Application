@@ -461,11 +461,12 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     UTILISATEUR_ACTION_EMAIL(10105, "Impossible de créer un utilisateur et de lui envoyer un mail d'initialisation."),
     UTILISATEUR_TOURNEE_RESERVEE(10106, "L'utilisateur a réservé une tournée."),
     UTILISATEUR_SUPPRESSION_KEYCLOAK(10107, "Impossible de supprimer l'utilisateur dans keycloak."),
-    UTILISATEUR_MAJ_KEYCLOAK(10108, "Impossible de modifier l'utilisateur dans keycloak."),
+    UTILISATEUR_MAJ_KEYCLOAK(10108, "Impossible de modifier l'utilisateur dans keycloak : $PLACEHOLDER_ERROR_TYPE"),
+    UTILISATEUR_VERIFICATION_KEYCLOAK(10109, "Impossible de vérifier l'existence de l'utilisateur dans keycloak $PLACEHOLDER_ERROR_TYPE"),
 
     // utilisateur import fichier
-    UTILISATEUR_IMPORT_EMPTY_FILE(10109, "Le fichier d'import utilisateur est vide"),
-    UTILISATEUR_IMPORT_EMPTY_ROW(10110, "Certaines informations sont manquantes"),
+    UTILISATEUR_IMPORT_EMPTY_FILE(10110, "Le fichier d'import utilisateur est vide"),
+    UTILISATEUR_IMPORT_EMPTY_ROW(10111, "Certaines informations sont manquantes"),
 
     //
     // ********************************************************************************
