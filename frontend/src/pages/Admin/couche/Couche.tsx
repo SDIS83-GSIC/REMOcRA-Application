@@ -101,8 +101,12 @@ export const prepareValues = (
       coucheTuilage: couche.coucheTuilage,
       coucheIconeUrl: couche.coucheIconeUrl,
       coucheLegendeUrl: couche.coucheLegendeUrl,
-      groupeFonctionnalitesHorsZcList: couche.groupeFonctionnalitesHorsZcList,
-      groupeFonctionnalitesZcList: couche.groupeFonctionnalitesZcList,
+      groupeFonctionnalitesHorsZcList:
+        couche.couchePublic === false
+          ? couche.groupeFonctionnalitesHorsZcList
+          : [],
+      groupeFonctionnalitesZcList:
+        couche.couchePublic === false ? couche.groupeFonctionnalitesZcList : [],
       moduleList: couche.moduleList,
       groupeCoucheId: couche.groupeCoucheId,
       coucheOpacite: couche.coucheOpacite,
@@ -319,9 +323,6 @@ const Couche = () => {
           <h4 className={"m-0 p-0 text-center h6"}>Paramètres</h4>
         </Col>
         <Col xs={12} lg={6}>
-          <CheckBoxInput name={`couchePublic`} label={"Publique"} />
-        </Col>
-        <Col xs={12} lg={6}>
           <CheckBoxInput name={`coucheActive`} label={"Active par défaut"} />
         </Col>
         <Col xs={12} lg={6}>
@@ -365,62 +366,69 @@ const Couche = () => {
             required={false}
           />
         </Col>
-        <Col xs={12} lg={6}>
-          <Multiselect
-            name={"groupeFonctionnalitesZcList"}
-            label="Profils autorisés sur zone de compétence"
-            tooltipText="Profils pour lesquels la couche est visible uniquement sur la zone de compétence de l'utilisateur connecté"
-            options={groupeFonctionnalitesState.data.filter(
-              (el) =>
-                !values.groupeFonctionnalitesHorsZcList?.some(
-                  (value) => value === el.id,
-                ),
-            )}
-            getOptionValue={(t) => t.id}
-            getOptionLabel={(t) => t.libelle}
-            value={groupeFonctionnalitesState.data.filter((el) =>
-              values.groupeFonctionnalitesZcList?.some(
-                (value) => value === el.id,
-              ),
-            )}
-            onChange={(value) => {
-              setFieldValue(
-                `groupeFonctionnalitesZcList`,
-                value.map((el) => el.id),
-              );
-            }}
-            isClearable={true}
-            required={false}
-          />
+        <Col xs={12} lg={12} className="mt-1">
+          <CheckBoxInput name={`couchePublic`} label={"Publique"} />
         </Col>
-        <Col xs={12} lg={6}>
-          <Multiselect
-            name={"groupeFonctionnalitesHorsZcList"}
-            label="Profils autorisés hors zone de compétence"
-            tooltipText="Profils pour lesquels la couche est complètement visible, sans prendre en compte la zone de compétence de l'utilisateur connecté"
-            options={groupeFonctionnalitesState.data.filter(
-              (el) =>
-                !values.groupeFonctionnalitesZcList?.some(
-                  (value) => value === el.id,
-                ),
-            )}
-            getOptionValue={(t) => t.id}
-            getOptionLabel={(t) => t.libelle}
-            value={groupeFonctionnalitesState.data.filter((el) =>
-              values.groupeFonctionnalitesHorsZcList?.some(
-                (value) => value === el.id,
-              ),
-            )}
-            onChange={(value) => {
-              setFieldValue(
-                `groupeFonctionnalitesHorsZcList`,
-                value.map((el) => el.id),
-              );
-            }}
-            isClearable={true}
-            required={false}
-          />
-        </Col>
+        {values.couchePublic === false && (
+          <>
+            <Col xs={12} lg={6}>
+              <Multiselect
+                name={"groupeFonctionnalitesZcList"}
+                label="Profils autorisés sur zone de compétence"
+                tooltipText="Profils pour lesquels la couche est visible uniquement sur la zone de compétence de l'utilisateur connecté"
+                options={groupeFonctionnalitesState.data.filter(
+                  (el) =>
+                    !values.groupeFonctionnalitesHorsZcList?.some(
+                      (value) => value === el.id,
+                    ),
+                )}
+                getOptionValue={(t) => t.id}
+                getOptionLabel={(t) => t.libelle}
+                value={groupeFonctionnalitesState.data.filter((el) =>
+                  values.groupeFonctionnalitesZcList?.some(
+                    (value) => value === el.id,
+                  ),
+                )}
+                onChange={(value) => {
+                  setFieldValue(
+                    `groupeFonctionnalitesZcList`,
+                    value.map((el) => el.id),
+                  );
+                }}
+                isClearable={true}
+                required={false}
+              />
+            </Col>
+            <Col xs={12} lg={6}>
+              <Multiselect
+                name={"groupeFonctionnalitesHorsZcList"}
+                label="Profils autorisés hors zone de compétence"
+                tooltipText="Profils pour lesquels la couche est complètement visible, sans prendre en compte la zone de compétence de l'utilisateur connecté"
+                options={groupeFonctionnalitesState.data.filter(
+                  (el) =>
+                    !values.groupeFonctionnalitesZcList?.some(
+                      (value) => value === el.id,
+                    ),
+                )}
+                getOptionValue={(t) => t.id}
+                getOptionLabel={(t) => t.libelle}
+                value={groupeFonctionnalitesState.data.filter((el) =>
+                  values.groupeFonctionnalitesHorsZcList?.some(
+                    (value) => value === el.id,
+                  ),
+                )}
+                onChange={(value) => {
+                  setFieldValue(
+                    `groupeFonctionnalitesHorsZcList`,
+                    value.map((el) => el.id),
+                  );
+                }}
+                isClearable={true}
+                required={false}
+              />
+            </Col>
+          </>
+        )}
 
         {/* Section Style */}
         <Col xs={12} className="p-2 bg-secondary mb-3 mt-3">

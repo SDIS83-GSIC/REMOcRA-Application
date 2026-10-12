@@ -85,12 +85,14 @@ constructor(
             )
         }
 
-        element.coucheFormData.groupeFonctionnalitesHorsZcList.forEach { groupeFonctionnalitesId ->
-            coucheRepository.insertGroupeFonctionnalites(element.coucheFormData.coucheId, groupeFonctionnalitesId, false)
-        }
+        if (!element.coucheFormData.couchePublic) {
+            element.coucheFormData.groupeFonctionnalitesHorsZcList.forEach { groupeFonctionnalitesId ->
+                coucheRepository.insertGroupeFonctionnalites(element.coucheFormData.coucheId, groupeFonctionnalitesId, false)
+            }
 
-        element.coucheFormData.groupeFonctionnalitesZcList.forEach { groupeFonctionnalitesId ->
-            coucheRepository.insertGroupeFonctionnalites(element.coucheFormData.coucheId, groupeFonctionnalitesId, true)
+            element.coucheFormData.groupeFonctionnalitesZcList.forEach { groupeFonctionnalitesId ->
+                coucheRepository.insertGroupeFonctionnalites(element.coucheFormData.coucheId, groupeFonctionnalitesId, true)
+            }
         }
 
         element.coucheFormData.moduleList.forEach { moduleType ->
