@@ -12,6 +12,8 @@ RUN apk add --no-cache jq=1.8.2-r0 && \
 COPY variables.json /opt/hop/variables.json
 
 COPY remocra.json /files/metadata/rdbms/remocra.json
+COPY sig_postgres.json /files/metadata/rdbms/sig_postgres.json
+COPY sig_oracle.json /files/metadata/rdbms/sig_oracle.json
 
 COPY local.json /files/metadata/pipeline-run-configuration/local.json
 
