@@ -34,7 +34,7 @@ class ImportCtpTask @Inject constructor(
             // on désactive les triggers pour éviter le lancer les événements pour chaque insert,
             // et notament de la vue v_pei_visite_date
             // on les lancera à la fin
-            visiteRepository.disabledAllTriggerOnVisite()
+            visiteRepository.disableTriggerOnInsertVisite()
 
             lignesAvecVisite.forEachIndexed { index, ligne ->
                 val peiRef = "PEI ${ligne.codeInsee}-${ligne.numeroInterne}"
@@ -48,7 +48,7 @@ class ImportCtpTask @Inject constructor(
                 }
             }
         } finally {
-            visiteRepository.enableAllTriggerOnVisite()
+            visiteRepository.enableTriggerOnInsertVisite()
             materializedViewRepository.refreshViewVisites()
         }
         logManager.info("Import CTP terminé : $nbSucces succès, $nbErreurs erreur(s) sur $total visite(s)")
