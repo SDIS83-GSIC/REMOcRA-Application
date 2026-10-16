@@ -23,7 +23,8 @@ import remocra.exception.RemocraResponseException
 import remocra.geoserver.GeoserverModule
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.document.DocumentUtils
-import remocra.utils.DateUtils
+import remocra.utils.DateUtils.Companion.PATTERN_MINUTE_SECONDE
+import remocra.utils.DateUtils.Companion.PATTERN_NATUREL_DATE_ONLY
 import remocra.utils.addQueryParameters
 import java.io.ByteArrayInputStream
 import java.io.FileInputStream
@@ -151,11 +152,11 @@ class GenereCarteTourneeUseCase @Inject constructor(
         // On ajoute aussi des variables textuelles
         context.put("libelleTournee", libelleTournee)
         context.put("nbPei", tourneeRepository.getNbPei(tourneeId).toString())
-        context.put("dateGeneration", dateUtils.format(dateUtils.now(), DateUtils.Companion.PATTERN_NATUREL_DATE_ONLY))
+        context.put("dateGeneration", dateUtils.format(dateUtils.now(), PATTERN_NATUREL_DATE_ONLY))
         context.put("scale", scale)
 
         val nomFichier = "$libelleTournee-${
-            dateUtils.format(dateUtils.now(), "yyyy-MM-dd-HH-mm-ss")
+            dateUtils.format(dateUtils.now(), PATTERN_MINUTE_SECONDE)
         }"
 
         // On s'assure que le répertoire existe, sinon on le crée
