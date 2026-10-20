@@ -23,7 +23,7 @@ class MailService @Inject constructor(
 
         bcc.forEach(email::addBcc)
         email.subject = subject
-        email.setHtmlMsg("<html><body><p>$body</p></body></html>")
+        email.setHtmlMsg("<html><body><div style=\"white-space: pre-line;\"><p>$body</p></div></body></html>")
         email.setTextMsg(body)
 
         if (attachment != null) {

@@ -182,7 +182,11 @@ class CoucheMetadataRepository @Inject constructor(private val dsl: DSLContext) 
             .join(COUCHE).on(COUCHE_METADATA.COUCHE_ID.eq(COUCHE.ID))
             .join(GROUPE_COUCHE).on(COUCHE.GROUPE_COUCHE_ID.eq(GROUPE_COUCHE.ID))
             .where(params.filterBy?.toCondition() ?: DSL.trueCondition())
-            .orderBy(params.sortBy?.toCondition())
+            .orderBy(
+                params.sortBy?.toCondition()
+                    ?.takeIf { it.isNotEmpty() }
+                    ?: listOf(COUCHE.CODE.asc()),
+            )
             .limit(params.limit)
             .offset(params.offset)
             .fetchInto(ResponseCouche::class.java)
