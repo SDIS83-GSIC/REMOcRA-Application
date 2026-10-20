@@ -21,7 +21,7 @@ class AdresseUtils {
                 DSL.`when`(Pei.PEI.SUFFIXE_VOIE.isNotNull, DSL.concat(Pei.PEI.SUFFIXE_VOIE, " ")).otherwise(""),
                 DSL.`when`(Pei.PEI.VOIE_ID.isNotNull, DSL.concat(VOIE.LIBELLE, " ")).otherwise(Pei.PEI.VOIE_TEXTE),
             )
-            return adresseField
+            return DSL.nullif(DSL.trim(adresseField), "")
         }
     }
 }

@@ -27,6 +27,9 @@ import { IconParametre } from "../../../components/Icon/Icon.tsx";
 import { hasDroit } from "../../../droits.tsx";
 import typeAgent from "../../../Entities/TypeAgentEntity.tsx";
 import { referenceColumnPei } from "../../../enums/ColumnPeiEnum.tsx";
+import referenceDfciListeCouche, {
+  DFCI_LISTE_COUCHE,
+} from "../../../enums/DfciListeCoucheEnum.tsx";
 import TYPE_DROIT from "../../../enums/DroitEnum.tsx";
 import typeAffichageCoordonnees from "../../../enums/TypeAffichageCoordonnees.tsx";
 import typeRouteHistoriquePei from "../../../enums/TypeRouteHistoriquePei.tsx";
@@ -58,6 +61,8 @@ type ParametresSectionDfci = {
   dfciTravauxDestinataireEmail: string;
   dfciTravauxObjetEmail: string;
   dfciTravauxCorpsEmail: string;
+  dfciToleranceDfciPisteMetres: number;
+  dfciListeCouche: DFCI_LISTE_COUCHE[];
 };
 
 type ParametresSectionMobile = {
@@ -420,6 +425,7 @@ export const AdminParametresInterne = () => {
       { name: "dfci.dfciTravauxDestinataireEmail", accordionIndex: 4 },
       { name: "dfci.dfciTravauxObjetEmail", accordionIndex: 4 },
       { name: "dfci.dfciTravauxCorpsEmail", accordionIndex: 4 },
+      { name: "dfci.dfciToleranceDfciPisteMetres", accordionIndex: 4 },
       // Permis (5)
       { name: "permis.permisToleranceChargementMetres", accordionIndex: 5 },
       // PEI (6) - dans l'ordre d'affichage
@@ -446,6 +452,22 @@ export const AdminParametresInterne = () => {
       { name: "pei.declarationPeiDestinataireEmail", accordionIndex: 6 },
       { name: "pei.declarationPeiObjetEmail", accordionIndex: 6 },
       { name: "pei.declarationPeiCorpsEmail", accordionIndex: 6 },
+      ...(values?.pei?.autoriserMailVisiteReception
+        ? [
+            {
+              name: "pei.peiOrganismeNotificationVisiteReception",
+              accordionIndex: 6,
+            },
+          ]
+        : []),
+      ...(values?.pei?.autoriserMailRoi
+        ? [
+            {
+              name: "pei.peiOrganismeNotificationRoi",
+              accordionIndex: 6,
+            },
+          ]
+        : []),
       // PEI longue indisponibilité (7)
       {
         name: "peiLongueIndispo.peiLongueIndisponibiliteMessage",
@@ -461,6 +483,7 @@ export const AdminParametresInterne = () => {
       },
       // Application mobile (9)
       { name: "mobile.dureeValiditeToken", accordionIndex: 9 },
+      { name: "mobile.gestionAgent", accordionIndex: 9 },
     ];
 
   return (
@@ -1208,6 +1231,16 @@ const AdminCouvertureHydraulique = ({
 };
 
 const AdminDfci = ({ values }: { values: ParametresSectionDfci }) => {
+  const { setFieldValue } = useFormikContext();
+
+  const listeCoucheDfci: IdCodeLibelleType[] = referenceDfciListeCouche.map(
+    (e) => ({
+      id: e.code,
+      code: e.code,
+      libelle: e.libelle,
+    }),
+  );
+
   return (
     values && (
       <>
@@ -1228,6 +1261,35 @@ const AdminDfci = ({ values }: { values: ParametresSectionDfci }) => {
             name="dfci.dfciTravauxCorpsEmail"
             label="Contenu du mail de notification lors d'une réception de travaux"
             tooltipText="Vous pouvez utiliser #[ORGANISME_UTILISATEUR]# et #[LIEN_TELECHARGEMENT]# dans votre message. Ces deux valeurs seront remplacées automatiquement."
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.INTEGER}>
+          <PositiveNumberInput
+            name="dfci.dfciToleranceDfciPisteMetres"
+            label="Tolérance (en m) de détection des pistes"
+          />
+        </AdminParametre>
+        <AdminParametre type={TYPE_PARAMETRE.MULTI_STRING}>
+          <Multiselect
+            name={"dfci.dfciListeCouche"}
+            label="Liste des couches DFCI à afficher"
+            options={listeCoucheDfci}
+            getOptionValue={(e) => e.id}
+            getOptionLabel={(e) => e.libelle}
+            value={
+              values?.dfciListeCouche?.map((e) =>
+                listeCoucheDfci?.find((r: IdCodeLibelleType) => r.id === e),
+              ) ?? undefined
+            }
+            onChange={(coucheDfci) => {
+              const coucheDfciListe: DFCI_LISTE_COUCHE[] = coucheDfci.map(
+                (e) => e.id,
+              );
+              coucheDfciListe.length > 0
+                ? setFieldValue("dfci.dfciListeCouche", coucheDfciListe)
+                : setFieldValue("dfci.dfciListeCouche", []);
+            }}
+            required={false}
           />
         </AdminParametre>
       </>

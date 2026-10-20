@@ -14,3 +14,5 @@ export const PAGINATION_OPTIONS = [10, 15, 25, 50, 100];
 export const DEFAULT_PAGINATION = 15; // Nombre d'éléments par page pour les tableaux
 
 export const AUCUNE_TOURNEE = "AUCUNE_TOURNEE"; // Valeur de filtre pour les PEIs sans tournée associée
+
+export const MIN_ZOOM_COUCHE_TRANSPARENTE = 12;

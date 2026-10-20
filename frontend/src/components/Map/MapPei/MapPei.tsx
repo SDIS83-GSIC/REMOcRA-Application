@@ -284,6 +284,7 @@ const MapPei = () => {
                     workingLayer?.getSource()?.clear();
                     setCoordonneesPeiCreate(null);
                     setShowFormPei(false);
+                    disabledTool("create-pei");
                   }}
                   map={map!}
                 />

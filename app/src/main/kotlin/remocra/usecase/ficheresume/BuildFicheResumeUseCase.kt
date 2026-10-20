@@ -116,7 +116,7 @@ constructor(
                     var data = if (peiData.peiTypePei == TypePei.PIBI) {
                         """
                                Diamètre : ${peiData.diametreLibelle.takeIfNotNullElseNonRenseigne()}
-                               Diamètre de canalisation : ${peiData.pibiDiametreCanalisation?.toString()?.takeIfNotNullElseNonRenseigne()}
+                               Diamètre de canalisation : ${peiData.pibiDiametreCanalisation.toString().takeIfNotNullElseNonRenseigne()}
                                Débit renforcé : ${if (peiData.pibiDebitRenforce == true) "Oui" else "Non"}
                         """.trimIndent().let {
                             peiData.pibiJumele?.let { jumele ->
@@ -139,7 +139,7 @@ constructor(
                                 "Illimitée"
                             } else {
                                 "${
-                                    peiData.penaCapacite.toString().takeIfNotNullElseNonRenseigne()
+                                    peiData.penaCapacite.toString().takeIfNotNullElseNonRenseignee()
                                 } ${peiData.penaCapacite?.let { " m³" } ?: ""}"
                             }
                         }}
@@ -155,7 +155,7 @@ constructor(
                                 it,
                                 DateUtils.PATTERN_NATUREL,
                             )
-                        }.takeIfNotNullElseNonRenseigne()
+                        }.takeIfNotNullElseNonRenseignee()
                     }
                         Dernier CTP : ${peiData.lastCtp?.let {
                         dateUtils.format(
@@ -180,7 +180,7 @@ constructor(
                         ResumeElement(
                             type = it.ficheResumeBlocTypeResumeData,
                             titre = it.ficheResumeBlocTitre,
-                            data = ficheResumeRepository.getCis(peiId)?.joinToString(),
+                            data = ficheResumeRepository.getCis(peiId).takeIf { it.isNotEmpty() }?.joinToString() ?: "Non renseigné",
                             colonne = it.ficheResumeBlocColonne,
                             ligne = it.ficheResumeBlocLigne,
                         ),
@@ -191,7 +191,7 @@ constructor(
                         ResumeElement(
                             type = it.ficheResumeBlocTypeResumeData,
                             titre = it.ficheResumeBlocTitre,
-                            data = ficheResumeRepository.getCaserne(peiId),
+                            data = ficheResumeRepository.getCaserne(peiId).takeIfNotNullElseNonRenseignee(),
                             colonne = it.ficheResumeBlocColonne,
                             ligne = it.ficheResumeBlocLigne,
                         ),
@@ -199,8 +199,8 @@ constructor(
                 }
                 TypeResumeElement.OBSERVATION -> {
                     // Ajout de l'observation du PEI (champ global) et de la dernière visite
-                    val observationPei = peiData.peiObservation?.takeIfNotNullElseNonRenseigne()
-                    val observationVisite = ficheResumeRepository.getLastObservation(peiId)?.takeIfNotNullElseNonRenseigne()
+                    val observationPei = peiData.peiObservation.takeIfNotNullElseNonRenseignee()
+                    val observationVisite = ficheResumeRepository.getLastObservation(peiId).takeIfNotNullElseNonRenseignee()
                     val data = """
                         Observation du PEI : $observationPei
                         Observation de la dernière visite : $observationVisite
@@ -261,6 +261,19 @@ constructor(
         val siteLibelle: String?,
     )
 
-    private fun String?.takeIfNotNullElseNonRenseigne() =
-        this.takeIf { !it.isNullOrBlank() && it != "null" } ?: "Non renseigné"
+    private val NON_RENSEIGNE = "Non renseigné"
+    private val NON_RENSEIGNEE = "Non renseignée"
+
+    private fun takeIfNotNullElseNonRenseigne(value: String?, isMasculin: Boolean): String =
+        value.takeIf { !it.isNullOrBlank() && it != "null" } ?: if (isMasculin) {
+            NON_RENSEIGNE
+        } else {
+            NON_RENSEIGNEE
+        }
+
+    private fun String?.takeIfNotNullElseNonRenseignee(): String =
+        takeIfNotNullElseNonRenseigne(this, false)
+
+    private fun String?.takeIfNotNullElseNonRenseigne(): String =
+        takeIfNotNullElseNonRenseigne(this, true)
 }

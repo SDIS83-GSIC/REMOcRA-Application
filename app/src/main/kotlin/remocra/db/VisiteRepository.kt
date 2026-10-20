@@ -372,4 +372,12 @@ class VisiteRepository
             .where(VISITE.PEI_ID.eq(peiId))
             .orderBy(VISITE.DATE.desc())
             .fetch(VISITE.DATE)
+
+    fun disabledAllTriggerOnVisite() {
+        dsl.execute("ALTER TABLE ${VISITE.qualifiedName} DISABLE TRIGGER ALL;")
+    }
+
+    fun enableAllTriggerOnVisite() {
+        dsl.execute("ALTER TABLE ${VISITE.qualifiedName} ENABLE TRIGGER ALL;")
+    }
 }

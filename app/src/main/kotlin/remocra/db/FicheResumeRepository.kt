@@ -188,7 +188,7 @@ class FicheResumeRepository @Inject constructor(private val dsl: DSLContext) : A
         val grosDebit: Boolean,
     )
 
-    fun getCis(peiId: UUID): Collection<String>? = dsl.selectDistinct(
+    fun getCis(peiId: UUID): Collection<String> = dsl.selectDistinct(
         ORGANISME.LIBELLE,
     ).from(ORGANISME)
         .join(TYPE_ORGANISME)

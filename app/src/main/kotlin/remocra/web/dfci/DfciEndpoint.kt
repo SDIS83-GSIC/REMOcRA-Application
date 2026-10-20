@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.inject.Inject
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.ws.rs.Consumes
+import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.PUT
 import jakarta.ws.rs.Path
@@ -16,6 +17,10 @@ import org.locationtech.jts.geom.Geometry
 import remocra.auth.Public
 import remocra.auth.RequireDroits
 import remocra.auth.userInfo
+import remocra.db.DfciCategoriePisteRepository
+import remocra.db.DfciMassifRepository
+import remocra.db.DfciOuvrageRepository
+import remocra.db.DfciPrestataireRepository
 import remocra.db.DfciRepository
 import remocra.db.UtilisateurRepository
 import remocra.db.jooq.remocra.enums.Droit
@@ -39,6 +44,14 @@ class DfciEndpoint : AbstractEndpoint() {
     lateinit var receptionTravauxUseCase: ReceptionTravauxUseCase
 
     @Inject lateinit var dfciRepository: DfciRepository
+
+    @Inject lateinit var dfciCategoriePisteRepository: DfciCategoriePisteRepository
+
+    @Inject lateinit var dfciMassifRepository: DfciMassifRepository
+
+    @Inject lateinit var dfciPrestataireRepository: DfciPrestataireRepository
+
+    @Inject lateinit var dfciOuvrageRepository: DfciOuvrageRepository
 
     @POST
     @Path("/check")
@@ -65,4 +78,48 @@ class DfciEndpoint : AbstractEndpoint() {
             ),
         ).build()
     }
+
+    /**
+     * Endpoint pour récupérer l'id, code libelle de la table dfci_Massif
+     */
+    @GET
+    @Path("/massif")
+    @Public("En attente du tableau de droit")
+    fun getAllDfciMassif(): Response =
+        Response.ok(
+            dfciMassifRepository.getAllDfciMassifIdCodeLibelle(),
+        ).build()
+
+    /**
+     * Endpoint pour récupérer l'id, code libelle de la table dfci_categorie_piste
+     */
+    @GET
+    @Path("/catego-piste")
+    @Public("En attente du tableau de droit")
+    fun getAllDfciCategoriePiste(): Response =
+        Response.ok(
+            dfciCategoriePisteRepository.getAllDfciCategoriePisteIdCodeLibelle(),
+        ).build()
+
+    /**
+     * Endpoint pour récupérer l'id, code libelle de la table dfci_prestataire
+     */
+    @GET
+    @Path("/prestataire")
+    @Public("En attente du tableau de droit")
+    fun getAllDfciPrestataire(): Response =
+        Response.ok(
+            dfciPrestataireRepository.getAllDfciPrestataireIdCodeLibelle(),
+        ).build()
+
+    /**
+     * Endpoint pour récupérer l'id, code libelle de la table dfci_ouvrage
+     */
+    @GET
+    @Path("/ouvrage")
+    @Public("En attente du tableau de droit")
+    fun getAllDfciOuvrage(): Response =
+        Response.ok(
+            dfciOuvrageRepository.getAllDfciOuvrageIdCodeLibelle(),
+        ).build()
 }

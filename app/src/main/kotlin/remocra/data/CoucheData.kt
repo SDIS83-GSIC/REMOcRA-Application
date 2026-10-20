@@ -32,13 +32,13 @@ data class SimplifiedCoucheData(
     val coucheLibelle: String?,
     val coucheCode: String?,
     val coucheNom: String?,
-    val groupeFonctionnaliteList: Collection<GroupeFonctionnalite> = listOf(),
+    val groupeFonctionnaliteList: Collection<GroupeFonctionnalites> = listOf(),
 )
 
-data class GroupeFonctionnalite(
-    val groupeFonctionnaliteId: UUID,
-    val groupeFonctionnaliteCode: String,
-    val groupeFonctionnaliteLibelle: String,
+data class GroupeFonctionnalites(
+    val groupeFonctionnalitesId: UUID,
+    val groupeFonctionnalitesCode: String,
+    val groupeFonctionnalitesLibelle: String,
 )
 
 data class ResponseCouche(
@@ -53,7 +53,7 @@ data class ResponseCouche(
     val coucheMetadataActif: Boolean = false,
     val coucheMetadataPublic: Boolean = false,
 
-    val groupeFonctionnaliteList: Collection<GroupeFonctionnalite>? = emptyList(),
+    val groupeFonctionnaliteList: Collection<GroupeFonctionnalites>? = emptyList(),
 )
 
 data class CoucheMetadata(

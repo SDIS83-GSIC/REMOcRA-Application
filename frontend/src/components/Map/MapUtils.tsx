@@ -9,7 +9,10 @@ import CircleStyle from "ol/style/Circle";
 import { PeiInfoEntityElement } from "../../Entities/PeiEntity.tsx";
 import SOURCE_CARTO from "../../enums/SourceCartoEnum.tsx";
 import url, { getFetchOptions } from "../../module/fetch.tsx";
-import { EPSG_3857 } from "../../utils/constantsUtils.tsx";
+import {
+  EPSG_3857,
+  MIN_ZOOM_COUCHE_TRANSPARENTE,
+} from "../../utils/constantsUtils.tsx";
 import { toOpenLayer } from "./Map.tsx";
 import { optimizeVectorLayer } from "./MapPerformanceUtils.tsx";
 
@@ -173,10 +176,10 @@ export function createVectorLayer(
       style ??
       new Style({
         fill: new Fill({
-          color: "rgba(0, 0, 0, 0)",
-        }),
+          color: "rgba(0, 0, 0, 0.01)", //Applique un style invisible à l'oeil nu par defaut en l'absence de geoserver
+        }), //(bug OpenLayer ne permettant pas de cliquer sur des lignes totalement transparentes)
         stroke: new Stroke({
-          color: "rgba(0, 0, 0, 0)",
+          color: "rgba(0, 0, 0, 0.01)",
           width: 4,
         }),
         image: new CircleStyle({
@@ -192,7 +195,7 @@ export function createVectorLayer(
     extent: map.getView().calculateExtent(),
     opacity: 1,
     visible: true,
-    minZoom: 12,
+    minZoom: MIN_ZOOM_COUCHE_TRANSPARENTE,
     minResolution: 0,
     maxResolution: 99999,
     zIndex: 9999,

@@ -3,15 +3,34 @@ package remocra.tasks
 import jakarta.inject.Inject
 import remocra.GlobalConstants
 import remocra.auth.WrappedUserInfo
+import remocra.data.DfciAireData
+import remocra.data.DfciDebData
+import remocra.data.DfciPanneauData
+import remocra.data.DfciPisteData
+import remocra.data.IdCodeVersion
 import remocra.data.NotificationMailData
 import remocra.data.enums.ErrorType
 import remocra.db.CommuneRepository
+import remocra.db.DfciAiresRepository
+import remocra.db.DfciCategoriePisteRepository
+import remocra.db.DfciDebRepository
+import remocra.db.DfciMassifRepository
+import remocra.db.DfciOuvrageRepository
+import remocra.db.DfciPanneauRepository
+import remocra.db.DfciPistesRepository
+import remocra.db.DfciPrestataireRepository
 import remocra.db.EntrepotSigRepository
+import remocra.db.SynchroRequete
 import remocra.db.VoieRepository
 import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.db.sig.SigRepository
 import remocra.db.sig.data.joinColumnNames
 import remocra.exception.RemocraResponseException
+import remocra.usecase.dfci.DetecterConflit
+import remocra.usecase.dfci.DetecterConflitDfciAireUseCase
+import remocra.usecase.dfci.DetecterConflitDfciDebUseCase
+import remocra.usecase.dfci.DetecterConflitDfciPanneauUseCase
+import remocra.usecase.dfci.DetecterConflitDfciPisteUseCase
 import remocra.utils.RequestUtils
 import kotlin.time.DurationUnit
 import kotlin.time.TimeSource
@@ -24,6 +43,18 @@ constructor(
     private val entrepotSigRepository: EntrepotSigRepository,
     private val sigRepository: SigRepository,
     private val requestUtils: RequestUtils,
+    private val dfciCategoriePisteRepository: DfciCategoriePisteRepository,
+    private val dfciMassifRepository: DfciMassifRepository,
+    private val dfciPrestataireRepository: DfciPrestataireRepository,
+    private val dfciOuvrageRepository: DfciOuvrageRepository,
+    private val dfciPistesRepository: DfciPistesRepository,
+    private val dfciAiresRepository: DfciAiresRepository,
+    private val dfciDebRepository: DfciDebRepository,
+    private val dfciPanneauRepository: DfciPanneauRepository,
+    private val detecteConflitDfciPisteUseCase: DetecterConflitDfciPisteUseCase,
+    private val detecteConflitDfciAireUseCase: DetecterConflitDfciAireUseCase,
+    private val detecterConflitDfciDebUseCase: DetecterConflitDfciDebUseCase,
+    private val detecterConflitDfciPanneauUseCase: DetecterConflitDfciPanneauUseCase,
 ) :
     SchedulableTask<SynchronisationSIGTaskParameter, SchedulableTaskResults>() {
 
@@ -160,6 +191,70 @@ constructor(
                         }
                     }
                 }
+                TypeSynchronisation.MISE_A_JOUR_DFCI_CATEGORIE_PISTE -> {
+                    logManager.info("[${tableASynchroniser.typeSynchronisation}] Mise à jour de la table remocra.dfci_categorie_piste")
+                    dfciCategoriePisteRepository.updateElementFromSig()
+                    logManager.info("[${tableASynchroniser.typeSynchronisation}] Insertion des nouvelles données dans remocra.dfci_categorie_piste")
+                    dfciCategoriePisteRepository.getAllNewElementsFromSig().forEach {
+                        dfciCategoriePisteRepository.insertDfciCategoriePisteFromData(it)
+                    }
+                }
+                TypeSynchronisation.MISE_A_JOUR_DFCI_MASSIF -> {
+                    logManager.info("[${tableASynchroniser.typeSynchronisation}] Mise à jour de la table remocra.dfci_massif")
+                    dfciMassifRepository.updateElementFromSig()
+                    logManager.info("[${tableASynchroniser.typeSynchronisation}] Insertion des nouvelles données dans remocra.dfci_massif")
+                    dfciMassifRepository.getAllNewElementsFromSig().forEach {
+                        dfciMassifRepository.insertDfciMassifFromData(it)
+                    }
+                }
+                TypeSynchronisation.MISE_A_JOUR_DFCI_PRESTATAIRE -> {
+                    logManager.info("[${tableASynchroniser.typeSynchronisation}] Mise à jour de la table remocra.dfci_prestataire")
+                    dfciPrestataireRepository.updateDfciPrestataireFromSig()
+                    logManager.info("[${tableASynchroniser.typeSynchronisation}] Insertion des nouvelles données dans remocra.dfci_prestataire")
+                    dfciPrestataireRepository.getAllNewElementsFromSig().forEach {
+                        dfciPrestataireRepository.insertDfciPrestataireFromData(it)
+                    }
+                }
+                TypeSynchronisation.MISE_A_JOUR_DFCI_OUVRAGE -> {
+                    logManager.info("[${tableASynchroniser.typeSynchronisation}] Mise à jour de la table remocra.dfci_ouvrage")
+                    dfciOuvrageRepository.updateElementFromSig()
+                    logManager.info("[${tableASynchroniser.typeSynchronisation}] Insertion des nouvelles données dans remocra.dfci_ouvrage")
+                    dfciOuvrageRepository.getAllNewElementsFromSig().forEach {
+                        dfciOuvrageRepository.insertDfciOuvrageFromData(it)
+                    }
+                }
+                TypeSynchronisation.MISE_A_JOUR_REMOCRA_DFCI_PISTE -> {
+                    logManager.info("[${tableASynchroniser.typeSynchronisation}] Mise à jour des données existantes dans remocra.dfci_piste")
+                    updateOldData(dfciPistesRepository, detecteConflitDfciPisteUseCase, userInfo)
+                    logManager.info("[${tableASynchroniser.typeSynchronisation}] Insertion des nouvelles données dans remocra.dfci_piste")
+                    dfciPistesRepository.getAllNewElementsFromSig().forEach {
+                        dfciPistesRepository.insertDfciPisteFromData(it)
+                    }
+                }
+                TypeSynchronisation.MISE_A_JOUR_REMOCRA_DFCI_AIRE -> {
+                    logManager.info("[${tableASynchroniser.typeSynchronisation}] Mise à jour des données existantes dans remocra.dfci_aire")
+                    updateOldData(dfciAiresRepository, detecteConflitDfciAireUseCase, userInfo)
+                    logManager.info("[${tableASynchroniser.typeSynchronisation}] Insertion des nouvelles données dans remocra.dfci_aire")
+                    dfciAiresRepository.getAllNewElementsFromSig().forEach {
+                        dfciAiresRepository.insertDfciAireFromData(it)
+                    }
+                }
+                TypeSynchronisation.MISE_A_JOUR_REMOCRA_DFCI_DEB -> {
+                    logManager.info("[${tableASynchroniser.typeSynchronisation}] Mise à jour des données existantes dans remocra.dfci_deb")
+                    updateOldData(dfciDebRepository, detecterConflitDfciDebUseCase, userInfo)
+                    logManager.info("[${tableASynchroniser.typeSynchronisation}] Insertion des nouvelles données dans remocra.dfci_deb")
+                    dfciDebRepository.getAllNewElementsFromSig().forEach {
+                        dfciDebRepository.insertDfciDebFromData(it)
+                    }
+                }
+                TypeSynchronisation.MISE_A_JOUR_REMOCRA_DFCI_PANNEAU -> {
+                    logManager.info("[${tableASynchroniser.typeSynchronisation}] Mise à jour des données existantes dans remocra.dfci_panneau")
+                    updateOldData(dfciPanneauRepository, detecterConflitDfciPanneauUseCase, userInfo)
+                    logManager.info("[${tableASynchroniser.typeSynchronisation}] Insertion des nouvelles données dans remocra.dfci_panneau")
+                    dfciPanneauRepository.getAllNewElementsFromSig().forEach {
+                        dfciPanneauRepository.insertDfciPanneauFromData(it)
+                    }
+                }
             }
             logManager.info("[${tableASynchroniser.typeSynchronisation}] Fin du post-traitement (${getStringifiedExecutionDuration(startPostTraitementTable)})")
         }
@@ -204,6 +299,47 @@ constructor(
             TypeSynchronisation.MISE_A_JOUR_REMOCRA_COMMUNE -> communeRepository.dropViewForEntrepotSig()
             TypeSynchronisation.MISE_A_JOUR_REMOCRA_VOIE -> voieRepository.dropViewForEntrepotSig()
             TypeSynchronisation.STOCKAGE_SIMPLE -> Unit
+            TypeSynchronisation.MISE_A_JOUR_DFCI_MASSIF -> dfciMassifRepository.dropViewForEntrepotSig()
+            TypeSynchronisation.MISE_A_JOUR_DFCI_CATEGORIE_PISTE -> dfciCategoriePisteRepository.dropViewForEntrepotSig()
+            TypeSynchronisation.MISE_A_JOUR_DFCI_PRESTATAIRE -> dfciPrestataireRepository.dropViewForEntrepotSig()
+            TypeSynchronisation.MISE_A_JOUR_DFCI_OUVRAGE -> dfciOuvrageRepository.dropViewForEntrepotSig()
+            TypeSynchronisation.MISE_A_JOUR_REMOCRA_DFCI_PISTE -> dfciPistesRepository.dropViewForEntrepotSig()
+            TypeSynchronisation.MISE_A_JOUR_REMOCRA_DFCI_DEB -> dfciDebRepository.dropViewForEntrepotSig()
+            TypeSynchronisation.MISE_A_JOUR_REMOCRA_DFCI_AIRE -> dfciAiresRepository.dropViewForEntrepotSig()
+            TypeSynchronisation.MISE_A_JOUR_REMOCRA_DFCI_PANNEAU -> dfciPanneauRepository.dropViewForEntrepotSig()
+        }
+    }
+
+    /**
+     * Met à jour les anciennes données de la table à synchroniser
+     */
+    private fun <T : IdCodeVersion> updateOldData(repository: SynchroRequete<T>, useCase: DetecterConflit<T>, userInfo: WrappedUserInfo) {
+        val mapDataSig: Map<String, T> = repository.getAllOldElementsFromSig()
+        if (mapDataSig.isEmpty()) return
+        repository.getAllOldElementsFromRemocra().forEach { dataRemocra ->
+            val dataFromSig = mapDataSig[dataRemocra.code]
+            if (dataFromSig != null) {
+                @Suppress("UNCHECKED_CAST")
+                val dataSig: T = when (dataFromSig) {
+                    is DfciPisteData -> dataFromSig.copy(id = dataRemocra.id)
+                    is DfciAireData -> dataFromSig.copy(id = dataRemocra.id)
+                    is DfciDebData -> dataFromSig.copy(id = dataRemocra.id)
+                    is DfciPanneauData -> dataFromSig.copy(id = dataRemocra.id)
+                    else -> throw IllegalStateException("Erreur lors de la liaison entre les données de REMOcRA et du SIG")
+                } as T
+                if (dataRemocra.version < dataSig.version) {
+                    when (dataSig) {
+                        is DfciPisteData -> dfciPistesRepository.updateDfciPisteFromData(dataSig)
+                        is DfciAireData -> dfciAiresRepository.updateDfciAireFromData(dataSig)
+                        is DfciDebData -> dfciDebRepository.updateDfciDebFromData(dataSig)
+                        is DfciPanneauData -> dfciPanneauRepository.updateDfciPanneauFromData(dataSig)
+                    }
+                } else if (dataRemocra.version == dataSig.version) {
+                    if (useCase.detecterConflit(dataRemocra, dataSig, userInfo)) {
+                        logManager.warn("Conflits lors de la synchronisation, veuillez-vous rendre dans la page de gestion")
+                    }
+                }
+            }
         }
     }
 }
@@ -228,4 +364,12 @@ enum class TypeSynchronisation(val ordre: Int) {
     MISE_A_JOUR_REMOCRA_COMMUNE(1),
     MISE_A_JOUR_REMOCRA_VOIE(2),
     STOCKAGE_SIMPLE(3),
+    MISE_A_JOUR_DFCI_CATEGORIE_PISTE(4),
+    MISE_A_JOUR_DFCI_MASSIF(5),
+    MISE_A_JOUR_DFCI_PRESTATAIRE(6),
+    MISE_A_JOUR_DFCI_OUVRAGE(7),
+    MISE_A_JOUR_REMOCRA_DFCI_PISTE(8),
+    MISE_A_JOUR_REMOCRA_DFCI_DEB(9),
+    MISE_A_JOUR_REMOCRA_DFCI_AIRE(10),
+    MISE_A_JOUR_REMOCRA_DFCI_PANNEAU(11),
 }

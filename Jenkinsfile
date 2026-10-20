@@ -1,4 +1,4 @@
-library 'atolcd-jenkins'
+@Library('atolcd-jenkins') _
 
 // Cette version doit être synchronisée :
 // - avec le gradle/wrapper/gradle-wrapper.properties

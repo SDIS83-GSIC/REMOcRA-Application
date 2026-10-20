@@ -501,6 +501,301 @@ export const TooltipScriptVue = ({
           Toutes les colonnes sont obligatoires.
         </>
       );
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_REMOCRA_DFCI_AIRE:
+      return (
+        <>
+          La vue doit s'appeler "v_dfci_aire_sig" et contenir ces colonnes :{" "}
+          <br />
+          <strong>v_dfci_aire_sig_id</strong>: Identifiant unique de l'aire en
+          base de données.
+          <br />
+          <strong>v_dfci_aire_sig_amenagement</strong>: Aménagement de l'aire.
+          <br />
+          <strong>v_dfci_aire_sig_date_gps</strong>: Date du relevé GPS de
+          l'aire.
+          <br />
+          <strong>v_dfci_aire_sig_grande_dimension</strong>: Plus grand
+          dimension de l'aire. Peut être nul.
+          <br />
+          <strong>v_dfci_aire_sig_petite_dimension</strong>: Plus petite
+          dimension de l'aire. Peut être nul.
+          <br />
+          <strong>v_dfci_aire_sig_type</strong>: Type de l'aire.
+          <br />
+          <strong>v_dfci_aire_sig_dfci_piste_id</strong>: Piste référencée par
+          l'aire. Peut être nul.
+          <br />
+          <strong>v_dfci_aire_sig_remarque</strong>: Remarque sur l'aire l'aire.
+          Peut être nul.
+          <br />
+          <strong>v_dfci_aire_sig_geometrie</strong>: Emplacement géometrique de
+          l'aire.
+          <br />
+          <strong>v_dfci_aire_sig_code</strong>: Code unique de l'aire.
+          <br />
+          <strong>v_dfci_aire_sig_version</strong>: Version en base de données
+          de l'aire.
+          <br />
+          Toutes les colonnes sont obligatoires.
+        </>
+      );
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_REMOCRA_DFCI_PISTE:
+      return (
+        <>
+          La vue doit s'appeler "v_dfci_piste_sig" et contenir ces colonnes :{" "}
+          <br />
+          <strong>v_dfci_piste_sig_id</strong>: Identifiant unique de la piste
+          en base de données.
+          <br />
+          <strong>v_dfci_piste_sig_adresse</strong>: Adresse de la piste. Peut
+          être nul.
+          <br />
+          <strong>v_dfci_piste_sig_annee_programme</strong>: Année de
+          programmation de la piste. Peut être nul.
+          <br />
+          <strong>v_dfci_piste_sig_annee_travaux</strong> : Année des derniers
+          travaux. Peut être nul.
+          <strong>v_dfci_piste_sig_circulation</strong>: Condition de
+          circulation de la piste.
+          <br />
+          <strong>v_dfci_piste_sig_date_gps</strong>: Date du relevé GPS de la
+          piste.
+          <br />
+          <strong>v_dfci_piste_sig_libelle</strong>: Libellé de la piste.
+          <br />
+          <strong>v_dfci_piste_sig_numero</strong>: Numéro de la piste.
+          <br />
+          <strong>v_dfci_piste_sig_ouverture</strong>: Ouverture de la piste à
+          la cirulation publique.
+          <br />
+          <strong>v_dfci_piste_sig_est_dfci</strong>: La piste est une piste
+          DFCI.
+          <br />
+          <strong>v_dfci_piste_sig_retournement</strong>: Retournement possible
+          tous les km.
+          <br />
+          <strong>v_dfci_piste_sig_num_troncon</strong>: Numéro du tronçon dans
+          la piste.
+          <br />
+          <strong>v_dfci_piste_sig_num_objectif</strong>: Numéro de l'objectif.
+          Peut être nul.
+          <br />
+          <strong>v_dfci_piste_sig_libelle_objectif</strong>: Libellé de
+          l'objectif. Peut être nul.
+          <br />
+          <strong>v_dfci_piste_sig_geometrie</strong>: Emplacement géometrique
+          de la piste.
+          <br />
+          <strong>v_dfci_piste_sig_impraticabilite</strong>: Cause de
+          l'impraticabilité de la piste. Peut être nul.
+          <br />
+          <strong>v_dfci_piste_sig_travaux</strong>: Type de travaux sur la
+          piste. Peut être nul.
+          <br />
+          <strong>v_dfci_piste_sig_voie</strong>: Type de voie DFCI.
+          <br />
+          <strong>v_dfci_piste_sig_impasse</strong>: Présence d'une impasse sur
+          la piste.
+          <br />
+          <strong>v_dfci_piste_sig_foncier</strong>: Assise foncière du tronçon
+          de piste. Peut être nul.
+          <br />
+          <strong>v_dfci_piste_sig_croisement</strong>: Possibilité de
+          croisement sur la piste.
+          <br />
+          <strong>v_dfci_piste_sig_programme</strong>: Type de programme sur la
+          piste. Peut être nul.
+          <br />
+          <strong>v_dfci_piste_sig_praticabilite</strong>: La piste est
+          praticable.
+          <br />
+          <strong>v_dfci_piste_sig_remarque</strong>: Remarque sur la piste.
+          Peut être nul.
+          <br />
+          <strong>v_dfci_piste_sig_code</strong>: Code unique de la piste
+          <br />
+          <strong>v_dfci_piste_sig_dfci_categorie_piste_id</strong>: Identifiant
+          de la catégorie de piste.
+          <br />
+          <strong>v_dfci_piste_sig_dfci_massif_id</strong>: Identifiant du
+          massif où se trouve la piste.
+          <br />
+          <strong>v_dfci_piste_sig_dfci_prestataire_id</strong>: Identifiant du
+          prestataire. Peut être nul.
+          <br />
+          <strong>v_dfci_piste_sig_dfci_ouvrage_id</strong>: Identifiant de
+          l'ouvrage. Peut être nul.
+          <br />
+          <strong>v_dfci_piste_sig_version</strong>: Version en base de donnée
+          de la piste.
+          <br />
+          Toutes les colonnes sont obligatoires.
+        </>
+      );
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_REMOCRA_DFCI_DEB:
+      return (
+        <>
+          La vue doit s'appeler "v_dfci_deb_sig" et contenir ces colonnes :{" "}
+          <br />
+          <strong>v_dfci_deb_sig_id</strong>: Identifiant unique du
+          débroussaillement en base de données.
+          <br />
+          <strong>v_dfci_deb_sig_libelle</strong>: Libellé du débroussaillement.
+          <br />
+          <strong>v_dfci_deb_sig_annee_programme</strong>: Année de
+          programmation du débroussaillement. Peut être nul.
+          <br />
+          <strong>v_dfci_deb_sig_annee_travaux</strong> : Année des derniers
+          travaux. Peut être nul.
+          <strong>v_dfci_deb_sig_mois_travaux</strong>: Mois des travaux. Peut
+          être nul.
+          <br />
+          <strong>v_dfci_deb_sig_annee_edition</strong>: Année d'édition du
+          débroussaillement. Peut être nul.
+          <br />
+          <strong>v_dfci_deb_sig_largeur</strong>: Largeur du débroussaillement.
+          <br />
+          <strong>v_dfci_deb_sig_surface</strong>: Surface du débroussaillement.
+          <br />
+          <strong>v_dfci_deb_sig_geometrie</strong>: Emplacement géometrique du
+          débroussaillement.
+          <br />
+          <strong>v_dfci_deb_sig_travaux</strong>: Type de travaux du
+          débroussaillement. Peut être nul.
+          <br />
+          <strong>v_dfci_deb_sig_type</strong>: Type de débroussaillement.
+          <br />
+          <strong>v_dfci_deb_sig_programme</strong>: Type de programme sur le
+          débroussaillement. Peut être nul.
+          <br />
+          <strong>v_dfci_deb_sig_remarque</strong>: Remarque sur le
+          débroussaillement. Peut être nul.
+          <br />
+          <strong>v_dfci_deb_sig_code</strong>: Code unique du
+          débroussaillement.
+          <br />
+          <strong>v_dfci_deb_sig_dfci_massif_id</strong>: Identifiant du massif
+          où se trouve le débroussaillement.
+          <br />
+          <strong>v_dfci_deb_sig_dfci_prestataire_id</strong>: Identifiant du
+          prestataire. Peut être nul.
+          <br />
+          <strong>v_dfci_deb_sig_dfci_ouvrage_id</strong>: Identifiant de
+          l'ouvrage. Peut être nul.
+          <br />
+          <strong>v_dfci_deb_sig_version</strong>: Version en base de donnée du
+          débroussaillement.
+          <br />
+          Toutes les colonnes sont obligatoires.
+        </>
+      );
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_REMOCRA_DFCI_PANNEAU:
+      return (
+        <>
+          La vue doit s'appeler "v_dfci_panneau_sig" et contenir ces colonnes :{" "}
+          <br />
+          <strong>v_dfci_panneau_sig_id</strong>: Identifiant unique du panneau
+          en base de données.
+          <br />
+          <strong>v_dfci_panneau_sig_type</strong>: Type de panneau.
+          <br />
+          <strong>v_dfci_panneau_sig_etat</strong>: Etat du panneau.
+          <br />
+          <strong>v_dfci_panneau_sig_bzero</strong>: B0 du panneau.
+          <br />
+          <strong>v_dfci_panneau_sig_date_gps</strong> : Relevé GPS du panneau.
+          <strong>v_dfci_panneau_sig_position</strong>: Position du panneau.
+          <br />
+          <strong>v_dfci_panneau_sig_equipement</strong>: Equipement panneauté.
+          <br />
+          <strong>v_dfci_panneau_sig_dfci_piste_id</strong>: Piste où se trouve
+          le panneau.
+          <br />
+          <strong>v_dfci_panneau_sig_num_piste</strong>: Présence du numéro de
+          piste sur le panneau.
+          <br />
+          <strong>v_dfci_panneau_sig_libelle_piste</strong>: Présence du libelle
+          de piste sur le panneau.
+          <br />
+          <strong>v_dfci_panneau_sig_geometrie</strong>: Emplacement géometrique
+          du panneau.
+          <br />
+          <strong>v_dfci_panneau_sig_remarque</strong>: Remarque sur le panneau.
+          Peut être nul.
+          <br />
+          <strong>v_dfci_panneau_sig_code</strong>: Code unique du panneau.
+          <br />
+          <strong>v_dfci_panneau_sig_version</strong>: Version en base de donnée
+          du panneau.
+          <br />
+          Toutes les colonnes sont obligatoires.
+        </>
+      );
+
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_DFCI_MASSIF:
+      return (
+        <>
+          La vue doit s'appeler "v_dfci_massif_sig" et contenir ces colonnes :{" "}
+          <br />
+          <strong>v_dfci_massif_sig_id</strong>: Identifiant unique du massif.
+          en base de données.
+          <br />
+          <strong>v_dfci_massif_sig_code</strong>: Code unique du massif.
+          <br />
+          <strong>v_dfci_massif_sig_libelle</strong>: Libellé du massif.
+          <br />
+          Toutes les colonnes sont obligatoires.
+        </>
+      );
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_DFCI_CATEGORIE_PISTE:
+      return (
+        <>
+          La vue doit s'appeler "v_dfci_categorie_piste_sig" et contenir ces
+          colonnes : <br />
+          <strong>v_dfci_categorie_piste_sig_id</strong>: Identifiant unique de
+          la catégorie de piste. en base de données.
+          <br />
+          <strong>v_dfci_categorie_piste_sig_code</strong>: Code unique de la
+          catégorie de piste.
+          <br />
+          <strong>v_dfci_categorie_piste_sig_libelle</strong>: Libellé de la
+          catégorie de piste.
+          <br />
+          Toutes les colonnes sont obligatoires.
+        </>
+      );
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_DFCI_OUVRAGE:
+      return (
+        <>
+          La vue doit s'appeler "v_dfci_ouvrage_sig" et contenir ces colonnes :{" "}
+          <br />
+          <strong>v_dfci_ouvrage_sig_id</strong>: Identifiant unique de
+          l'ouvrage en base de données.
+          <br />
+          <strong>v_dfci_ouvrage_sig_code</strong>: Code unique de l'ouvrage.
+          <br />
+          <strong>v_dfci_ouvrage_sig_libelle</strong>: Libellé de l'ouvrage.
+          <br />
+          Toutes les colonnes sont obligatoires.
+        </>
+      );
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_DFCI_PRESTATAIRE:
+      return (
+        <>
+          La vue doit s'appeler "v_dfci_prestataire_sig" et contenir ces
+          colonnes : <br />
+          <strong>v_dfci_prestataire_sig_id</strong>: Identifiant unique du
+          prestataire. en base de données.
+          <br />
+          <strong>v_dfci_prestataire_sig_code</strong>: Code unique du
+          prestataire.
+          <br />
+          <strong>v_dfci_prestataire_sig_libelle</strong>: Libellé du
+          prestataire.
+          <br />
+          Toutes les colonnes sont obligatoires.
+        </>
+      );
   }
 };
 
@@ -514,6 +809,22 @@ export function getDefaultValueForScriptVue(
       return "CREATE OR REPLACE VIEW entrepotsig.v_voie_sig AS SELECT voie.voie_id AS v_voie_sig_id, voie.voie_libelle AS v_voie_sig_libelle, voie.voie_geometrie AS v_voie_sig_geometrie, voie.voie_commune_id AS v_voie_sig_commune_id FROM remocra.voie;";
     case TYPE_SYNCHRONISATION_TABLE_SIG.STOCKAGE_SIMPLE:
       return null;
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_REMOCRA_DFCI_AIRE:
+      return "CREATE OR REPLACE VIEW entrepotsig.v_dfci_aire_sig AS SELECT dfci_aire_id AS v_dfci_aire_sig_id, dfci_aire_amenagement AS v_dfci_aire_sig_amenagement, dfci_aire_date_gps AS v_dfci_aire_sig_date_gps, dfci_aire_grande_dimension AS v_dfci_aire_sig_grande_dimension, dfci_aire_petite_dimension AS v_dfci_aire_sig_petite_dimension, dfci_aire_type AS v_dfci_aire_sig_type, dfci_aire_dfci_piste_id AS v_dfci_aire_sig_dfci_piste_id, dfci_aire_remarque AS v_dfci_aire_sig_remarque, dfci_aire_geometrie AS v_dfci_aire_sig_geometrie, dfci_aire_code AS v_dfci_aire_sig_code, dfci_aire_version AS v_dfci_aire_sig_version FROM remocra.dfci_aire;";
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_DFCI_CATEGORIE_PISTE:
+      return "CREATE OR REPLACE VIEW entrepotsig.v_dfci_categorie_piste_sig AS SELECT dfci_categorie_piste_id AS v_dfci_categorie_piste_sig_id, dfci_categorie_piste_code AS v_dfci_categorie_piste_sig_code, dfci_categorie_piste_libelle AS v_dfci_categorie_piste_sig_libelle FROM remocra.dfci_categorie_piste;";
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_REMOCRA_DFCI_DEB:
+      return "CREATE OR REPLACE VIEW entrepotsig.v_dfci_deb_sig AS SELECT dfci_deb_id AS v_dfci_deb_sig_id, dfci_deb_libelle AS v_dfci_deb_sig_libelle, dfci_deb_annee_programme AS v_dfci_deb_sig_annee_programme, dfci_deb_annee_travaux AS v_dfci_deb_sig_annee_travaux, dfci_deb_mois_travaux AS v_dfci_deb_sig_mois_travaux, dfci_deb_annee_edition AS v_dfci_deb_sig_annee_edition, dfci_deb_largeur AS v_dfci_deb_sig_largeur, dfci_deb_surface AS v_dfci_deb_sig_surface, dfci_deb_geometrie AS v_dfci_deb_sig_geometrie, dfci_deb_type AS v_dfci_deb_sig_type, dfci_deb_programme AS v_dfci_deb_sig_programme, dfci_deb_travaux AS v_dfci_deb_sig_travaux, dfci_deb_remarque AS v_dfci_deb_sig_remarque, dfci_deb_code AS v_dfci_deb_sig_code, dfci_deb_dfci_massif_id AS v_dfci_deb_sig_dfci_massif_id, dfci_deb_dfci_prestataire_id AS v_dfci_deb_sig_dfci_prestataire_id, dfci_deb_dfci_ouvrage_id AS v_dfci_deb_sig_dfci_ouvrage_id, dfci_deb_version AS v_dfci_deb_sig_version FROM remocra.dfci_deb;";
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_DFCI_MASSIF:
+      return "CREATE OR REPLACE VIEW entrepotsig.v_dfci_massif_sig AS SELECT dfci_massif_id AS v_dfci_massif_sig_id, dfci_massif_code AS v_dfci_massif_sig_code, dfci_massif_libelle AS v_dfci_massif_sig_libelle FROM remocra.dfci_massif;";
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_DFCI_OUVRAGE:
+      return "CREATE OR REPLACE VIEW entrepotsig.v_dfci_ouvrage_sig AS SELECT dfci_ouvrage_id AS v_dfci_ouvrage_sig_id, dfci_ouvrage_code AS v_dfci_ouvrage_sig_code, dfci_ouvrage_libelle AS v_dfci_ouvrage_sig_libelle FROM remocra.dfci_ouvrage;";
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_REMOCRA_DFCI_PANNEAU:
+      return "CREATE OR REPLACE VIEW entrepotsig.v_dfci_panneau_sig AS SELECT dfci_panneau_id AS v_dfci_panneau_sig_id, dfci_panneau_type AS v_dfci_panneau_sig_type, dfci_panneau_etat AS v_dfci_panneau_sig_etat, dfci_panneau_bzero AS v_dfci_panneau_sig_bzero, dfci_panneau_date_gps AS v_dfci_panneau_sig_date_gps, dfci_panneau_position AS v_dfci_panneau_sig_position, dfci_panneau_equipement AS v_dfci_panneau_sig_equipement, dfci_panneau_dfci_piste_id AS v_dfci_panneau_sig_dfci_piste_id, dfci_panneau_num_piste AS v_dfci_panneau_sig_num_piste, dfci_panneau_libelle_piste AS v_dfci_panneau_sig_libelle_piste, dfci_panneau_remarque AS v_dfci_panneau_sig_remarque, dfci_panneau_geometrie AS v_dfci_panneau_sig_geometrie, dfci_panneau_code AS v_dfci_panneau_sig_code, dfci_panneau_version AS v_dfci_panneau_sig_version FROM remocra.dfci_panneau;";
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_REMOCRA_DFCI_PISTE:
+      return "CREATE OR REPLACE VIEW entrepotsig.v_dfci_piste_sig AS SELECT dfci_piste_id AS v_dfci_piste_sig_id, dfci_piste_adresse AS v_dfci_piste_sig_adresse, dfci_piste_annee_programme AS v_dfci_piste_sig_annee_programme, dfci_piste_annee_travaux AS v_dfci_piste_sig_annee_travaux, dfci_piste_circulation AS v_dfci_piste_sig_circulation, dfci_piste_date_gps AS v_dfci_piste_sig_date_gps, dfci_piste_libelle AS v_dfci_piste_sig_libelle, dfci_piste_numero AS v_dfci_piste_sig_numero, dfci_piste_ouverture AS v_dfci_piste_sig_ouverture, dfci_piste_est_dfci AS v_dfci_piste_sig_est_dfci, dfci_piste_retournement AS v_dfci_piste_sig_retournement, dfci_piste_num_troncon AS v_dfci_piste_sig_num_troncon, dfci_piste_num_objectif AS v_dfci_piste_sig_num_objectif, dfci_piste_libelle_objectif AS v_dfci_piste_sig_libelle_objectif, dfci_piste_geometrie AS v_dfci_piste_sig_geometrie, dfci_piste_impraticabilite AS v_dfci_piste_sig_impraticabilite, dfci_piste_travaux AS v_dfci_piste_sig_travaux, dfci_piste_voie AS v_dfci_piste_sig_voie, dfci_piste_impasse AS v_dfci_piste_sig_impasse, dfci_piste_foncier AS v_dfci_piste_sig_foncier, dfci_piste_croisement AS v_dfci_piste_sig_croisement, dfci_piste_programme AS v_dfci_piste_sig_programme, dfci_piste_praticabilite AS v_dfci_piste_sig_praticabilite, dfci_piste_remarque AS v_dfci_piste_sig_remarque, dfci_piste_code AS v_dfci_piste_sig_code, dfci_piste_dfci_categorie_piste_id AS v_dfci_piste_sig_dfci_categorie_piste_id, dfci_piste_dfci_massif_id AS v_dfci_piste_sig_dfci_massif_id, dfci_piste_dfci_prestataire_id AS v_dfci_piste_sig_dfci_prestataire_id, dfci_piste_dfci_ouvrage_id AS v_dfci_piste_sig_dfci_ouvrage_id, dfci_piste_version AS v_dfci_piste_sig_version FROM remocra.dfci_piste;";
+    case TYPE_SYNCHRONISATION_TABLE_SIG.MISE_A_JOUR_DFCI_PRESTATAIRE:
+      return "CREATE OR REPLACE VIEW entrepotsig.v_dfci_prestataire_sig AS SELECT dfci_prestataire_id AS v_dfci_prestataire_sig_id, dfci_prestataire_code AS v_dfci_prestataire_sig_code, dfci_prestataire_libelle AS v_dfci_prestataire_sig_libelle FROM remocra.dfci_prestataire;";
   }
 }
 
@@ -611,6 +922,41 @@ const ParametreSynchroSIGIterableForm = ({
                   <strong>script SQL</strong> est exécuté pour, par exemple,
                   transformer les données géographiques afin de les mettre en
                   conformité avec le format attendu par REMOcRA.
+                </li>
+                <li>
+                  <strong>MISE_A_JOUR_DFCI</strong> : Permet de synchroniser les
+                  tables pour le module DFCI. La synchronisation est composée de
+                  8 tables. Il est indispensable de paramètrer plusieurs pour en
+                  synchroniser une.
+                  <ul>
+                    <li>
+                      La table <strong>dfci_piste</strong> a besoin de :{" "}
+                      <code>
+                        dfci_categorie_piste, dfci_massif, dfci_prestataire,
+                        dfci_ouvrage
+                      </code>
+                      .
+                    </li>
+                    <li>
+                      La table <strong>dfci_deb</strong> a besoin de :{" "}
+                      <code>dfci_massif, dfci_prestataire, dfci_ouvrage</code>.
+                    </li>
+                    <li>
+                      La table <strong>dfci_aire</strong> a besoin de :{" "}
+                      <code>dfci_piste</code>.
+                    </li>
+                    <li>
+                      La table <strong>dfci_panneau</strong> a besoin de :{" "}
+                      <code>dfci_piste</code>.
+                    </li>
+                  </ul>
+                  Les autres tables{" "}
+                  <strong>
+                    (dfci_categorie_piste, dfci_massif, dfci_prestataire,
+                    dfci_ouvrage)
+                  </strong>{" "}
+                  sont indépendantes étant des nomenclatures. Chaque
+                  identification se fait sur le <strong>Code</strong>.
                 </li>
               </ul>
             </>

@@ -23,9 +23,8 @@ import url from "../../../module/fetch.tsx";
 import { URLS } from "../../../routes.tsx";
 import filterValuesToVariable from "./FilterMetadata.tsx";
 
-type GroupeFonctionnalite = {
-  groupeFonctionnaliteId: string;
-  groupeFonctionnaliteLibelle: string;
+type GroupeFonctionnalites = {
+  groupeFonctionnalitesLibelle: string;
 };
 
 const ListCoucheMetadata = () => {
@@ -94,19 +93,11 @@ const ListCoucheMetadata = () => {
             accessor: "groupeFonctionnaliteList",
             Cell: (value) => {
               return (
-                <div
-                  style={{
-                    padding: "5px",
-                    borderRadius: "4px",
-                    fontSize: "14px",
-                    color: "#333",
-                    lineHeight: "1.5",
-                  }}
-                >
+                <div>
                   {value?.value
                     .map(
-                      (item: GroupeFonctionnalite) =>
-                        item.groupeFonctionnaliteLibelle,
+                      (item: GroupeFonctionnalites) =>
+                        item.groupeFonctionnalitesLibelle,
                     )
                     .join(", ")}
                 </div>

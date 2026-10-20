@@ -7,18 +7,31 @@ import org.jooq.impl.DSL
 import org.jooq.impl.DSL.multiset
 import org.jooq.impl.DSL.selectDistinct
 import org.locationtech.jts.geom.Geometry
+import org.locationtech.jts.geom.LineString
 import org.locationtech.jts.geom.Point
 import remocra.app.AppSettings
+import remocra.data.enums.TypeDfciElement
 import remocra.data.enums.TypeElementCarte
+import remocra.db.jooq.couverturehydraulique.enums.TypePeiProjet
 import remocra.db.jooq.couverturehydraulique.tables.references.PEI_PROJET
 import remocra.db.jooq.remocra.enums.EtatSignalement
 import remocra.db.jooq.remocra.enums.EvenementStatutMode
+import remocra.db.jooq.remocra.enums.TypeAire
+import remocra.db.jooq.remocra.enums.TypeDebroussaillement
+import remocra.db.jooq.remocra.enums.TypePanneau
 import remocra.db.jooq.remocra.tables.Pei.Companion.PEI
 import remocra.db.jooq.remocra.tables.references.CADASTRE_PARCELLE
 import remocra.db.jooq.remocra.tables.references.CADASTRE_SECTION
 import remocra.db.jooq.remocra.tables.references.COMMUNE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE
 import remocra.db.jooq.remocra.tables.references.DEBIT_SIMULTANE_MESURE
+import remocra.db.jooq.remocra.tables.references.DFCI_AIRE
+import remocra.db.jooq.remocra.tables.references.DFCI_CONFLIT
+import remocra.db.jooq.remocra.tables.references.DFCI_DEB
+import remocra.db.jooq.remocra.tables.references.DFCI_MASSIF
+import remocra.db.jooq.remocra.tables.references.DFCI_PANNEAU
+import remocra.db.jooq.remocra.tables.references.DFCI_PISTE
+import remocra.db.jooq.remocra.tables.references.DIAMETRE
 import remocra.db.jooq.remocra.tables.references.EVENEMENT
 import remocra.db.jooq.remocra.tables.references.INDISPONIBILITE_TEMPORAIRE
 import remocra.db.jooq.remocra.tables.references.L_DEBIT_SIMULTANE_MESURE_PEI
@@ -143,8 +156,19 @@ class CarteRepository @Inject constructor(
      * Récupère les PEI en projet dans une BBOX selon l'étude
      */
     fun getPeiProjetWithinEtudeAndBbox(etudeId: UUID, bbox: Field<Geometry?>, srid: Int): Collection<PeiProjetCarte> {
-        return dsl.select(ST_Transform(PEI_PROJET.GEOMETRIE, srid).`as`("elementGeometrie"), PEI_PROJET.ID.`as`("elementId"))
+        return dsl.select(
+            ST_Transform(PEI_PROJET.GEOMETRIE, srid).`as`("elementGeometrie"),
+            PEI_PROJET.ID.`as`("elementId"),
+            PEI_PROJET.TYPE_PEI_PROJET,
+            NATURE_DECI.LIBELLE.`as`("peiProjetNatureDeciLibelle"),
+            PEI_PROJET.DIAMETRE_CANALISATION,
+            DIAMETRE.LIBELLE.`as`("peiProjetDiametreLibelle"),
+            PEI_PROJET.DEBIT,
+            PEI_PROJET.CAPACITE,
+        )
             .from(PEI_PROJET)
+            .join(NATURE_DECI).on(PEI_PROJET.NATURE_DECI_ID.eq(NATURE_DECI.ID))
+            .leftJoin(DIAMETRE).on(PEI_PROJET.DIAMETRE_ID.eq(DIAMETRE.ID))
             .where(
                 PEI_PROJET.ETUDE_ID.eq(etudeId),
             ).and(
@@ -157,8 +181,19 @@ class CarteRepository @Inject constructor(
      * Récupère les PEI en projet selon l'étude
      */
     fun getPeiProjetWithinEtude(etudeId: UUID, srid: Int): Collection<PeiProjetCarte> {
-        return dsl.select(ST_Transform(PEI_PROJET.GEOMETRIE, srid).`as`("elementGeometrie"), PEI_PROJET.ID.`as`("elementId"))
+        return dsl.select(
+            ST_Transform(PEI_PROJET.GEOMETRIE, srid).`as`("elementGeometrie"),
+            PEI_PROJET.ID.`as`("elementId"),
+            PEI_PROJET.TYPE_PEI_PROJET,
+            NATURE_DECI.LIBELLE.`as`("peiProjetNatureDeciLibelle"),
+            PEI_PROJET.DIAMETRE_CANALISATION,
+            DIAMETRE.LIBELLE.`as`("peiProjetDiametreLibelle"),
+            PEI_PROJET.DEBIT,
+            PEI_PROJET.CAPACITE,
+        )
             .from(PEI_PROJET)
+            .join(NATURE_DECI).on(PEI_PROJET.NATURE_DECI_ID.eq(NATURE_DECI.ID))
+            .leftJoin(DIAMETRE).on(PEI_PROJET.DIAMETRE_ID.eq(DIAMETRE.ID))
             .where(
                 PEI_PROJET.ETUDE_ID.eq(etudeId),
             )
@@ -407,6 +442,150 @@ class CarteRepository @Inject constructor(
             .and(bbox?.let { ST_Within(ST_Transform(RCCI.GEOMETRIE, srid), bbox) })
             .fetchInto()
 
+    /**
+     * Récupère les aires se trouvant sur la carte
+     */
+    fun getDfciAiresWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<DfciAireCarte> =
+        dsl.select(
+            ST_Transform(DFCI_AIRE.GEOMETRIE, srid).`as`("elementGeometrie"),
+            DFCI_AIRE.ID.`as`("elementId"),
+            DFCI_AIRE.TYPE,
+            DFCI_PISTE.LIBELLE,
+            DSL.exists(
+                dsl
+                    .selectOne()
+                    .from(DFCI_CONFLIT)
+                    .where(DFCI_CONFLIT.ELEMENT_ID.eq(DFCI_AIRE.ID)),
+            ).`as`("hasConflit"),
+        )
+            .from(DFCI_AIRE)
+            .join(DFCI_PISTE)
+            .on(DFCI_PISTE.ID.eq(DFCI_AIRE.DFCI_PISTE_ID))
+            .where(
+                zoneId?.let {
+                    repositoryUtils.checkIsSuperAdminOrCondition(
+                        ST_Within(
+                            DFCI_AIRE.GEOMETRIE,
+                            DSL.field(
+                                DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
+                                    .where(ZONE_INTEGRATION.ID.eq(zoneId)),
+                            ),
+                        ).isTrue,
+                        isSuperAdmin,
+                    )
+                },
+            )
+            .and(bbox?.let { ST_Within(ST_Transform(DFCI_AIRE.GEOMETRIE, srid), bbox) })
+            .fetchInto()
+
+    /**
+     * Récupère les pistes se trouvant sur la carte
+     */
+    fun getDfciPistesWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<DfciPisteCarte> =
+        dsl.select(
+            ST_Transform(DFCI_PISTE.GEOMETRIE, srid).`as`("elementGeometrie"),
+            DFCI_PISTE.ID.`as`("elementId"),
+            DFCI_PISTE.LIBELLE,
+            DFCI_PISTE.NUMERO,
+            DFCI_PISTE.ADRESSE,
+            DSL.exists(
+                dsl
+                    .selectOne()
+                    .from(DFCI_CONFLIT)
+                    .where(DFCI_CONFLIT.ELEMENT_ID.eq(DFCI_PISTE.ID)),
+            ).`as`("hasConflit"),
+        )
+            .from(DFCI_PISTE)
+            .where(
+                zoneId?.let {
+                    repositoryUtils.checkIsSuperAdminOrCondition(
+                        ST_Within(
+                            DFCI_PISTE.GEOMETRIE,
+                            DSL.field(
+                                DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
+                                    .where(ZONE_INTEGRATION.ID.eq(zoneId)),
+                            ),
+                        ).isTrue,
+                        isSuperAdmin,
+                    )
+                },
+            )
+            .and(bbox?.let { ST_Within(ST_Transform(DFCI_PISTE.GEOMETRIE, srid), bbox) })
+            .fetchInto()
+
+    /**
+     * Récupère les débroussaillements se trouvant sur la carte
+     */
+    fun getDfciDebWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<DfciDebCarte> =
+        dsl.select(
+            ST_Transform(DFCI_DEB.GEOMETRIE, srid).`as`("elementGeometrie"),
+            DFCI_DEB.ID.`as`("elementId"),
+            DFCI_DEB.TYPE,
+            DFCI_MASSIF.LIBELLE,
+            DSL.exists(
+                dsl
+                    .selectOne()
+                    .from(DFCI_CONFLIT)
+                    .where(DFCI_CONFLIT.ELEMENT_ID.eq(DFCI_DEB.ID)),
+            ).`as`("hasConflit"),
+        )
+            .from(DFCI_DEB)
+            .join(DFCI_MASSIF)
+            .on(DFCI_MASSIF.ID.eq(DFCI_DEB.DFCI_MASSIF_ID))
+            .where(
+                zoneId?.let {
+                    repositoryUtils.checkIsSuperAdminOrCondition(
+                        ST_Within(
+                            DFCI_DEB.GEOMETRIE,
+                            DSL.field(
+                                DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
+                                    .where(ZONE_INTEGRATION.ID.eq(zoneId)),
+                            ),
+                        ).isTrue,
+                        isSuperAdmin,
+                    )
+                },
+            )
+            .and(bbox?.let { ST_Within(ST_Transform(DFCI_DEB.GEOMETRIE, srid), bbox) })
+            .fetchInto()
+
+    /**
+     * Récupère les panneaux se trouvant sur la carte
+     */
+    fun getDfciPanneauWithinZoneAndBbox(zoneId: UUID?, bbox: Field<Geometry?>?, srid: Int, isSuperAdmin: Boolean): Collection<DfciPanneauCarte> =
+        dsl.select(
+            ST_Transform(DFCI_PANNEAU.GEOMETRIE, srid).`as`("elementGeometrie"),
+            DFCI_PANNEAU.ID.`as`("elementId"),
+            DFCI_PANNEAU.TYPE,
+            DFCI_PANNEAU.NUM_PISTE,
+            DFCI_PANNEAU.LIBELLE_PISTE,
+            DFCI_PISTE.LIBELLE,
+            DSL.exists(
+                dsl
+                    .selectOne()
+                    .from(DFCI_CONFLIT)
+                    .where(DFCI_CONFLIT.ELEMENT_ID.eq(DFCI_PANNEAU.ID)),
+            ).`as`("hasConflit"),
+        )
+            .from(DFCI_PANNEAU)
+            .join(DFCI_PISTE).on(DFCI_PISTE.ID.eq(DFCI_PANNEAU.DFCI_PISTE_ID))
+            .where(
+                zoneId?.let {
+                    repositoryUtils.checkIsSuperAdminOrCondition(
+                        ST_Within(
+                            DFCI_PANNEAU.GEOMETRIE,
+                            DSL.field(
+                                DSL.select(ZONE_INTEGRATION.GEOMETRIE).from(ZONE_INTEGRATION)
+                                    .where(ZONE_INTEGRATION.ID.eq(zoneId)),
+                            ),
+                        ).isTrue,
+                        isSuperAdmin,
+                    )
+                },
+            )
+            .and(bbox?.let { ST_Within(ST_Transform(DFCI_PANNEAU.GEOMETRIE, srid), bbox) })
+            .fetchInto()
+
     abstract class ElementCarte {
         abstract val elementGeometrie: Geometry
         abstract val elementId: UUID
@@ -449,11 +628,32 @@ class CarteRepository @Inject constructor(
     data class PeiProjetCarte(
         override val elementGeometrie: Point,
         override val elementId: UUID,
-        override var propertiesToDisplay: String? = null,
+        val peiProjetTypePeiProjet: TypePeiProjet,
+        val peiProjetNatureDeciLibelle: String?,
+        val peiProjetDiametreCanalisation: Int?,
+        val peiProjetDiametreLibelle: String?,
+        val peiProjetDebit: Int?,
+        val peiProjetCapacite: Int?,
 
     ) : ElementCarte() {
         override val typeElementCarte: TypeElementCarte
             get() = TypeElementCarte.PEI_PROJET
+
+        override var propertiesToDisplay: String? =
+            "<b>Type du PEI en projet :</b> ${peiProjetTypePeiProjet.name}<br/>" +
+                "<b>Nature DECI :</b> ${peiProjetNatureDeciLibelle.orEmpty()}<br/>" +
+                when (peiProjetTypePeiProjet) {
+                    TypePeiProjet.PIBI ->
+                        "<b>Diamètre :</b> ${peiProjetDiametreLibelle.orEmpty()}<br/>" +
+                            "<b>Diamètre de canalisation :</b> ${peiProjetDiametreCanalisation?.toString().orEmpty()}<br/>"
+
+                    TypePeiProjet.RESERVE ->
+                        "<b>Capacité (m³) :</b> ${peiProjetCapacite?.toString().orEmpty()}<br/>" +
+                            "<b>Débit (m³/h) :</b> ${peiProjetDebit?.toString().orEmpty()}<br/>"
+
+                    TypePeiProjet.PA ->
+                        "<b>Débit (m³/h) :</b> ${peiProjetDebit?.toString().orEmpty()}<br/>"
+                }
     }
 
     data class EvenementCarte(
@@ -574,5 +774,93 @@ class CarteRepository @Inject constructor(
             get() = TypeElementCarte.RCCI
 
         override var propertiesToDisplay: String? = "$rcciDateIncendie"
+    }
+
+    data class DfciAireCarte(
+        override val elementGeometrie: Point,
+        override val elementId: UUID,
+        val dfciAireType: TypeAire,
+        val dfciPisteLibelle: String,
+        val hasConflit: Boolean,
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.DFCI_AIRE
+        override var propertiesToDisplay: String? = "<b>Type d'aire :</b> ${decorateTypeAire(dfciAireType)} <br/>" +
+            "<b>Piste :</b> $dfciPisteLibelle <br/>"
+        val dfciTypeElement: TypeDfciElement get() = TypeDfciElement.AIRE
+
+        private fun decorateTypeAire(type: TypeAire): String =
+            when (type) {
+                TypeAire.RETOURNEMENT -> "Retournement"
+                TypeAire.CROISEMENT -> "Croisement"
+            }
+    }
+
+    data class DfciPisteCarte(
+        override val elementGeometrie: LineString,
+        override val elementId: UUID,
+        val dfciPisteLibelle: String,
+        val dfciPisteNumero: String,
+        var dfciPisteAdresse: String?,
+        val hasConflit: Boolean,
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.DFCI_PISTE
+        override var propertiesToDisplay: String? = "<b>Libellé :</b> $dfciPisteLibelle <br/>" +
+            "<b>Numéro :</b> $dfciPisteNumero<br/>" +
+            "<b>Adresse :</b> ${dfciPisteAdresse.takeIf { !it.isNullOrBlank() } ?: "Aucune adresse renseignée" }"
+        val dfciTypeElement: TypeDfciElement get() = TypeDfciElement.PISTE
+    }
+
+    data class DfciDebCarte(
+        override val elementGeometrie: Geometry,
+        override val elementId: UUID,
+        val dfciDebType: TypeDebroussaillement,
+        val dfciMassifLibelle: String,
+        val hasConflit: Boolean,
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.DFCI_DEB
+        override var propertiesToDisplay: String? = "<b>Type :</b> ${decorateTypeDebroussaillement(dfciDebType)} <br/>" +
+            "<b>Massif :</b> $dfciMassifLibelle <br/>"
+        val dfciTypeElement: TypeDfciElement get() = TypeDfciElement.DEBROUSSAILLEMENT
+
+        private fun decorateTypeDebroussaillement(typeDeb: TypeDebroussaillement): String =
+            when (typeDeb) {
+                TypeDebroussaillement.DFCI -> "DFCI"
+                TypeDebroussaillement.ARCHIVE -> "Archive"
+                TypeDebroussaillement.AUTRE -> "Autre"
+            }
+    }
+
+    data class DfciPanneauCarte(
+        override val elementGeometrie: Point,
+        override val elementId: UUID,
+        val dfciPanneauType: TypePanneau,
+        val dfciPanneauNumPiste: Boolean,
+        val dfciPanneauLibellePiste: Boolean,
+        val dfciPisteLibelle: String,
+        val hasConflit: Boolean,
+    ) : ElementCarte() {
+        override val typeElementCarte: TypeElementCarte
+            get() = TypeElementCarte.DFCI_PANNEAU
+        override var propertiesToDisplay: String? = "<b>Type :</b> ${decorateTypePanneau(dfciPanneauType)} <br/>" +
+            "<b>Piste :</b> $dfciPisteLibelle<br/>"
+        val dfciTypeElement: TypeDfciElement get() = TypeDfciElement.PANNEAU
+
+        init {
+            var donneesNumPiste = "Non"
+            var donneesLibellePiste = "Non"
+            if (dfciPanneauNumPiste) donneesNumPiste = "Oui"
+            if (dfciPanneauLibellePiste) donneesLibellePiste = "Oui"
+            propertiesToDisplay += "<b>Présence du numéro de piste :</b> $donneesNumPiste <br/>" +
+                "<b>Présence du libelle de piste :</b> $donneesLibellePiste <br/>"
+        }
+
+        private fun decorateTypePanneau(typePanneau: TypePanneau): String =
+            when (typePanneau) {
+                TypePanneau.SIGNAL_PRINCIPAL -> "Signal principal"
+                TypePanneau.SIGNAL_COMPLEMENT -> "Signal complémentaire"
+            }
     }
 }

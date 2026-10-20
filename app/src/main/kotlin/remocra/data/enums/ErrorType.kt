@@ -371,6 +371,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_NOMENC_SAME_ELEMENT(8204, "Vous ne pouvez pas définir l'objet parent avec la valeur courante"),
     ADMIN_NOMENC_CODE_EXISTS(8205, "Ce code existe déjà pour un autre élément"),
     ADMIN_NOMENC_IMPOSSIBLE_SUPPRIME(8206, "Impossible de supprimer l'élément. Il est toujours référencé vers une autre table."),
+    ADMIN_NOMENC_COMPLEMENT_REQUETE_INVALID(8207, "La requête SQL du complément n'est pas valide $PLACEHOLDER_ERROR_TYPE"),
 
     //
     // ********************************************************************************
@@ -507,12 +508,13 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_RAPPORT_PERSO_FORBIDDEN(15000, "Vous n'avez pas les droits d'administration des rapports personnalisés.", Status.FORBIDDEN),
     ADMIN_RAPPORT_PERSO_CODE_UNIQUE(15001, "Le code doit être unique."),
     ADMIN_RAPPORT_PERSO_REQUETE_INVALID_CUD(15002, "La requête doit être un SELECT (et non CREATE / UPDATE / DELETE / DROP)."),
-    ADMIN_RAPPORT_PERSO_REQUETE_INVALID(15003, "La requête n'est pas valide : $PLACEHOLDER_ERROR_TYPE"),
+    ADMIN_REQUETE_INVALID(15003, "La requête n'est pas valide : $PLACEHOLDER_ERROR_TYPE"),
     ADMIN_RAPPORT_PERSO_REQUETE_PARAMETRE_INVALID(15004, " La requête du paramètre n'est pas valide : $PLACEHOLDER_ERROR_TYPE"),
     ADMIN_RAPPORT_PERSO_PARAMETRE_CODE_UNIQUE(15005, "Chaque code des paramètres doit être unique."),
     RAPPORT_PERSO_FORBIDDEN(15006, "Vous n'avez pas les droits pour générer ce rapport", Status.FORBIDDEN),
     RAPPORT_PERSO_SHP(15007, "Impossible de générer le fichier shape : $PLACEHOLDER_ERROR_TYPE"),
     RAPPORT_PERSO_IS_PROTECTED(15008, "Ce rapport personnalisé est protégé"),
+    RAPPORT_PERSO_DBF_MAPPING_INVALID(15009, "Mapping DBF introuvable : $PLACEHOLDER_ERROR_TYPE"),
 
     ADMIN_TASK_FORBIDDEN(16000, "Vous n'avez pas les droits d'administration des tâches planifiées.", Status.FORBIDDEN),
     ADMIN_TASK_SYNCHRO_SIG_SCRIPT_VUE(16001, "Le script de création de vue est nécessaire pour le type de synchronisation  $PLACEHOLDER_ERROR_TYPE"),
@@ -605,6 +607,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ADMIN_COUCHES_NAME_NULL(25005, "Le nom de la couche doit être défini."),
     ADMIN_COUCHE_IS_PROTECTED(25006, "Cette valeur est protégée"),
     ADMIN_COUCHE_GROUPE_COUCHE_DELETE_CONTRAINTE(25007, "Impossible de supprimer ce groupe de couche car des couches lui sont encore associées."),
+    ADMIN_COUCHES_GROUPES(25008, "Un groupe de fonctionnalités doit être renseigné."),
 
     // Paramètres API
     DROIT_API_FORBIDDEN(26000, "Vous n'avez pas les droits de modification des droits API", Status.FORBIDDEN),
@@ -709,6 +712,17 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     ATLAS_ANNEXES_FORBIDDEN_UPDATE(34001, "Vous n'avez pas les droits de modification de l'ordre des annexes"),
     ATLAS_DOCUMENTS_NOT_FOUND(34002, "Aucun fichier existant pour l'atlas"),
 
+    //
+    // ********************************************************************************
+    // DFCI
+    // ********************************************************************************
+    //
+    DFCI_AIRE_U_FORBIDDEN(35001, "Vous n'avez le droit de modification des aires DFCI."),
+    DFCI_PISTE_U_FORBIDDEN(35002, "Vous n'avez le droit de modification des pistes DFCI."),
+    DFCI_DEB_U_FORBIDDEN(35003, "Vous n'avez le droit de modification des débroussaillements DFCI."),
+    DFCI_PANNEAU_U_FORBIDDEN(35004, "Vous n'avez le droit de modification des panneaux DFCI."),
+    DFCI_GESTION_CONFLIT_A_FORBIDDEN(35005, "Vous n'avez pas la permission pour résoudre les conflits"),
+    DFCI_RESOLVE_CONFLIT_NOT_SAME_VALUE(35006, "Les valeurs du SIG et de REMOcRA ne sont pas les mêmes."),
     ;
 
     override fun toString(): String {

@@ -6,9 +6,11 @@ import remocra.auth.WrappedUserInfo
 import remocra.data.IdLibelleRapportPersonnalise
 import remocra.data.ModeleCourrierData
 import remocra.data.RapportPersonnaliseData
+import remocra.data.SousCategorieComplement
 import remocra.data.enums.ErrorType
 import remocra.data.enums.TypeModuleRapportCourrier
 import remocra.db.RapportPersonnaliseRepository
+import remocra.db.jooq.remocra.enums.TypeParametreEvenementComplement
 import remocra.db.jooq.remocra.enums.TypeParametreRapportCourrier
 import remocra.exception.RemocraResponseException
 import java.util.UUID
@@ -98,34 +100,55 @@ constructor(
         )
     }
 
+    fun checkEvenementSousCategorieComplements(userInfo: WrappedUserInfo, complements: Collection<SousCategorieComplement>) {
+        complements.forEach { complement ->
+            if (complement.sousCategorieComplementType == TypeParametreEvenementComplement.SELECT_INPUT && complement.sousCategorieComplementSql != null) {
+                validateSqlInjection(complement.sousCategorieComplementSql)
+                try {
+                    val requeteModifiee = requestUtils.replaceGlobalParameters(userInfo, complement.sousCategorieComplementSql)
+                    rapportPersonnaliseRepository.executeSqlParametre(requeteModifiee)
+                } catch (e: Exception) {
+                    throw RemocraResponseException(
+                        ErrorType.ADMIN_NOMENC_COMPLEMENT_REQUETE_INVALID,
+                        "(complément : ${complement.sousCategorieComplementLibelle}) : ${e.message}",
+                    )
+                }
+            }
+        }
+    }
+
+    private fun validateSqlInjection(sql: String) {
+        if (sql.contains("CREATE", true) ||
+            requestUtils.containsWordNotInSingleQuote(sql, "INSERT") ||
+            requestUtils.containsWordNotInSingleQuote(sql, "UPDATE") ||
+            sql.contains("DROP", true) ||
+            requestUtils.containsWordNotInSingleQuote(sql, "DELETE") ||
+            sql.contains("TRUNCATE", true)
+        ) {
+            throw RemocraResponseException(
+                ErrorType.ADMIN_REQUETE_INVALID,
+                "Ne doit pas contenir de CREATE, INSERT, UPDATE, DROP, DELETE ou TRUNCATE",
+            )
+        }
+
+        if (!sql.trim().startsWith("SELECT", ignoreCase = true) &&
+            !sql.trim().startsWith("WITH", ignoreCase = true)
+        ) {
+            throw RemocraResponseException(
+                ErrorType.ADMIN_REQUETE_INVALID,
+                "doit commencer par un 'SELECT' ou un 'WITH'",
+            )
+        }
+    }
+
     private fun checkContraintes(userInfo: WrappedUserInfo, element: RapportCourrierData) {
         // Aucun paramètre ne doivent avoir le même code
         if (element.listeRapportCourrierParametre.map { it.rapportCourrierParametreCode }.distinct().size != element.listeRapportCourrierParametre.size) {
             throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_PARAMETRE_CODE_UNIQUE)
         }
 
-        // TODO vérifier qu'on n'est pas injection ?
-        if (element.rapportCourrierSourceSql.contains("CREATE", true) ||
-            requestUtils.containsWordNotInSingleQuote(element.rapportCourrierSourceSql, "INSERT") ||
-            requestUtils.containsWordNotInSingleQuote(element.rapportCourrierSourceSql, "UPDATE") ||
-            element.rapportCourrierSourceSql.contains("DROP", true) ||
-            requestUtils.containsWordNotInSingleQuote(element.rapportCourrierSourceSql, "DELETE") ||
-            element.rapportCourrierSourceSql.contains("TRUNCATE", true)
-        ) {
-            throw RemocraResponseException(
-                ErrorType.ADMIN_RAPPORT_PERSO_REQUETE_INVALID,
-                "Ne doit pas contenir de CREATE, INSERT, UPDATE, DROP, DELETE ou TRUNCATE",
-            )
-        }
-
-        if (!element.rapportCourrierSourceSql.trim().startsWith("SELECT", ignoreCase = true) &&
-            !element.rapportCourrierSourceSql.trim().startsWith("WITH", ignoreCase = true)
-        ) {
-            throw RemocraResponseException(
-                ErrorType.ADMIN_RAPPORT_PERSO_REQUETE_INVALID,
-                "doit commencer par un 'SELECT' ou un 'WITH'",
-            )
-        }
+        // Vérifier l'injection SQL
+        validateSqlInjection(element.rapportCourrierSourceSql)
 
         var requete = element.rapportCourrierSourceSql
 
@@ -156,7 +179,7 @@ constructor(
             val requeteModifiee = requestUtils.replaceGlobalParameters(userInfo, requete)
             rapportPersonnaliseRepository.executeSqlRapport(requeteModifiee)
         } catch (e: Exception) {
-            throw RemocraResponseException(ErrorType.ADMIN_RAPPORT_PERSO_REQUETE_INVALID, e.message)
+            throw RemocraResponseException(ErrorType.ADMIN_REQUETE_INVALID, e.message)
         }
     }
 

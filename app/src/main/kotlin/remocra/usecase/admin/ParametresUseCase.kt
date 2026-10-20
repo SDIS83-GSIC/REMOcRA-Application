@@ -59,6 +59,8 @@ constructor(
             dfciTravauxDestinataireEmail = mapParametres.getStringOrNull(ParametreEnum.DFCI_TRAVAUX_DESTINATAIRE_EMAIL.name),
             dfciTravauxObjetEmail = mapParametres.getStringOrNull(ParametreEnum.DFCI_TRAVAUX_OBJET_EMAIL.name),
             dfciTravauxCorpsEmail = mapParametres.getStringOrNull(ParametreEnum.DFCI_TRAVAUX_CORPS_EMAIL.name),
+            dfciToleranceDfciPisteMetres = mapParametres.getIntOrNull(ParametreEnum.DFCI_TOLERANCE_DFCI_PISTE_METRES.name),
+            dfciListeCouche = mapParametres.getListOfString(ParametreEnum.DFCI_LISTE_COUCHE.name, objectMapper),
         )
 
         val mobile = ParametresSectionMobile(

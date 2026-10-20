@@ -173,7 +173,6 @@ export function toOpenLayer(
         // Optimisations de performance
         cacheSize: 512,
         transition: 0,
-        tileLoadFunction: createAbortableTileLoadFunction(layer.crossOrigin),
       });
 
     case SOURCE_CARTO.WFS:

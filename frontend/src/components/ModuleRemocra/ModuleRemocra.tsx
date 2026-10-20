@@ -57,6 +57,7 @@ const ModuleDocumentCourrier = ({
     id: string;
     libelle: string;
     date: Date;
+    reference?: string;
   }[];
   moduleId: string;
   moduleType: TypeModuleRemocra;
@@ -69,7 +70,7 @@ const ModuleDocumentCourrier = ({
       <Table bordered striped>
         <thead>
           <tr>
-            <th>Libellé</th>
+            <th>{isTypeDocument ? "Libellé" : "Référence"}</th>
             <th width={majWidth}>Mise à jour</th>
             <th width={50} />
           </tr>
@@ -78,7 +79,7 @@ const ModuleDocumentCourrier = ({
           {listeDocument?.map((e, index) => {
             return (
               <tr key={index}>
-                <td>{e.libelle}</td>
+                <td>{isTypeDocument ? e.libelle : e.reference}</td>
                 <td width={majWidth}>
                   {e.date &&
                     (isTypeDocument
@@ -147,6 +148,7 @@ type ModuleRemocra = {
     id: string;
     libelle: string;
     date: Date;
+    reference?: string;
   }[];
 };
 

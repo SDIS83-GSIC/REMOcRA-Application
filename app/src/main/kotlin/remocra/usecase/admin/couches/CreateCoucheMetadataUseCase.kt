@@ -45,7 +45,7 @@ constructor(
     override fun execute(userInfo: WrappedUserInfo, element: CoucheMetadata): CoucheMetadata {
         // insertion
         coucheMetadataRepository.upsertCoucheMetadata(element)
-        if (element.groupeFonctionnaliteIds != null) {
+        if (!element.groupeFonctionnaliteIds.isNullOrEmpty()) {
             for (id in element.groupeFonctionnaliteIds) {
                 if (element.coucheMetadataId != null) {
                     coucheMetadataRepository.addLienGroupeFonctionnalites(element.coucheMetadataId, id)
@@ -57,13 +57,15 @@ constructor(
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: CoucheMetadata) {
         if (element.groupeFonctionnaliteIds != null) {
-            for (id in element.groupeFonctionnaliteIds) {
-                if (element.coucheMetadataId != null) {
-                    if (coucheMetadataRepository.checkLienGroupeFonctionnalites(element.coucheMetadataId, id)) {
-                        throw RemocraResponseException(ErrorType.GROUPE_FONCTIONNALITES_COUCHE_UNIQUE)
-                    }
-                }
+            if ((element.coucheMetadataId != null) && element.groupeFonctionnaliteIds.intersect(
+                    coucheMetadataRepository
+                        .findGroupFonctIdByCoucheMetadata(element.coucheMetadataId).toSet(),
+                ).isNotEmpty()
+            ) {
+                throw RemocraResponseException(ErrorType.GROUPE_FONCTIONNALITES_COUCHE_UNIQUE)
             }
+        } else if (!element.coucheMetadataPublic) {
+            throw RemocraResponseException(ErrorType.ADMIN_COUCHES_GROUPES)
         }
     }
 }

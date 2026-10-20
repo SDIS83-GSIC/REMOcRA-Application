@@ -9,8 +9,8 @@ import remocra.app.ParametresProvider
 import remocra.auth.WrappedUserInfo
 import remocra.couverturehydraulique.CalculData
 import remocra.couverturehydraulique.GeometrieUtils
+import remocra.couverturehydraulique.db.ReseauRepository
 import remocra.couverturehydraulique.graphe.Chemin
-import remocra.couverturehydraulique.graphe.CreateTopologie
 import remocra.couverturehydraulique.graphe.GrapheManager
 import remocra.data.enums.ErrorType
 import remocra.data.enums.ParametreEnum
@@ -24,11 +24,12 @@ class CalculCouvertureUseCase @Inject constructor(
     private val reseauUseCase: ReseauUseCase,
     private val parametresProvider: ParametresProvider,
     private val objectMapper: ObjectMapper,
-    private val createTopologie: CreateTopologie,
     private val grapheManager: GrapheManager,
     private val appSettings: AppSettings,
     private val geometrieUtils: GeometrieUtils,
     private val parcoursUseCase: ParcoursUseCase,
+    private val reseauRepository: ReseauRepository,
+    private val createTopologieUseCase: CreateTopologieUseCase,
 ) : AbstractCUDUseCase<CalculData>(TypeOperation.UPDATE) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -52,8 +53,10 @@ class CalculCouvertureUseCase @Inject constructor(
             ?.let { objectMapper.readValue<List<Int>>(it) } ?: throw RemocraResponseException(ErrorType.CALCUL_COUVERTURE_DECI_ISODISTANCES_MANQUANT)
 
         val etudeId = if (element.useReseauImporte || element.useReseauImporteWithReseauCourant) element.etudeId else null
+        if (!reseauRepository.isTopologyComplete(element.etudeId)) {
+            createTopologieUseCase.createTopologie(element.etudeId)
+        }
         val graphe = grapheManager.loadGraphe(etudeId, element.useReseauImporteWithReseauCourant)
-        createTopologie.createTopologie(graphe)
 
         val listePeiIdWithProjets = element.listPeiId.plus(element.listPeiProjetId)
 

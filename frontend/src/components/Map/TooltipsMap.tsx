@@ -1,5 +1,6 @@
 import { Feature, Map as OLMap, Overlay } from "ol";
 import { WKT } from "ol/format";
+import { Geometry } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
 import VectorSource from "ol/source/Vector";
 import { ReactNode, Ref, useEffect, useMemo, useRef, useState } from "react";
@@ -7,12 +8,14 @@ import { Button, Col, Popover, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { hasDroit } from "../../droits.tsx";
 import COLUMN_INDISPONIBILITE_TEMPORAIRE from "../../enums/ColumnIndisponibiliteTemporaireEnum.tsx";
+import { DFCI_ELEMENT } from "../../enums/DfciElementEnum.tsx";
 import TYPE_DROIT from "../../enums/DroitEnum.tsx";
 import PARAMETRE from "../../enums/ParametreEnum.tsx";
 import TYPE_POINT_CARTE from "../../enums/TypePointCarteEnum.tsx";
 import url from "../../module/fetch.tsx";
 import UpdatePeiProjet from "../../pages/CouvertureHydraulique/PeiProjet/UpdatePeiProjet.tsx";
 import UpdateDebitSimultane from "../../pages/DebitSimultane/UpdateDebitSimultane.tsx";
+import DfciUpdateElement from "../../pages/DFCI/DfciUpdateElement.tsx";
 import ListIndisponibiliteTemporaire from "../../pages/IndisponibiliteTemporaire/ListIndisponibiliteTemporaire.tsx";
 import UpdateEvenement from "../../pages/ModuleCrise/Evenement/UpdateEvenement.tsx";
 import DocumentPei from "../../pages/Pei/DocumentPei.tsx";
@@ -23,6 +26,7 @@ import AireAspiration from "../../pages/Pena/AireAspiration.tsx";
 import UpdatePermis from "../../pages/Permis/UpdatePermis.tsx";
 import ListTournee from "../../pages/Tournee/ListTournee.tsx";
 import { URLS } from "../../routes.tsx";
+import { MIN_ZOOM_COUCHE_TRANSPARENTE } from "../../utils/constantsUtils.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import CustomLinkButton from "../Button/CustomLinkButton.tsx";
 import DeleteButtonWithModal from "../Button/DeleteButtonWithModal.tsx";
@@ -35,6 +39,7 @@ import {
   IconEdit,
   IconIndisponibiliteTemporaire,
   IconLeverIndisponibiliteTemporaire,
+  IconMerge,
   IconOeil,
   IconSee,
   IconTournee,
@@ -1088,6 +1093,30 @@ const useTooltipMap = ({
 
   useEffect(() => {
     if (map && ref.current != null && !disabled) {
+      // Change le curseur au survol des éléments interactifs
+      map.on("pointermove", (event) => {
+        const pixel = map.getEventPixel(event.originalEvent);
+        const currentZoom = map.getView().getZoom() || 0;
+        let hasInteractiveFeature = false;
+
+        map.forEachFeatureAtPixel(
+          pixel,
+          function (feature) {
+            if (!filterFeature || filterFeature(feature)) {
+              hasInteractiveFeature = true;
+              return true;
+            }
+            return false;
+          },
+          { hitTolerance: 15 },
+        );
+
+        map.getTargetElement().style.cursor =
+          hasInteractiveFeature && currentZoom >= MIN_ZOOM_COUCHE_TRANSPARENTE
+            ? "pointer"
+            : "";
+      });
+
       map.on("singleclick", (event) => {
         const pixel = map.getEventPixel(event.originalEvent);
 
@@ -1215,6 +1244,139 @@ export const TooltipMapRisque = ({
             "Fiche Résumé du PEI " +
             featureSelect?.getProperties().peiNumeroComplet
           }
+        />
+      </Volet>
+    </div>
+  );
+};
+
+/**
+ * Tooltip pour les éléments présent sur la carte DFCI
+ * @param map Carte DFCI
+ * @returns Le composant tooltip pour le DFCI
+ */
+export const TooltipMapDFCI = ({
+  map,
+  dataDfciAireLayer,
+  dataDfciPisteLayer,
+  dataDfciDebLayer,
+  dataDfciPanneauLayer,
+}: {
+  map?: OLMap;
+  dataDfciAireLayer:
+    | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
+    | undefined;
+  dataDfciPisteLayer:
+    | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
+    | undefined;
+  dataDfciDebLayer:
+    | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
+    | undefined;
+  dataDfciPanneauLayer:
+    | VectorLayer<VectorSource<Feature<Geometry>>, Feature<Geometry>>
+    | undefined;
+}) => {
+  const ref = useRef(null);
+  const { featureSelect, overlay } = useTooltipMap({
+    ref: ref,
+    map: map,
+  });
+
+  const [showVoletInfo, setShowVoletInfo] = useState(false);
+  const typeElem: DFCI_ELEMENT = featureSelect?.getProperties().dfciTypeElement;
+  const elementId = featureSelect?.getProperties().elementId;
+  const [readOnlyForm, setReadOnlyForm] = useState(true);
+  const { user } = useAppContext();
+
+  function hasDroitUpdateElem() {
+    switch (typeElem) {
+      case DFCI_ELEMENT.AIRE:
+        return hasDroit(user, TYPE_DROIT.DFCI_AIRE_U);
+      case DFCI_ELEMENT.PISTE:
+        return hasDroit(user, TYPE_DROIT.DFCI_PISTE_U);
+      case DFCI_ELEMENT.DEBROUSSAILLEMENT:
+        return hasDroit(user, TYPE_DROIT.DFCI_DEB_U);
+      case DFCI_ELEMENT.PANNEAU:
+        return hasDroit(user, TYPE_DROIT.DFCI_PANNEAU_U);
+    }
+  }
+
+  const elementHasConflit: boolean = featureSelect?.getProperties().hasConflit;
+
+  const hasDroitResolveConflit =
+    hasDroit(user, TYPE_DROIT.DFCI_GESTION_CONFLITS_A) && elementHasConflit;
+
+  return (
+    <div ref={ref}>
+      <Tooltip
+        featureSelect={featureSelect}
+        overlay={overlay}
+        displayButtonDelete={false}
+        displayButtonEdit={hasDroitUpdateElem()}
+        displayButtonSee={true}
+        disabledEdit={!hasDroitUpdateElem()}
+        onClickSee={() => {
+          setShowVoletInfo(true), setReadOnlyForm(true);
+        }}
+        onClickEdit={() => {
+          setShowVoletInfo(true), setReadOnlyForm(false);
+        }}
+        autreActionBouton={
+          <>
+            {hasDroitResolveConflit && (
+              <Col className="p-1" xs={"auto"}>
+                <TooltipCustom
+                  tooltipText={"Résoudre le conflit"}
+                  tooltipId={"resolveDfciConflit"}
+                >
+                  <CustomLinkButton
+                    pathname={URLS.DFCI_GESTION_CONFLITS}
+                    variant="danger"
+                    search={new URLSearchParams({
+                      filterBy: JSON.stringify({
+                        dfciConflitElementId: elementId,
+                      }),
+                    }).toString()}
+                  >
+                    <IconMerge />
+                  </CustomLinkButton>
+                </TooltipCustom>
+              </Col>
+            )}
+          </>
+        }
+      />
+      <Volet
+        handleClose={() => setShowVoletInfo(false)}
+        show={showVoletInfo}
+        className="w-auto"
+      >
+        {elementHasConflit && (
+          <p className="fade alert alert-danger show text-center">
+            Un conflit est en cours sur cet élément, veuillez le corriger.
+          </p>
+        )}
+        <DfciUpdateElement
+          typeElem={typeElem}
+          elementId={elementId}
+          readOnly={readOnlyForm || elementHasConflit}
+          onSubmit={() => {
+            setShowVoletInfo(false);
+            switch (typeElem) {
+              case DFCI_ELEMENT.AIRE:
+                dataDfciAireLayer?.getSource()?.refresh();
+                break;
+              case DFCI_ELEMENT.PISTE:
+                dataDfciPisteLayer?.getSource()?.refresh();
+                break;
+              case DFCI_ELEMENT.DEBROUSSAILLEMENT:
+                dataDfciDebLayer?.getSource()?.refresh();
+                break;
+              case DFCI_ELEMENT.PANNEAU:
+                dataDfciPanneauLayer?.getSource()?.refresh();
+                break;
+            }
+          }}
         />
       </Volet>
     </div>

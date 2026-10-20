@@ -46,7 +46,7 @@ constructor(
             coucheMetadataRepository.deleteLienGroupeFonctionnalites(element.coucheMetadataId)
             coucheMetadataRepository.upsertCoucheMetadata(element)
 
-            if (element.groupeFonctionnaliteIds != null) {
+            if (!element.groupeFonctionnaliteIds.isNullOrEmpty()) {
                 for (id in element.groupeFonctionnaliteIds) {
                     coucheMetadataRepository.addLienGroupeFonctionnalites(element.coucheMetadataId, id)
                 }
@@ -56,6 +56,8 @@ constructor(
     }
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: CoucheMetadata) {
-        // no op
+        if (element.groupeFonctionnaliteIds.isNullOrEmpty() && (!element.coucheMetadataPublic)) {
+            throw RemocraResponseException(ErrorType.ADMIN_COUCHES_GROUPES)
+        }
     }
 }

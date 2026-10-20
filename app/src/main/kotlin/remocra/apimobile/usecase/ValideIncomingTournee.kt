@@ -8,8 +8,10 @@ import remocra.auth.WrappedUserInfo
 import remocra.data.CreationVisiteCtrl
 import remocra.data.VisiteData
 import remocra.db.DocumentRepository
+import remocra.db.MaterializedViewRepository
 import remocra.db.TourneeRepository
 import remocra.db.TransactionManager
+import remocra.db.VisiteRepository
 import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.log.LogManager
 import remocra.usecase.AbstractUseCase
@@ -27,6 +29,8 @@ class ValideIncomingTournee @Inject constructor(
     private val updatePeiUseCase: UpdatePeiUseCase,
     private val getCommuneVoieByGeomUseCase: GetCommuneVoieByGeomUseCase,
     private val parametresProvider: ParametresProvider,
+    private val visiteRepository: VisiteRepository,
+    private val materializedViewRepository: MaterializedViewRepository,
 ) : AbstractUseCase() {
 
     fun execute(tourneeId: UUID, userInfo: WrappedUserInfo, logManager: LogManager, mainTransaction: TransactionManager) {
@@ -37,8 +41,17 @@ class ValideIncomingTournee @Inject constructor(
             logManager.info("Gestion des photos")
             gestionPhoto(tourneeId, logManager)
 
-            logManager.info("Gestion des visites")
-            gestionVisites(tourneeId, userInfo, logManager, mainTransaction)
+            try {
+                // on désactive les triggers pour éviter le lancer les événements pour chaque insert,
+                // et notament de la vue v_pei_visite_date
+                // on les lancera à la fin
+                visiteRepository.disabledAllTriggerOnVisite()
+                logManager.info("Gestion des visites")
+                gestionVisites(tourneeId, userInfo, logManager, mainTransaction)
+            } finally {
+                visiteRepository.enableAllTriggerOnVisite()
+                materializedViewRepository.refreshViewVisites()
+            }
 
             logManager.info("Mise à jour de la tournée $tourneeId")
             tourneeRepository.setAvancementTournee(tourneeId, 100)

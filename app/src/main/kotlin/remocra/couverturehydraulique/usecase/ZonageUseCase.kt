@@ -7,8 +7,10 @@ import remocra.couverturehydraulique.GeometrieUtils
 import remocra.couverturehydraulique.db.CouvertureTraceePeiRepository
 import remocra.couverturehydraulique.db.CouvertureTraceeRepository
 import remocra.couverturehydraulique.db.ParametreRepository
+import remocra.couverturehydraulique.db.PeiRepository
 import remocra.couverturehydraulique.db.PeiRepository.PeiCouvertureHydraulique
 import remocra.couverturehydraulique.graphe.Graphe
+import remocra.db.jooq.couverturehydraulique.tables.pojos.CouvertureTraceePei
 import remocra.usecase.AbstractUseCase
 import java.util.UUID
 
@@ -22,6 +24,7 @@ class ZonageUseCase @Inject constructor(
     private val couvertureTraceePeiRepository: CouvertureTraceePeiRepository,
     private val parametreRepository: ParametreRepository,
     private val appSettings: AppSettings,
+    private val peiRepository: PeiRepository,
 ) : AbstractUseCase() {
     companion object {
         // Risque courant faible : 1 PEI non gros débit à distance proche
@@ -117,9 +120,9 @@ class ZonageUseCase @Inject constructor(
         val couverturesPeiProche = couvertureTraceePeiRepository.getCouverturesNonGrosDebit(DISTANCE_RISQUE_COURANT_ORDINAIRE_PROCHE, idEtude, appSettings.codeSdis)
         val couverturesPeiEloignee = couvertureTraceePeiRepository.getCouverturesNonGrosDebit(DISTANCE_RISQUE_COURANT_ORDINAIRE_ELOIGNEE, idEtude, appSettings.codeSdis)
         for (couverturePei in couverturesPeiProche) {
-            val peiA = toPeiCouvertureHydraulique(couverturePei)
+            val peiA = toPeiCouvertureHydraulique(couverturePei) ?: continue
             for (couvertureVoisin in couverturesPeiEloignee) {
-                val peiB = toPeiCouvertureHydraulique(couvertureVoisin)
+                val peiB = toPeiCouvertureHydraulique(couvertureVoisin) ?: continue
                 if (peiA.peiId != peiB.peiId) {
                     val distGraphe = distanceGraphe(peiA, peiB, graphe)
                     if (distGraphe != null && distGraphe <= DISTANCE_MAX_INTERSECTION_PEIS) {
@@ -178,8 +181,8 @@ class ZonageUseCase @Inject constructor(
 
     private fun unionIntersectedCoverages(
         initialGeometry: Geometry?,
-        couverturesA: List<remocra.db.jooq.couverturehydraulique.tables.pojos.CouvertureTraceePei>,
-        couverturesB: List<remocra.db.jooq.couverturehydraulique.tables.pojos.CouvertureTraceePei>,
+        couverturesA: List<CouvertureTraceePei>,
+        couverturesB: List<CouvertureTraceePei>,
     ): Geometry? {
         var result = initialGeometry
         for (couvertureA in couverturesA) {
@@ -224,11 +227,8 @@ class ZonageUseCase @Inject constructor(
         return null // Pas de chemin trouvé
     }
 
-    private fun toPeiCouvertureHydraulique(couverture: remocra.db.jooq.couverturehydraulique.tables.pojos.CouvertureTraceePei): PeiCouvertureHydraulique {
-        return PeiCouvertureHydraulique(
-            peiId = couverture.couvertureTraceePeiId,
-            peiGeometrie = couverture.couvertureTraceePeiGeometrie as org.locationtech.jts.geom.Point,
-        )
+    private fun toPeiCouvertureHydraulique(couverture: CouvertureTraceePei): PeiCouvertureHydraulique? {
+        return peiRepository.getById(couverture.couvertureTraceePeiId)
     }
 
     private fun saveRiskZone(idEtude: UUID, label: String, geometry: Geometry?) {

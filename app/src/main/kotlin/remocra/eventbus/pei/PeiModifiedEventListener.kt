@@ -159,6 +159,11 @@ constructor(
             objectMapper.readValue<InfosTokenNexsis>(responseToken.body()).accessToken
         } catch (e: Exception) {
             logger.error("Erreur lors de la récupération du token d'authentification ", e)
+            logger.error(
+                "Réponse OAuth NexSIS : statut={}, corps={}",
+                responseToken.statusCode(),
+                responseToken.body(),
+            )
             throw IllegalStateException(e.message)
         }
 

@@ -38,6 +38,13 @@ object GlobalConstants {
     const val NATURE_22_PIBI_ETUDE = "PIBI_ETUDE"
     const val NATURE_22_PENA_ETUDE = "PENA_ETUDE"
 
+    // Propre au SDIS 38
+    const val NATURE_38_RESEAU_PRODUCTION_NEIGE = "RES_PR"
+    const val NATURE_38_RESEAU_IRRIGATION = "RES_IR"
+
+    // Propre au SDIS 42
+    const val NATURE_42_POTEAU_RELAIS = "PR"
+
     // Propre au SDIS 59
     const val NATURE_59_ALIMENTATION_POTEAU_RELAIS = "ALI_PR"
     const val NATURE_59_ALIMENTATION_DE_CONDUITE = "ALI_COND"
@@ -181,4 +188,8 @@ object GlobalConstants {
 
     // Rapports personnalisés
     const val RAPPORT_PERSO_PEI_HISTORIQUE = "PEI_HISTORIQUE"
+
+    // DFCI
+    const val DFCI_TOLERANCE_DFCI_PISTE_METRES = "DFCI_TOLERANCE_DFCI_PISTE_METRES"
+    const val DFCI_LISTE_COUCHE = "DFCI_LISTE_COUCHE"
 }
