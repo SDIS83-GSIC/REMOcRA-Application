@@ -244,27 +244,43 @@ class CalculDispoUseCase @Inject constructor(
         return mapPredicats.entries.filter { it.value }.map { getAnomalieIdFromCode(it.key.name) }.toSet()
     }
 
+    private fun isPenaCapaciteNullOuInferieureA(pei: PeiForCalculDispoData, seuil: Int): Boolean =
+        pei.penaCapacite == null || pei.penaCapacite < seuil
+
+    private fun isPenaCapaciteRenseigneeEtInferieureA(pei: PeiForCalculDispoData, seuil: Int): Boolean =
+        pei.penaCapacite != null && pei.penaCapacite < seuil
+
+    private fun isPenaCapaciteRenseigneeEtDansIntervalle(pei: PeiForCalculDispoData, intervalle: IntRange): Boolean {
+        val capacite = pei.penaCapacite
+        return capacite != null && capacite in intervalle
+    }
+
+    private fun isPenaCapaciteNullOuDansIntervalle(pei: PeiForCalculDispoData, intervalle: IntRange): Boolean {
+        val capacite = pei.penaCapacite
+        return capacite == null || capacite in intervalle
+    }
+
     private fun isVolumeInsuffisant(pei: PeiForCalculDispoData): Boolean {
         if (pei.penaCapaciteIllimitee == true) {
             return false
         }
 
         return when (appSettings.codeSdis) {
-            CodeSdis.SDIS_01 -> pei.penaCapaciteIllimitee != true && (pei.penaCapacite == null || pei.penaCapacite < 30)
+            CodeSdis.SDIS_01 -> pei.penaCapaciteIllimitee != true && isPenaCapaciteNullOuInferieureA(pei, 30)
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_22 ->
                 pei.nature!!.natureCode == GlobalConstants.NATURE_22_PENA_ETUDE || // Si PEI en étude, alors indispo
-                    (pei.penaCapacite == null || pei.penaCapacite < 30)
+                    isPenaCapaciteNullOuInferieureA(pei, 30)
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> {
-                if (pei.penaCapacite != null && pei.penaCapacite < 60) {
+                if (isPenaCapaciteRenseigneeEtInferieureA(pei, 60)) {
                     return true
                 }
                 if (
                     pei.nature!!.natureCode == GlobalConstants.NATURE_PEA &&
-                    (pei.penaCapacite == null || pei.penaCapacite < 60)
+                    isPenaCapaciteNullOuInferieureA(pei, 60)
                 ) {
                     return true
                 }
@@ -274,19 +290,19 @@ class CalculDispoUseCase @Inject constructor(
 
             CodeSdis.SDIS_42 -> pei.penaCapacite?.let { it < 2 } ?: (pei.nature?.natureCode != GlobalConstants.NATURE_42_POTEAU_RELAIS)
             CodeSdis.SDIS_49 -> false
-            CodeSdis.SDIS_53 -> pei.penaCapacite != null && pei.penaCapacite < 60
-            CodeSdis.SDIS_56 -> false
-            CodeSdis.SDIS_58 -> pei.penaCapacite != null && pei.penaCapacite < 15
+            CodeSdis.SDIS_53 -> isPenaCapaciteRenseigneeEtInferieureA(pei, 60)
+            CodeSdis.SDIS_56 -> isPenaCapaciteNullOuInferieureA(pei, 30)
+            CodeSdis.SDIS_58 -> isPenaCapaciteRenseigneeEtInferieureA(pei, 15)
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
-                    pei.penaCapacite != null && pei.penaCapacite < 30
+                    isPenaCapaciteRenseigneeEtInferieureA(pei, 30)
                 } else {
                     false
                 }
-            CodeSdis.SDIS_61 -> pei.penaCapacite != null && pei.penaCapacite < 30
+            CodeSdis.SDIS_61 -> isPenaCapaciteRenseigneeEtInferieureA(pei, 30)
             CodeSdis.SDIS_62 ->
                 if (isNatureConcerned62(pei)) {
-                    pei.penaCapacite != null && pei.penaCapacite < 30
+                    isPenaCapaciteRenseigneeEtInferieureA(pei, 30)
                 } else {
                     false
                 }
@@ -297,10 +313,10 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_83 -> false
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_971 -> pei.penaCapacite == null || pei.penaCapacite < 60
+            CodeSdis.SDIS_971 -> isPenaCapaciteNullOuInferieureA(pei, 60)
             CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
-            CodeSdis.SDMIS -> pei.penaCapacite != null && pei.penaCapacite < 10
+            CodeSdis.SDMIS -> isPenaCapaciteRenseigneeEtInferieureA(pei, 10)
         }
     }
 
@@ -314,14 +330,14 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_09 -> false
             CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> pei.penaCapacite != null && pei.penaCapacite in 61..<100
-            CodeSdis.SDIS_38 -> !isNatureSpecialeSdis38(pei) && (pei.penaCapaciteIncertaine == true || (pei.penaCapacite != null && pei.penaCapacite < 30))
-            CodeSdis.SDIS_39 -> pei.penaCapacite != null && pei.penaCapacite in 60..119
-            CodeSdis.SDIS_42 -> pei.penaCapaciteIncertaine == true || pei.penaCapacite != null && pei.penaCapacite < 30
+            CodeSdis.SDIS_22 -> isPenaCapaciteRenseigneeEtDansIntervalle(pei, 61..<100)
+            CodeSdis.SDIS_38 -> !isNatureSpecialeSdis38(pei) && (pei.penaCapaciteIncertaine == true || isPenaCapaciteRenseigneeEtInferieureA(pei, 30))
+            CodeSdis.SDIS_39 -> isPenaCapaciteRenseigneeEtDansIntervalle(pei, 60..119)
+            CodeSdis.SDIS_42 -> pei.penaCapaciteIncertaine == true || isPenaCapaciteRenseigneeEtInferieureA(pei, 30)
             CodeSdis.SDIS_49 -> false
-            CodeSdis.SDIS_53 -> pei.penaCapacite == null || pei.penaCapacite in 60..<100
+            CodeSdis.SDIS_53 -> isPenaCapaciteNullOuDansIntervalle(pei, 60..<100)
             CodeSdis.SDIS_56 -> false
-            CodeSdis.SDIS_58 -> pei.penaCapacite != null && pei.penaCapacite in 16..29
+            CodeSdis.SDIS_58 -> isPenaCapaciteRenseigneeEtDansIntervalle(pei, 16..29)
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> false
             CodeSdis.SDIS_62 -> isNatureConcerned62(pei) && pei.penaCapacite == null
@@ -332,10 +348,10 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_83 -> false
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_971 -> pei.penaCapacite != null && pei.penaCapacite in 60..119
+            CodeSdis.SDIS_971 -> isPenaCapaciteRenseigneeEtDansIntervalle(pei, 60..119)
             CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
-            CodeSdis.SDMIS -> pei.penaCapacite != null && pei.penaCapacite in 10..29
+            CodeSdis.SDMIS -> isPenaCapaciteRenseigneeEtDansIntervalle(pei, 10..29)
         }
     }
 
@@ -343,19 +359,19 @@ class CalculDispoUseCase @Inject constructor(
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01 -> false
             CodeSdis.SDIS_09 -> false
-            CodeSdis.SDIS_16 -> pei.pression == null || pei.pression < 1.0
+            CodeSdis.SDIS_16 -> isPressionNullOuInferieureA(pei, 1.0)
             CodeSdis.SDIS_21 -> false
             CodeSdis.SDIS_22 -> false
             CodeSdis.SDIS_38 -> !isNatureSpecialeSdis38(pei) && isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_39 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_42 -> false
             CodeSdis.SDIS_49 -> false
-            CodeSdis.SDIS_53 -> pei.pression != null && pei.pression < 0.95
-            CodeSdis.SDIS_56 -> false
+            CodeSdis.SDIS_53 -> isPressionRenseigneeEtInferieureA(pei, 0.95)
+            CodeSdis.SDIS_56 -> isPressionNullOuInferieureA(pei, 0.95)
             CodeSdis.SDIS_58 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
-                    pei.pression == null || pei.pression < 0.95
+                    isPressionNullOuInferieureA(pei, 0.95)
                 } else {
                     false
                 }
@@ -367,7 +383,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_78 -> false
             CodeSdis.SDIS_83 -> {
                 if (isNaturePIBI(pei)) {
-                    if (pei.pression != null && pei.pression >= 0 && pei.pression < 1) {
+                    if (isPressionRenseigneeEtDansIntervalle(pei, 0.0..<1.0)) {
                         return true
                     }
                 }
@@ -395,12 +411,12 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> false
             CodeSdis.SDIS_49 -> false
-            CodeSdis.SDIS_53 -> pei.pression == null || pei.pression in 0.95..<1.0
-            CodeSdis.SDIS_56 -> false
-            CodeSdis.SDIS_58 -> pei.pression != null && pei.pression > 8
+            CodeSdis.SDIS_53 -> isPressionNullOuDansIntervalle(pei, 0.95..<1.0)
+            CodeSdis.SDIS_56 -> isPressionRenseigneeEtDansIntervalle(pei, 0.95..<1.0)
+            CodeSdis.SDIS_58 -> isPressionRenseigneeEtSuperieureA(pei, 8.0)
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
-                    pei.pression != null && pei.pression in 0.95..<1.0
+                    isPressionRenseigneeEtDansIntervalle(pei, 0.95..<1.0)
                 } else {
                     false
                 }
@@ -409,7 +425,8 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_66 -> false
             CodeSdis.SDIS_71 -> false
             CodeSdis.SDIS_77 -> false
-            CodeSdis.SDIS_78 -> pei.pression != null && pei.pression > 0 && pei.pression < 1
+            CodeSdis.SDIS_78 -> isPressionRenseigneeEtSuperieureA(pei, 0.0) &&
+                isPressionRenseigneeEtInferieureA(pei, 1.0)
             CodeSdis.SDIS_83 -> false
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_95 -> false
@@ -431,11 +448,11 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> isPressionTropEleveeDefault(pei)
             CodeSdis.SDIS_49 -> false
-            CodeSdis.SDIS_53 -> pei.pression != null && pei.pression > 6
+            CodeSdis.SDIS_53 -> isPressionRenseigneeEtSuperieureA(pei, 6.0)
             CodeSdis.SDIS_56 -> false
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
-            CodeSdis.SDIS_61 -> pei.pression != null && pei.pression > 8
+            CodeSdis.SDIS_61 -> isPressionRenseigneeEtSuperieureA(pei, 8.0)
             CodeSdis.SDIS_62 -> false
             CodeSdis.SDIS_66 -> false
             CodeSdis.SDIS_71 -> false
@@ -444,7 +461,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_83 -> isPressionTropEleveeDefault(pei)
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_971 -> pei.pression != null && pei.pression >= 7
+            CodeSdis.SDIS_971 -> isPressionRenseigneeEtSuperieureOuEgaleA(pei, 7.0)
             CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
@@ -454,15 +471,15 @@ class CalculDispoUseCase @Inject constructor(
     private fun isPressionDynamiqueInsuffisante(pei: PeiForCalculDispoData): Boolean {
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01 -> false
-            CodeSdis.SDIS_09 -> pei.pressionDynamique != null && pei.pressionDynamique < 1
+            CodeSdis.SDIS_09 -> isPressionDynamiqueRenseigneeEtInferieureA(pei, 1.0)
             CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> pei.pressionDynamique == null || pei.pressionDynamique < 1 || pei.nature!!.natureCode == GlobalConstants.NATURE_22_PIBI_ETUDE // Si PEI en étude, alors indispo
+            CodeSdis.SDIS_22 -> isPressionDynamiqueNullOuInferieureA(pei, 1.0) || pei.nature!!.natureCode == GlobalConstants.NATURE_22_PIBI_ETUDE // Si PEI en étude, alors indispo
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> {
                 if (isNaturePIBI(pei)) {
-                    if (pei.pressionDynamique != null && pei.pressionDynamique < 0.6) {
+                    if (isPressionDynamiqueRenseigneeEtInferieureA(pei, 0.6)) {
                         return true
                     }
                 }
@@ -472,13 +489,13 @@ class CalculDispoUseCase @Inject constructor(
 
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
-            CodeSdis.SDIS_56 -> false
+            CodeSdis.SDIS_56 -> isPressionDynamiqueNullOuInferieureA(pei, 0.95)
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> false
             CodeSdis.SDIS_62 -> {
                 if (isNatureConcerned62(pei)) {
-                    if (pei.pressionDynamique != null && pei.pressionDynamique < 0.6) {
+                    if (isPressionDynamiqueRenseigneeEtInferieureA(pei, 0.6)) {
                         return true
                     }
                 }
@@ -490,7 +507,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_78 -> false
             CodeSdis.SDIS_83 -> {
                 if (isNaturePIBI(pei)) {
-                    if (pei.pressionDynamique != null && pei.pressionDynamique >= 0.1 && pei.pressionDynamique < 1) {
+                    if (isPressionDynamiqueRenseigneeEtDansIntervalle(pei, 0.1..<1.0)) {
                         return true
                     }
                 }
@@ -516,25 +533,26 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_22 -> false
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
-            CodeSdis.SDIS_42 -> pei.pressionDynamique != null && pei.pressionDynamique >= 0.6 && pei.pressionDynamique < 1
+            CodeSdis.SDIS_42 -> isPressionDynamiqueRenseigneeEtDansIntervalle(pei, 0.6..<1.0)
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
-            CodeSdis.SDIS_56 -> false
+            CodeSdis.SDIS_56 -> isPressionDynamiqueRenseigneeEtDansIntervalle(pei, 0.95..<1.0)
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> false
             CodeSdis.SDIS_62 -> {
                 if (isNatureConcerned62(pei)) {
-                    if (pei.pressionDynamique == null || pei.pressionDynamique in 0.6..<1.0) {
+                    if (isPressionDynamiqueNullOuDansIntervalle(pei, 0.6..<1.0)) {
                         return true
                     }
                 }
                 false
             }
             CodeSdis.SDIS_66 -> false
-            CodeSdis.SDIS_71 -> pei.pressionDynamique != null && pei.pressionDynamique >= 1 && pei.pressionDynamique < 2
+            CodeSdis.SDIS_71 -> isPressionDynamiqueRenseigneeEtDansIntervalle(pei, 1.0..<2.0)
             CodeSdis.SDIS_77 -> false
-            CodeSdis.SDIS_78 -> pei.pressionDynamique != null && pei.pressionDynamique > 0 && pei.pressionDynamique < 1
+            CodeSdis.SDIS_78 -> isPressionDynamiqueRenseigneeEtSuperieureA(pei, 0.0) &&
+                isPressionDynamiqueRenseigneeEtInferieureA(pei, 1.0)
             CodeSdis.SDIS_83 -> false
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_95 -> false
@@ -548,25 +566,24 @@ class CalculDispoUseCase @Inject constructor(
     private fun isPressionDynamiqueTropElevee(pei: PeiForCalculDispoData): Boolean {
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01 -> false
-            CodeSdis.SDIS_09 -> pei.pressionDynamique != null && pei.pressionDynamique >= 8
+            CodeSdis.SDIS_09 -> isPressionDynamiqueRenseigneeEtSuperieureOuEgaleA(pei, 8.0)
             CodeSdis.SDIS_16 -> false
             CodeSdis.SDIS_21 -> false
-            CodeSdis.SDIS_22 -> pei.pressionDynamique != null && pei.pressionDynamique > 8
+            CodeSdis.SDIS_22 -> isPressionDynamiqueRenseigneeEtSuperieureA(pei, 8.0)
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
             CodeSdis.SDIS_42 -> isPressionDynamiqueTropEleveeDefault(pei)
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
-            CodeSdis.SDIS_56 -> false
+            CodeSdis.SDIS_56 -> isPressionDynamiqueRenseigneeEtSuperieureA(pei, 8.0)
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 ->
-                pei.pression != null && pei.pressionDynamique != null &&
-                    pei.pression >= 1 && pei.pression <= 8 &&
-                    pei.pressionDynamique > 8
+                isPressionRenseigneeEtDansIntervalle(pei, 1.0..8.0) &&
+                    isPressionDynamiqueRenseigneeEtSuperieureA(pei, 8.0)
             CodeSdis.SDIS_62 -> {
                 if (isNatureConcerned62(pei)) {
-                    if (pei.pressionDynamique != null && pei.pressionDynamique > 8) {
+                    if (isPressionDynamiqueRenseigneeEtSuperieureA(pei, 8.0)) {
                         return true
                     }
                 }
@@ -574,13 +591,13 @@ class CalculDispoUseCase @Inject constructor(
             }
             CodeSdis.SDIS_66 -> false
             // TODO choix à faire (avec le SDIS) : seuil à 10 ou à 16 ?
-            CodeSdis.SDIS_71 -> pei.pressionDynamique != null && pei.pressionDynamique > 16
+            CodeSdis.SDIS_71 -> isPressionDynamiqueRenseigneeEtSuperieureA(pei, 16.0)
             CodeSdis.SDIS_77 -> isPressionDynamiqueTropEleveeDefault(pei)
             CodeSdis.SDIS_78 -> false
             CodeSdis.SDIS_83 -> isPressionDynamiqueTropEleveeDefault(pei)
             CodeSdis.SDIS_89 -> false
             CodeSdis.SDIS_95 -> false
-            CodeSdis.SDIS_971 -> pei.pressionDynamique != null && pei.pressionDynamique >= 6
+            CodeSdis.SDIS_971 -> isPressionDynamiqueRenseigneeEtSuperieureOuEgaleA(pei, 6.0)
             CodeSdis.SDIS_973 -> false
             CodeSdis.BSPP -> false
             CodeSdis.SDMIS -> false
@@ -589,32 +606,32 @@ class CalculDispoUseCase @Inject constructor(
 
     private fun isDebitInsuffisant(pei: PeiForCalculDispoData): Boolean {
         return when (appSettings.codeSdis) {
-            CodeSdis.SDIS_01 -> pei.debit == null || pei.debit < 30
-            CodeSdis.SDIS_09 -> pei.debit != null && pei.debit < 15
-            CodeSdis.SDIS_16 -> pei.debit == null || pei.debit < 15
-            CodeSdis.SDIS_21 -> pei.debit != null && pei.debit < 30
+            CodeSdis.SDIS_01 -> isDebitNullOuInferieurA(pei, 30)
+            CodeSdis.SDIS_09 -> isDebitRenseigneEtInferieurA(pei, 15)
+            CodeSdis.SDIS_16 -> isDebitNullOuInferieurA(pei, 15)
+            CodeSdis.SDIS_21 -> isDebitRenseigneEtInferieurA(pei, 30)
             CodeSdis.SDIS_22 -> {
                 return if (pei.nature!!.natureCode == GlobalConstants.NATURE_22_PIBI_ETUDE) { // Si PEI en étude, alors indispo
                     true
                 } else if (pei.diametreId == null) {
                     // Si le diamètre est null, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
-                    pei.debit == null || pei.debit < 27
+                    isDebitNullOuInferieurA(pei, 27)
                 } else if (isDiametre80(pei)) {
-                    pei.debit == null || pei.debit < 27
+                    isDebitNullOuInferieurA(pei, 27)
                 } else if (isDiametre100(pei)) {
-                    pei.debit == null || pei.debit < 30
+                    isDebitNullOuInferieurA(pei, 30)
                 } else if (isDiametre150(pei)) {
-                    pei.debit == null || pei.debit < 60
+                    isDebitNullOuInferieurA(pei, 60)
                 } else {
                     // Si le diamètre est autre que null/80/100/150, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
-                    pei.debit == null || pei.debit < 27
+                    isDebitNullOuInferieurA(pei, 27)
                 }
             }
-            CodeSdis.SDIS_38 -> !isNatureSpecialeSdis38(pei) && (pei.debit == null || pei.debit < 15)
-            CodeSdis.SDIS_39 -> (pei.debit == null || pei.debit <= 29)
+            CodeSdis.SDIS_38 -> !isNatureSpecialeSdis38(pei) && isDebitNullOuInferieurA(pei, 15)
+            CodeSdis.SDIS_39 -> isDebitNullOuInferieurA(pei, 30)
             CodeSdis.SDIS_42 -> pei.debit == null
             CodeSdis.SDIS_49 -> {
-                if (pei.debit == null || pei.debit < 30) {
+                if (isDebitNullOuInferieurA(pei, 30)) {
                     return true
                 }
 
@@ -623,20 +640,20 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_53 -> {
                 return if (pei.diametreId == null) {
                     // Si le diamètre est null, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
-                    pei.debit != null && pei.debit < 27
+                    isDebitRenseigneEtInferieurA(pei, 27)
                 } else if (isDiametre80(pei)) {
-                    pei.debit != null && pei.debit < 27
+                    isDebitRenseigneEtInferieurA(pei, 27)
                 } else if (isDiametre100(pei)) {
-                    pei.debit != null && pei.debit < 54
+                    isDebitRenseigneEtInferieurA(pei, 54)
                 } else if (isDiametre150(pei)) {
-                    pei.debit != null && pei.debit < 62
+                    isDebitRenseigneEtInferieurA(pei, 62)
                 } else {
                     // Si le diamètre est autre que null/80/100/150, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
-                    pei.debit != null && pei.debit < 27
+                    isDebitRenseigneEtInferieurA(pei, 27)
                 }
             }
-            CodeSdis.SDIS_58 -> pei.debit == null || pei.debit < 15
-            CodeSdis.SDIS_56 -> false
+            CodeSdis.SDIS_58 -> isDebitNullOuInferieurA(pei, 15)
+            CodeSdis.SDIS_56 -> isDebitNullOuInferieurA(pei, 27)
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
                     if (pei.debit == null) {
@@ -652,34 +669,34 @@ class CalculDispoUseCase @Inject constructor(
                     false
                 }
             CodeSdis.SDIS_61 -> {
-                if (pei.pressionDynamique == null || pei.pressionDynamique <= 8) {
-                    if (pei.pression != null && pei.pression >= 1 && pei.pression <= 8) {
-                        return pei.debit != null && pei.debit < 30
+                if (isPressionDynamiqueNullOuInferieureOuEgaleA(pei, 8.0)) {
+                    if (isPressionRenseigneeEtDansIntervalle(pei, 1.0..8.0)) {
+                        return isDebitRenseigneEtInferieurA(pei, 30)
                     }
                 }
                 if (pei.debit == null) {
-                    return pei.pressionDynamique == null || pei.pressionDynamique < 1
+                    return isPressionDynamiqueNullOuInferieureA(pei, 1.0)
                 }
                 return false
             }
             CodeSdis.SDIS_62 -> {
                 if (isNatureConcerned62(pei)) {
-                    if (pei.debit != null && pei.debit < 15) {
+                    if (isDebitRenseigneEtInferieurA(pei, 15)) {
                         return true
-                    } else if (pei.debit != null && pei.debit in 15..<25) {
+                    } else if (isDebitRenseigneEtDansIntervalle(pei, 15..<25)) {
                         return peiHasAnomalie62(pei)
                     }
                 }
                 false
             }
-            CodeSdis.SDIS_66 -> pei.debit != null && pei.debit < 30
+            CodeSdis.SDIS_66 -> isDebitRenseigneEtInferieurA(pei, 30)
             CodeSdis.SDIS_71 -> {
                 if (pei.diametreId == null || listOf(GlobalConstants.DIAMETRE_80, GlobalConstants.DIAMETRE_100).contains(ensureDiametre(pei).diametreCode) &&
-                    (pei.debit != null && pei.debit < 30)
+                    isDebitRenseigneEtInferieurA(pei, 30)
                 ) {
                     return true
                 } else if (isDiametre150(pei) &&
-                    (pei.debit != null && pei.debit < 60)
+                    isDebitRenseigneEtInferieurA(pei, 60)
                 ) {
                     return true
                 }
@@ -688,31 +705,31 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_77 -> isDebitInsuffisantDefault(pei)
             CodeSdis.SDIS_78 -> false
             CodeSdis.SDIS_83 -> isDebitInsuffisantDefault(pei)
-            CodeSdis.SDIS_89 -> pei.debit != null && pei.debit < 15
+            CodeSdis.SDIS_89 -> isDebitRenseigneEtInferieurA(pei, 15)
             CodeSdis.SDIS_95 -> {
                 if (pei.diametreId == null) {
                     return false
                 }
                 if (isDiametre80(pei)) {
-                    if (pei.debit != null && pei.debit < 15) {
+                    if (isDebitRenseigneEtInferieurA(pei, 15)) {
                         return true
                     }
                 }
                 if (isDiametre100(pei)) {
-                    if (pei.debit != null && pei.debit < 30) {
+                    if (isDebitRenseigneEtInferieurA(pei, 30)) {
                         return true
                     }
                 }
                 if (isDiametre150(pei)) {
-                    if (pei.debit != null && pei.debit < 60) {
+                    if (isDebitRenseigneEtInferieurA(pei, 60)) {
                         return true
                     }
                 }
                 return false
             }
-            CodeSdis.SDIS_971 -> pei.debit == null || pei.debit < 30
-            CodeSdis.SDIS_973 -> pei.debit == null || pei.debit < 30
-            CodeSdis.BSPP -> pei.debit != null && pei.debit < 60
+            CodeSdis.SDIS_971 -> isDebitNullOuInferieurA(pei, 30)
+            CodeSdis.SDIS_973 -> isDebitNullOuInferieurA(pei, 30)
+            CodeSdis.BSPP -> isDebitRenseigneEtInferieurA(pei, 60)
             CodeSdis.SDMIS -> false
         }
     }
@@ -721,7 +738,7 @@ class CalculDispoUseCase @Inject constructor(
         return when (appSettings.codeSdis) {
             CodeSdis.SDIS_01 -> {
                 // Cas du diamètre NULL à gérer avant que ça puisse planter
-                if (pei.diametreId == null && pei.debit in 30..59) {
+                if (pei.diametreId == null && isDebitRenseigneEtDansIntervalle(pei, 30..59)) {
                     return true
                 }
                 val diametre = ensureDiametre(pei)
@@ -730,41 +747,41 @@ class CalculDispoUseCase @Inject constructor(
                     return false
                 }
                 if (GlobalConstants.DIAMETRE_100 == diametre.diametreCode) {
-                    if (pei.debit in 30..59) {
+                    if (isDebitRenseigneEtDansIntervalle(pei, 30..59)) {
                         return true
                     }
                 } else if (GlobalConstants.DIAMETRE_150 == diametre.diametreCode) {
-                    if (pei.debit in 30..119) {
+                    if (isDebitRenseigneEtDansIntervalle(pei, 30..119)) {
                         return true
                     }
                 }
                 return false
             }
-            CodeSdis.SDIS_09 -> pei.debit != null && pei.debit in 15..29
-            CodeSdis.SDIS_16 -> pei.debit != null && pei.debit in 15..29
-            CodeSdis.SDIS_21 -> pei.debit != null && pei.debit in 30..59
+            CodeSdis.SDIS_09 -> isDebitRenseigneEtDansIntervalle(pei, 15..29)
+            CodeSdis.SDIS_16 -> isDebitRenseigneEtDansIntervalle(pei, 15..29)
+            CodeSdis.SDIS_21 -> isDebitRenseigneEtDansIntervalle(pei, 30..59)
             CodeSdis.SDIS_22 -> {
                 return if (pei.diametreId == null) {
                     // Si le diamètre est null, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
-                    pei.debit != null && pei.debit in 27..<30
+                    isDebitRenseigneEtDansIntervalle(pei, 27..<30)
                 } else if (isDiametre80(pei)) {
-                    pei.debit != null && pei.debit in 27..<30
+                    isDebitRenseigneEtDansIntervalle(pei, 27..<30)
                 } else if (isDiametre100(pei)) {
-                    pei.debit != null && pei.debit in 30..<54
+                    isDebitRenseigneEtDansIntervalle(pei, 30..<54)
                 } else if (isDiametre150(pei)) {
-                    pei.debit != null && pei.debit in 60..<105
+                    isDebitRenseigneEtDansIntervalle(pei, 60..<105)
                 } else {
                     // Si le diamètre est autre que null/80/100/150, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
-                    pei.debit != null && pei.debit in 27..<30
+                    isDebitRenseigneEtDansIntervalle(pei, 27..<30)
                 }
             }
-            CodeSdis.SDIS_38 -> !isNatureSpecialeSdis38(pei) && pei.debit != null && pei.debit in 15..29
-            CodeSdis.SDIS_39 -> pei.debit != null && (pei.debit in 30..59)
-            CodeSdis.SDIS_42 -> pei.debit != null && pei.debit < 30
+            CodeSdis.SDIS_38 -> !isNatureSpecialeSdis38(pei) && isDebitRenseigneEtDansIntervalle(pei, 15..29)
+            CodeSdis.SDIS_39 -> isDebitRenseigneEtDansIntervalle(pei, 30..59)
+            CodeSdis.SDIS_42 -> isDebitRenseigneEtInferieurA(pei, 30)
             CodeSdis.SDIS_49 -> {
-                if (isDiametre100(pei) && pei.debit != null && pei.debit in 30..59) {
+                if (isDiametre100(pei) && isDebitRenseigneEtDansIntervalle(pei, 30..59)) {
                     return true
-                } else if (isDiametre150(pei) && pei.debit != null && pei.debit in 30..119) {
+                } else if (isDiametre150(pei) && isDebitRenseigneEtDansIntervalle(pei, 30..119)) {
                     return true
                 }
 
@@ -773,19 +790,19 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_53 -> {
                 return if (pei.diametreId == null) {
                     // Si le diamètre est null, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
-                    pei.debit == null || pei.debit in 27..<30
+                    isDebitNullOuDansIntervalle(pei, 27..<30)
                 } else if (isDiametre80(pei)) {
-                    pei.debit == null || pei.debit in 27..<30
+                    isDebitNullOuDansIntervalle(pei, 27..<30)
                 } else if (isDiametre100(pei)) {
-                    pei.debit == null || pei.debit in 54..<60
+                    isDebitNullOuDansIntervalle(pei, 54..<60)
                 } else if (isDiametre150(pei)) {
-                    pei.debit == null || pei.debit in 62..<105
+                    isDebitNullOuDansIntervalle(pei, 62..<105)
                 } else {
                     // Si le diamètre est autre que null/80/100/150, on applique la règle ayant le plus grand handicap opérationnel = Ø 80
-                    pei.debit == null || pei.debit in 27..<30
+                    isDebitNullOuDansIntervalle(pei, 27..<30)
                 }
             }
-            CodeSdis.SDIS_58 -> pei.debit != null && (pei.debit in 15..29)
+            CodeSdis.SDIS_58 -> isDebitRenseigneEtDansIntervalle(pei, 15..29)
             CodeSdis.SDIS_56 -> false
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
@@ -802,19 +819,13 @@ class CalculDispoUseCase @Inject constructor(
                 }
             CodeSdis.SDIS_61 -> {
                 if (isDiametre100(pei) &&
-                    (
-                        pei.pression != null && pei.pression >= 1 && pei.pression <= 8 &&
-                            (pei.pressionDynamique == null || pei.pressionDynamique < 1)
-                        ) &&
-                    pei.debit != null && pei.debit >= 30 && pei.debit < 60
+                    isConditionPressionSdis61(pei) &&
+                    isDebitRenseigneEtDansIntervalle(pei, 30..<60)
                 ) {
                     return true
                 } else if (isDiametre150(pei) &&
-                    (
-                        pei.pression != null && pei.pression >= 1 && pei.pression <= 8 &&
-                            (pei.pressionDynamique == null || pei.pressionDynamique < 1)
-                        ) &&
-                    pei.debit != null && pei.debit >= 30 && pei.debit < 120
+                    isConditionPressionSdis61(pei) &&
+                    isDebitRenseigneEtDansIntervalle(pei, 30..<120)
                 ) {
                     return true
                 }
@@ -822,21 +833,21 @@ class CalculDispoUseCase @Inject constructor(
             }
             CodeSdis.SDIS_62 -> {
                 if (isNatureConcerned62(pei)) {
-                    if (pei.debit != null && pei.debit in 15..<25) {
+                    if (isDebitRenseigneEtDansIntervalle(pei, 15..<25)) {
                         !peiHasAnomalie62(pei)
                     } else {
                         val diametre = pei.diametreId
                         when {
                             diametre == null -> {
                                 if (isNatureBI(pei)) {
-                                    (pei.debit == null || pei.debit in 25..<45)
+                                    isDebitNullOuDansIntervalle(pei, 25..<45)
                                 } else {
                                     (pei.debit == null)
                                 }
                             }
-                            isDiametre100(pei) -> (pei.debit == null || pei.debit in 25..<45)
-                            isDiametre150(pei) -> (pei.debit == null || pei.debit in 25..<60)
-                            isNatureBI(pei) -> (pei.debit == null || pei.debit in 25..<45)
+                            isDiametre100(pei) -> isDebitNullOuDansIntervalle(pei, 25..<45)
+                            isDiametre150(pei) -> isDebitNullOuDansIntervalle(pei, 25..<60)
+                            isNatureBI(pei) -> isDebitNullOuDansIntervalle(pei, 25..<45)
                             else -> pei.debit == null
                         }
                     }
@@ -844,39 +855,39 @@ class CalculDispoUseCase @Inject constructor(
                     false
                 }
             }
-            CodeSdis.SDIS_66 -> pei.debit != null && pei.debit in 30..59
+            CodeSdis.SDIS_66 -> isDebitRenseigneEtDansIntervalle(pei, 30..59)
             CodeSdis.SDIS_71 -> {
                 if (pei.diametreId == null || isDiametre100(pei) &&
-                    (pei.debit != null && pei.debit in 30..59)
+                    isDebitRenseigneEtDansIntervalle(pei, 30..59)
                 ) {
                     return true
                 } else if (isDiametre150(pei) &&
-                    (pei.debit != null && pei.debit in 60..119)
+                    isDebitRenseigneEtDansIntervalle(pei, 60..119)
                 ) {
                     return true
                 }
                 return false
             }
             CodeSdis.SDIS_77 -> isDebitNonConformeDefault(pei)
-            CodeSdis.SDIS_78 -> pei.debit != null && pei.debit in 1..44
+            CodeSdis.SDIS_78 -> isDebitRenseigneEtDansIntervalle(pei, 1..44)
             CodeSdis.SDIS_83 -> isDebitNonConformeDefault(pei)
-            CodeSdis.SDIS_89 -> pei.debit != null && pei.debit in 15..29
+            CodeSdis.SDIS_89 -> isDebitRenseigneEtDansIntervalle(pei, 15..29)
             CodeSdis.SDIS_95 -> {
                 if (pei.diametre == null) {
                     return false
                 }
                 if (isDiametre80(pei)) {
-                    if (pei.debit != null && pei.debit in 15..29) {
+                    if (isDebitRenseigneEtDansIntervalle(pei, 15..29)) {
                         return true
                     }
                 }
                 if (isDiametre100(pei)) {
-                    if (pei.debit != null && pei.debit in 30..59) {
+                    if (isDebitRenseigneEtDansIntervalle(pei, 30..59)) {
                         return true
                     }
                 }
                 if (isDiametre150(pei)) {
-                    if (pei.debit != null && pei.debit in 60..119) {
+                    if (isDebitRenseigneEtDansIntervalle(pei, 60..119)) {
                         return true
                     }
                 }
@@ -886,16 +897,16 @@ class CalculDispoUseCase @Inject constructor(
                 return if (pei.diametreId == null) {
                     false
                 } else if (isDiametre100(pei)) {
-                    pei.debit != null && pei.debit in 30..59
+                    isDebitRenseigneEtDansIntervalle(pei, 30..59)
                 } else if (isDiametre150(pei)) {
-                    pei.debit != null && pei.debit in 30..119
+                    isDebitRenseigneEtDansIntervalle(pei, 30..119)
                 } else {
                     false
                 }
             }
-            CodeSdis.SDIS_973 -> pei.debit != null && pei.debit >= 30 && pei.debit < 60
+            CodeSdis.SDIS_973 -> isDebitRenseigneEtDansIntervalle(pei, 30..<60)
             CodeSdis.BSPP -> false
-            CodeSdis.SDMIS -> pei.debit != null && pei.debit < 30
+            CodeSdis.SDMIS -> isDebitRenseigneEtInferieurA(pei, 30)
         }
     }
 
@@ -908,7 +919,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_22 -> false
             CodeSdis.SDIS_38 -> false
             CodeSdis.SDIS_39 -> false
-            CodeSdis.SDIS_42 -> pei.debit != null && pei.debit > 500
+            CodeSdis.SDIS_42 -> isDebitRenseigneEtSuperieurA(pei, 500)
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
             CodeSdis.SDIS_56 -> false
@@ -916,15 +927,15 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> {
                 if (isDiametre80(pei) && isPressionsBetween1And8(pei) &&
-                    (pei.debit != null && pei.debit >= 90)
+                    isDebitRenseigneEtSuperieurOuEgalA(pei, 90)
                 ) {
                     return true
                 } else if (isDiametre100(pei) && isPressionsBetween1And8(pei) &&
-                    (pei.debit != null && pei.debit >= 150)
+                    isDebitRenseigneEtSuperieurOuEgalA(pei, 150)
                 ) {
                     return true
                 } else if (isDiametre150(pei) && isPressionsBetween1And8(pei) &&
-                    (pei.debit != null && pei.debit >= 270)
+                    isDebitRenseigneEtSuperieurOuEgalA(pei, 270)
                 ) {
                     return true
                 }
@@ -1052,46 +1063,107 @@ class CalculDispoUseCase @Inject constructor(
      * Règle par défaut pour savoir si la pression est considérée comme insuffisante
      */
     private fun isPressionInsuffisanteDefault(pei: PeiForCalculDispoData) =
-        pei.pression == null || pei.pression < 1
+        isPressionNullOuInferieureA(pei, 1.0)
+
+    private fun isPressionRenseigneeEtInferieureA(pei: PeiForCalculDispoData, seuil: Double): Boolean =
+        pei.pression != null && pei.pression < seuil
+
+    private fun isPressionNullOuInferieureA(pei: PeiForCalculDispoData, seuil: Double): Boolean {
+        return pei.pression == null || pei.pression < seuil
+    }
+    private fun isPressionRenseigneeEtSuperieureA(pei: PeiForCalculDispoData, seuil: Double): Boolean =
+        pei.pression != null && pei.pression > seuil
+
+    private fun isPressionRenseigneeEtDansIntervalle(pei: PeiForCalculDispoData, intervalle: OpenEndRange<Double>): Boolean =
+        pei.pression != null && pei.pression in intervalle
+
+    private fun isPressionNullOuDansIntervalle(pei: PeiForCalculDispoData, intervalle: OpenEndRange<Double>): Boolean =
+        pei.pression == null || pei.pression in intervalle
+
+    private fun isPressionRenseigneeEtDansIntervalle(pei: PeiForCalculDispoData, intervalle: ClosedRange<Double>): Boolean =
+        pei.pression != null && pei.pression in intervalle
+
+    private fun isPressionRenseigneeEtSuperieureOuEgaleA(pei: PeiForCalculDispoData, seuil: Double): Boolean =
+        pei.pression != null && pei.pression >= seuil
+
+    private fun isDebitRenseigneEtInferieurA(pei: PeiForCalculDispoData, seuil: Int): Boolean =
+        pei.debit != null && pei.debit < seuil
+
+    private fun isDebitNullOuInferieurA(pei: PeiForCalculDispoData, seuil: Int): Boolean =
+        pei.debit == null || pei.debit < seuil
+
+    private fun isDebitRenseigneEtDansIntervalle(pei: PeiForCalculDispoData, intervalle: IntRange): Boolean =
+        pei.debit != null && pei.debit in intervalle
+
+    private fun isDebitNullOuDansIntervalle(pei: PeiForCalculDispoData, intervalle: IntRange): Boolean =
+        pei.debit == null || pei.debit in intervalle
+
+    private fun isDebitRenseigneEtSuperieurOuEgalA(pei: PeiForCalculDispoData, seuil: Int): Boolean =
+        pei.debit != null && pei.debit >= seuil
+
+    private fun isDebitRenseigneEtSuperieurA(pei: PeiForCalculDispoData, seuil: Int): Boolean =
+        pei.debit != null && pei.debit > seuil
 
     /**
      * Règle par défaut pour savoir si la pression est considérée comme trop élevée
      */
-    private fun isPressionTropEleveeDefault(pei: PeiForCalculDispoData): Boolean {
-        if (isNaturePIBI(pei)) {
-            if (pei.pression != null && pei.pression > 16) {
-                return true
-            }
-        }
-
-        return false
-    }
+    private fun isPressionTropEleveeDefault(pei: PeiForCalculDispoData): Boolean =
+        isNaturePIBI(pei) && isPressionRenseigneeEtSuperieureA(pei, 16.0)
 
     /**
      * Règle par défaut pour savoir si la pression dynamique est considérée comme insuffisante
      */
     private fun isPressionDynamiqueInsuffisanteDefault(pei: PeiForCalculDispoData) =
-        pei.pressionDynamique != null && pei.pressionDynamique < 1
+        isPressionDynamiqueRenseigneeEtInferieureA(pei, 1.0)
 
     /**
      * Règle par défaut pour savoir si la pression dynamique est considérée comme trop élevée
      */
-    private fun isPressionDynamiqueTropEleveeDefault(pei: PeiForCalculDispoData): Boolean {
-        if (isNaturePIBI(pei)) {
-            if (pei.pressionDynamique != null && pei.pressionDynamique > 16) {
-                return true
-            }
-        }
+    private fun isPressionDynamiqueTropEleveeDefault(pei: PeiForCalculDispoData): Boolean =
+        isNaturePIBI(pei) && isPressionDynamiqueRenseigneeEtSuperieureA(pei, 16.0)
 
-        return false
+    private fun isPressionDynamiqueNullOuInferieureA(pei: PeiForCalculDispoData, seuil: Double): Boolean {
+        return pei.pressionDynamique == null || pei.pressionDynamique < seuil
     }
+
+    private fun isPressionDynamiqueRenseigneeEtInferieureA(pei: PeiForCalculDispoData, seuil: Double): Boolean {
+        return pei.pressionDynamique != null && pei.pressionDynamique < seuil
+    }
+
+    private fun isPressionDynamiqueRenseigneeEtDansIntervalle(pei: PeiForCalculDispoData, intervalle: OpenEndRange<Double>): Boolean {
+        return pei.pressionDynamique != null && pei.pressionDynamique in intervalle
+    }
+
+    private fun isPressionDynamiqueRenseigneeEtSuperieureA(pei: PeiForCalculDispoData, seuil: Double): Boolean {
+        return pei.pressionDynamique != null && pei.pressionDynamique > seuil
+    }
+
+    private fun isPressionDynamiqueRenseigneeEtSuperieureOuEgaleA(pei: PeiForCalculDispoData, seuil: Double): Boolean {
+        return pei.pressionDynamique != null && pei.pressionDynamique >= seuil
+    }
+
+    private fun isPressionDynamiqueNullOuDansIntervalle(pei: PeiForCalculDispoData, intervalle: OpenEndRange<Double>): Boolean {
+        return pei.pressionDynamique == null || pei.pressionDynamique in intervalle
+    }
+
+    private fun isPressionDynamiqueNullOuInferieureOuEgaleA(pei: PeiForCalculDispoData, seuil: Double): Boolean {
+        return pei.pressionDynamique == null || pei.pressionDynamique <= seuil
+    }
+
+    /**
+     * Retourne TRUE si pour le PEI, la pression est renseignée et comprise entre 1 et 8 (inclus),
+     * et la pression dynamique est soit nulle, soit inférieure à 1 (règle spécifique SDIS 61)
+     */
+    private fun isConditionPressionSdis61(pei: PeiForCalculDispoData): Boolean =
+        isPressionRenseigneeEtDansIntervalle(pei, 1.0..8.0) &&
+            isPressionDynamiqueNullOuInferieureA(pei, 1.0)
 
     /**
      * Règle par défaut pour savoir si le débit est considéré comme insuffisant
      */
     private fun isDebitInsuffisantDefault(pei: PeiForCalculDispoData): Boolean {
         if (listOf(GlobalConstants.DIAMETRE_70, GlobalConstants.DIAMETRE_80, GlobalConstants.DIAMETRE_100).contains(ensureDiametre(pei).diametreCode)) {
-            return pei.debit != null && pei.debit in 0..29
+            return isDebitRenseigneEtDansIntervalle(pei, 0..29)
         }
 
         return false
@@ -1102,10 +1174,10 @@ class CalculDispoUseCase @Inject constructor(
      */
     private fun isDebitNonConformeDefault(pei: PeiForCalculDispoData): Boolean {
         if (isDiametre100(pei)) {
-            return pei.debit != null && pei.debit in 30..59
+            return isDebitRenseigneEtDansIntervalle(pei, 30..59)
         }
         if (isDiametre150(pei)) {
-            return pei.debit != null && pei.debit in 60..119
+            return isDebitRenseigneEtDansIntervalle(pei, 60..119)
         }
 
         return false
@@ -1116,13 +1188,13 @@ class CalculDispoUseCase @Inject constructor(
      */
     private fun isDebitTropEleveDefault(pei: PeiForCalculDispoData): Boolean {
         if (listOf(GlobalConstants.DIAMETRE_70, GlobalConstants.DIAMETRE_80).contains(ensureDiametre(pei).diametreCode)) {
-            return pei.debit != null && pei.debit > 90
+            return isDebitRenseigneEtSuperieurA(pei, 90)
         }
         if (isDiametre100(pei)) {
-            return pei.debit != null && pei.debit > 130
+            return isDebitRenseigneEtSuperieurA(pei, 130)
         }
         if (isDiametre150(pei)) {
-            return pei.debit != null && pei.debit > 150
+            return isDebitRenseigneEtSuperieurA(pei, 150)
         }
 
         return false
@@ -1132,7 +1204,8 @@ class CalculDispoUseCase @Inject constructor(
      * Utilitaire retournant TRUE si les pressions statiques et dynamiques sont non nulles et comprises entre 1 et 8
      */
     private fun isPressionsBetween1And8(pei: PeiForCalculDispoData): Boolean {
-        return pei.pression != null && pei.pression >= 1 && pei.pression <= 8 &&
-            pei.pressionDynamique != null && pei.pressionDynamique >= 1 && pei.pressionDynamique <= 8
+        return isPressionRenseigneeEtDansIntervalle(pei, 1.0..8.0) &&
+            isPressionDynamiqueRenseigneeEtSuperieureOuEgaleA(pei, 1.0) &&
+            isPressionDynamiqueNullOuInferieureOuEgaleA(pei, 8.0)
     }
 }
