@@ -1,5 +1,11 @@
 = Release Notes
 
+== 3.0.12.1
+
+* https://redmine.atolcd.com/issues/307489[#307489]: [Fix] Corrige la désactivation/activation des triggers de remocra.visite
+
+Pour plus d'informations, consultez les tickets REDMINE associés.
+
 == 3.0.12
 
 * https://redmine.atolcd.com/issues/306691[#306691]: Visites : optimisation de l'insertion en masse de visites
