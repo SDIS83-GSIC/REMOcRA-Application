@@ -45,11 +45,11 @@ class ValideIncomingTournee @Inject constructor(
                 // on désactive les triggers pour éviter le lancer les événements pour chaque insert,
                 // et notament de la vue v_pei_visite_date
                 // on les lancera à la fin
-                visiteRepository.disabledAllTriggerOnVisite()
+                visiteRepository.disableTriggerOnInsertVisite()
                 logManager.info("Gestion des visites")
                 gestionVisites(tourneeId, userInfo, logManager, mainTransaction)
             } finally {
-                visiteRepository.enableAllTriggerOnVisite()
+                visiteRepository.enableTriggerOnInsertVisite()
                 materializedViewRepository.refreshViewVisites()
             }
 

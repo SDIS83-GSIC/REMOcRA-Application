@@ -373,11 +373,9 @@ class VisiteRepository
             .orderBy(VISITE.DATE.desc())
             .fetch(VISITE.DATE)
 
-    fun disabledAllTriggerOnVisite() {
-        dsl.execute("ALTER TABLE ${VISITE.qualifiedName} DISABLE TRIGGER ALL;")
-    }
+    fun disableTriggerOnInsertVisite() =
+        dsl.execute("ALTER TABLE ${VISITE.qualifiedName} DISABLE TRIGGER trg_visite_insert_refresh_pei_visite_date;")
 
-    fun enableAllTriggerOnVisite() {
-        dsl.execute("ALTER TABLE ${VISITE.qualifiedName} ENABLE TRIGGER ALL;")
-    }
+    fun enableTriggerOnInsertVisite() =
+        dsl.execute("ALTER TABLE ${VISITE.qualifiedName} ENABLE TRIGGER trg_visite_insert_refresh_pei_visite_date;")
 }

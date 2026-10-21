@@ -32,7 +32,7 @@ constructor(
             // on désactive les triggers pour éviter le lancer les événements pour chaque insert,
             // et notament de la vue v_pei_visite_date
             // on les lancera à la fin
-            visiteRepository.disabledAllTriggerOnVisite()
+            visiteRepository.disableTriggerOnInsertVisite()
 
             val listResult: MutableMap<UUID, AbstractUseCase.Result> = mutableMapOf()
             visiteTourneeInput.listeSimplifiedVisite?.forEach { visite ->
@@ -60,7 +60,7 @@ constructor(
             }
             return@transactionResult listResult
         } finally {
-            visiteRepository.enableAllTriggerOnVisite()
+            visiteRepository.enableTriggerOnInsertVisite()
             materializedViewRepository.refreshViewVisites()
         }
     }
