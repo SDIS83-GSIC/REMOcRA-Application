@@ -62,7 +62,7 @@ constructor(
         // - message
         messageRepository.add(
             MessageData(
-                messageObjet = "Modification géométrique d’événement",
+                messageObjet = "Modification géométrique d’évènement",
                 messageDescription = "",
                 messageDateConstat = dateUtils.now(),
                 messageImportance = 0,

@@ -82,7 +82,7 @@ constructor(
 
         // Placeholders degré 2 : chaque destinataire permet de paramétrer différement le mail
         val objetsANotifier: MutableList<NotificationMailData> = mutableListOf()
-        // Regrouper tous les événements par adresse e-mail
+        // Regrouper tous les évènements par adresse e-mail
         val mapEmailToTracaEvents = mapJoinDestinataireEventTracaOnPeiId.entries
             .groupBy({ it.key.destinataireEmail }, { it.value })
             .mapValues { it.value.flatten() }
@@ -135,7 +135,7 @@ constructor(
          *  Au choix signifit que ca peut etre les trois, deux ou un seul cas
          */
 
-        // Récupération des événements de tracabilité depuis la dernière éxécution de la tâche
+        // Récupération des évènements de tracabilité depuis la dernière éxécution de la tâche
         val listeEventTraca = tracabiliteRepository.getTracabilitePeiSince(getLastExecDate(this.getType(), this.jobDb!!.jobId))
 
         // Si aucun evenement de traca, on s'arrete là
@@ -164,7 +164,7 @@ constructor(
         // Pour chaque élément de traca
         val listPei: MutableList<TracabiliteEvent<PeiData>> = mutableListOf()
         listTracaObjects.forEach { tracaObject ->
-            // Récupération de l'événement précédent s'il existe
+            // Récupération de l'évènement précédent s'il existe
             val previousTracaEvent = tracabiliteRepository.getPreviousPeiTracaEvent(tracaObject.pojoId, tracaObject.date)
             if (previousTracaEvent != null) {
                 val pojo = try {

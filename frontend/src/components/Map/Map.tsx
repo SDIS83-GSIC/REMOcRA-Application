@@ -649,7 +649,7 @@ export const useMapComponent = ({
       // On mémorise la dernière valeur connue de l'étendue pour éviter les navigations inutiles
       let lastExtent = "";
 
-      // Débounce les événements de fin de mouvement pour éviter trop d'appels
+      // Débounce les évènements de fin de mouvement pour éviter trop d'appels
       const debouncedHandleMoveEnd = debounce(() => {
         const view = map.getView();
         const extent = view.calculateExtent().join(",");
@@ -667,7 +667,7 @@ export const useMapComponent = ({
         }
       }, 300); // Délai de 300ms
 
-      // Throttle les événements de zoom pour améliorer les performances
+      // Throttle les évènements de zoom pour améliorer les performances
       const throttledHandleZoom = throttle(() => {
         // Actions spécifiques au zoom si nécessaire
       }, 100); // Délai de 100ms

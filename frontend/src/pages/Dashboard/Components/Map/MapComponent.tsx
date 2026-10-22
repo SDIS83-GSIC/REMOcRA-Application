@@ -116,7 +116,7 @@ const MapDashboardComponent = (data: any) => {
     newMap.addOverlay(newTooltip);
     setTooltip(newTooltip);
 
-    // Événements pour la tooltip
+    // Évènements pour la tooltip
     newMap.on("pointermove", (evt) => {
       const feature = newMap.forEachFeatureAtPixel(
         evt.pixel,

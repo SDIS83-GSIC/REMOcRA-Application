@@ -7,7 +7,7 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 /**
- * Mapper des exceptions non gérées dans la servlet. Cela permet d'avoir un événement Sentry avec le
+ * Mapper des exceptions non gérées dans la servlet. Cela permet d'avoir un évènement Sentry avec le
  * contexte de la requête de servlet.
  */
 class UnhandledExceptionMapper : ExceptionMapper<Throwable> {

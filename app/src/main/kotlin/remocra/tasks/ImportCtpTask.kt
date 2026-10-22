@@ -31,7 +31,7 @@ class ImportCtpTask @Inject constructor(
         var nbSucces = 0
         var nbErreurs = 0
         try {
-            // on désactive les triggers pour éviter le lancer les événements pour chaque insert,
+            // on désactive les triggers pour éviter le lancer les évènements pour chaque insert,
             // et notament de la vue v_pei_visite_date
             // on les lancera à la fin
             visiteRepository.disableTriggerOnInsertVisite()

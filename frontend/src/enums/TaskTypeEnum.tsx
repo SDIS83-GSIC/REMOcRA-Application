@@ -79,7 +79,7 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
       deltaMinuteNotificationDebut: {
         typeTaskParametre: TYPE_TASK_PARAMETRE.INTEGER,
         required: true,
-        label: "Délai de récupération des événements (en minutes) :",
+        label: "Délai de récupération des évènements (en minutes) :",
         tooltipMessage:
           "Doit être en adéquation avec la fréquence d'exécution de la tâche.",
       },
@@ -96,7 +96,7 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
       deltaMinuteNotificationFin: {
         typeTaskParametre: TYPE_TASK_PARAMETRE.INTEGER,
         required: true,
-        label: "Délai de récupération des événements (en minutes) :",
+        label: "Délai de récupération des évènements (en minutes) :",
         tooltipMessage:
           "Doit être en adéquation avec la fréquence d'exécution de la tâche.",
       },

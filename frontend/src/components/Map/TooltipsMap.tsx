@@ -797,7 +797,7 @@ export const TooltipMapEditEvenement = ({
     map: map,
     disabled: disabled,
     filterFeature: (feature) => {
-      // Ne détecte que les features de la couche événements
+      // Ne détecte que les features de la couche évènements
       return (
         dataEvenementLayer?.getSource()?.getFeatures()?.includes(feature) ??
         false

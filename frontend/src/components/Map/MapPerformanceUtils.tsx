@@ -209,7 +209,7 @@ export function createAbortableImageLoadFunction(): (
   };
 }
 
-// Débounce pour les événements de déplacement de carte
+// Débounce pour les évènements de déplacement de carte
 export function debounce<T extends (...args: any[]) => void>(
   func: T,
   wait: number,
@@ -221,7 +221,7 @@ export function debounce<T extends (...args: any[]) => void>(
   }) as T;
 }
 
-// Throttle pour les événements de zoom
+// Throttle pour les évènements de zoom
 export function throttle<T extends (...args: any[]) => void>(
   func: T,
   limit: number,

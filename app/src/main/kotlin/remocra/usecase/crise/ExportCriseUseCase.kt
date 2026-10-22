@@ -162,7 +162,7 @@ constructor(
                 </div>
 
                 <div class="section">
-                    <h2>Événements</h2>
+                    <h2>Évènements</h2>
                 """.trimIndent(),
             )
 
@@ -175,7 +175,7 @@ constructor(
                     <p><strong>Date constat :</strong> ${event.evenementDateConstat?.let { "<time class='date-time-to-convert' datetime='$it'></time>" } ?: "Aucune"}</p>
                     <p><strong>Origine :</strong> ${event.evenementOrigine}</p>
                     <p><strong>Importance :</strong> ${event.evenementImportance?.let { "★".repeat(it) } ?: "Aucune"}</p>
-                    <p><strong>Événement clos :</strong> ${if (event.evenementEstFerme == true) "Oui" else "Non"}</p>
+                    <p><strong>Évènement clos :</strong> ${if (event.evenementEstFerme == true) "Oui" else "Non"}</p>
                     ${if (event.evenementDateCloture != null) "<p><strong>Date de clôture :</strong> <time class='date-time-to-convert' datetime='${event.evenementDateCloture}'></time></p>" else ""}
 
                     <h4>Messages associés :</h4>
@@ -200,7 +200,7 @@ constructor(
                         )
                     }
                 }
-                // Fermeture de l'événement
+                // Fermeture de l'évènement
                 append("</div>")
             }
 

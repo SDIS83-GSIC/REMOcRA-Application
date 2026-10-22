@@ -240,9 +240,9 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     CRISE_FORBIDDEN_D(4203, "Vous n'avez pas les droits de suppression d'une crise.", Status.FORBIDDEN),
     CRISE_DOCUMENT_MEME_NOM(4204, "Les documents d'une même crise ne doivent pas avoir le même nom."),
 
-    EVENEMENT_TYPE_FORBIDDEN_C(4300, "Vous n'avez pas les droits de création d'un événement.", Status.FORBIDDEN),
-    EVENEMENT_TYPE_FORBIDDEN_U(4301, "Vous n'avez pas les droits de modification d'un événement.", Status.FORBIDDEN),
-    EVENEMENT_DOCUMENT_MEME_NOM(4302, "Les documents d'un même événement ne doivent pas avoir le même nom.", Status.BAD_REQUEST),
+    EVENEMENT_TYPE_FORBIDDEN_C(4300, "Vous n'avez pas les droits de création d'un évènement.", Status.FORBIDDEN),
+    EVENEMENT_TYPE_FORBIDDEN_U(4301, "Vous n'avez pas les droits de modification d'un évènement.", Status.FORBIDDEN),
+    EVENEMENT_DOCUMENT_MEME_NOM(4302, "Les documents d'un même évènement ne doivent pas avoir le même nom.", Status.BAD_REQUEST),
     EVENEMENT_GEOMETRY_UPDATE_FORBIDDEN(4303, "Vous n'avez pas les droits de modification de la géométrie des évènements.", Status.FORBIDDEN),
 
     /**

@@ -8,7 +8,7 @@ import java.util.UUID
 /**
  * Evénement déclenché *après* la modification d'un PEI (opérations C, U, D), alors que la BDD est à jour.
  *
- * Cet événement pourra par exemple être écouté par le traitement de "notification de changement d'état d'un PEI"
+ * Cet évènement pourra par exemple être écouté par le traitement de "notification de changement d'état d'un PEI"
  */
 class PeiModifiedEvent @Inject constructor(
     val peiId: UUID,
