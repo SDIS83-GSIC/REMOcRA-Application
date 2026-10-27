@@ -1,5 +1,28 @@
 = Release Notes
 
+== 3.0.13
+
+* https://redmine.atolcd.com/issues/304973[#304973] : Anomalies associées à un PEI nouvellement créé
+* https://redmine.atolcd.com/issues/306471[#306471] : [VISITE] Visites antidatées
+* https://redmine.atolcd.com/issues/294914[#294914] : Sélection d'un PEI sur la carte - action au clic
+* https://redmine.atolcd.com/issues/305375[#305375] : [METADONNEES] S'affiche en plusieurs fois pour un groupe de couche
+* https://redmine.atolcd.com/issues/305609[#305609] : [Synchronisation utilisateur] - Paramètre organismeCode et profilCode
+* https://redmine.atolcd.com/issues/305893[#305893] : [CARTE DES TOURNEES] GENERATION - Il manque des PEI sur la carte
+* https://redmine.atolcd.com/issues/306436[#306436] : [RAPPORTS PERSONNALISES] CARTE - Les noms des couches sont en gras
+* https://redmine.atolcd.com/issues/307029[#307029] : Paramétrages des couches publiques
+* https://redmine.atolcd.com/issues/307316[#307316] : [METADONNEES] Gestion des métadonnées - Tri par défaut
+* https://redmine.atolcd.com/issues/307932[#307932] : Utilisateurs : Impossible de modifier un utilisateur provenant de LDAP
+* https://redmine.atolcd.com/issues/307957[#307957] : Module de crise : Associer des catégories d'évènements aux types de crise
+* https://redmine.atolcd.com/issues/307999[#307999] : Dates et heures : affichage en fonction du fuseau horaire
+* https://redmine.atolcd.com/issues/308029[#308029] : Notification par mail : Mise en forme du message
+* https://redmine.atolcd.com/issues/308103[#308103] : Apache Hop : connexion à la base donnée
+* https://redmine.atolcd.com/issues/308147[#308147] : Apache Hop : exécution des tâches personnalisées
+* https://redmine.atolcd.com/issues/308463[#308463] : Suppression d'un PEI en erreur
+* https://redmine.atolcd.com/issues/308465[#308465] : Keycloak : Préparation mise à jour
+* https://redmine.atolcd.com/issues/302180[#302180] : [GENERER UN COURRIER] APERCU DU COURRIER - Mettre en plein écran
+
+Pour plus d'informations, consultez les tickets REDMINE associés.
+
 == 3.0.12.1
 
 * https://redmine.atolcd.com/issues/307489[#307489]: [Fix] Corrige la désactivation/activation des triggers de remocra.visite
