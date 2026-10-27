@@ -106,6 +106,17 @@
       ]
     }
   ],
+  "clientScopeMappings": {
+    "realm-management": [
+      {
+        "client": "remocra",
+        "roles": [
+          "manage-users",
+          "manage-clients"
+        ]
+      }
+    ]
+  },
   "users": [
     {
       "username": "service-account-remocra",
