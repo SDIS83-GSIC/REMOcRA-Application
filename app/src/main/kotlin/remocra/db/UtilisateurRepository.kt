@@ -5,12 +5,15 @@ import org.jooq.Condition
 import org.jooq.DSLContext
 import org.jooq.SortField
 import org.jooq.impl.DSL
+import org.jooq.impl.DSL.jsonGetAttributeAsText
+import org.jooq.impl.SQLDataType
 import remocra.GlobalConstants
 import remocra.auth.WrappedUserInfo
 import remocra.data.GlobalData
 import remocra.data.Params
 import remocra.data.UtilisateurData
 import remocra.db.jooq.remocra.enums.Droit
+import remocra.db.jooq.remocra.enums.TypeTask
 import remocra.db.jooq.remocra.tables.pojos.Utilisateur
 import remocra.db.jooq.remocra.tables.pojos.ZoneIntegration
 import remocra.db.jooq.remocra.tables.references.GROUPE_FONCTIONNALITES
@@ -18,6 +21,7 @@ import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_
 import remocra.db.jooq.remocra.tables.references.ORGANISME
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.PROFIL_UTILISATEUR
+import remocra.db.jooq.remocra.tables.references.TASK
 import remocra.db.jooq.remocra.tables.references.TOURNEE
 import remocra.db.jooq.remocra.tables.references.TYPE_ORGANISME
 import remocra.db.jooq.remocra.tables.references.UTILISATEUR
@@ -146,17 +150,32 @@ class UtilisateurRepository @Inject constructor(
         id: UUID,
         nom: String?,
         prenom: String?,
-        email: String,
+        email: String?,
         username: String,
         keycloakId: String,
         profilUtilisateurId: UUID?,
         organismeId: UUID?,
-    ): Utilisateur =
-        dsl.insertInto(UTILISATEUR)
+    ): Utilisateur {
+        val emailExistant = dsl.select(UTILISATEUR.EMAIL)
+            .from(UTILISATEUR)
+            .where(UTILISATEUR.USERNAME.eq(username))
+            .fetchOne(UTILISATEUR.EMAIL)
+
+        val emailParDefaut = dsl.select(
+            jsonGetAttributeAsText(
+                TASK.PARAMETRES.cast(SQLDataType.JSON),
+                "emailParDefaut",
+            ),
+        )
+            .from(TASK)
+            .where(TASK.TYPE.eq(TypeTask.SYNCHRO_UTILISATEUR))
+            .fetchOneInto(String::class.java)
+
+        return dsl.insertInto(UTILISATEUR)
             .set(UTILISATEUR.ID, id)
             .set(UTILISATEUR.NOM, nom)
             .set(UTILISATEUR.PRENOM, prenom)
-            .set(UTILISATEUR.EMAIL, email)
+            .set(UTILISATEUR.EMAIL, email ?: emailParDefaut)
             .set(UTILISATEUR.USERNAME, username)
             .set(UTILISATEUR.KEYCLOAK_ID, keycloakId)
             .set(UTILISATEUR.DERNIERE_CONNEXION, dateUtils.now())
@@ -167,10 +186,11 @@ class UtilisateurRepository @Inject constructor(
             .doUpdate()
             .set(UTILISATEUR.NOM, nom)
             .set(UTILISATEUR.PRENOM, prenom)
-            .set(UTILISATEUR.EMAIL, email)
+            .set(UTILISATEUR.EMAIL, email ?: emailExistant)
             .set(UTILISATEUR.DERNIERE_CONNEXION, dateUtils.now())
             .returning()
             .fetchSingleInto()
+    }
 
     fun getZoneByOrganismeId(organismeId: UUID): ZoneIntegration? {
         return dsl.select(*ZONE_INTEGRATION.fields())
