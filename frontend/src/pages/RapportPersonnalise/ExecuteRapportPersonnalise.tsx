@@ -128,7 +128,7 @@ const ExecuteRapportPersonnalise = () => {
       document.removeEventListener("mouseup", handleMouseUp);
       document.body.classList.remove("resizing");
 
-      // Nettoyer les gestionnaires d'événements
+      // Nettoyer les gestionnaires d'évènements
       if (table) {
         const resizers = table.querySelectorAll(".column-resizer");
         resizers.forEach((resizer) => {

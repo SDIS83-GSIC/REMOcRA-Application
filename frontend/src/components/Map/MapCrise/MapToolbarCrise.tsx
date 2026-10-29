@@ -452,7 +452,7 @@ const MapToolbarCrise = forwardRef(
               <ToolbarButton
                 toolName={"move-event"}
                 toolIcon={<IconMoveObjet />}
-                toolLabelTooltip={"Déplacer un événement"}
+                toolLabelTooltip={"Déplacer un évènement"}
                 toggleTool={toggleToolCallback}
                 activeTool={activeTool}
                 variant={variant}
@@ -460,7 +460,7 @@ const MapToolbarCrise = forwardRef(
               {/* Evènements (création) */}
               <TooltipCustom
                 tooltipId="crise-create-event"
-                tooltipText="Créer un nouvel événement"
+                tooltipText="Créer un nouvel évènement"
               >
                 <Button
                   className="m-2"
@@ -478,7 +478,7 @@ const MapToolbarCrise = forwardRef(
           {/* Evènements (liste) */}
           <TooltipCustom
             tooltipId="crise-list-event"
-            tooltipText="Afficher la liste des événements"
+            tooltipText="Afficher la liste des évènements"
           >
             <Button
               className="m-2"

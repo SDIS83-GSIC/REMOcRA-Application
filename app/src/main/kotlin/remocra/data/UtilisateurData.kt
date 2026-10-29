@@ -14,6 +14,9 @@ data class UtilisateurData(
     val utilisateurProfilUtilisateurId: UUID?,
     val utilisateurOrganismeId: UUID?,
     val utilisateurIsSuperAdmin: Boolean = false,
+    // Non persisté en base : transmis par le front lors de l'update pour indiquer que
+    // l'utilisateur provient du LDAP, afin d'éviter un nouvel appel à Keycloak côté back.
+    val utilisateurFromLdap: Boolean = false,
 )
 
 data class UtilisateurImportData(

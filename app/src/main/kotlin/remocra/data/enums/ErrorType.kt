@@ -131,6 +131,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     VISITE_RECO_INIT_NOT_FIRST(2116, "La visite de type ${TypeVisite.RECO_INIT} doit être la deuxième visite du PEI"),
     VISITE_CDP_PENA(2117, "Il est impossible de saisir un Contrôle Débit Pression pour un PENA"),
     VISITE_DATE_ALREADY_EXIST(2118, "La visite ne peut être renseignée à la même date et heure qu'une visite déjà existante"),
+    VISITE_INVALIDE_ORDER(2119, "Cette visite rompt l'ordre naturel des visites. Veuillez vérifier les dates et heures."),
 
     VISITE_TYPE_FORBIDDEN(
         2200,
@@ -239,9 +240,9 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     CRISE_FORBIDDEN_D(4203, "Vous n'avez pas les droits de suppression d'une crise.", Status.FORBIDDEN),
     CRISE_DOCUMENT_MEME_NOM(4204, "Les documents d'une même crise ne doivent pas avoir le même nom."),
 
-    EVENEMENT_TYPE_FORBIDDEN_C(4300, "Vous n'avez pas les droits de création d'un événement.", Status.FORBIDDEN),
-    EVENEMENT_TYPE_FORBIDDEN_U(4301, "Vous n'avez pas les droits de modification d'un événement.", Status.FORBIDDEN),
-    EVENEMENT_DOCUMENT_MEME_NOM(4302, "Les documents d'un même événement ne doivent pas avoir le même nom.", Status.BAD_REQUEST),
+    EVENEMENT_TYPE_FORBIDDEN_C(4300, "Vous n'avez pas les droits de création d'un évènement.", Status.FORBIDDEN),
+    EVENEMENT_TYPE_FORBIDDEN_U(4301, "Vous n'avez pas les droits de modification d'un évènement.", Status.FORBIDDEN),
+    EVENEMENT_DOCUMENT_MEME_NOM(4302, "Les documents d'un même évènement ne doivent pas avoir le même nom.", Status.BAD_REQUEST),
     EVENEMENT_GEOMETRY_UPDATE_FORBIDDEN(4303, "Vous n'avez pas les droits de modification de la géométrie des évènements.", Status.FORBIDDEN),
 
     /**
@@ -461,11 +462,12 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     UTILISATEUR_ACTION_EMAIL(10105, "Impossible de créer un utilisateur et de lui envoyer un mail d'initialisation."),
     UTILISATEUR_TOURNEE_RESERVEE(10106, "L'utilisateur a réservé une tournée."),
     UTILISATEUR_SUPPRESSION_KEYCLOAK(10107, "Impossible de supprimer l'utilisateur dans keycloak."),
-    UTILISATEUR_MAJ_KEYCLOAK(10108, "Impossible de modifier l'utilisateur dans keycloak."),
+    UTILISATEUR_MAJ_KEYCLOAK(10108, "Impossible de modifier l'utilisateur dans keycloak : $PLACEHOLDER_ERROR_TYPE"),
+    UTILISATEUR_VERIFICATION_KEYCLOAK(10109, "Impossible de vérifier l'existence de l'utilisateur dans keycloak $PLACEHOLDER_ERROR_TYPE"),
 
     // utilisateur import fichier
-    UTILISATEUR_IMPORT_EMPTY_FILE(10109, "Le fichier d'import utilisateur est vide"),
-    UTILISATEUR_IMPORT_EMPTY_ROW(10110, "Certaines informations sont manquantes"),
+    UTILISATEUR_IMPORT_EMPTY_FILE(10110, "Le fichier d'import utilisateur est vide"),
+    UTILISATEUR_IMPORT_EMPTY_ROW(10111, "Certaines informations sont manquantes"),
 
     //
     // ********************************************************************************
@@ -701,6 +703,7 @@ enum class ErrorType(val code: Int, val libelle: String, val status: Status = St
     //
     IMAGE_INVALIDE(32001, "L'image générée est invalide ou vide"),
     IMAGE_PNG_ILLISIBLE(32002, "Impossible de lire l'image PNG"),
+    IMAGE_CONVERSION_PIXEL_IMPOSSSIBLE(32003, "Impossible de convertir les dimensions de l'image en pixel"),
 
     //
     // ********************************************************************************

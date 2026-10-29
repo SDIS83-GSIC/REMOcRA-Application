@@ -393,7 +393,7 @@ class CriseRepository @Inject constructor(
     )
 
     /**
-     * Récupère les documents associés à une crise ou à un événement avec un type d'origine qui permet de différencier les documents issus d'une crise ou d'un événement.
+     * Récupère les documents associés à une crise ou à un évènement avec un type d'origine qui permet de différencier les documents issus d'une crise ou d'un évènement.
      *
      * @param criseId L'ID de la crise pour filtrer les documents associés.
      * @return Une liste de documents

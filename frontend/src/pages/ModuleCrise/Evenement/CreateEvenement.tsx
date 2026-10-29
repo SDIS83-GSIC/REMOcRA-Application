@@ -27,7 +27,7 @@ const CreateEvenement = ({
     <Container>
       <PageTitle
         icon={<IconEvent />}
-        title="Nouvel événement"
+        title="Nouvel évènement"
         displayReturnButton={false}
       />
       <MyFormik

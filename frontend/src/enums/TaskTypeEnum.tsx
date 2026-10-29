@@ -29,6 +29,34 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
         tooltipMessage:
           "Est utile si la case 'Accepter les utilisateurs sans email' est cochée. Correspond à l'email qui sera utilisée pour les utilisateurs sans adresse mail lors de la synchronisation.",
       },
+      prefixeLdapOrganismeCode: {
+        typeTaskParametre: TYPE_TASK_PARAMETRE.STRING,
+        required: false,
+        label: "Préfixe utilisé dans LDAP pour code de l'organisme :",
+        tooltipMessage:
+          "Permettra de faire correspondre les codes utilisés dans LDAP avec ceux de REMOcRA : le système enlèvera ce préfixe lors de la synchronisation.",
+      },
+      prefixeLdapProfilUtilisateurCode: {
+        typeTaskParametre: TYPE_TASK_PARAMETRE.STRING,
+        required: false,
+        label: "Préfixe utilisé dans LDAP pour code du profil utilisateur :",
+        tooltipMessage:
+          "Permettra de faire correspondre les codes utilisés dans LDAP avec ceux de REMOcRA : le système enlèvera ce préfixe lors de la synchronisation.",
+      },
+      suffixeLdapOrganismeCode: {
+        typeTaskParametre: TYPE_TASK_PARAMETRE.STRING,
+        required: false,
+        label: "Suffixe utilisé dans LDAP pour code de l'organisme :",
+        tooltipMessage:
+          "Permettra de faire correspondre les codes utilisés dans LDAP avec ceux de REMOcRA : le système enlèvera ce suffixe lors de la synchronisation.",
+      },
+      suffixeLdapProfilUtilisateurCode: {
+        typeTaskParametre: TYPE_TASK_PARAMETRE.STRING,
+        required: false,
+        label: "Suffixe utilisé dans LDAP pour code du profil utilisateur :",
+        tooltipMessage:
+          "Permettra de faire correspondre les codes utilisés dans LDAP avec ceux de REMOcRA : le système enlèvera ce suffixe lors de la synchronisation.",
+      },
     },
     notification: false,
     isConfigurable: true,
@@ -51,7 +79,7 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
       deltaMinuteNotificationDebut: {
         typeTaskParametre: TYPE_TASK_PARAMETRE.INTEGER,
         required: true,
-        label: "Délai de récupération des événements (en minutes) :",
+        label: "Délai de récupération des évènements (en minutes) :",
         tooltipMessage:
           "Doit être en adéquation avec la fréquence d'exécution de la tâche.",
       },
@@ -68,7 +96,7 @@ const TaskType: Record<string, SqueletteTaskEntity> = {
       deltaMinuteNotificationFin: {
         typeTaskParametre: TYPE_TASK_PARAMETRE.INTEGER,
         required: true,
-        label: "Délai de récupération des événements (en minutes) :",
+        label: "Délai de récupération des évènements (en minutes) :",
         tooltipMessage:
           "Doit être en adéquation avec la fréquence d'exécution de la tâche.",
       },

@@ -33,7 +33,9 @@ object HtmlSanitizerModule : RemocraModule() {
                     null
                 }
             }.onElements("iframe")
-            .allowAttributes("style").onElements("div", "section", "a", "span", "p", "img", "h1", "h2", "h3", "h4", "table", "tbody", "tr", "td", "th", "thead", "tfoot")
+            .allowElements("time")
+            .allowAttributes("datetime", "class").onElements("time")
+            .allowAttributes("style").onElements("div", "section", "a", "span", "p", "img", "h1", "h2", "h3", "h4", "table", "tbody", "tr", "td", "th", "thead", "tfoot", "time")
             .allowElements("table", "tbody", "tr", "td", "th", "thead", "tfoot")
             .requireRelNofollowOnLinks()
             .toFactory()

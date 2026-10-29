@@ -11,4 +11,10 @@ data class ClientRepresentation(
     val standardFlowEnabled: Boolean = false,
     val redirectUris: List<String> = listOf(),
     val attributes: Map<String, String> = mapOf(),
+    val fullScopeAllowed: Boolean = false,
+)
+
+@JvmRecord
+data class ClientFullScopeAllowedRepresentation(
+    val fullScopeAllowed: Boolean,
 )

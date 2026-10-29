@@ -4,9 +4,10 @@ import { platformModifierKeyOnly } from "ol/events/condition";
 import { WKT } from "ol/format";
 import { Geometry } from "ol/geom";
 import { DragBox, Draw, Modify, Select } from "ol/interaction";
+import VectorLayer from "ol/layer/Vector";
 import { Fill, Stroke, Style } from "ol/style";
 import CircleStyle from "ol/style/Circle";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { Button, ButtonGroup, Row } from "react-bootstrap";
 import { object, string } from "yup";
 import { hasDroit, isAuthorized } from "../../../droits.tsx";
@@ -51,6 +52,12 @@ export type PeiSelect = {
   numeroComplet: string;
 };
 
+type TooltipPeiSelection = {
+  elementId: string;
+  peiNumeroComplet: string;
+  natureDeciCode: string;
+};
+
 export const useToolbarPeiContext = ({
   map,
   workingLayer,
@@ -59,12 +66,21 @@ export const useToolbarPeiContext = ({
   setCoordonneesPeiCreate,
 }: {
   map: OLMap;
+  workingLayer: VectorLayer;
+  dataPeiLayer: VectorLayer;
   setShowFormPei: (v: boolean) => void;
-  setCoordonneesPeiCreate: (e: any) => void;
+  setCoordonneesPeiCreate: (
+    e: { coordonneeX: number; coordonneeY: number; srid: number } | null,
+  ) => void;
 }) => {
   const { visible, show, close, ref } = useModal();
 
-  const { visible: visibleMove, show: showMove, close: closeMove } = useModal();
+  const {
+    visible: visibleMove,
+    show: showMove,
+    close: closeMove,
+    ref: refMove,
+  } = useModal();
 
   const { error: errorToast } = useToastContext();
 
@@ -113,6 +129,31 @@ export const useToolbarPeiContext = ({
   );
 
   const [geometrieMove, setGeometrieMove] = useState<string | null>(null);
+
+  const highlightedFeatureRef = useRef<Feature<Geometry> | null>(null);
+
+  const selectionStyle = useMemo(
+    () =>
+      new Style({
+        image: new CircleStyle({
+          radius:
+            parseInt(
+              parametres.data?.[PARAMETRE.PEI_SELECTION_RAYON]?.parametreValeur,
+            ) || 16,
+          stroke: new Stroke({
+            color:
+              parametres.data?.[PARAMETRE.PEI_SELECTION_COULEUR]
+                ?.parametreValeur || "#ff00f2b3",
+            width:
+              parseInt(
+                parametres.data?.[PARAMETRE.PEI_SELECTION_LARGEUR]
+                  ?.parametreValeur,
+              ) || 4,
+          }),
+        }),
+      }),
+    [parametres.data],
+  );
 
   const tools = useMemo(() => {
     function associeNatureDeciPeiTournee(
@@ -239,31 +280,10 @@ export const useToolbarPeiContext = ({
         });
     });
 
-    // Style de sélection paramétrable
-    const selectionColor =
-      parametres.data?.[PARAMETRE.PEI_SELECTION_COULEUR]?.parametreValeur ||
-      "#ff00f2b3";
-
-    const selectionRadius =
-      parseInt(
-        parametres.data?.[PARAMETRE.PEI_SELECTION_RAYON]?.parametreValeur,
-      ) ?? 16;
-
-    const selectionWidth =
-      parseInt(
-        parametres.data?.[PARAMETRE.PEI_SELECTION_LARGEUR]?.parametreValeur,
-      ) ?? 4;
+    // Style de sélection paramétrable — calculé dans selectionStyle (useMemo dédié)
 
     const selectCtrl = new Select({
-      style: new Style({
-        image: new CircleStyle({
-          radius: selectionRadius,
-          stroke: new Stroke({
-            color: selectionColor,
-            width: selectionWidth,
-          }),
-        }),
-      }),
+      style: selectionStyle,
       toggleCondition: platformModifierKeyOnly,
       multi: true,
       hitTolerance: 16,
@@ -443,6 +463,10 @@ export const useToolbarPeiContext = ({
     });
 
     function toggleDeplacerPei(active = false) {
+      if (highlightedFeatureRef.current) {
+        highlightedFeatureRef.current.setStyle(undefined);
+        highlightedFeatureRef.current = null;
+      }
       if (active) {
         if (
           map?.getInteractions().getArray().includes(selectPeiCtrl) &&
@@ -501,7 +525,7 @@ export const useToolbarPeiContext = ({
     showMove,
     setCoordonneesPeiCreate,
     workingLayer?.getSource,
-    parametres.data,
+    selectionStyle,
   ]);
 
   function createUpdateTournee() {
@@ -541,6 +565,74 @@ export const useToolbarPeiContext = ({
       });
   }
 
+  function syncTooltipSelection(selection: TooltipPeiSelection | null) {
+    // Retirer le highlight de la feature précédente
+    if (highlightedFeatureRef.current) {
+      highlightedFeatureRef.current.setStyle(undefined);
+      highlightedFeatureRef.current = null;
+    }
+
+    if (selection == null) {
+      setListePeiId([]);
+      setListePeiTourneePrive([]);
+      setListePeiTourneePublic([]);
+      setListePeiTourneeIcpe([]);
+      setListePeiIdDebitSimultane([]);
+      setTypeReseauId(undefined);
+      return;
+    }
+
+    // Appliquer le highlight sur la nouvelle feature
+    const feature = dataPeiLayer
+      .getSource()
+      ?.getFeatures()
+      .find(
+        (f: Feature<Geometry>) =>
+          f.getProperties().elementId === selection.elementId,
+      );
+    if (feature) {
+      feature.setStyle(selectionStyle);
+      highlightedFeatureRef.current = feature;
+    }
+
+    setListePeiId([selection.elementId]);
+    setListePeiIdDebitSimultane([]);
+    setTypeReseauId(undefined);
+
+    switch (selection.natureDeciCode) {
+      case TYPE_NATURE_DECI.PRIVE:
+        setListePeiTourneePrive([
+          {
+            peiId: selection.elementId,
+            numeroComplet: selection.peiNumeroComplet,
+          },
+        ]);
+        setListePeiTourneePublic([]);
+        setListePeiTourneeIcpe([]);
+        break;
+      case TYPE_NATURE_DECI.ICPE:
+      case TYPE_NATURE_DECI.ICPE_CONVENTIONNE:
+        setListePeiTourneeIcpe([
+          {
+            peiId: selection.elementId,
+            numeroComplet: selection.peiNumeroComplet,
+          },
+        ]);
+        setListePeiTourneePrive([]);
+        setListePeiTourneePublic([]);
+        break;
+      default:
+        setListePeiTourneePublic([
+          {
+            peiId: selection.elementId,
+            numeroComplet: selection.peiNumeroComplet,
+          },
+        ]);
+        setListePeiTourneePrive([]);
+        setListePeiTourneeIcpe([]);
+    }
+  }
+
   return {
     tools,
     showCreateIndispoTemp,
@@ -568,6 +660,8 @@ export const useToolbarPeiContext = ({
     geometrieMove,
     closeMove,
     visibleMove,
+    refMove,
+    syncTooltipSelection,
   };
 };
 
@@ -616,6 +710,7 @@ const MapToolbarPei = ({
   setShowFormVisite,
   showFormVisite,
   coordonneesPeiCreate,
+  syncTooltipSelection,
 }: {
   toggleTool: (toolId: string) => void;
   activeTool: string;
@@ -649,12 +744,12 @@ const MapToolbarPei = ({
   peiIdUpdate: string;
   disabledTool: (toolId: string) => void;
   peiInfoMove: PeiInfoEntityElement | null;
-  deplacePei: boolean | null;
   geometrieMove: string | null;
   closeMove: () => void;
   visibleMove: boolean;
   setShowFormVisite: (v: { peiId: string | null; show: boolean }) => void;
   showFormVisite: { peiId: string | null; show: boolean };
+  syncTooltipSelection: (selection: TooltipPeiSelection | null) => void;
   coordonneesPeiCreate: {
     coordonneeX: number;
     coordonneeY: number;
@@ -662,6 +757,7 @@ const MapToolbarPei = ({
   } | null;
 }) => {
   const { user } = useAppContext();
+
   const canEdit = isAuthorized(user, [
     TYPE_DROIT.PEI_U,
     TYPE_DROIT.PEI_ADRESSE_C,
@@ -697,6 +793,16 @@ const MapToolbarPei = ({
     TYPE_DROIT.PEI_NUMERO_INTERNE_U,
     TYPE_DROIT.PEI_ADRESSE_C,
   ]);
+
+  const handleTooltipPeiSelectionChange = useCallback(
+    (selection: TooltipPeiSelection | null) => {
+      if (activeTool === "select-pei") {
+        return;
+      }
+      syncTooltipSelection(selection);
+    },
+    [activeTool, syncTooltipSelection],
+  );
 
   return (
     <ButtonGroup>
@@ -743,7 +849,7 @@ const MapToolbarPei = ({
             tooltipText={
               showFormPei || showFormVisite.show ? (
                 "Un formulaire est en cours d'édition"
-              ) : listePeiId?.length === 0 ? (
+              ) : listePeiId.length === 0 ? (
                 <>
                   <b>Créer une indisponibilité temporaire</b>
                   <br />
@@ -761,7 +867,7 @@ const MapToolbarPei = ({
               onClick={createIndispoTemp}
               className="rounded m-2"
               disabled={
-                showFormPei || showFormVisite.show || listePeiId?.length === 0
+                showFormPei || showFormVisite.show || listePeiId.length === 0
               }
             >
               <IconIndisponibiliteTemporaire />
@@ -973,6 +1079,7 @@ const MapToolbarPei = ({
         showFormVisite={showFormVisite}
         dataDebitSimultaneLayer={dataDebitSimultaneLayer}
         showFormPei={showFormPei}
+        onTooltipPeiSelectionChange={handleTooltipPeiSelectionChange}
         disabledCreateButton={() => disabledTool("create-pei")}
         coordonneesPeiCreate={coordonneesPeiCreate}
       />

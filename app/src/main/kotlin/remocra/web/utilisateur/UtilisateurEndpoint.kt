@@ -28,6 +28,7 @@ import remocra.db.jooq.remocra.enums.Droit
 import remocra.usecase.utilisateur.CreateUtilisateurUseCase
 import remocra.usecase.utilisateur.DeleteUtilisateurUseCase
 import remocra.usecase.utilisateur.DownloadTemplateImportUserUseCase
+import remocra.usecase.utilisateur.GetUtilisateurFromLdapUseCase
 import remocra.usecase.utilisateur.ImportUtilisateurUseCase
 import remocra.usecase.utilisateur.UpdateUtilisateurUseCase
 import remocra.utils.DateUtils
@@ -56,6 +57,9 @@ class UtilisateurEndpoint : AbstractEndpoint() {
 
     @Inject
     lateinit var downloadTemplateImportUserUseCase: DownloadTemplateImportUserUseCase
+
+    @Inject
+    lateinit var getUtilisateurFromLdapUseCase: GetUtilisateurFromLdapUseCase
 
     @Context
     lateinit var securityContext: SecurityContext
@@ -134,6 +138,9 @@ class UtilisateurEndpoint : AbstractEndpoint() {
 
         @FormParam("utilisateurIsSuperAdmin")
         var utilisateurIsSuperAdmin: Boolean = false
+
+        @FormParam("utilisateurFromLdap")
+        var utilisateurFromLdap: Boolean = false
     }
 
     @DELETE
@@ -154,6 +161,13 @@ class UtilisateurEndpoint : AbstractEndpoint() {
     @RequireDroits([Droit.ADMIN_UTILISATEURS_R, Droit.ADMIN_UTILISATEURS_A, Droit.ADMIN_UTILISATEURS_ORGA_R, Droit.ADMIN_UTILISATEURS_ORGA_A])
     fun get(@PathParam("utilisateurId") utilisateurId: UUID): Response {
         return Response.ok(utilisateurRepository.getById(utilisateurId)).build()
+    }
+
+    @GET
+    @Path("/get/{utilisateurId}/from-ldap")
+    @RequireDroits([Droit.ADMIN_UTILISATEURS_R, Droit.ADMIN_UTILISATEURS_A, Droit.ADMIN_UTILISATEURS_ORGA_R, Droit.ADMIN_UTILISATEURS_ORGA_A])
+    fun getFromLdap(@PathParam("utilisateurId") utilisateurId: UUID): Response {
+        return Response.ok(mapOf("utilisateurFromLdap" to getUtilisateurFromLdapUseCase.execute(utilisateurId))).build()
     }
 
     @PUT
@@ -178,6 +192,7 @@ class UtilisateurEndpoint : AbstractEndpoint() {
                 utilisateurProfilUtilisateurId = utilisateurInput.utilisateurProfilUtilisateurId,
                 utilisateurOrganismeId = utilisateurInput.utilisateurOrganismeId,
                 utilisateurIsSuperAdmin = utilisateurInput.utilisateurIsSuperAdmin,
+                utilisateurFromLdap = utilisateurInput.utilisateurFromLdap,
             ),
         ).wrap()
 

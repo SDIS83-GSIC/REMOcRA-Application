@@ -204,12 +204,14 @@ Créer les dossiers suivants et leur affecter tous deux les droits _remocra_ :
 mkdir /var/log/remocra
 mkdir /var/lib/remocra
 mkdir /var/opt/geoserver
-# mkdir /var/opt/apache-hop # si Apache Hop est installé
+## Si Apache Hop est installé
+# mkdir /var/lib/remocra/apache_hop && mkdir /var/lib/remocra/apache_hop/{tasks,config,hop_config}
 
 chown -R remocra: /var/lib/remocra
 chown -R remocra: /var/log/remocra
 chown -R remocra: /var/opt/geoserver
-# chown -R remocra: /var/opt/apache-hop # si Apache Hop est installé
+## Si Apache Hop est installé
+# chown -R remocra: /var/lib/remocra/apache_hop
 ----
 
 === Démarrer les images

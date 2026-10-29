@@ -67,7 +67,7 @@ class CriseUseCase @Inject constructor(
         userInfo: WrappedUserInfo,
         evenementSousCategorieId: UUID?,
     ): List<EvenementSousCategorieDetails> {
-        // si (evenementSousCategorieId != null), ça veut dire qu'on a une géométrie (ex : hélitreuillage => sous catégorie d'événement)
+        // si (evenementSousCategorieId != null), ça veut dire qu'on a une géométrie (ex : hélitreuillage => sous catégorie d'évènement)
         return if (evenementSousCategorieId != null) {
             groupTypeEvent(
                 buildSousCategorieEvenementDetails(

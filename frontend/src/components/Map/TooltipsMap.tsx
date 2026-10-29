@@ -2,8 +2,17 @@ import { Feature, Map as OLMap, Overlay } from "ol";
 import { WKT } from "ol/format";
 import { Geometry } from "ol/geom";
 import VectorLayer from "ol/layer/Vector";
+import { unByKey } from "ol/Observable";
 import VectorSource from "ol/source/Vector";
-import { ReactNode, Ref, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ReactNode,
+  Ref,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Button, Col, Popover, Row } from "react-bootstrap";
 import { useLocation, useNavigate } from "react-router-dom";
 import { hasDroit } from "../../droits.tsx";
@@ -27,6 +36,7 @@ import UpdatePermis from "../../pages/Permis/UpdatePermis.tsx";
 import ListTournee from "../../pages/Tournee/ListTournee.tsx";
 import { URLS } from "../../routes.tsx";
 import { MIN_ZOOM_COUCHE_TRANSPARENTE } from "../../utils/constantsUtils.tsx";
+import { formatHtmlDates } from "../../utils/formatHtmlDateUtils.tsx";
 import { useAppContext } from "../App/AppProvider.tsx";
 import CustomLinkButton from "../Button/CustomLinkButton.tsx";
 import DeleteButtonWithModal from "../Button/DeleteButtonWithModal.tsx";
@@ -73,6 +83,7 @@ const TooltipMapPei = ({
   setShowFormVisite,
   showFormVisite,
   coordonneesPeiCreate,
+  onTooltipPeiSelectionChange,
 }: {
   map: OLMap;
   displayButtonEdit: boolean;
@@ -89,6 +100,13 @@ const TooltipMapPei = ({
   disabledCreateButton: () => void;
   setShowFormVisite: (v: { peiId: string | null; show: boolean }) => void;
   showFormVisite: { peiId: string | null; show: boolean };
+  onTooltipPeiSelectionChange?: (
+    v: {
+      elementId: string;
+      peiNumeroComplet: string;
+      natureDeciCode: string;
+    } | null,
+  ) => void;
   coordonneesPeiCreate: {
     coordonneeX: number;
     coordonneeY: number;
@@ -98,13 +116,19 @@ const TooltipMapPei = ({
   const ref = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const { featureSelect, overlay } = useTooltipMap({
-    ref: ref,
-    map: map,
-    filterFeature: (feature) =>
+
+  const filterFeaturePei = useCallback(
+    (feature: Feature) =>
       feature.getProperties().typeElementCarte === TYPE_POINT_CARTE.PEI ||
       feature.getProperties().typeElementCarte ===
         TYPE_POINT_CARTE.DEBIT_SIMULTANE,
+    [],
+  );
+
+  const { featureSelect, overlay } = useTooltipMap({
+    ref: ref,
+    map: map,
+    filterFeature: filterFeaturePei,
   });
 
   const [showFichePei, setShowFichePei] = useState(false);
@@ -159,6 +183,41 @@ const TooltipMapPei = ({
       setShowFormPei(false);
     }
   }, [peiIdUpdate, setShowFormPei, showFormPei, overlay, coordonneesPeiCreate]);
+
+  useEffect(() => {
+    if (!onTooltipPeiSelectionChange || disabledTooltip) {
+      return;
+    }
+
+    if (
+      featureSelect?.getProperties().typeElementCarte === TYPE_POINT_CARTE.PEI
+    ) {
+      const point = featureSelect.getProperties();
+      onTooltipPeiSelectionChange({
+        elementId: point.elementId,
+        peiNumeroComplet: point.peiNumeroComplet,
+        natureDeciCode: point.natureDeciCode,
+      });
+    } else {
+      onTooltipPeiSelectionChange(null);
+    }
+  }, [featureSelect, onTooltipPeiSelectionChange, disabledTooltip]);
+
+  useEffect(() => {
+    if (!overlay || !onTooltipPeiSelectionChange) {
+      return;
+    }
+
+    const listener = overlay.on("change:position", () => {
+      if (overlay.getPosition() == null) {
+        onTooltipPeiSelectionChange(null);
+      }
+    });
+
+    return () => {
+      unByKey(listener);
+    };
+  }, [overlay, onTooltipPeiSelectionChange]);
 
   return (
     <div ref={ref}>
@@ -604,7 +663,9 @@ const Tooltip = ({
             <div
               className="popover-body-content"
               dangerouslySetInnerHTML={{
-                __html: featureSelect.getProperties().propertiesToDisplay,
+                __html: formatHtmlDates(
+                  featureSelect.getProperties().propertiesToDisplay,
+                ),
               }}
             />
 
@@ -794,7 +855,7 @@ export const TooltipMapEditEvenement = ({
     map: map,
     disabled: disabled,
     filterFeature: (feature) => {
-      // Ne détecte que les features de la couche événements
+      // Ne détecte que les features de la couche évènements
       return (
         dataEvenementLayer?.getSource()?.getFeatures()?.includes(feature) ??
         false

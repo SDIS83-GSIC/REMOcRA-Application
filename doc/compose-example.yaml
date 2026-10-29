@@ -41,8 +41,12 @@ services:
       - SIG_DBNAME
       - SIG_USERNAME
       - SIG_PASSWORD
+      - SIG_PORT_NUMBER
       - CLIENT_SECRET_APACHE_HOP
       - APACHE_HOP_ENABLE
+      - APACHE_HOP_URL
+      - APACHE_HOP_USERNAME
+      - APACHE_HOP_PASSWORD
     healthcheck:
       test: curl --fail -s http://localhost:8881/ || exit 1
       interval: 1m30s
@@ -106,6 +110,7 @@ services:
     volumes:
       - /var/lib/remocra/apache_hop/tasks:/files/tasks/
       - /var/lib/remocra/apache_hop/config:/files/metadata/async-web-service/
+      - /var/lib/remocra/apache_hop/hop_config:/opt/hop/config/
     environment:
       - HOP_SERVER_USER=${APACHE_HOP_USERNAME}
       - HOP_SERVER_PASS=${APACHE_HOP_PASSWORD}
@@ -119,6 +124,7 @@ services:
       - SIG_DBNAME
       - SIG_USERNAME
       - SIG_PASSWORD
+      - SIG_PORT_NUMBER
       - CLIENT_SECRET_APACHE_HOP
     ports:
       - '8060:8060'

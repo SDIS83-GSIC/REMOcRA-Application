@@ -14,7 +14,7 @@ const CreateListEvenement = ({
     <Container>
       <PageTitle
         icon={<IconList />}
-        title="Liste des événements"
+        title="Liste des évènements"
         displayReturnButton={false}
       />
       <ListEvenement

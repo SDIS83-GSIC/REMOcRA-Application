@@ -1,12 +1,19 @@
 FROM apache/hop:2.16.0
 
-# TODO: cibler plus précisément les répertoires dans lesquels HOP va écrire
-RUN find /opt/hop -type d -exec chmod a=rwxt {} +
+# Installer en tant que root
+USER root
+
+# Installe jq pour le script d'entrypoint
+## TODO: cibler plus précisément les répertoires dans lesquels HOP va écrire
+RUN apk add --no-cache jq=1.8.2-r0 && \
+    find /opt/hop -type d -exec chmod a=rwxt {} +
 
 # Copier le fichier variables.json template
 COPY variables.json /opt/hop/variables.json
 
 COPY remocra.json /files/metadata/rdbms/remocra.json
+COPY sig_postgres.json /files/metadata/rdbms/sig_postgres.json
+COPY sig_oracle.json /files/metadata/rdbms/sig_oracle.json
 
 COPY local.json /files/metadata/pipeline-run-configuration/local.json
 

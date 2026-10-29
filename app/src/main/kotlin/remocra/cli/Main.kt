@@ -23,7 +23,9 @@ import remocra.keycloak.KeycloakModule
 import remocra.mail.MailModule
 import remocra.schedule.ScheduleModule
 import remocra.sentry.SentryModule
+import remocra.utils.DateUtils
 import remocra.web.WebModule
+import java.time.Clock
 import kotlin.system.exitProcess
 
 /**
@@ -89,6 +91,33 @@ class Main : Runnable {
         description = ["Répare la table de suivi de la version de schéma de la base de données"],
     )
     fun repairDb() = withFlyway { repair() }
+
+    @Command(
+        name = "migrate-fullscopeallowed",
+        description = ["Passe fullScopeAllowed à false pour les clients Keycloak créés par REMOcRA"],
+    )
+    fun migrateFullScopeAllowed() {
+        val config = init()
+        val authnConfig = config.getConfig("remocra.authn")
+
+        Guice.createInjector(
+            JsonModule,
+            KeycloakModule.create(authnConfig),
+            DatabaseModule.create(config.getConfig("remocra.database")),
+            HealthModule.create(config.getConfig("remocra.health")),
+            { binder ->
+                binder.bind(AuthModule.KeycloakClient::class.java).toInstance(
+                    AuthModule.KeycloakClient(
+                        authnConfig.getString("client-id"),
+                        authnConfig.getString("client-secret"),
+                    ),
+                )
+                binder.bind(DateUtils::class.java).toInstance(
+                    DateUtils(Clock.systemDefaultZone()),
+                )
+            },
+        ).getInstance(MigrateFullScopeAllowed::class.java).execute()
+    }
 
     @Command(description = ["Démarre le serveur"])
     fun serve() {

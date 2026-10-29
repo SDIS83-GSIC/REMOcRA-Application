@@ -1,6 +1,7 @@
 import { useFormikContext } from "formik";
 import { useEffect, useState } from "react";
-import { Col, Row } from "react-bootstrap";
+import { Alert, Col, Row } from "react-bootstrap";
+import { useParams } from "react-router-dom";
 import { object } from "yup";
 import { useAppContext } from "../../../components/App/AppProvider.tsx";
 import { useGet } from "../../../components/Fetch/useFetch.tsx";
@@ -15,6 +16,7 @@ import {
   IconAdd,
   IconInfo,
   IconNextPage,
+  IconWarning,
 } from "../../../components/Icon/Icon.tsx";
 import TooltipCustom from "../../../components/Tooltip/Tooltip.tsx";
 import url from "../../../module/fetch.tsx";
@@ -32,6 +34,7 @@ type UtilisateurType = {
   utilisateurProfilUtilisateurId: string;
   utilisateurOrganismeId: string;
   utilisateurIsSuperAdmin: boolean;
+  utilisateurFromLdap?: boolean;
 };
 
 export const getInitialValues = (data?: UtilisateurType) => ({
@@ -62,10 +65,12 @@ export const prepareVariables = (values: UtilisateurType) => ({
   utilisateurProfilUtilisateurId: values.utilisateurProfilUtilisateurId,
   utilisateurOrganismeId: values.utilisateurOrganismeId,
   utilisateurIsSuperAdmin: values.utilisateurIsSuperAdmin,
+  utilisateurFromLdap: values.utilisateurFromLdap ?? false,
 });
 
 const Utilisateur = () => {
   const { user } = useAppContext();
+  const { utilisateurId } = useParams();
 
   const [groupeFonctionnalitesDeduit, setGroupeFonctionnalitesDeduit] =
     useState<string>();
@@ -77,6 +82,22 @@ const Utilisateur = () => {
 
   const { values, setValues, setFieldValue } =
     useFormikContext<UtilisateurType>();
+
+  // Vérification de l'origine LDAP de l'utilisateur.
+  const { error: fromLdapError } = useGet(
+    utilisateurId
+      ? url`/api/utilisateur/get/` + utilisateurId + `/from-ldap`
+      : "",
+    {
+      onResolve: (data: { utilisateurFromLdap: boolean }) =>
+        setFieldValue(
+          "utilisateurFromLdap",
+          Boolean(data?.utilisateurFromLdap),
+        ),
+      onReject: () => setFieldValue("utilisateurFromLdap", false),
+    },
+  );
+  const utilisateurFromLdap = Boolean(values.utilisateurFromLdap);
 
   useEffect(() => {
     setGroupeFonctionnalitesDeduit(
@@ -102,6 +123,29 @@ const Utilisateur = () => {
 
   return (
     <FormContainer>
+      {utilisateurFromLdap && (
+        <Row className="mt-3">
+          <Col>
+            <Alert variant="info">
+              <IconInfo /> Cet utilisateur provient du LDAP : l'identifiant,
+              l'email, le nom et le prénom ne peuvent pas être modifiés depuis
+              REMOcRA
+            </Alert>
+          </Col>
+        </Row>
+      )}
+      {fromLdapError && (
+        <Row className="mt-3">
+          <Col>
+            <Alert variant="warning">
+              <IconWarning /> Impossible de vérifier si cet utilisateur provient
+              du LDAP (Keycloak indisponible). Il sera peut être impossible de
+              modifier l'identifiant, l'email, le nom ou le prénom de cet
+              utilisateur.
+            </Alert>
+          </Col>
+        </Row>
+      )}
       <Row className="mt-3">
         <Col>
           <CheckBoxInput name="utilisateurActif" label="Actif" />
@@ -115,13 +159,19 @@ const Utilisateur = () => {
       </Row>
       <Row className="mt-3">
         <Col>
-          <TextInput label="Email" name="utilisateurEmail" required={true} />
+          <TextInput
+            label="Email"
+            name="utilisateurEmail"
+            required={true}
+            disabled={utilisateurFromLdap}
+          />
         </Col>
         <Col>
           <TextInput
             label="Identifiant"
             name="utilisateurUsername"
             required={true}
+            disabled={utilisateurFromLdap}
           />
         </Col>
         <Col>
@@ -134,10 +184,20 @@ const Utilisateur = () => {
       </Row>
       <Row className="mt-3">
         <Col>
-          <TextInput label="Nom" name="utilisateurNom" required={false} />
+          <TextInput
+            label="Nom"
+            name="utilisateurNom"
+            required={false}
+            disabled={utilisateurFromLdap}
+          />
         </Col>
         <Col>
-          <TextInput label="Prénom" name="utilisateurPrenom" required={false} />
+          <TextInput
+            label="Prénom"
+            name="utilisateurPrenom"
+            required={false}
+            disabled={utilisateurFromLdap}
+          />
         </Col>
       </Row>
       {user?.isSuperAdmin && (

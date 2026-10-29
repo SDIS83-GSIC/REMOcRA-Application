@@ -24,7 +24,12 @@ export const doFetch = async (
     window.location.reload();
   }
 
-  if (res.status === 403) {
+  // On ne redirige vers l'accueil que pour les requêtes GET,
+  // un accès direct à une page/ressource interdite.
+  // Pour les actions (DELETE/POST/PUT), on gère déjà l'erreur là où on l'appel
+  // avec un toast et une redirection empêcherait de lire ce message.
+  const method = (options as { method?: string })?.method ?? "GET";
+  if (res.status === 403 && method.toUpperCase() === "GET") {
     document.location.href = URLS.ACCUEIL;
   }
 

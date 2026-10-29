@@ -34,7 +34,7 @@ abstract class AbstractCUDUseCase<T : Any>(open val typeOperation: TypeOperation
 
     /** Exécute la logique métier d'insert / update / delete.
      *
-     * Retourner l'entité la plus à jour afin de permettre aux mécanismes ultérieurs (événements) de fonctionner au mieux
+     * Retourner l'entité la plus à jour afin de permettre aux mécanismes ultérieurs (évènements) de fonctionner au mieux
      *
      * @param element L'élément à enregistrer
      * @return T l'élément enregistré

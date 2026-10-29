@@ -37,7 +37,7 @@ const UpdateEvenement = ({
       <Container>
         <PageTitle
           icon={<IconEvent />}
-          title={readOnly ? "Informations" : "Modifier l'événement"}
+          title={readOnly ? "Informations" : "Modifier l'évènement"}
           displayReturnButton={false}
         />
         <MyFormik

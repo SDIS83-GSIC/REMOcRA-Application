@@ -2,7 +2,9 @@ package remocra.schedule
 
 import jakarta.inject.Inject
 import jakarta.inject.Provider
+import jakarta.inject.Singleton
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import org.apache.logging.log4j.core.util.CronExpression
 import org.slf4j.LoggerFactory
@@ -25,11 +27,13 @@ import remocra.utils.DateUtils
 import java.text.ParseException
 import java.util.Date
 import java.util.UUID
+import kotlin.time.Duration.Companion.milliseconds
 
+@Singleton
 class SchedulableTasksExecutor
 @Inject
 constructor(
-    private var tasks: Set<SchedulableTask<out SchedulableTaskParameters, out SchedulableTaskResults>>,
+    private val tasks: Set<SchedulableTask<out SchedulableTaskParameters, out SchedulableTaskResults>>,
     private val logManagerFactory: LogManagerFactory,
     private val logLineRepository: LogLineRepository,
     private val parametresProvider: Provider<ParametresData>,
@@ -41,12 +45,12 @@ constructor(
     private val logger = LoggerFactory.getLogger(javaClass)
 
     fun start() {
-        // ici on est dans un redémarrage de l'application / rechargement des données
-        // on doit donc mettre en erreur les tâches qui ont été arrété alors qu'elles étaient en cours
+        // ici, on est dans un redémarrage de l'application / rechargement des données,
+        // on doit donc mettre en erreur les tâches qui ont été arrêté alors qu'elles étaient en cours
 
         val jobEnCours = jobRepository.getJobsEnCours()
         jobEnCours.forEach {
-            // On insère une log line pour avoir l'information
+            // On insère une LogLine pour avoir l'information
             logLineRepository.writeLogLine(
                 LogLine(
                     logLineId = UUID.randomUUID(),
@@ -63,9 +67,13 @@ constructor(
 
         tasks.forEach { task ->
             try {
-                if (getTaskInfo(task)?.taskPlanification != null) {
-                    task.schedule(CronExpression(getTaskInfo(task)?.taskPlanification))
+                val taskInfo = getTaskInfo(task)
+                if (taskInfo?.taskPlanification == null || taskInfo.taskActif != true) {
+                    task.schedulableTask?.cancel()
+                    task.schedulableTask = null
+                    return@forEach
                 }
+                task.schedule(CronExpression(taskInfo.taskPlanification))
             } catch (pe: ParseException) {
                 logger.error("Erreur lors du parsing de la date de lancement de la tâche", pe)
             } catch (e: Exception) {
@@ -83,8 +91,11 @@ constructor(
             val now = Date()
             val nextExecution = scheduleTime.getNextValidTimeAfter(now) ?: return@launch
             val millis = nextExecution.time - now.time
-            delay(millis)
-            // Par défaut c'est l'utilisateur système qui exécute les tâches,
+            delay(millis.milliseconds)
+            if (!isActive) {
+                return@launch
+            }
+            // Par défaut, c'est l'utilisateur système qui exécute les tâches,
             // on reconstruit son UserInfo car c'est lui qui sera fourni aux useCases appelés dans les traitements.
             val userInfoSysteme = UserInfo(
                 utilisateur = dataCacheProvider.get().utilisateurSysteme,
@@ -98,7 +109,9 @@ constructor(
             val wrappedUserInfo = WrappedUserInfo()
             wrappedUserInfo.userInfo = userInfoSysteme
             start(logManagerFactory.create(), wrappedUserInfo)
-            schedule(scheduleTime)
+            if (isActive) {
+                schedule(scheduleTime)
+            }
         }
     }
 

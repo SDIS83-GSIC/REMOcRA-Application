@@ -39,6 +39,7 @@ constructor(
             parametresProvider.getParametreString(ParametreEnum.CARACTERISTIQUES_PIBI_TOOLTIP_WEB.name),
             parametresProvider.getParametreString(ParametreEnum.CARACTERISTIQUES_PENA_TOOLTIP_WEB.name),
             userInfo,
+            webFormat = true,
         )
 
     /**
@@ -61,7 +62,7 @@ constructor(
         }
     }
 
-    private fun getPeiCaracteristiques(pibiSelectedCaracteristiques: String?, penaSelectedCaracteristiques: String?, userInfo: WrappedUserInfo): Map<UUID, String> {
+    private fun getPeiCaracteristiques(pibiSelectedCaracteristiques: String?, penaSelectedCaracteristiques: String?, userInfo: WrappedUserInfo, webFormat: Boolean = false): Map<UUID, String> {
         val pibiCaracteristiques = pibiSelectedCaracteristiques.fromStringParameter()
         val penaCaracteristiques = penaSelectedCaracteristiques.fromStringParameter()
 
@@ -92,7 +93,7 @@ constructor(
                 if (it == null) {
                     return@forEach
                 }
-                mapRetour[key] += "<li>" + it.caracteristique.libelle + " : " + it.value.formatValue(it.caracteristique) + "</li>"
+                mapRetour[key] += "<li>" + it.caracteristique.libelle + " : " + it.value.formatValue(it.caracteristique, webFormat) + "</li>"
             }
 
             mapRetour[key] += "</ul></div>"
@@ -101,9 +102,20 @@ constructor(
         return mapRetour
     }
 
-    private fun Any?.formatValue(peiCaracteristique: PeiCaracteristique): String {
+    private fun Any?.formatValue(peiCaracteristique: PeiCaracteristique, webFormat: Boolean): String {
         return when (peiCaracteristique) {
-            PeiCaracteristique.DATE_RECEPTION, PeiCaracteristique.DATE_ROI, PeiCaracteristique.DATE_ROP, PeiCaracteristique.DATE_CTP -> if ((this == null)) "Non renseignée" else dateUtils.formatNaturelDateHeureMinute(this as ZonedDateTime)
+            PeiCaracteristique.DATE_RECEPTION,
+            PeiCaracteristique.DATE_ROI,
+            PeiCaracteristique.DATE_ROP,
+            PeiCaracteristique.DATE_CTP,
+            ->
+                if ((this == null)) {
+                    "Non renseignée"
+                } else if (webFormat) {
+                    "<time class='date-time-to-convert' datetime='$this'></time>"
+                } else {
+                    dateUtils.formatNaturelDateHeureMinute(this as ZonedDateTime)
+                }
             PeiCaracteristique.CAPACITE -> if ((this == null)) "Non renseignée" else "$this"
             PeiCaracteristique.DEBIT -> if ((this == null)) "Non renseigné" else "$this m³/h"
             else -> this?.toString() ?: ""

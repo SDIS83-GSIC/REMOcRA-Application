@@ -125,6 +125,19 @@ class CreateVisiteUseCase @Inject constructor(
             throw RemocraResponseException(ErrorType.VISITE_AFTER_NOW)
         }
 
+        // La visite ne perturbe pas l'ordre naturel des visites :
+        // 1. RECEPTION, 2. RECO_INIT, 3. Autres visites
+        if (element.visiteTypeVisite != TypeVisite.RECEPTION) {
+            if (visiteRepository.visiteTypeExistsAfterSpecifiedDate(peiId = element.visitePeiId, typeVisite = TypeVisite.RECEPTION, visiteDate = element.visiteDate)) {
+                throw RemocraResponseException(ErrorType.VISITE_INVALIDE_ORDER)
+            }
+            if (element.visiteTypeVisite != TypeVisite.RECO_INIT) {
+                if (visiteRepository.visiteTypeExistsAfterSpecifiedDate(peiId = element.visitePeiId, typeVisite = TypeVisite.RECO_INIT, visiteDate = element.visiteDate)) {
+                    throw RemocraResponseException(ErrorType.VISITE_INVALIDE_ORDER)
+                }
+            }
+        }
+
         val typePei = peiRepository.getTypePei(element.visitePeiId)
 
         // Vérification de la validité du CDP

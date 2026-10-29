@@ -3,7 +3,15 @@ import { Button, Col, Row } from "react-bootstrap";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
-import { IconCamera, IconExport, IconList, IconPrint } from "../Icon/Icon.tsx";
+import {
+  IconCamera,
+  IconCentPourcent,
+  IconExport,
+  IconList,
+  IconPrint,
+  IconZoomIn,
+  IconZoomOut,
+} from "../Icon/Icon.tsx";
 import TooltipCustom from "../Tooltip/Tooltip.tsx";
 import styles from "./PdfViewer.module.css";
 
@@ -19,6 +27,7 @@ const PdfViewer = ({ url }: { url: string }) => {
   const [pageInput, setPageInput] = useState<string>("");
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [showThumbnails, setShowThumbnails] = useState<boolean>(false);
+  const [scale, setScale] = useState<number>(1);
   const containerRef = useRef<HTMLDivElement>(null);
   const pageRefs = useRef<Map<number, HTMLDivElement>>(new Map());
 
@@ -84,6 +93,18 @@ const PdfViewer = ({ url }: { url: string }) => {
     if (!isNaN(pageNum)) {
       goToPage(pageNum);
     }
+  };
+
+  const handleZoomIn = () => {
+    setScale((prevScale) => Math.min(prevScale + 0.2, 2));
+  };
+
+  const handleZoomOut = () => {
+    setScale((prevScale) => Math.max(prevScale - 0.2, 0.5));
+  };
+
+  const handleResetZoom = () => {
+    setScale(1);
   };
 
   const renderError = () => (
@@ -164,6 +185,45 @@ const PdfViewer = ({ url }: { url: string }) => {
             </TooltipCustom>
           </Col>
           <Col>
+            <TooltipCustom tooltipId="zoom-in-tooltip" tooltipText="Agrandir">
+              <Button
+                onClick={handleZoomIn}
+                className={
+                  isFullscreen ? "btn bg-white text-primary" : "btn btn-primary"
+                }
+              >
+                <IconZoomIn />
+              </Button>
+            </TooltipCustom>
+          </Col>
+          <Col>
+            <TooltipCustom tooltipId="zoom-out-tooltip" tooltipText="Réduire">
+              <Button
+                onClick={handleZoomOut}
+                className={
+                  isFullscreen ? "btn bg-white text-primary" : "btn btn-primary"
+                }
+              >
+                <IconZoomOut />
+              </Button>
+            </TooltipCustom>
+          </Col>
+          <Col>
+            <TooltipCustom
+              tooltipId="zoom-reset-tooltip"
+              tooltipText="Réinitialiser le zoom"
+            >
+              <Button
+                onClick={handleResetZoom}
+                className={
+                  isFullscreen ? "btn bg-white text-primary" : "btn btn-primary"
+                }
+              >
+                <IconCentPourcent />
+              </Button>
+            </TooltipCustom>
+          </Col>
+          <Col>
             <div className={styles.pageNavigation}>
               <input
                 type="number"
@@ -234,6 +294,7 @@ const PdfViewer = ({ url }: { url: string }) => {
                   key={`page_${index + 1}`}
                   pageNumber={index + 1}
                   className={styles.page}
+                  scale={scale}
                   inputRef={(ref) => {
                     if (ref) {
                       pageRefs.current.set(index + 1, ref);

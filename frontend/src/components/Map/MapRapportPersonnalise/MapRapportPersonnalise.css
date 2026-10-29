@@ -2,6 +2,7 @@
   height: 70vh;
   max-height: 70vh;
   overflow: auto;
+  font-weight: normal;
 }
 
 .map-wrapper-rapport .map-component-wrapper {

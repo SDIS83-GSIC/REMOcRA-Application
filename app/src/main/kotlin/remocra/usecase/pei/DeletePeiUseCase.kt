@@ -107,8 +107,6 @@ constructor(
     override fun checkDroits(userInfo: WrappedUserInfo) {
         if (!userInfo.hasDroit(droitWeb = Droit.PEI_D)) {
             throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D)
-        } else if (!userInfo.hasDroit(droitWeb = Droit.INDISPO_TEMP_D)) {
-            throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D_INDISPONIBILITE_TEMPORAIRE)
         } else if (!userInfo.hasDroit(droitWeb = Droit.TOURNEE_A)) {
             throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D_TOURNEE)
         }
@@ -116,6 +114,14 @@ constructor(
 
     override fun checkContraintes(userInfo: WrappedUserInfo, element: PeiData) {
         super.checkContraintes(userInfo, element)
+
+        // Si le PEI est le seul dans une indisponibilité temporaire et entraîne sa suppression, on n'autorise pas sa suppression sans le droit
+        val listeIndisponibiliteTemporaire = indisponibiliteTemporaireRepository.getIndisponibiliteTemporaireIdWithOnlyOnePei(element.peiId)
+        if (listeIndisponibiliteTemporaire.isNotEmpty()) {
+            if (!userInfo.hasDroit(droitWeb = Droit.INDISPO_TEMP_D)) {
+                throw RemocraResponseException(ErrorType.PEI_FORBIDDEN_D_INDISPONIBILITE_TEMPORAIRE)
+            }
+        }
 
         // Si le PEI a un débit simultané, on n'autorise pas sa suppression
         if (debitSimultaneRepository.existDebitSimultaneWithPibi(element.peiId) && element.peiTypePei == TypePei.PIBI) {
