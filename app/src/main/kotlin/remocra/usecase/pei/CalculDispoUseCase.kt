@@ -367,7 +367,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_42 -> false
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> isPressionRenseigneeEtInferieureA(pei, 0.95)
-            CodeSdis.SDIS_56 -> isPressionNullOuInferieureA(pei, 0.95)
+            CodeSdis.SDIS_56 -> isPressionRenseigneeEtInferieureA(pei, 0.95)
             CodeSdis.SDIS_58 -> isPressionInsuffisanteDefault(pei)
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
@@ -412,7 +412,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_42 -> false
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> isPressionNullOuDansIntervalle(pei, 0.95..<1.0)
-            CodeSdis.SDIS_56 -> isPressionRenseigneeEtDansIntervalle(pei, 0.95..<1.0)
+            CodeSdis.SDIS_56 -> isPressionNullOuDansIntervalle(pei, 0.95..<1.0)
             CodeSdis.SDIS_58 -> isPressionRenseigneeEtSuperieureA(pei, 8.0)
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
@@ -449,7 +449,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_42 -> isPressionTropEleveeDefault(pei)
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> isPressionRenseigneeEtSuperieureA(pei, 6.0)
-            CodeSdis.SDIS_56 -> false
+            CodeSdis.SDIS_56 -> isPressionTropEleveeDefault(pei)
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> isPressionRenseigneeEtSuperieureA(pei, 8.0)
@@ -489,7 +489,7 @@ class CalculDispoUseCase @Inject constructor(
 
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
-            CodeSdis.SDIS_56 -> isPressionDynamiqueNullOuInferieureA(pei, 0.95)
+            CodeSdis.SDIS_56 -> isPressionDynamiqueRenseigneeEtInferieureA(pei, 0.95)
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> false
@@ -536,7 +536,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_42 -> isPressionDynamiqueRenseigneeEtDansIntervalle(pei, 0.6..<1.0)
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
-            CodeSdis.SDIS_56 -> isPressionDynamiqueRenseigneeEtDansIntervalle(pei, 0.95..<1.0)
+            CodeSdis.SDIS_56 -> isPressionDynamiqueNullOuDansIntervalle(pei, 0.95..<1.0)
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 -> false
@@ -575,7 +575,7 @@ class CalculDispoUseCase @Inject constructor(
             CodeSdis.SDIS_42 -> isPressionDynamiqueTropEleveeDefault(pei)
             CodeSdis.SDIS_49 -> false
             CodeSdis.SDIS_53 -> false
-            CodeSdis.SDIS_56 -> isPressionDynamiqueRenseigneeEtSuperieureA(pei, 8.0)
+            CodeSdis.SDIS_56 -> isPressionDynamiqueTropEleveeDefault(pei)
             CodeSdis.SDIS_58 -> false
             CodeSdis.SDIS_59 -> false
             CodeSdis.SDIS_61 ->
@@ -803,7 +803,16 @@ class CalculDispoUseCase @Inject constructor(
                 }
             }
             CodeSdis.SDIS_58 -> isDebitRenseigneEtDansIntervalle(pei, 15..29)
-            CodeSdis.SDIS_56 -> false
+            CodeSdis.SDIS_56 -> when (pei.debit) {
+                in 27..<30 ->
+                    pei.diametreId == null || isDiametre80(pei)
+                in 27..<60 ->
+                    isDiametre100(pei)
+                in 27..<120 ->
+                    isDiametre150(pei)
+                else ->
+                    false
+            }
             CodeSdis.SDIS_59 ->
                 if (isNatureConcerned59(pei)) {
                     when (pei.debit) {
