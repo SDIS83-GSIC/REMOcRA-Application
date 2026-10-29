@@ -54,6 +54,7 @@ const AnomalieList = () => {
         <thead>
           <tr>
             <th rowSpan={2}>Anomalie</th>
+            <th rowSpan={2}>Rend non conforme</th>
             {typeMap.map((_type, idxNT) => (
               <th key={idxNT} colSpan={_type.count}>
                 {_type.label}
@@ -70,7 +71,7 @@ const AnomalieList = () => {
           <tbody key={idxC}>
             <tr>
               <th
-                colSpan={natureCount + 1}
+                colSpan={natureCount + 2}
                 className="bg-primary text-light p-0"
               >
                 <div
@@ -132,6 +133,13 @@ const AnomalieList = () => {
                       </Button>
                     )}
                   </th>
+                  <td className="fs-6 text-center">
+                    {anomalie.anomalieRendNonConforme ? (
+                      <Badge className="bg-warning">Oui</Badge>
+                    ) : (
+                      <Badge bg="primary">Non</Badge>
+                    )}
+                  </td>
                   {categorie.anomalieCategorieCode ===
                     ANOMALIE_CATEGORIE_SYSTEME && (
                     <td colSpan={natureCount}>
