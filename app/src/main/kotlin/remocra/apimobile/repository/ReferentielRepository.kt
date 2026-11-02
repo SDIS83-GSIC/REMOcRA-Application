@@ -313,6 +313,7 @@ class ReferentielRepository @Inject constructor(
         var jointureNature = false
         var jointureDiametre = false
         var jointureVisiteDate = false
+        var jointurePression = false
         fun buildJoinNature() {
             if (!jointureNature) {
                 onClause =
@@ -370,11 +371,14 @@ class ReferentielRepository @Inject constructor(
                     }
                 }
 
-                PeiCaracteristique.DEBIT -> {
-                    onClause =
-                        onClause
-                            .leftJoin(V_PEI_LAST_MESURES)
-                            .on(V_PEI_LAST_MESURES.PEI_ID.eq(PEI.ID))
+                PeiCaracteristique.DEBIT, PeiCaracteristique.PRESSION_STATIQUE, PeiCaracteristique.PRESSION_DYNAMIQUE -> {
+                    if (!jointurePression) {
+                        onClause =
+                            onClause
+                                .leftJoin(V_PEI_LAST_MESURES)
+                                .on(V_PEI_LAST_MESURES.PEI_ID.eq(PEI.ID))
+                        jointurePression = true
+                    }
                 }
 
                 PeiCaracteristique.CAPACITE -> Unit
@@ -453,6 +457,8 @@ class ReferentielRepository @Inject constructor(
 
             PeiCaracteristique.ADRESSE -> AdresseUtils.getDslConcatForAdresse()
             PeiCaracteristique.TOURNEE -> TOURNEE.LIBELLE
+            PeiCaracteristique.PRESSION_STATIQUE -> V_PEI_LAST_MESURES.PRESSION
+            PeiCaracteristique.PRESSION_DYNAMIQUE -> V_PEI_LAST_MESURES.PRESSION_DYN
         }
     }
 }

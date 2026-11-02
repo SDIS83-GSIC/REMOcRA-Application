@@ -118,6 +118,9 @@ constructor(
                 }
             PeiCaracteristique.CAPACITE -> if ((this == null)) "Non renseignée" else "$this"
             PeiCaracteristique.DEBIT -> if ((this == null)) "Non renseigné" else "$this m³/h"
+            PeiCaracteristique.PRESSION_STATIQUE,
+            PeiCaracteristique.PRESSION_DYNAMIQUE,
+            -> if ((this == null)) "Non renseignée" else "$this bar"
             else -> this?.toString() ?: ""
         }
     }

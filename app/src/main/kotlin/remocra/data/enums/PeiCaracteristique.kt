@@ -26,6 +26,8 @@ enum class PeiCaracteristique(val libelle: String, val typeCaracteristique: Type
     DEBIT("Débit", TypeCaracteristique.PIBI),
     JUMELE("Jumelé", TypeCaracteristique.PIBI),
     GROS_DEBIT("Gros débit", TypeCaracteristique.PIBI),
+    PRESSION_STATIQUE("Pression statique", TypeCaracteristique.PIBI),
+    PRESSION_DYNAMIQUE("Pression dynamique", TypeCaracteristique.PIBI),
 
     // PENA
     CAPACITE("Capacité", TypeCaracteristique.PENA),
