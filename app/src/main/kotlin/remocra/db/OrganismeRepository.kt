@@ -307,7 +307,7 @@ class OrganismeRepository @Inject constructor(private val dsl: DSLContext) : Abs
             .leftJoin(TYPE_ORGANISME).on(ORGANISME.TYPE_ORGANISME_ID.eq(TYPE_ORGANISME.ID))
             .leftJoin(parent).on(ORGANISME.PARENT_ID.eq(parent.ID))
             .where(conditionBase.and(conditionDroit))
-            .orderBy(params.sortBy?.toCondition() ?: listOf(ORGANISME.CODE))
+            .orderBy(params.sortBy?.toCondition().takeIf { !it.isNullOrEmpty() } ?: setOf(ORGANISME.LIBELLE.asc()))
             .limit(params.limit)
             .offset(params.offset)
             .fetchInto()
