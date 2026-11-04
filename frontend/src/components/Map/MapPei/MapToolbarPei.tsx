@@ -565,73 +565,79 @@ export const useToolbarPeiContext = ({
       });
   }
 
-  function syncTooltipSelection(selection: TooltipPeiSelection | null) {
-    // Retirer le highlight de la feature précédente
-    if (highlightedFeatureRef.current) {
-      highlightedFeatureRef.current.setStyle(undefined);
-      highlightedFeatureRef.current = null;
-    }
+  const syncTooltipSelection = useCallback(
+    (selection: TooltipPeiSelection | null) => {
+      // Retirer le highlight de la feature précédente
+      if (highlightedFeatureRef.current) {
+        highlightedFeatureRef.current.setStyle(undefined);
+        highlightedFeatureRef.current = null;
+      }
 
-    if (selection == null) {
-      setListePeiId([]);
-      setListePeiTourneePrive([]);
-      setListePeiTourneePublic([]);
-      setListePeiTourneeIcpe([]);
+      if (selection == null) {
+        setListePeiId([]);
+        setListePeiTourneePrive([]);
+        setListePeiTourneePublic([]);
+        setListePeiTourneeIcpe([]);
+        setListePeiIdDebitSimultane([]);
+        setTypeReseauId(undefined);
+        return;
+      }
+
+      // Appliquer le highlight sur la nouvelle feature
+      const feature = dataPeiLayer
+        .getSource()
+        ?.getFeatures()
+        .find(
+          (f: Feature<Geometry>) =>
+            f.getProperties().elementId === selection.elementId,
+        );
+
+      if (feature) {
+        feature.setStyle(selectionStyle);
+        highlightedFeatureRef.current = feature;
+      }
+
+      setListePeiId([selection.elementId]);
       setListePeiIdDebitSimultane([]);
       setTypeReseauId(undefined);
-      return;
-    }
 
-    // Appliquer le highlight sur la nouvelle feature
-    const feature = dataPeiLayer
-      .getSource()
-      ?.getFeatures()
-      .find(
-        (f: Feature<Geometry>) =>
-          f.getProperties().elementId === selection.elementId,
-      );
-    if (feature) {
-      feature.setStyle(selectionStyle);
-      highlightedFeatureRef.current = feature;
-    }
+      switch (selection.natureDeciCode) {
+        case TYPE_NATURE_DECI.PRIVE:
+          setListePeiTourneePrive([
+            {
+              peiId: selection.elementId,
+              numeroComplet: selection.peiNumeroComplet,
+            },
+          ]);
+          setListePeiTourneePublic([]);
+          setListePeiTourneeIcpe([]);
+          break;
 
-    setListePeiId([selection.elementId]);
-    setListePeiIdDebitSimultane([]);
-    setTypeReseauId(undefined);
+        case TYPE_NATURE_DECI.ICPE:
+        case TYPE_NATURE_DECI.ICPE_CONVENTIONNE:
+          setListePeiTourneeIcpe([
+            {
+              peiId: selection.elementId,
+              numeroComplet: selection.peiNumeroComplet,
+            },
+          ]);
+          setListePeiTourneePrive([]);
+          setListePeiTourneePublic([]);
+          break;
 
-    switch (selection.natureDeciCode) {
-      case TYPE_NATURE_DECI.PRIVE:
-        setListePeiTourneePrive([
-          {
-            peiId: selection.elementId,
-            numeroComplet: selection.peiNumeroComplet,
-          },
-        ]);
-        setListePeiTourneePublic([]);
-        setListePeiTourneeIcpe([]);
-        break;
-      case TYPE_NATURE_DECI.ICPE:
-      case TYPE_NATURE_DECI.ICPE_CONVENTIONNE:
-        setListePeiTourneeIcpe([
-          {
-            peiId: selection.elementId,
-            numeroComplet: selection.peiNumeroComplet,
-          },
-        ]);
-        setListePeiTourneePrive([]);
-        setListePeiTourneePublic([]);
-        break;
-      default:
-        setListePeiTourneePublic([
-          {
-            peiId: selection.elementId,
-            numeroComplet: selection.peiNumeroComplet,
-          },
-        ]);
-        setListePeiTourneePrive([]);
-        setListePeiTourneeIcpe([]);
-    }
-  }
+        default:
+          setListePeiTourneePublic([
+            {
+              peiId: selection.elementId,
+              numeroComplet: selection.peiNumeroComplet,
+            },
+          ]);
+          setListePeiTourneePrive([]);
+          setListePeiTourneeIcpe([]);
+      }
+    },
+    [dataPeiLayer, selectionStyle],
+  );
 
   return {
     tools,
