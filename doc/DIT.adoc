@@ -124,7 +124,7 @@ GEOSERVER_PASSWORD=xxxxxxxxxxxxxxxxx
 | REMOCRA_USERNAME_LENGTH_MIN | Longueur minimale d'un username pour la création d'un compte dans l'application | 3
 | REMOCRA_USERNAME_LENGTH_MAX | Longueur maximale d'un username pour la création d'un compte dans l'application | 255
 
-.8+| *Informations de connexion à la base SIG du SDIS
+.11+| *Informations de connexion à la base SIG du SDIS
 (les valeurs sont optionnelles)*
 | SIG_HOSTNAME | Nom de l'hôte de la base de données SIG |
 | SIG_PORT_NUMBER | Port de la base de données SIG  |
@@ -134,6 +134,9 @@ GEOSERVER_PASSWORD=xxxxxxxxxxxxxxxxx
 | SIG_PASSWORD | Mot de passe de l'utilisateur de la base de données SIG |
 | SIG_DRIVER_TYPE | Type de driver pour se connecter à la base de données SIG (uniquement pour oracle) |
 | SIG_SERVICE_NAME | Service name de la base de données SIG (uniquement pour oracle) |
+| SIG_KEEPALIVE_TIME | Intervalle HikariCP optionnel entre les vérifications des connexions inactives, en millisecondes | 300000
+| SIG_MAX_LIFETIME | Durée de vie maximale optionnelle d'une connexion dans le pool HikariCP, en millisecondes | 900000
+| SIG_IDLE_TIMEOUT | Durée maximale optionnelle d'inactivité d'une connexion dans le pool HikariCP, en millisecondes | 600000
 
 .7+| *Keycloak*
 | KC_BOOTSTRAP_ADMIN_USERNAME | Nom de l’utilisateur super-admin pour se connecter à Keycloak |
