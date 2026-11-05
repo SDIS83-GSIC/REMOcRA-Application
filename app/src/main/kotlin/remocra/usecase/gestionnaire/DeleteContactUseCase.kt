@@ -83,7 +83,7 @@ constructor(
         courriersIds
             .filterNot { courrierRepository.isCourrierStillReferenced(it) }
             .forEach { courrierId ->
-                courrierRepository.deleteLCourrierThematique(courrierId)
+                courrierRepository.deleteLCourrierThematique(listOf(courrierId))
                 val documentId = courrierRepository.deleteCourrierById(courrierId)
                 if (courriersNonPeiIds.contains(courrierId)) {
                     documentRepository.deleteDocumentByIds(listOf(documentId))

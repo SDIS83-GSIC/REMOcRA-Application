@@ -6,6 +6,7 @@ import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.db.jooq.remocra.tables.references.COURRIER
 import remocra.db.jooq.remocra.tables.references.DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_PEI_DOCUMENT
+import remocra.db.jooq.remocra.tables.references.L_VISITE_DOCUMENT
 import java.util.UUID
 class DocumentRepository @Inject constructor(private val dsl: DSLContext) : AbstractRepository() {
 
@@ -40,6 +41,11 @@ class DocumentRepository @Inject constructor(private val dsl: DSLContext) : Abst
     fun deleteDocumentPei(listId: Collection<UUID>) =
         dsl.deleteFrom(L_PEI_DOCUMENT)
             .where(L_PEI_DOCUMENT.DOCUMENT_ID.`in`(listId))
+            .execute()
+
+    fun deleteDocumentVisite(listId: Collection<UUID>) =
+        dsl.deleteFrom(L_VISITE_DOCUMENT)
+            .where(L_VISITE_DOCUMENT.DOCUMENT_ID.`in`(listId))
             .execute()
 
     fun insertDocument(document: Document) =
@@ -87,4 +93,11 @@ class DocumentRepository @Inject constructor(private val dsl: DSLContext) : Abst
             .from(COURRIER)
             .where(COURRIER.DOCUMENT_ID.eq(documentId))
             .fetchOneInto()
+
+    fun insertDocumentVisite(documentId: UUID, visiteId: UUID) {
+        dsl.insertInto(L_VISITE_DOCUMENT)
+            .set(L_VISITE_DOCUMENT.VISITE_ID, visiteId)
+            .set(L_VISITE_DOCUMENT.DOCUMENT_ID, documentId)
+            .execute()
+    }
 }

@@ -66,6 +66,7 @@ class GenererRapportVisiteReceptionUseCase @Inject constructor(
             userInfo = userInfo,
             transactionManager = transactionManager,
             peiId = element.visitePeiId,
+            visiteId = element.visiteId,
         )
     }
 }

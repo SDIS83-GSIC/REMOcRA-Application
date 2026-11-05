@@ -8,11 +8,14 @@ import remocra.data.ApiVisiteSpecifiqueData
 import remocra.data.CreationVisiteCtrl
 import remocra.data.VisiteData
 import remocra.db.jooq.remocra.enums.TypeVisite
+import remocra.db.jooq.remocra.tables.pojos.Document
 import remocra.db.jooq.remocra.tables.pojos.Visite
 import remocra.db.jooq.remocra.tables.pojos.VisiteCtrlDebitPression
 import remocra.db.jooq.remocra.tables.references.ANOMALIE
 import remocra.db.jooq.remocra.tables.references.ANOMALIE_CATEGORIE
+import remocra.db.jooq.remocra.tables.references.DOCUMENT
 import remocra.db.jooq.remocra.tables.references.L_VISITE_ANOMALIE
+import remocra.db.jooq.remocra.tables.references.L_VISITE_DOCUMENT
 import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.POIDS_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.VISITE
@@ -395,4 +398,17 @@ class VisiteRepository
                 .and(VISITE.DATE.gt(visiteDate)),
         )
     }
+
+    fun getDocumentsByVisiteId(visiteId: UUID): Collection<Document> =
+        dsl.select(*DOCUMENT.fields())
+            .from(DOCUMENT)
+            .join(L_VISITE_DOCUMENT)
+            .on(DOCUMENT.ID.eq(L_VISITE_DOCUMENT.DOCUMENT_ID))
+            .where(L_VISITE_DOCUMENT.VISITE_ID.eq(visiteId))
+            .fetchInto()
+
+    fun deleteVisiteDocumentByVisiteId(visiteId: UUID) =
+        dsl.deleteFrom(L_VISITE_DOCUMENT)
+            .where(L_VISITE_DOCUMENT.VISITE_ID.eq(visiteId))
+            .execute()
 }

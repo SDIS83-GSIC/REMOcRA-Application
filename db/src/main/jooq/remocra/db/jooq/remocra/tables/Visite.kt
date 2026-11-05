@@ -28,11 +28,14 @@ import remocra.db.jooq.bindings.ZonedDateTimeBinding
 import remocra.db.jooq.remocra.Remocra
 import remocra.db.jooq.remocra.enums.TypeVisite
 import remocra.db.jooq.remocra.keys.L_VISITE_ANOMALIE__L_VISITE_ANOMALIE_VISITE_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_VISITE_DOCUMENT__L_VISITE_DOCUMENT_VISITE_ID_FKEY
 import remocra.db.jooq.remocra.keys.VISITE_CTRL_DEBIT_PRESSION__VISITE_CTRL_DEBIT_PRESSION_VISITE_CTRL_DEBIT_PRESSION_VISI_FKEY
 import remocra.db.jooq.remocra.keys.VISITE_PKEY
 import remocra.db.jooq.remocra.keys.VISITE__VISITE_VISITE_PEI_ID_FKEY
 import remocra.db.jooq.remocra.tables.Anomalie.AnomaliePath
+import remocra.db.jooq.remocra.tables.Document.DocumentPath
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie.LVisiteAnomaliePath
+import remocra.db.jooq.remocra.tables.LVisiteDocument.LVisiteDocumentPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import remocra.db.jooq.remocra.tables.VisiteCtrlDebitPression.VisiteCtrlDebitPressionPath
 import java.time.ZonedDateTime
@@ -185,6 +188,23 @@ open class Visite(
     val lVisiteAnomalie: LVisiteAnomaliePath
         get(): LVisiteAnomaliePath = lVisiteAnomalie()
 
+    private lateinit var _lVisiteDocument: LVisiteDocumentPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_visite_document</code> table
+     */
+    fun lVisiteDocument(): LVisiteDocumentPath {
+        if (!this::_lVisiteDocument.isInitialized) {
+            _lVisiteDocument = LVisiteDocumentPath(this, null, L_VISITE_DOCUMENT__L_VISITE_DOCUMENT_VISITE_ID_FKEY.inverseKey)
+        }
+
+        return _lVisiteDocument
+    }
+
+    val lVisiteDocument: LVisiteDocumentPath
+        get(): LVisiteDocumentPath = lVisiteDocument()
+
     private lateinit var _visiteCtrlDebitPression: VisiteCtrlDebitPressionPath
 
     /**
@@ -208,6 +228,13 @@ open class Visite(
      */
     val anomalie: AnomaliePath
         get(): AnomaliePath = lVisiteAnomalie().anomalie()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.document</code> table
+     */
+    val document: DocumentPath
+        get(): DocumentPath = lVisiteDocument().document()
     override fun `as`(alias: String): Visite = Visite(DSL.name(alias), this)
     override fun `as`(alias: Name): Visite = Visite(alias, this)
     override fun `as`(alias: Table<*>): Visite = Visite(alias.qualifiedName, this)

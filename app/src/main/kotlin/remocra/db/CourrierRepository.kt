@@ -500,9 +500,24 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext, privat
                 ),
         )
 
-    fun deleteLCourrierThematique(courrierId: UUID) =
+    fun deleteLCourrierThematique(courrierIds: Collection<UUID>) =
         dsl.deleteFrom(L_THEMATIQUE_COURRIER)
-            .where(L_THEMATIQUE_COURRIER.COURRIER_ID.eq(courrierId))
+            .where(L_THEMATIQUE_COURRIER.COURRIER_ID.`in`(courrierIds))
+            .execute()
+
+    fun deleteLCourrierOrganisme(courrierIds: Collection<UUID>) =
+        dsl.deleteFrom(L_COURRIER_ORGANISME)
+            .where(L_COURRIER_ORGANISME.COURRIER_ID.`in`(courrierIds))
+            .execute()
+
+    fun deleteLCourrierGestionnaire(courrierIds: Collection<UUID>) =
+        dsl.deleteFrom(L_COURRIER_CONTACT_GESTIONNAIRE)
+            .where(L_COURRIER_CONTACT_GESTIONNAIRE.COURRIER_ID.`in`(courrierIds))
+            .execute()
+
+    fun deleteLCourrierUtilisateur(courrierIds: Collection<UUID>) =
+        dsl.deleteFrom(L_COURRIER_UTILISATEUR)
+            .where(L_COURRIER_UTILISATEUR.COURRIER_ID.`in`(courrierIds))
             .execute()
 
     fun deleteCourrierById(courrierId: UUID): UUID =
@@ -527,4 +542,20 @@ class CourrierRepository @Inject constructor(private val dsl: DSLContext, privat
                     ),
             )
             .fetchInto()
+
+    fun getCourrierIdsByDocumentIds(documentIds: Collection<UUID>): List<UUID> =
+        dsl.select(COURRIER.ID)
+            .from(COURRIER)
+            .where(COURRIER.DOCUMENT_ID.`in`(documentIds))
+            .fetchInto()
+
+    fun deleteCourrierByIds(courrierIds: Collection<UUID>) =
+        dsl.deleteFrom(COURRIER)
+            .where(COURRIER.ID.`in`(courrierIds))
+            .execute()
+
+    fun deleteLCourrierContactOrganisme(courrierIds: List<UUID>) =
+        dsl.deleteFrom(L_COURRIER_CONTACT_ORGANISME)
+            .where(L_COURRIER_CONTACT_ORGANISME.COURRIER_ID.`in`(courrierIds))
+            .execute()
 }

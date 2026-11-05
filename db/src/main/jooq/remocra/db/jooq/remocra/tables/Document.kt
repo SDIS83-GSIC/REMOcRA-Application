@@ -40,6 +40,7 @@ import remocra.db.jooq.remocra.keys.L_EVENEMENT_DOCUMENT__L_EVENEMENT_DOCUMENT_D
 import remocra.db.jooq.remocra.keys.L_PEI_DOCUMENT__L_PEI_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_PERMIS_DOCUMENT__L_PERMIS_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.L_SIGNALEMENT_DOCUMENT__L_SIGNALEMENT_DOCUMENT_DOCUMENT_ID_FKEY
+import remocra.db.jooq.remocra.keys.L_VISITE_DOCUMENT__L_VISITE_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.MODELE_COURRIER__MODELE_COURRIER_MODELE_COURRIER_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.OLDEB_VISITE_DOCUMENT__OLDEB_VISITE_DOCUMENT_OLDEB_VISITE_DOCUMENT_DOCUMENT_ID_FKEY
 import remocra.db.jooq.remocra.keys.RCCI_DOCUMENT__RCCI_DOCUMENT_RCCI_DOCUMENT_DOCUMENT_ID_FKEY
@@ -55,12 +56,14 @@ import remocra.db.jooq.remocra.tables.LEvenementDocument.LEvenementDocumentPath
 import remocra.db.jooq.remocra.tables.LPeiDocument.LPeiDocumentPath
 import remocra.db.jooq.remocra.tables.LPermisDocument.LPermisDocumentPath
 import remocra.db.jooq.remocra.tables.LSignalementDocument.LSignalementDocumentPath
+import remocra.db.jooq.remocra.tables.LVisiteDocument.LVisiteDocumentPath
 import remocra.db.jooq.remocra.tables.ModeleCourrier.ModeleCourrierPath
 import remocra.db.jooq.remocra.tables.OldebVisiteDocument.OldebVisiteDocumentPath
 import remocra.db.jooq.remocra.tables.Pei.PeiPath
 import remocra.db.jooq.remocra.tables.Permis.PermisPath
 import remocra.db.jooq.remocra.tables.RcciDocument.RcciDocumentPath
 import remocra.db.jooq.remocra.tables.Signalement.SignalementPath
+import remocra.db.jooq.remocra.tables.Visite.VisitePath
 import java.time.ZonedDateTime
 import java.util.UUID
 import javax.annotation.processing.Generated
@@ -357,6 +360,23 @@ open class Document(
     val lSignalementDocument: LSignalementDocumentPath
         get(): LSignalementDocumentPath = lSignalementDocument()
 
+    private lateinit var _lVisiteDocument: LVisiteDocumentPath
+
+    /**
+     * Get the implicit to-many join path to the
+     * <code>remocra.l_visite_document</code> table
+     */
+    fun lVisiteDocument(): LVisiteDocumentPath {
+        if (!this::_lVisiteDocument.isInitialized) {
+            _lVisiteDocument = LVisiteDocumentPath(this, null, L_VISITE_DOCUMENT__L_VISITE_DOCUMENT_DOCUMENT_ID_FKEY.inverseKey)
+        }
+
+        return _lVisiteDocument
+    }
+
+    val lVisiteDocument: LVisiteDocumentPath
+        get(): LVisiteDocumentPath = lVisiteDocument()
+
     private lateinit var _modeleCourrier: ModeleCourrierPath
 
     /**
@@ -449,6 +469,13 @@ open class Document(
      */
     val signalement: SignalementPath
         get(): SignalementPath = lSignalementDocument().signalement()
+
+    /**
+     * Get the implicit many-to-many join path to the
+     * <code>remocra.visite</code> table
+     */
+    val visite: VisitePath
+        get(): VisitePath = lVisiteDocument().visite()
     override fun `as`(alias: String): Document = Document(DSL.name(alias), this)
     override fun `as`(alias: Name): Document = Document(alias, this)
     override fun `as`(alias: Table<*>): Document = Document(alias.qualifiedName, this)

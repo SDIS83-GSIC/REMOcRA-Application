@@ -1,11 +1,13 @@
 package remocra.usecase.document
 
+import jakarta.inject.Inject
 import remocra.GlobalConstants
 import remocra.auth.WrappedUserInfo
 import remocra.data.AbstractDocumentData
 import remocra.data.DocumentsData.DocumentData
 import remocra.data.DocumentsData.DocumentsPei
 import remocra.data.enums.ErrorType
+import remocra.db.CourrierRepository
 import remocra.db.TransactionManager
 import remocra.db.jooq.historique.enums.TypeObjet
 import remocra.db.jooq.historique.enums.TypeOperation
@@ -15,7 +17,9 @@ import remocra.exception.RemocraResponseException
 import java.nio.file.Path
 import java.util.UUID
 
-class UpsertDocumentPeiUseCase : AbstractUpsertDocumentUseCase<DocumentsPei>() {
+class UpsertDocumentPeiUseCase @Inject constructor(
+    private val courrierRepository: CourrierRepository,
+) : AbstractUpsertDocumentUseCase<DocumentsPei>() {
 
     override fun insertLDocument(documentId: UUID, element: DocumentsPei, newDoc: AbstractDocumentData, mainTransactionManager: TransactionManager?) {
         (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
@@ -25,7 +29,20 @@ class UpsertDocumentPeiUseCase : AbstractUpsertDocumentUseCase<DocumentsPei>() {
 
     override fun deleteLDocument(listeDocsToRemove: Collection<UUID>, mainTransactionManager: TransactionManager?) {
         (mainTransactionManager ?: transactionManager).transactionResult(mainTransactionManager == null) {
+            // Récupère les potentiels courriers associés aux documents
+            val courrierIds = courrierRepository.getCourrierIdsByDocumentIds(listeDocsToRemove)
+
+            if (courrierIds.isNotEmpty()) {
+                // Suppression des associations avec les thématiques
+                courrierRepository.deleteLCourrierThematique(courrierIds)
+                // Suppression des courriers
+                courrierRepository.deleteCourrierByIds(courrierIds)
+            }
+
+            // Suppression des associations avec les PEI
             documentRepository.deleteDocumentPei(listeDocsToRemove)
+            // Suppression des associations avec les visites
+            documentRepository.deleteDocumentVisite(listeDocsToRemove)
         }
     }
     override fun updateLDocument(listToUpdate: Collection<AbstractDocumentData>, mainTransactionManager: TransactionManager?) {

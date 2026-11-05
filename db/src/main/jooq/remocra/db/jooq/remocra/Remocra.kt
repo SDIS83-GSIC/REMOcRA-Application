@@ -90,6 +90,7 @@ import remocra.db.jooq.remocra.tables.LToponymieCrise
 import remocra.db.jooq.remocra.tables.LTourneePei
 import remocra.db.jooq.remocra.tables.LTypeCriseCategorie
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
+import remocra.db.jooq.remocra.tables.LVisiteDocument
 import remocra.db.jooq.remocra.tables.LieuDit
 import remocra.db.jooq.remocra.tables.LogLine
 import remocra.db.jooq.remocra.tables.MarquePibi
@@ -609,6 +610,11 @@ open class Remocra : SchemaImpl(DSL.name("remocra"), DefaultCatalog.DEFAULT_CATA
     val L_VISITE_ANOMALIE: LVisiteAnomalie get() = LVisiteAnomalie.L_VISITE_ANOMALIE
 
     /**
+     * The table <code>remocra.l_visite_document</code>.
+     */
+    val L_VISITE_DOCUMENT: LVisiteDocument get() = LVisiteDocument.L_VISITE_DOCUMENT
+
+    /**
      * The table <code>remocra.lieu_dit</code>.
      */
     val LIEU_DIT: LieuDit get() = LieuDit.LIEU_DIT
@@ -1103,6 +1109,7 @@ open class Remocra : SchemaImpl(DSL.name("remocra"), DefaultCatalog.DEFAULT_CATA
         LTourneePei.L_TOURNEE_PEI,
         LTypeCriseCategorie.L_TYPE_CRISE_CATEGORIE,
         LVisiteAnomalie.L_VISITE_ANOMALIE,
+        LVisiteDocument.L_VISITE_DOCUMENT,
         LieuDit.LIEU_DIT,
         LogLine.LOG_LINE,
         MarquePibi.MARQUE_PIBI,

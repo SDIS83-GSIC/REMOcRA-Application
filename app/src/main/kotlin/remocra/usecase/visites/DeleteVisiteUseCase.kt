@@ -5,6 +5,8 @@ import remocra.auth.WrappedUserInfo
 import remocra.data.VisiteData
 import remocra.data.enums.ErrorType
 import remocra.db.AnomalieRepository
+import remocra.db.CourrierRepository
+import remocra.db.DocumentRepository
 import remocra.db.PeiRepository
 import remocra.db.VisiteRepository
 import remocra.db.jooq.historique.enums.TypeObjet
@@ -16,13 +18,19 @@ import remocra.db.jooq.remocra.tables.pojos.LPeiAnomalie
 import remocra.eventbus.tracabilite.TracabiliteEvent
 import remocra.exception.RemocraResponseException
 import remocra.usecase.AbstractCUDUseCase
+import remocra.usecase.document.DocumentUtils
 import remocra.usecase.pei.UpdatePeiUseCase
+import java.nio.file.Paths
+import java.util.UUID
 
 class DeleteVisiteUseCase @Inject constructor(
     private val updatePeiUseCase: UpdatePeiUseCase,
     private val peiRepository: PeiRepository,
     private val anomalieRepository: AnomalieRepository,
     private val visiteRepository: VisiteRepository,
+    private val documentRepository: DocumentRepository,
+    private val courrierRepository: CourrierRepository,
+    private val documentUtils: DocumentUtils,
 ) : AbstractCUDUseCase<VisiteData>(TypeOperation.DELETE) {
 
     override fun checkDroits(userInfo: WrappedUserInfo) {
@@ -109,6 +117,8 @@ class DeleteVisiteUseCase @Inject constructor(
         // On supprime les autres données liées à la visite
         visiteRepository.deleteAllVisiteAnomalies(element.visiteId)
         visiteRepository.deleteVisiteCtrl(element.visiteId)
+        // On supprime des courriers et associations documentaires
+        deleteDocumentsByVisiteId(element.visiteId)
         visiteRepository.deleteVisite(element.visiteId)
 
         // On met à jour le PEI pour le calcul débit pression  / volume et le calcul d'insdispo
@@ -117,5 +127,37 @@ class DeleteVisiteUseCase @Inject constructor(
             userInfo = userInfo,
         )
         return element
+    }
+
+    private fun deleteDocumentsByVisiteId(visiteId: UUID) {
+        // Récupère des documents associés à la visite
+        val documents = visiteRepository.getDocumentsByVisiteId(visiteId)
+        // Récupération des courriers associés aux documents
+        val courrierIds = courrierRepository.getCourrierIdsByDocumentIds(documents.map { it.documentId })
+
+        if (courrierIds.isNotEmpty()) {
+            // Suppression des associations avec les thématiques
+            courrierRepository.deleteLCourrierThematique(courrierIds)
+            // Suppression des associations avec les contacts organismes
+            courrierRepository.deleteLCourrierContactOrganisme(courrierIds)
+            // Suppression des associations avec les organismes
+            courrierRepository.deleteLCourrierOrganisme(courrierIds)
+            // Suppression des associations avec les gestionnaires
+            courrierRepository.deleteLCourrierGestionnaire(courrierIds)
+            // Suppression des associations avec les utilisateurs
+            courrierRepository.deleteLCourrierUtilisateur(courrierIds)
+            // Suppression des courriers
+            courrierRepository.deleteCourrierByIds(courrierIds)
+        }
+
+        // Suppression des associations avec la visite
+        visiteRepository.deleteVisiteDocumentByVisiteId(visiteId)
+        documentRepository.deleteDocumentPei(documents.map { it.documentId })
+
+        if (courrierIds.isNotEmpty()) {
+            documents.forEach {
+                documentUtils.deleteFile(it.documentNomFichier, Paths.get(it.documentRepertoire))
+            }
+        }
     }
 }

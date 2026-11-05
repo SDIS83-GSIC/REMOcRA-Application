@@ -87,6 +87,7 @@ import remocra.db.jooq.remocra.tables.LToponymieCrise
 import remocra.db.jooq.remocra.tables.LTourneePei
 import remocra.db.jooq.remocra.tables.LTypeCriseCategorie
 import remocra.db.jooq.remocra.tables.LVisiteAnomalie
+import remocra.db.jooq.remocra.tables.LVisiteDocument
 import remocra.db.jooq.remocra.tables.LieuDit
 import remocra.db.jooq.remocra.tables.LogLine
 import remocra.db.jooq.remocra.tables.MarquePibi
@@ -581,6 +582,11 @@ val L_TYPE_CRISE_CATEGORIE: LTypeCriseCategorie = LTypeCriseCategorie.L_TYPE_CRI
  * The table <code>remocra.l_visite_anomalie</code>.
  */
 val L_VISITE_ANOMALIE: LVisiteAnomalie = LVisiteAnomalie.L_VISITE_ANOMALIE
+
+/**
+ * The table <code>remocra.l_visite_document</code>.
+ */
+val L_VISITE_DOCUMENT: LVisiteDocument = LVisiteDocument.L_VISITE_DOCUMENT
 
 /**
  * The table <code>remocra.lieu_dit</code>.

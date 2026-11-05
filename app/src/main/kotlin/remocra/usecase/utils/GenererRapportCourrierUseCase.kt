@@ -9,6 +9,7 @@ import remocra.data.courrier.form.NomValue
 import remocra.data.courrier.form.ParametreCourrierInput
 import remocra.db.DocumentRepository
 import remocra.db.TransactionManager
+import remocra.db.jooq.remocra.enums.TypeCourrier
 import remocra.db.jooq.remocra.tables.pojos.ModeleCourrier
 import remocra.usecase.AbstractUseCase
 import remocra.usecase.courrier.CourrierGeneratorUseCase
@@ -29,6 +30,7 @@ class GenererRapportCourrierUseCase @Inject constructor(
         userInfo: WrappedUserInfo,
         transactionManager: TransactionManager? = null,
         peiId: UUID? = null,
+        visiteId: UUID? = null,
     ): Result {
         val generationPath = courrierGeneratorUseCase.executeInternal(
             ParametreCourrierInput(
@@ -55,8 +57,15 @@ class GenererRapportCourrierUseCase @Inject constructor(
             mainTransactionManager = transactionManager,
         )
 
-        peiId?.let {
-            documentRepository.insertDocumentPei(it, docId, false)
+        if (peiId != null && modeleCourrier.modeleCourrierType == TypeCourrier.COURRIER_ROI) {
+            documentRepository.insertDocumentPei(peiId, docId, false)
+        }
+
+        visiteId?.let {
+            documentRepository.insertDocumentVisite(
+                documentId = docId,
+                visiteId = it,
+            )
         }
 
         return courrier
