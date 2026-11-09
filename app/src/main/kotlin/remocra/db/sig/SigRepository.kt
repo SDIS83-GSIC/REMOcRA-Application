@@ -33,8 +33,11 @@ class SigRepository @Inject constructor(
     ) {
         sigQueries
             .selectAll(listFields, schemaSource, tableSource)
-            .asSequence()
-            .chunked(batchSize)
-            .forEach(processBatch)
+            .use { stream ->
+                stream
+                    .asSequence()
+                    .chunked(batchSize)
+                    .forEach(processBatch)
+            }
     }
 }

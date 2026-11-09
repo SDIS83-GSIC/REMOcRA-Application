@@ -34,9 +34,14 @@ private constructor(private val properties: Properties?, private val databaseVen
     companion object {
         fun create(config: Config): SigDatabaseModule {
             val properties = config.withoutPath("database-vendor").toProperties()
-            if (properties.isNotEmpty()) {
+            if (config.hasPath("database-vendor") && properties.isNotEmpty()) {
                 val databaseVendor = config.getString("database-vendor").toDatabaseVendor()
                 properties["dataSourceClassName"] = databaseVendor.toDataSourceClassName()
+                // Propriété keepalive spécifique à chaque base de données
+                when (databaseVendor) {
+                    DatabaseVendor.POSTGRES -> properties["dataSource.tcpKeepAlive"] = "true"
+                    DatabaseVendor.ORACLE -> properties["dataSource.oracle.net.keepAlive"] = "true"
+                }
                 return SigDatabaseModule(properties, databaseVendor)
             }
             return SigDatabaseModule(null, null)
