@@ -1,5 +1,12 @@
 = Release Notes
 
+== 3.0.13.1
+
+* https://redmine.atolcd.com/issues/310556[#310556] : Stabilisation de la gestion de connexions à la base SIG
+* https://redmine.atolcd.com/issues/310310[#310310] : Recherche BAN et modification de la date de la visite impossible
+
+Pour plus d'informations, consultez les tickets REDMINE associés.
+
 == 3.0.13
 
 * https://redmine.atolcd.com/issues/304973[#304973] : Anomalies associées à un PEI nouvellement créé
