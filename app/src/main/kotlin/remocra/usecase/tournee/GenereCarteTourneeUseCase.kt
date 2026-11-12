@@ -155,7 +155,7 @@ class GenereCarteTourneeUseCase @Inject constructor(
         context.put("dateGeneration", dateUtils.format(dateUtils.now(), PATTERN_NATUREL_DATE_ONLY))
         context.put("scale", scale)
 
-        val nomFichier = "$libelleTournee-${
+        val nomFichier = "${libelleTournee.replace("/", "-")}-${
             dateUtils.format(dateUtils.now(), PATTERN_MINUTE_SECONDE)
         }"
 
