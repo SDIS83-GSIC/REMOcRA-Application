@@ -17,7 +17,6 @@ import remocra.db.jooq.remocra.tables.references.PEI
 import remocra.db.jooq.remocra.tables.references.POIDS_ANOMALIE
 import remocra.db.jooq.remocra.tables.references.VISITE
 import remocra.db.jooq.remocra.tables.references.VISITE_CTRL_DEBIT_PRESSION
-import remocra.db.jooq.remocra.tables.references.V_PEI_VISITE_DATE
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -357,14 +356,23 @@ class VisiteRepository
             .fetchSingleInto()
     }
 
-    fun hasRecepAndROI(idPei: UUID): Boolean {
-        return dsl.fetchExists(
-            DSL.selectOne().from(V_PEI_VISITE_DATE)
-                .where(V_PEI_VISITE_DATE.PEI_ID.eq(idPei))
-                .and(V_PEI_VISITE_DATE.LAST_RECEPTION.isNotNull)
-                .and(V_PEI_VISITE_DATE.LAST_RECO_INIT.isNotNull),
+    /**
+     * Retourne vrai si le PEI a au moins une visite de réception et une ROI
+     * N'utilise pas la vue V_PEI_VISITE_DATE car doit être utilisable dans un contexte d'insertion de visite en masse : import CTP, synchro mobile, saisies d'une tournée
+     *
+     * @param peiId UUID
+     * @return boolean
+     */
+    fun hasRecepAndROI(peiId: UUID): Boolean =
+        dsl.fetchExists(
+            DSL.selectOne().from(VISITE)
+                .where(VISITE.PEI_ID.eq(peiId))
+                .and(VISITE.TYPE_VISITE.eq(TypeVisite.RECEPTION)),
+        ) && dsl.fetchExists(
+            DSL.selectOne().from(VISITE)
+                .where(VISITE.PEI_ID.eq(peiId))
+                .and(VISITE.TYPE_VISITE.eq(TypeVisite.RECO_INIT)),
         )
-    }
 
     fun getAllVisiteDates(peiId: UUID): List<ZonedDateTime?> =
         dsl.select(VISITE.DATE)
