@@ -1,5 +1,5 @@
 import { getIn, useField, useFormikContext } from "formik";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { Badge, Col, Container, Row } from "react-bootstrap";
 import { object } from "yup";
 import AccordionCustom, {
@@ -361,10 +361,35 @@ function checkValidity(
   }
 }
 
+export const initializeTransferList = <T extends { id: string }>(
+  selectedIds: string[],
+  referenceList: T[],
+  filterFn?: (item: T) => boolean,
+) => {
+  const filteredReferenceList = filterFn
+    ? referenceList.filter(filterFn)
+    : referenceList;
+
+  const referenceMap = new Map(
+    filteredReferenceList.map((item) => [item.id, item]),
+  );
+
+  const selected = selectedIds
+    .map((id) => referenceMap.get(id))
+    .filter((item): item is T => item !== undefined);
+
+  const selectedSet = new Set(selected.map(({ id }) => id));
+
+  const available = filteredReferenceList.filter(
+    ({ id }) => !selectedSet.has(id),
+  );
+
+  return { selected, available };
+};
+
 const AdminParametres = () => {
   const adminParametresState = useGet(url`/api/admin/parametres`);
   const { data } = adminParametresState;
-
   return (
     <MyFormik
       initialValues={getInitialValues(data)}
@@ -748,7 +773,7 @@ const AdminApplicationMobile = ({
     nameFormik: "mobile.caracteristiquesPenaIds",
   });
 
-  useMemo(() => {
+  useEffect(() => {
     if (
       !allCaracteristiques ||
       !values?.caracteristiquesPibiIds ||
@@ -756,51 +781,38 @@ const AdminApplicationMobile = ({
     ) {
       return;
     }
-    //PIBI
-    if (availablePibiOptions == null) {
-      setAvailablePibiOptions(
-        allCaracteristiques.filter(
-          (item: any) => item.type === "PIBI" || item.type === "GENERAL",
-        ) as any[],
+
+    if (availablePibiOptions === null) {
+      const { selected, available } = initializeTransferList(
+        values.caracteristiquesPibiIds.map(({ id }) => id),
+        allCaracteristiques,
+        (item: any) => item.type === "PIBI" || item.type === "GENERAL",
       );
+
+      setSelectedPibiOptions(selected);
+      setAvailablePibiOptions(available);
     }
-    if (selectedPibiOptions == null) {
-      setSelectedPibiOptions(
-        allCaracteristiques.filter((item: any) => {
-          return values?.caracteristiquesPibiIds
-            ?.map((e) => e.id)
-            .includes(item.id);
-        }),
+
+    if (availablePenaOptions === null) {
+      const { selected, available } = initializeTransferList(
+        values.caracteristiquesPenaIds.map(({ id }) => id),
+        allCaracteristiques,
+        (item: any) => item.type === "PENA" || item.type === "GENERAL",
       );
-    }
-    //PENA
-    if (availablePenaOptions == null) {
-      setAvailablePenaOptions(
-        allCaracteristiques.filter(
-          (item: any) => item.type === "PENA" || item.type === "GENERAL",
-        ),
-      );
-    }
-    if (selectedPenaOptions == null) {
-      setSelectedPenaOptions(
-        allCaracteristiques.filter((item: any) => {
-          return values?.caracteristiquesPenaIds
-            ?.map((e) => e.id)
-            .includes(item.id);
-        }),
-      );
+
+      setSelectedPenaOptions(selected);
+      setAvailablePenaOptions(available);
     }
   }, [
-    values,
-    availablePenaOptions,
-    availablePibiOptions,
-    selectedPenaOptions,
-    selectedPibiOptions,
-    setAvailablePenaOptions,
-    setAvailablePibiOptions,
-    setSelectedPenaOptions,
-    setSelectedPibiOptions,
     allCaracteristiques,
+    values?.caracteristiquesPibiIds,
+    values?.caracteristiquesPenaIds,
+    availablePibiOptions,
+    availablePenaOptions,
+    setAvailablePibiOptions,
+    setAvailablePenaOptions,
+    setSelectedPibiOptions,
+    setSelectedPenaOptions,
   ]);
 
   return (
@@ -1316,27 +1328,22 @@ const AdminPei = ({
   });
   const { setFieldValue } = useFormikContext();
 
-  useMemo(() => {
-    if (!values?.peiColonnesIds) {
+  useEffect(() => {
+    if (!values.peiColonnesIds || availableOptions !== null) {
       return;
     }
-    if (availableOptions == null) {
-      setAvailableOptions(
-        referenceColumnPei.filter((e) => !values.peiColonnesIds?.includes(e)),
-      );
-    }
-    if (selectedOptions == null) {
-      setSelectedOptions(
-        referenceColumnPei.filter(({ id }) =>
-          values.peiColonnesIds?.map((e) => e.id).includes(id),
-        ),
-      );
-    }
+
+    const { selected, available } = initializeTransferList(
+      values.peiColonnesIds.map(({ id }) => id),
+      referenceColumnPei,
+    );
+
+    setSelectedOptions(selected);
+    setAvailableOptions(available);
   }, [
-    values,
-    setSelectedOptions,
-    selectedOptions,
+    values.peiColonnesIds,
     availableOptions,
+    setSelectedOptions,
     setAvailableOptions,
   ]);
 
@@ -1362,59 +1369,46 @@ const AdminPei = ({
     nameFormik: "pei.caracteristiquesPenaTooltipWebIds",
   });
 
-  useMemo(() => {
+  useEffect(() => {
     if (
       !allCaracteristiques ||
-      !values?.caracteristiquesPenaTooltipWebIds ||
-      !values?.caracteristiquesPibiTooltipWebIds
+      !values?.caracteristiquesPibiTooltipWebIds ||
+      !values?.caracteristiquesPenaTooltipWebIds
     ) {
       return;
     }
-    //PIBI
-    if (availablePibiOptions == null) {
-      setAvailablePibiOptions(
-        allCaracteristiques.filter(
-          (item: any) => item.type === "PIBI" || item.type === "GENERAL",
-        ),
+
+    if (availablePibiOptions === null) {
+      const { selected, available } = initializeTransferList(
+        values.caracteristiquesPibiTooltipWebIds.map(({ id }) => id),
+        allCaracteristiques,
+        (item: any) => item.type === "PIBI" || item.type === "GENERAL",
       );
+
+      setSelectedPibiOptions(selected);
+      setAvailablePibiOptions(available);
     }
-    if (selectedPibiOptions == null) {
-      setSelectedPibiOptions(
-        allCaracteristiques.filter((item: any) => {
-          return values?.caracteristiquesPibiTooltipWebIds
-            ?.map((e) => e.id)
-            .includes(item.id);
-        }),
+
+    if (availablePenaOptions === null) {
+      const { selected, available } = initializeTransferList(
+        values.caracteristiquesPenaTooltipWebIds.map(({ id }) => id),
+        allCaracteristiques,
+        (item: any) => item.type === "PENA" || item.type === "GENERAL",
       );
-    }
-    //PENA
-    if (availablePenaOptions == null) {
-      setAvailablePenaOptions(
-        allCaracteristiques.filter(
-          (item: any) => item.type === "PENA" || item.type === "GENERAL",
-        ),
-      );
-    }
-    if (selectedPenaOptions == null) {
-      setSelectedPenaOptions(
-        allCaracteristiques.filter((item: any) => {
-          return values?.caracteristiquesPenaTooltipWebIds
-            ?.map((e) => e.id)
-            .includes(item.id);
-        }),
-      );
+
+      setSelectedPenaOptions(selected);
+      setAvailablePenaOptions(available);
     }
   }, [
-    values,
-    availablePenaOptions,
-    availablePibiOptions,
-    selectedPenaOptions,
-    selectedPibiOptions,
-    setAvailablePenaOptions,
-    setAvailablePibiOptions,
-    setSelectedPenaOptions,
-    setSelectedPibiOptions,
     allCaracteristiques,
+    values?.caracteristiquesPibiTooltipWebIds,
+    values?.caracteristiquesPenaTooltipWebIds,
+    availablePibiOptions,
+    availablePenaOptions,
+    setAvailablePibiOptions,
+    setAvailablePenaOptions,
+    setSelectedPibiOptions,
+    setSelectedPenaOptions,
   ]);
 
   return (
