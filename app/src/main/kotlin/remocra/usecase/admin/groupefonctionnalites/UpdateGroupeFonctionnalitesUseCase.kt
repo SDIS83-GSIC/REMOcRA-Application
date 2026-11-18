@@ -26,7 +26,13 @@ class UpdateGroupeFonctionnalitesUseCase @Inject constructor(private val groupeF
     override fun postEvent(element: GroupeFonctionnalitesData, userInfo: WrappedUserInfo) {
         eventBus.post(
             TracabiliteEvent(
-                pojo = element,
+                pojo = GroupeFonctionnalitesData(
+                    groupeFonctionnalitesId = element.groupeFonctionnalitesId,
+                    groupeFonctionnalitesLibelle = element.groupeFonctionnalitesLibelle,
+                    groupeFonctionnalitesCode = element.groupeFonctionnalitesCode,
+                    groupeFonctionnalitesActif = element.groupeFonctionnalitesActif,
+                    groupeFonctionnalitesDroits = groupeFonctionnalitesRepository.getDroitsByGroupeId(element.groupeFonctionnalitesId),
+                ),
                 pojoId = element.groupeFonctionnalitesId,
                 typeOperation = typeOperation,
                 typeObjet = TypeObjet.GROUPE_FONCTIONNALITES,

@@ -7,6 +7,7 @@ import org.jooq.SortField
 import org.jooq.impl.DSL
 import remocra.data.GlobalData
 import remocra.data.Params
+import remocra.db.jooq.remocra.enums.Droit
 import remocra.db.jooq.remocra.tables.pojos.GroupeFonctionnalites
 import remocra.db.jooq.remocra.tables.references.GROUPE_FONCTIONNALITES
 import remocra.db.jooq.remocra.tables.references.L_PROFIL_UTILISATEUR_ORGANISME_GROUPE_FONCTIONNALITES
@@ -157,4 +158,13 @@ class GroupeFonctionnalitesRepository @Inject constructor(private val dsl: DSLCo
             .set(GROUPE_FONCTIONNALITES.DROITS, groupeFonctionnalites.groupeFonctionnalitesDroits)
             .where(GROUPE_FONCTIONNALITES.ID.eq(groupeFonctionnalites.groupeFonctionnalitesId))
             .execute()
+
+    fun getDroitsByGroupeId(groupeFonctionnalitesId: UUID): Array<Droit?> =
+        dsl.select(GROUPE_FONCTIONNALITES.DROITS)
+            .from(GROUPE_FONCTIONNALITES)
+            .where(GROUPE_FONCTIONNALITES.ID.eq(groupeFonctionnalitesId))
+            .fetch()
+            .mapNotNull { record -> record.component1() as? Array<*> }
+            .flatMap { it.filterIsInstance<Droit>() }
+            .toTypedArray()
 }
