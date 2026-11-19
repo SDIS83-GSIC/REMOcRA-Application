@@ -183,7 +183,7 @@ class CalculDispoUseCase @Inject constructor(
 
             // Pour HBE
             val disponibiliteHbe = when {
-                noteHbe >= 5 -> Disponibilite.INDISPONIBLE
+                pei.penaEquipeHbe != true || noteHbe >= 5 -> Disponibilite.INDISPONIBLE
                 setGlobalAnomalies.any { it.anomalieRendNonConforme } || isNatureSpecialeSdis38(pei) -> Disponibilite.NON_CONFORME
                 else -> Disponibilite.DISPONIBLE
             }
@@ -196,13 +196,13 @@ class CalculDispoUseCase @Inject constructor(
             // SDIS38 spécial : NON_CONFORME par défaut
             DisponibiliteResult(
                 terrestre = Disponibilite.NON_CONFORME,
-                hbe = Disponibilite.NON_CONFORME,
+                hbe = if (pei.penaEquipeHbe == true) Disponibilite.NON_CONFORME else Disponibilite.INDISPONIBLE,
             )
         } else {
             // Logique standard : DISPONIBLE
             DisponibiliteResult(
                 terrestre = Disponibilite.DISPONIBLE,
-                hbe = Disponibilite.DISPONIBLE,
+                hbe = if (pei.penaEquipeHbe == true) Disponibilite.DISPONIBLE else Disponibilite.INDISPONIBLE,
             )
         }
     }

@@ -5,11 +5,12 @@ import remocra.data.PeiData
 import remocra.data.PeiForCalculDispoData
 import remocra.data.PenaData
 import remocra.data.PibiData
+import remocra.db.VisiteRepository
 import remocra.db.jooq.remocra.enums.TypePei
 import remocra.usecase.AbstractUseCase
 
 class GetDisponibilitePeiUseCase @Inject constructor(
-    private val visiteRepository: remocra.db.VisiteRepository,
+    private val visiteRepository: VisiteRepository,
     private val calculDispoUseCase: CalculDispoUseCase,
 ) : AbstractUseCase() {
 
@@ -30,6 +31,7 @@ class GetDisponibilitePeiUseCase @Inject constructor(
                 penaCapacite = null,
                 penaCapaciteIllimitee = null,
                 penaCapaciteIncertaine = null,
+                penaEquipeHbe = null,
             )
 
             calculDispoUseCase.execute(peiForCalculDispoData)
@@ -48,6 +50,7 @@ class GetDisponibilitePeiUseCase @Inject constructor(
                 penaCapacite = elementConcret.penaCapacite,
                 penaCapaciteIllimitee = elementConcret.penaCapaciteIllimitee,
                 penaCapaciteIncertaine = elementConcret.penaCapaciteIncertaine,
+                penaEquipeHbe = elementConcret.penaEquipeHbe,
             )
 
             calculDispoUseCase.execute(peiForCalculDispoData)
