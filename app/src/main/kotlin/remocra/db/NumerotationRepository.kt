@@ -21,6 +21,7 @@ class NumerotationRepository @Inject constructor(private val dsl: DSLContext) : 
         .from(PEI)
         .where(PEI.COMMUNE_ID.eq(peiCommuneId))
         .and(PEI.NATURE_ID.eq(peiNatureId))
+        .orderBy(PEI.NUMERO_INTERNE)
         .fetchInto()
 
     /**
