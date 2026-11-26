@@ -13,7 +13,7 @@ class SigOracleQueries @Inject constructor(
         schemaName: String,
         tableName: String,
     ): List<ColumnInfo> {
-        return delegateQueries
+        val columns = delegateQueries
             .getMetaStructureTable(
                 query = """
                 SELECT
@@ -21,13 +21,21 @@ class SigOracleQueries @Inject constructor(
                     data_type,
                     nullable
                 FROM all_tab_columns
-                WHERE owner = UPPER(?)
-                    AND table_name = UPPER(?)
+                WHERE (owner, table_name) IN (
+                    SELECT UPPER(?), UPPER(?) FROM dual
+                    UNION
+                    SELECT table_owner, table_name
+                    FROM all_synonyms
+                    WHERE owner IN (UPPER(?), 'PUBLIC')
+                      AND synonym_name = UPPER(?)
+                )
                 ORDER BY column_id
                 """.trimIndent(),
                 preparedStatement = {
                     this.setString(1, schemaName)
                     this.setString(2, tableName)
+                    this.setString(3, schemaName)
+                    this.setString(4, tableName)
                 },
             ) { rs ->
                 ColumnInfo(
@@ -37,6 +45,12 @@ class SigOracleQueries @Inject constructor(
                     columnNullable = rs.getString("nullable") == "Y",
                 )
             }
+
+        require(columns.isNotEmpty()) {
+            "Aucune colonne trouvée dans Oracle pour ${schemaName.uppercase()}.${tableName.uppercase()} (vue inexistante, synonyme non résolu ou droit SELECT manquant)."
+        }
+
+        return columns
     }
 
     /**
