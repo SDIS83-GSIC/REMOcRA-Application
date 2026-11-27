@@ -40,8 +40,7 @@ private constructor(private val properties: Properties?, private val databaseVen
                 // Propriété keepalive spécifique à chaque base de données
                 when (databaseVendor) {
                     DatabaseVendor.POSTGRES -> properties["dataSource.tcpKeepAlive"] = "true"
-                    DatabaseVendor.ORACLE -> properties["dataSource.oracle.net.keepAlive"] = "true"
-                }
+                    DatabaseVendor.ORACLE -> System.setProperty("oracle.net.keepAlive", "true") }
                 return SigDatabaseModule(properties, databaseVendor)
             }
             return SigDatabaseModule(null, null)
